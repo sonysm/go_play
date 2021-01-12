@@ -35,11 +35,14 @@ dependencies:
   # firebase_phone_verify_ui:
   #   path: ../firebase_phone_verify_ui
   flutter_sfsymbols: ^1.0.0
-  line_awesome_icons: ^1.0.4+2
+  line_awesome_flutter: ^1.0.1
   font_awesome_flutter: ^8.11.0
   firebase_core: ^0.5.3
   firebase_messaging: ^7.0.3
   flutter_local_notifications: ^3.0.3
+  flutter_easyrefresh: ^2.1.8
+  cached_network_image: ^2.5.0
+  package_info: ^0.4.3+2
 
 
 dev_dependencies:

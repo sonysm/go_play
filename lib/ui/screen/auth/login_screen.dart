@@ -58,9 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: Container(
           height: double.infinity,
           width: double.infinity,

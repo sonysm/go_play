@@ -8,12 +8,16 @@
  * Copyright (c) 2021 ERROR-DEV All rights reserved.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sport_booking/theme/color.dart';
 
 ThemeData darkTheme() => ThemeData.dark().copyWith(
       visualDensity: VisualDensity.adaptivePlatformDensity,
+      cupertinoOverrideTheme: CupertinoThemeData(primaryColor: Colors.white),
     );
 
 ThemeData lightTheme() => ThemeData.dark().copyWith(
       visualDensity: VisualDensity.adaptivePlatformDensity,
+      cupertinoOverrideTheme: CupertinoThemeData(primaryColor: Colors.white),
     );

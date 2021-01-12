@@ -5,16 +5,16 @@ import 'package:sport_booking/theme/app_theme.dart';
 import 'package:sport_booking/theme/color.dart';
 
 void main() {
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      systemNavigationBarColor: blackColor,
-      systemNavigationBarDividerColor: Colors.transparent,
-      // statusBarBrightness: Brightness.dark,
-      // statusBarIconBrightness: Brightness.dark,
-      // systemNavigationBarIconBrightness: Brightness.dark,
-    ),
-  );
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   SystemUiOverlayStyle(
+  //     statusBarColor: Colors.transparent,
+  //     systemNavigationBarColor: blackColor,
+  //     systemNavigationBarDividerColor: Colors.transparent,
+  //     // statusBarBrightness: Brightness.dark,
+  //     // statusBarIconBrightness: Brightness.dark,
+  //     // systemNavigationBarIconBrightness: Brightness.dark,
+  //   ),
+  // );
 
   runApp(MyApp());
 }
