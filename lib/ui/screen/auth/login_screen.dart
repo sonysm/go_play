@@ -9,7 +9,6 @@
  */
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sport_booking/ui/components/apple_signin_button.dart';
 import 'package:sport_booking/ui/components/facebook_signin_button.dart';
 

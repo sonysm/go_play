@@ -9,6 +9,7 @@
  */
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:sport_booking/ui/screen/dashboard/dashboard_screen.dart';
 import 'package:sport_booking/ui/screen/news/news_screen.dart';
@@ -32,6 +33,8 @@ class _MainTabbarState extends State<MainTabbar> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays(
+        [SystemUiOverlay.bottom, SystemUiOverlay.top]);
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         onTap: (idx) => setState(() {

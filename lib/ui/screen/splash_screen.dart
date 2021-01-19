@@ -8,7 +8,6 @@
  * Copyright (c) 2021 ERROR-DEV All rights reserved.
  */
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -27,7 +26,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(

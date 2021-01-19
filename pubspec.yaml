@@ -43,6 +43,7 @@ dependencies:
   flutter_easyrefresh: ^2.1.8
   cached_network_image: ^2.5.0
   package_info: ^0.4.3+2
+  flutter_rating_bar: ^3.2.0+1
 
 
 dev_dependencies:
@@ -64,6 +65,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/dummy/
 
   
   fonts:

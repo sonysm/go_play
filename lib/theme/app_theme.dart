@@ -13,11 +13,14 @@ import 'package:flutter/material.dart';
 import 'package:sport_booking/theme/color.dart';
 
 ThemeData darkTheme() => ThemeData.dark().copyWith(
-      visualDensity: VisualDensity.adaptivePlatformDensity,
-      cupertinoOverrideTheme: CupertinoThemeData(primaryColor: Colors.white),
+      // visualDensity: VisualDensity.adaptivePlatformDensity,
+      cupertinoOverrideTheme: CupertinoThemeData(
+          primaryColor: whiteColor,
+          textTheme:
+              CupertinoTextThemeData(textStyle: TextStyle(color: whiteColor))),
     );
 
 ThemeData lightTheme() => ThemeData.dark().copyWith(
-      visualDensity: VisualDensity.adaptivePlatformDensity,
-      cupertinoOverrideTheme: CupertinoThemeData(primaryColor: Colors.white),
+      // visualDensity: VisualDensity.adaptivePlatformDensity,
+      cupertinoOverrideTheme: CupertinoThemeData(primaryColor: whiteColor),
     );
