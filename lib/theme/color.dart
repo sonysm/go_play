@@ -13,6 +13,6 @@ const Color seeColor = Color(0xFFFF715B);
 const Color shopColor = Color(0xFF7DCE82);
 const Color jobColor = Color(0xFFFCD757);
 const Color meetColor = Color(0xFF52D4DE);
-const Color mainColor = Color(0xFF56b000);
+const Color mainColor = Color(0xFF3F9E5C);
 
 const Color facebookColor = Color(0xFF4267B2);

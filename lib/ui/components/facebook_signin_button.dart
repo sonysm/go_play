@@ -144,7 +144,7 @@ class SignInWithFBButton extends StatelessWidget {
         child: Container(
           width: fontSize * (25 / 31),
           height: fontSize,
-          child: Icon(FontAwesomeIcons.facebookF),
+          child: Icon(FontAwesomeIcons.facebookF, color: whiteColor),
         ),
       ),
     );

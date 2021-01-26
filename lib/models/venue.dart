@@ -13,9 +13,11 @@ class Venue extends Model {
   String id;
   String name;
   String image;
+  String address;
 
   Venue.fromJSON(dynamic json) {
     name = json['name'];
     image = json['image'];
+    address = json['address'];
   }
 }

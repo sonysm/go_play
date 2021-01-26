@@ -52,8 +52,7 @@ class NewsCell extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.0),
                   child: CachedNetworkImage(
                       fit: BoxFit.cover,
-                      imageUrl:
-                          'https://images.unsplash.com/photo-1518611012118-696072aa579a?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80'),
+                      imageUrl: 'https://img.rasset.ie/0016159e-600.jpg'),
                 ),
               ),
             )

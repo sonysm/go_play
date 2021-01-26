@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:sport_booking/ui/screen/activities/activity_screen.dart';
 import 'package:sport_booking/ui/screen/dashboard/dashboard_screen.dart';
 import 'package:sport_booking/ui/screen/news/news_screen.dart';
 import 'package:sport_booking/ui/screen/notification/notification_screen.dart';
@@ -24,9 +25,9 @@ class MainTabbar extends StatefulWidget {
 class _MainTabbarState extends State<MainTabbar> {
   int _currentIndex = 0;
   List<Widget> _screen = [
+    ActivityScreen(),
     DashboardScreen(),
     NewsScreen(),
-    ProfileScreen(),
     NotificationScreen(),
     ProfileScreen()
   ];
@@ -42,10 +43,10 @@ class _MainTabbarState extends State<MainTabbar> {
         }),
         currentIndex: _currentIndex,
         items: [
-          BottomNavigationBarItem(icon: Icon(LineAwesomeIcons.home)),
-          BottomNavigationBarItem(icon: Icon(LineAwesomeIcons.newspaper_1)),
+          BottomNavigationBarItem(icon: Icon(LineAwesomeIcons.users)),
           BottomNavigationBarItem(
               icon: Icon(LineAwesomeIcons.alternate_ticket)),
+          BottomNavigationBarItem(icon: Icon(LineAwesomeIcons.newspaper_1)),
           BottomNavigationBarItem(icon: Icon(LineAwesomeIcons.bell)),
           BottomNavigationBarItem(icon: Icon(LineAwesomeIcons.user))
         ],

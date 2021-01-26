@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sport_booking/ui/screen/auth/login_screen.dart';
+import 'package:sport_booking/ui/screen/booking/booking_screen.dart';
+import 'package:sport_booking/ui/screen/dashboard/venue_detail_screen.dart';
 import 'package:sport_booking/ui/screen/dashboard/venue_list_screen.dart';
 import 'package:sport_booking/ui/screen/main_tabbar.dart';
 import 'package:sport_booking/ui/screen/splash_screen.dart';
@@ -21,6 +23,14 @@ class RouteGenerator {
       case '/venue-list':
         return MaterialPageRoute(
           builder: (_) => VenueListScreen(),
+        );
+      case '/venue-detail':
+        return MaterialPageRoute(
+          builder: (_) => VenueDetailScreen(args),
+        );
+      case '/book':
+        return MaterialPageRoute(
+          builder: (_) => BookingScreen(),
         );
 
       case '/login':

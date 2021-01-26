@@ -14,13 +14,22 @@ import 'package:sport_booking/theme/color.dart';
 
 ThemeData darkTheme() => ThemeData.dark().copyWith(
       // visualDensity: VisualDensity.adaptivePlatformDensity,
+      buttonColor: mainColor,
+      // iconTheme: IconThemeData(color: mainColor),
+
+      appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: mainColor)),
+      buttonTheme: ButtonThemeData(buttonColor: mainColor),
+
       cupertinoOverrideTheme: CupertinoThemeData(
-          primaryColor: whiteColor,
+          primaryContrastingColor: mainColor,
+          primaryColor: mainColor,
           textTheme:
               CupertinoTextThemeData(textStyle: TextStyle(color: whiteColor))),
     );
 
-ThemeData lightTheme() => ThemeData.dark().copyWith(
+ThemeData lightTheme() => ThemeData.light().copyWith(
       // visualDensity: VisualDensity.adaptivePlatformDensity,
+      buttonColor: Colors.green,
+      buttonTheme: ButtonThemeData(buttonColor: Colors.green),
       cupertinoOverrideTheme: CupertinoThemeData(primaryColor: whiteColor),
     );
