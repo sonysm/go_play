@@ -38,6 +38,13 @@ class _ActivityScreenState extends State<ActivityScreen> {
               SliverAppBar(
                 floating: true,
                 title: Text('Activities'),
+                actions: [
+                  IconButton(
+                      icon: Icon(LineAwesomeIcons.edit_1, color: mainColor),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/create-activity');
+                      })
+                ],
               ),
               header,
               SliverPadding(

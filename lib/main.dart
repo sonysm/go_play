@@ -1,8 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sport_booking/services/route.dart';
 import 'package:sport_booking/theme/app_theme.dart';
-import 'package:sport_booking/theme/color.dart';
 
 void main() {
   // SystemChrome.setSystemUIOverlayStyle(
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: lightTheme(),
+      theme: darkTheme(),
       darkTheme: darkTheme(),
       onGenerateRoute: RouteGenerator.generateRoute,
     );

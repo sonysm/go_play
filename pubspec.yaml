@@ -32,12 +32,12 @@ dependencies:
   bloc: ^6.1.1
   flutter_bloc: ^6.1.1
   connectivity: ^2.0.2
-  # firebase_phone_verify_ui:
-  #   path: ../firebase_phone_verify_ui
+  firebase_phone_verify_ui:
+    path: libraries/firebase_phone_verify_ui
   flutter_sfsymbols: ^1.0.0
   line_awesome_flutter: ^1.0.1
   font_awesome_flutter: ^8.11.0
-  firebase_core: ^0.5.3
+  firebase_core: ^0.5.0+1
   firebase_messaging: ^7.0.3
   flutter_local_notifications: ^3.0.3
   flutter_easyrefresh: ^2.1.8

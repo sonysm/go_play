@@ -7,6 +7,7 @@
  * -----
  * Copyright (c) 2021 ERROR-DEV All rights reserved.
  */
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -18,10 +19,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(
-        Duration(seconds: 2),
-        () => Navigator.pushNamedAndRemoveUntil(
-            context, '/login', (route) => false));
+
+    Firebase.initializeApp().then(
+      (value) {
+        return Navigator.pushNamedAndRemoveUntil(
+            context, '/login', (route) => false);
+      },
+    );
   }
 
   @override

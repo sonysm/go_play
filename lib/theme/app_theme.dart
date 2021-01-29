@@ -15,8 +15,7 @@ import 'package:sport_booking/theme/color.dart';
 ThemeData darkTheme() => ThemeData.dark().copyWith(
       // visualDensity: VisualDensity.adaptivePlatformDensity,
       buttonColor: mainColor,
-      // iconTheme: IconThemeData(color: mainColor),
-
+      textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'OpenSans'),
       appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: mainColor)),
       buttonTheme: ButtonThemeData(buttonColor: mainColor),
 
@@ -30,6 +29,7 @@ ThemeData darkTheme() => ThemeData.dark().copyWith(
 ThemeData lightTheme() => ThemeData.light().copyWith(
       // visualDensity: VisualDensity.adaptivePlatformDensity,
       buttonColor: Colors.green,
+      textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'OpenSans'),
       buttonTheme: ButtonThemeData(buttonColor: Colors.green),
       cupertinoOverrideTheme: CupertinoThemeData(primaryColor: whiteColor),
     );

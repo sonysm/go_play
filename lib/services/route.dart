@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sport_booking/ui/screen/activities/create_activity_screen.dart';
 import 'package:sport_booking/ui/screen/auth/login_screen.dart';
 import 'package:sport_booking/ui/screen/booking/booking_screen.dart';
 import 'package:sport_booking/ui/screen/dashboard/venue_detail_screen.dart';
@@ -31,6 +32,10 @@ class RouteGenerator {
       case '/book':
         return MaterialPageRoute(
           builder: (_) => BookingScreen(),
+        );
+      case '/create-activity':
+        return MaterialPageRoute(
+          builder: (_) => CreateActivityScreen(),
         );
 
       case '/login':

@@ -14,6 +14,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:sport_booking/bloc/home_cubit/home_cubit.dart';
 import 'package:sport_booking/models/venue.dart';
+import 'package:sport_booking/theme/color.dart';
 import 'package:sport_booking/ui/components/refresh_header.dart';
 import 'package:sport_booking/ui/components/venue/venue_cell.dart';
 

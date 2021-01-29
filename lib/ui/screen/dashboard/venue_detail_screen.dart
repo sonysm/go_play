@@ -162,22 +162,28 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
           ),
           Container(
             color: Theme.of(context).primaryColor,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(width: 16),
-                Expanded(
-                    child: RaisedButton(
-                        onPressed: () {}, child: Text('CREATE ACTIVITY'))),
-                SizedBox(width: 16),
-                Expanded(
-                    child: RaisedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/book');
-                        },
-                        child: Text('BOOK NOW'))),
-                SizedBox(width: 16),
-              ],
+            child: SafeArea(
+              top: false,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(width: 16),
+                  Expanded(
+                      child: RaisedButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed('/create-activity');
+                          },
+                          child: Text('CREATE ACTIVITY'))),
+                  SizedBox(width: 16),
+                  Expanded(
+                      child: RaisedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/book');
+                          },
+                          child: Text('BOOK NOW'))),
+                  SizedBox(width: 16),
+                ],
+              ),
             ),
           )
         ],

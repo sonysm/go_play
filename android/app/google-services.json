@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1054825180005",
+    "project_id": "kroma-sport",
+    "storage_bucket": "kroma-sport.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1054825180005:android:299dc3e359d2173f750f8c",
+        "android_client_info": {
+          "package_name": "com.kroma.kromasport"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1054825180005-glbefqdmhddcrnbkuegksu0vptqka1n1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCw9eoHRvIvjpaA_zWoEyJmD53FIlQCKKk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1054825180005-glbefqdmhddcrnbkuegksu0vptqka1n1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

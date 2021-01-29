@@ -7,10 +7,12 @@
  * -----
  * Copyright (c) 2021 ERROR-DEV All rights reserved.
  */
+import 'package:firebase_phone_verify_ui/enum.dart';
+import 'package:firebase_phone_verify_ui/firebase_phone_verify_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:sport_booking/ui/components/apple_signin_button.dart';
 import 'package:sport_booking/ui/components/facebook_signin_button.dart';
+import 'package:sport_booking/ui/components/phone_signin_button.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -18,6 +20,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final FirebasePhoneVerifyUi _verifyUi = FirebasePhoneVerifyUi();
+
   Widget privacyPolicyLinkAndTermsOfService() {
     return Container(
       width: 320,
@@ -81,18 +85,31 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 32.0),
                 Container(
+                  child: SignInWithPhoneButton(
+                    style: SignInWithPhoneButtonStyle.white,
+                    onPressed: () async {
+                      var result = await _verifyUi.loginWithPhone(context);
+                      if (result == FirebaseVerifyResult.verifySuccess) {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/home', (route) => false);
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                Container(
                   child: SignInWithFBButton(
                       onPressed: () => Navigator.pushNamedAndRemoveUntil(
                           context, '/home', (route) => false)),
                 ),
                 SizedBox(height: 16.0),
-                Container(
-                  child: SignInWithAppleButton(
-                    style: SignInWithAppleButtonStyle.white,
-                    onPressed: () {},
-                  ),
-                ),
-                SizedBox(height: 16.0),
+                // Container(
+                //   child: SignInWithAppleButton(
+                //     style: SignInWithAppleButtonStyle.white,
+                //     onPressed: () {},
+                //   ),
+                // ),
+                // SizedBox(height: 16.0),
                 privacyPolicyLinkAndTermsOfService(),
                 SizedBox(height: 32.0),
               ],

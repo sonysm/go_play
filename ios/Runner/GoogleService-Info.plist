@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1054825180005-1a763q8oga4k977hgnlepgqfbfv0tgn3.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1054825180005-1a763q8oga4k977hgnlepgqfbfv0tgn3</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB_Cs1VaWGcJdKqfGqu_OUstFUSlvHLrUQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1054825180005</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.kroma.kromasport</string>
+	<key>PROJECT_ID</key>
+	<string>kroma-sport</string>
+	<key>STORAGE_BUCKET</key>
+	<string>kroma-sport.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1054825180005:ios:29d24fca90004b11750f8c</string>
+</dict>
+</plist>
