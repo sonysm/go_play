@@ -88,11 +88,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: SignInWithPhoneButton(
                     style: SignInWithPhoneButtonStyle.white,
                     onPressed: () async {
-                      var result = await _verifyUi.loginWithPhone(context);
-                      if (result == FirebaseVerifyResult.verifySuccess) {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/home', (route) => false);
-                      }
+                      // var result = await _verifyUi.loginWithPhone(context);
+                      // if (result == FirebaseVerifyResult.verifySuccess) {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/home', (route) => false);
+                      // }
                     },
                   ),
                 ),
