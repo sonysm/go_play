@@ -5,6 +5,7 @@ import 'package:sport_booking/ui/screen/booking/booking_screen.dart';
 import 'package:sport_booking/ui/screen/dashboard/venue_detail_screen.dart';
 import 'package:sport_booking/ui/screen/dashboard/venue_list_screen.dart';
 import 'package:sport_booking/ui/screen/main_tabbar.dart';
+import 'package:sport_booking/ui/screen/news/news_detail_screen.dart';
 import 'package:sport_booking/ui/screen/splash_screen.dart';
 
 class RouteGenerator {
@@ -41,6 +42,10 @@ class RouteGenerator {
       case '/login':
         return MaterialPageRoute(
           builder: (_) => LoginScreen(),
+        );
+      case '/news-detail':
+        return MaterialPageRoute(
+          builder: (_) => NewDetailScreen(args),
         );
 
       default:

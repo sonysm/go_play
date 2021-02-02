@@ -10,6 +10,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:sport_booking/models/news.dart';
 import 'package:sport_booking/ui/components/news_cell.dart';
 import 'package:sport_booking/ui/components/refresh_header.dart';
 
@@ -41,7 +42,7 @@ class _NewsScreenState extends State<NewsScreen> {
                         if (index % 2 == 0) {
                           return Divider();
                         }
-                        return NewsCell();
+                        return NewsCell(news: News());
                       },
                       addSemanticIndexes: true,
                       childCount: 12,

@@ -46,6 +46,7 @@ dependencies:
   flutter_rating_bar: ^3.2.0+1
   calendar_timeline: ^0.7.0
   syncfusion_flutter_sliders: ^18.4.35-beta
+  line_awesome_icons: ^1.0.4+2
 
 
 dev_dependencies:

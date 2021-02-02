@@ -118,7 +118,7 @@ class SignInWithFBButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // per Apple's guidelines
-    final fontSize = height * 0.43;
+    final fontSize = height * 0.40;
 
     final textWidget = Text(
       text,

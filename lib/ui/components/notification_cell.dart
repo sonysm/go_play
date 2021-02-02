@@ -10,6 +10,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:sport_booking/models/news.dart';
 
 class NotificationCell extends StatelessWidget {
   const NotificationCell({
@@ -20,7 +21,9 @@ class NotificationCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-      onTap: () {},
+      onTap: () {
+        Navigator.pushNamed(context, '/news-detail', arguments: News());
+      },
       leading: CircleAvatar(
         radius: 32.0,
         backgroundColor: Color(Random().nextInt(0xffffffff)),

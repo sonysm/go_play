@@ -1,15 +1,14 @@
 /*
- * File: activity.dart
+ * File: news.dart
  * Project: models
  * -----
- * Created Date: Thursday January 21st 2021
+ * Created Date: Monday February 1st 2021
  * Author: Sony Sum
  * -----
  * Copyright (c) 2021 ERROR-DEV All rights reserved.
  */
-
-class Activity {
+class News {
   String id;
-  String name;
-  String type;
+  String title;
+  String message;
 }

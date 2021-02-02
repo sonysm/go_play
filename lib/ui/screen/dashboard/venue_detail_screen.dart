@@ -14,7 +14,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:sport_booking/models/venue.dart';
-import 'package:sport_booking/theme/color.dart';
 import 'package:sport_booking/ui/screen/activities/activity_screen.dart';
 
 class VenueDetailScreen extends StatefulWidget {
