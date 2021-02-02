@@ -34,7 +34,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
             slivers: [
               SliverAppBar(
                 floating: true,
-                title: Text('Notification'),
+                title: Text('Notification',
+                    style: Theme.of(context).textTheme.headline6),
               ),
               header,
               SliverList(

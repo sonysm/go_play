@@ -42,7 +42,8 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
           CustomScrollView(
             slivers: [
               SliverAppBar(
-                title: Text('Create Activity'),
+                title: Text('Create Activity',
+                    style: Theme.of(context).textTheme.headline6),
               ),
               SliverPadding(
                 padding: EdgeInsets.all(16),
@@ -57,6 +58,9 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                         subtitle:
                             Text('Food ball', style: subTitletexTheme(context)),
                         trailing: Icon(Icons.arrow_forward_ios),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/choose-item');
+                        },
                       ),
                       Divider(height: 1),
                       ListTile(

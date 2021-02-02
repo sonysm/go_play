@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sport_booking/ui/screen/activities/choose_item_screen.dart';
 import 'package:sport_booking/ui/screen/activities/create_activity_screen.dart';
 import 'package:sport_booking/ui/screen/auth/login_screen.dart';
 import 'package:sport_booking/ui/screen/booking/booking_screen.dart';
@@ -46,6 +47,11 @@ class RouteGenerator {
       case '/news-detail':
         return MaterialPageRoute(
           builder: (_) => NewDetailScreen(args),
+        );
+
+      case '/choose-item':
+        return MaterialPageRoute(
+          builder: (_) => ChooseItemScreen(),
         );
 
       default:

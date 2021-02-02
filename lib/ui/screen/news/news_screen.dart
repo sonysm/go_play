@@ -57,7 +57,7 @@ class _NewsScreenState extends State<NewsScreen> {
   SliverAppBar _buildSliverAppBar() {
     return SliverAppBar(
       floating: true,
-      title: Text('News'),
+      title: Text('News', style: Theme.of(context).textTheme.headline6),
     );
   }
 

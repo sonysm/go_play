@@ -14,6 +14,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:sport_booking/models/venue.dart';
+import 'package:sport_booking/theme/color.dart';
+import 'package:sport_booking/ui/components/activities/activity_cell.dart';
 import 'package:sport_booking/ui/screen/activities/activity_screen.dart';
 
 class VenueDetailScreen extends StatefulWidget {
@@ -141,9 +143,9 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
-                            Container(width: 320, child: ActiviryCell()),
+                            Container(width: 320, child: ActivityCell()),
                             SizedBox(width: 8.0),
-                            Container(width: 320, child: ActiviryCell())
+                            Container(width: 320, child: ActivityCell())
                           ],
                         ),
                       ),
@@ -172,14 +174,17 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                           onPressed: () {
                             Navigator.of(context).pushNamed('/create-activity');
                           },
+                          textColor: whiteColor,
                           child: Text('CREATE ACTIVITY'))),
                   SizedBox(width: 16),
                   Expanded(
                       child: RaisedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/book');
-                          },
-                          child: Text('BOOK NOW'))),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/book');
+                    },
+                    textColor: whiteColor,
+                    child: Text('BOOK NOW'),
+                  )),
                   SizedBox(width: 16),
                 ],
               ),

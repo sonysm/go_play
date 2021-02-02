@@ -15,9 +15,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async* {
     if (event is AuthLoginEvent) {
       yield AuthLoadingState();
-      Future.delayed(Duration(seconds: 4), () {
-        return AuthDidLoginState();
-      });
+      await Future.delayed(Duration(seconds: 2));
+      yield AuthDidLoginState();
     }
   }
 }

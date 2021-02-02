@@ -33,7 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Profile'),
+        title: Text('Profile', style: Theme.of(context).textTheme.headline6),
       ),
       body: FutureBuilder<PackageInfo>(
           future: PackageInfo.fromPlatform(),

@@ -13,8 +13,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sport_booking/bloc/auth/auth_bloc.dart';
+import 'package:sport_booking/services/kp.dart';
 import 'package:sport_booking/ui/components/facebook_signin_button.dart';
 import 'package:sport_booking/ui/components/phone_signin_button.dart';
+import 'package:sport_booking/utils/kp_loading.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -24,6 +26,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final FirebasePhoneVerifyUi _verifyUi = FirebasePhoneVerifyUi();
   final _authBloc = AuthBloc();
+  final GlobalKey _key = GlobalKey();
 
   Widget privacyPolicyLinkAndTermsOfService() {
     return Container(
@@ -63,14 +66,24 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void initState() {
+    KSP.shared.mainKey = _key;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _key,
       body: BlocProvider(
         create: (context) => _authBloc,
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
+            print(state);
             if (state is AuthLoadingState) {
+              KSPLoading.showLoading();
             } else if (state is AuthDidLoginState) {
+              KSPLoading.hideLoading();
               Navigator.pushNamedAndRemoveUntil(
                   context, '/home', (route) => false);
             }
@@ -103,11 +116,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: SignInWithPhoneButton(
                           style: SignInWithPhoneButtonStyle.white,
                           onPressed: () async {
-                            // _authBloc.add(AuthLoginEvent());
+                            _authBloc.add(AuthLoginEvent());
                             // var result = await _verifyUi.loginWithPhone(context);
                             // if (result == FirebaseVerifyResult.verifySuccess) {
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/home', (route) => false);
+                            // Navigator.pushNamedAndRemoveUntil(
+                            //     context, '/home', (route) => false);
                             // }
                           },
                         ),
@@ -115,9 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(height: 24.0),
                       Container(
                         child: SignInWithFBButton(onPressed: () {
-                          // _authBloc.add(AuthLoginEvent());
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/home', (route) => false);
+                          _authBloc.add(AuthLoginEvent());
+                          // Navigator.pushNamedAndRemoveUntil(
+                          //     context, '/home', (route) => false);
                         }),
                       ),
                       SizedBox(height: 64.0),

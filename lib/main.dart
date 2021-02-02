@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:sport_booking/services/kp.dart';
 import 'package:sport_booking/services/route.dart';
 import 'package:sport_booking/theme/app_theme.dart';
 
@@ -21,13 +22,11 @@ void main() {
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
 
-  GlobalKey _key = GlobalKey();
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: darkTheme(),
+      theme: lightTheme(),
       darkTheme: darkTheme(),
       onGenerateRoute: RouteGenerator.generateRoute,
     );

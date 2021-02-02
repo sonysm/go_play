@@ -10,31 +10,39 @@
 
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:sport_booking/services/kp.dart';
 import 'package:sport_booking/theme/color.dart';
 
-class KPLoading extends StatefulWidget {
+class KSPLoading extends StatefulWidget {
   final Color color;
 
-  KPLoading({
+  KSPLoading({
     Key key,
     @required this.color,
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => KPLoadingState();
+  State<StatefulWidget> createState() => KSPLoadingState();
 
-  void showLoading(BuildContext context,
-      {Color color: mainColor, Widget content}) {
+  static showLoading(
+      {BuildContext context, Color color: mainColor, Widget content}) {
     showDialog(
-      context: context,
+      context: context ?? KSP.shared.mainKey.currentContext,
       barrierDismissible: false,
       barrierColor: Colors.black.withOpacity(.3),
-      builder: (_) => content ?? KPLoading(color: color),
+      builder: (_) => content ?? KSPLoading(color: color),
     );
+  }
+
+  static hideLoading(
+      {BuildContext context, Color color: mainColor, Widget content}) {
+    if (Navigator.canPop(context ?? KSP.shared.mainKey.currentContext)) {
+      Navigator.pop(context ?? KSP.shared.mainKey.currentContext);
+    }
   }
 }
 
-class KPLoadingState extends State<KPLoading>
+class KSPLoadingState extends State<KSPLoading>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> scaleAnimation;
