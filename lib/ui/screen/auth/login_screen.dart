@@ -13,7 +13,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sport_booking/bloc/auth/auth_bloc.dart';
-import 'package:sport_booking/services/kp.dart';
+import 'package:sport_booking/services/ksp.dart';
+import 'package:sport_booking/theme/color.dart';
 import 'package:sport_booking/ui/components/facebook_signin_button.dart';
 import 'package:sport_booking/ui/components/phone_signin_button.dart';
 import 'package:sport_booking/utils/kp_loading.dart';
@@ -36,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Center(
           child: Text.rich(TextSpan(
               text: 'By continuing, you agree to our ',
-              style: TextStyle(fontSize: 12),
+              style: TextStyle(fontSize: 12, color: whiteColor),
               children: <TextSpan>[
             TextSpan(
                 text: 'Terms of Service',
@@ -50,12 +51,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   }),
             TextSpan(
                 text: ' and ',
-                style: TextStyle(fontSize: 12),
+                style: TextStyle(fontSize: 12, color: whiteColor),
                 children: <TextSpan>[
                   TextSpan(
                       text: 'Privacy Policy',
                       style: TextStyle(
-                          fontSize: 14, decoration: TextDecoration.underline),
+                          color: whiteColor,
+                          fontSize: 14,
+                          decoration: TextDecoration.underline),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           // code to open / launch privacy policy link here
@@ -81,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
           listener: (context, state) {
             print(state);
             if (state is AuthLoadingState) {
-              KSPLoading.showLoading();
+              showLoading();
             } else if (state is AuthDidLoginState) {
               KSPLoading.hideLoading();
               Navigator.pushNamedAndRemoveUntil(
@@ -106,7 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Row(
                           children: [
                             Expanded(child: Divider(color: Colors.white)),
-                            Text(' Sign in with '),
+                            Text(' Sign in with ',
+                                style: TextStyle(color: whiteColor)),
                             Expanded(child: Divider(color: Colors.white)),
                           ],
                         ),
@@ -135,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       SizedBox(height: 64.0),
                       privacyPolicyLinkAndTermsOfService(),
-                      SizedBox(height: 32.0),
+                      SizedBox(height: 16.0),
                     ],
                   ),
                 ));

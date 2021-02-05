@@ -36,6 +36,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
           CustomScrollView(
             slivers: [
               CupertinoSliverNavigationBar(
+                heroTag: 'venue-details',
                 padding: EdgeInsetsDirectional.only(start: 0, bottom: 8),
                 leading: IconButton(
                     padding: EdgeInsets.zero,
@@ -96,7 +97,9 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                         ],
                       ),
                       FlatButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/map');
+                        },
                         child: Text(
                           'See Map',
                           style: Theme.of(context)

@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:sport_booking/services/ksp.dart';
 import 'package:sport_booking/ui/screen/activities/activity_screen.dart';
 import 'package:sport_booking/ui/screen/dashboard/dashboard_screen.dart';
 import 'package:sport_booking/ui/screen/news/news_screen.dart';
@@ -23,6 +24,8 @@ class MainTabbar extends StatefulWidget {
 }
 
 class _MainTabbarState extends State<MainTabbar> {
+  final _key = GlobalKey();
+
   int _currentIndex = 0;
   List<Widget> _screen = [
     ActivityScreen(),
@@ -33,10 +36,17 @@ class _MainTabbarState extends State<MainTabbar> {
   ];
 
   @override
+  void initState() {
+    KSP.shared.mainKey = _key;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays(
         [SystemUiOverlay.bottom, SystemUiOverlay.top]);
     return CupertinoTabScaffold(
+      key: _key,
       tabBar: CupertinoTabBar(
         onTap: (idx) => setState(() {
           _currentIndex = idx;

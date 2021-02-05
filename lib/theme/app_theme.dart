@@ -13,19 +13,23 @@ import 'package:flutter/material.dart';
 import 'package:sport_booking/main.dart';
 import 'package:sport_booking/theme/color.dart';
 
-ThemeData darkTheme() => ThemeData.dark().copyWith(
-      // visualDensity: VisualDensity.adaptivePlatformDensity,
-      buttonColor: mainColor,
-      textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'OpenSans'),
-      appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: mainColor)),
-      buttonTheme: ButtonThemeData(buttonColor: mainColor),
-
-      cupertinoOverrideTheme: CupertinoThemeData(
-          primaryContrastingColor: mainColor,
-          primaryColor: mainColor,
-          textTheme:
-              CupertinoTextThemeData(textStyle: TextStyle(color: whiteColor))),
-    );
+ThemeData darkTheme() {
+  ThemeData defaultTheme = ThemeData.dark();
+  return ThemeData.dark().copyWith(
+    // visualDensity: VisualDensity.adaptivePlatformDensity,
+    buttonColor: mainColor,
+    textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'OpenSans'),
+    appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: mainColor)),
+    buttonTheme: ButtonThemeData(buttonColor: mainColor),
+    floatingActionButtonTheme: defaultTheme.floatingActionButtonTheme
+        .copyWith(backgroundColor: mainColor, foregroundColor: whiteColor),
+    cupertinoOverrideTheme: CupertinoThemeData(
+        primaryContrastingColor: mainColor,
+        primaryColor: mainColor,
+        textTheme:
+            CupertinoTextThemeData(textStyle: TextStyle(color: whiteColor))),
+  );
+}
 
 ThemeData lightTheme() {
   ThemeData defaultTheme = ThemeData.light();
@@ -34,6 +38,8 @@ ThemeData lightTheme() {
     visualDensity: VisualDensity.adaptivePlatformDensity,
     primaryColor: whiteColor,
     disabledColor: whiteColor,
+    primaryColorDark: Colors.grey[200],
+    primaryColorLight: Colors.pink,
     primaryIconTheme: defaultTheme.primaryIconTheme.copyWith(color: mainColor),
     accentIconTheme: defaultTheme.accentIconTheme.copyWith(color: mainColor),
     iconTheme: defaultTheme.iconTheme.copyWith(color: mainColor),
@@ -44,9 +50,11 @@ ThemeData lightTheme() {
     ),
     textTheme: ThemeData.light().textTheme.apply(fontFamily: 'OpenSans'),
     buttonTheme: ButtonThemeData(
-        buttonColor: mainColor,
-        colorScheme:
-            defaultTheme.colorScheme.copyWith(secondary: Colors.white)),
+      buttonColor: mainColor,
+      colorScheme: defaultTheme.colorScheme.copyWith(secondary: Colors.white),
+    ),
+    floatingActionButtonTheme: defaultTheme.floatingActionButtonTheme
+        .copyWith(backgroundColor: mainColor),
     cupertinoOverrideTheme: CupertinoThemeData(primaryColor: mainColor),
   );
 }

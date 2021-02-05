@@ -47,6 +47,7 @@ dependencies:
   calendar_timeline: ^0.7.0
   syncfusion_flutter_sliders: ^18.4.35-beta
   line_awesome_icons: ^1.0.4+2
+  google_maps_flutter: ^1.1.1
 
 
 dev_dependencies:

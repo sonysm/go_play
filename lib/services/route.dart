@@ -3,6 +3,7 @@ import 'package:sport_booking/ui/screen/activities/choose_item_screen.dart';
 import 'package:sport_booking/ui/screen/activities/create_activity_screen.dart';
 import 'package:sport_booking/ui/screen/auth/login_screen.dart';
 import 'package:sport_booking/ui/screen/booking/booking_screen.dart';
+import 'package:sport_booking/ui/screen/dashboard/map_screen.dart';
 import 'package:sport_booking/ui/screen/dashboard/venue_detail_screen.dart';
 import 'package:sport_booking/ui/screen/dashboard/venue_list_screen.dart';
 import 'package:sport_booking/ui/screen/main_tabbar.dart';
@@ -51,7 +52,15 @@ class RouteGenerator {
 
       case '/choose-item':
         return MaterialPageRoute(
-          builder: (_) => ChooseItemScreen(),
+          builder: (context) {
+            return ChooseItemScreen(OptionTypeSport(), args);
+          },
+        );
+      case '/map':
+        return MaterialPageRoute(
+          builder: (context) {
+            return MapScreen();
+          },
         );
 
       default:

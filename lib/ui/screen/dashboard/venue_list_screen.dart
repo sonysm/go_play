@@ -8,22 +8,17 @@
  * Copyright (c) 2021 ERROR-DEV All rights reserved.
  */
 
-import 'dart:convert';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:sport_booking/bloc/venue_list_cubit/venuelist_cubit.dart';
 import 'package:sport_booking/models/venue.dart';
 import 'package:sport_booking/theme/color.dart';
 import 'package:sport_booking/ui/components/refresh_header.dart';
 import 'package:sport_booking/ui/components/venue/venue_cell.dart';
-import 'package:sport_booking/ui/screen/dashboard/search_venue_deligate.dart';
+import 'package:sport_booking/ui/screen/dashboard/search_venue_delegate.dart';
 
 class VenueListScreen extends StatefulWidget {
   @override

@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:sport_booking/services/kp.dart';
+import 'package:sport_booking/services/ksp.dart';
 import 'package:sport_booking/services/route.dart';
 import 'package:sport_booking/theme/app_theme.dart';
 

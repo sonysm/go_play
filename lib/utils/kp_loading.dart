@@ -10,7 +10,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:sport_booking/services/kp.dart';
+import 'package:sport_booking/services/ksp.dart';
 import 'package:sport_booking/theme/color.dart';
 
 class KSPLoading extends StatefulWidget {
@@ -23,16 +23,6 @@ class KSPLoading extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => KSPLoadingState();
-
-  static showLoading(
-      {BuildContext context, Color color: mainColor, Widget content}) {
-    showDialog(
-      context: context ?? KSP.shared.mainKey.currentContext,
-      barrierDismissible: false,
-      barrierColor: Colors.black.withOpacity(.3),
-      builder: (_) => content ?? KSPLoading(color: color),
-    );
-  }
 
   static hideLoading(
       {BuildContext context, Color color: mainColor, Widget content}) {
@@ -177,4 +167,24 @@ class LoadingSuccessDialogState extends State<LoadingSuccessDialog>
       ),
     );
   }
+}
+
+showLoading(
+    {BuildContext context,
+    Color color: mainColor,
+    bool willPop = true,
+    Widget content}) {
+  showDialog(
+    context: context ?? KSP.shared.mainKey.currentContext,
+    barrierDismissible: false,
+    barrierColor: Colors.black.withOpacity(.3),
+    builder: (_) => WillPopScope(
+      onWillPop: () async => false,
+      child: content ?? KSPLoading(color: color),
+    ),
+  );
+}
+
+hideLoading({BuildContext context}) {
+  Navigator.pop(context ?? KSP.shared.mainKey.currentContext);
 }

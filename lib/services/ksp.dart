@@ -22,5 +22,5 @@ class KSP {
 
   KSP._internal();
 
-  GlobalKey mainKey = GlobalKey();
+  GlobalKey mainKey;
 }

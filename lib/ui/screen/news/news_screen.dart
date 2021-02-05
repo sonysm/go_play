@@ -87,8 +87,8 @@ class _NewsScreenState extends State<NewsScreen> {
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context)
                         .textTheme
-                        .headline6
-                        .copyWith(fontSize: 18)),
+                        .bodyText1
+                        .copyWith(fontSize: 16)),
               )
             ],
           ),

@@ -38,8 +38,8 @@ class NewsCell extends StatelessWidget {
                         maxLines: 3,
                         style: Theme.of(context)
                             .textTheme
-                            .headline6
-                            .copyWith(fontSize: 18),
+                            .bodyText1
+                            .copyWith(fontSize: 16),
                       ),
                       Spacer(),
                       Text('1 hour ago',
