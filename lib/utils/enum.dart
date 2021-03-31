@@ -8,6 +8,13 @@
  * Copyright (c) 2021 ERROR-DEV All rights reserved.
  */
 
+enum BookStatus {
+  panding,
+  confirmed,
+  rejected,
+  booked,
+}
+
 enum FeedType {
   activityPost,
   userPost,

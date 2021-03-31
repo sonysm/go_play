@@ -92,10 +92,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   SliverPadding(
-                    padding: EdgeInsets.only(bottom: 64),
+                    padding: EdgeInsets.only(bottom: 64, top: 24),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate(
                         [
+                          _buildMenu(
+                              'My Booking', LineAwesomeIcons.alternate_ticket,
+                              onTap: () {
+                            Navigator.pushNamed(context, '/my-booking');
+                          }),
                           _buildMenu('My group', LineAwesomeIcons.users,
                               onTap: () {}),
                           _buildMenu(
