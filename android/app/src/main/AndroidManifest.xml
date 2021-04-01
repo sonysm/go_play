@@ -1,13 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.sport_booking">
-    <!-- io.flutter.app.FlutterApplication is an android.app.Application that
-         calls FlutterMain.startInitialization(this); in its onCreate method.
-         In most cases you can leave this as-is, but you if you want to provide
-         additional functionality it is fine to subclass or reimplement
-         FlutterApplication and put your custom class here. -->
-    <application
-        android:name="io.flutter.app.FlutterApplication"
-        android:label="Kroma Sport"
+    package="com.kroma.kroma_sport">
+   <application
+        android:label="kroma_sport"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -43,10 +37,5 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-
-        <!-- Name formart --> 
-        <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyCw9eoHRvIvjpaA_zWoEyJmD53FIlQCKKk"/>
-
     </application>
 </manifest>
