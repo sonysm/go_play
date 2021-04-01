@@ -14,7 +14,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "sport_booking",
+            "name": "kroma_sport",
             "request": "launch",
             "type": "dart"
         }
