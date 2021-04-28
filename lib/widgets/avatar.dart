@@ -20,7 +20,7 @@ class Avatar extends StatelessWidget {
         radius: radius,
         backgroundColor: Colors.grey[200],
         foregroundImage: CachedNetworkImageProvider(imageUrl),
-        backgroundImage: AssetImage('assets/images/user3.jpg'),
+        backgroundImage: AssetImage('assets/images/user.jpg'),
       ),
     );
   }

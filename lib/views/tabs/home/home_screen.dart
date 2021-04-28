@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
+
+import 'widget/home_feed_cell.dart';
 
 class HomeScreen extends StatefulWidget {
   static String tag = '/homeScreen';
@@ -23,12 +26,25 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget buildHomeFeedList() {
     return SliverList(
       delegate: SliverChildListDelegate(
-        List.generate(8, (index) => Column(
-          children: [
-            HomeFeedCell(),
-            Container(height: 8.0,)
-          ],
-        )),
+        List.generate(
+            8,
+            (index) => Column(
+                  children: [
+                    HomeFeedCell(
+                      onCellTap: () =>
+                          launchScreen(context, FeedDetailScreen.tag),
+                      onLikeTap: () {},
+                      onCommentTap: () =>
+                          launchScreen(context, FeedDetailScreen.tag),
+                      onShareTap: () {},
+                      onAddCommentTap: () =>
+                          launchScreen(context, FeedDetailScreen.tag),
+                    ),
+                    Container(
+                      height: 8.0,
+                    )
+                  ],
+                )),
       ),
     );
   }
