@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
@@ -31,48 +33,55 @@ class _MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: _icons.length,
-      child: Scaffold(
-        body: IndexedStack(
-          index: _screenIndex,
-          children: _screens,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<HomeCubit>(
+          create: (BuildContext context) => HomeCubit()..onLoad(),
         ),
-        bottomNavigationBar: Container(
-          color: Theme.of(context).primaryColor,
-          child: SafeArea(
-            child: Container(
-              //color: Theme.of(context).primaryColor,
-              height: 54.0,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                border: Border(
-                  top: BorderSide(
-                    color: Theme.of(context).brightness == Brightness.light
-                        ? Colors.grey
-                        : Color(0xFF455A64),
-                    width: 0.1,
+      ],
+      child: DefaultTabController(
+        length: _icons.length,
+        child: Scaffold(
+          body: IndexedStack(
+            index: _screenIndex,
+            children: _screens,
+          ),
+          bottomNavigationBar: Container(
+            color: Theme.of(context).primaryColor,
+            child: SafeArea(
+              child: Container(
+                //color: Theme.of(context).primaryColor,
+                height: 54.0,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  border: Border(
+                    top: BorderSide(
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.grey
+                          : Color(0xFF455A64),
+                      width: 0.1,
+                    ),
                   ),
                 ),
-              ),
-              child: _CustomTabBar(
-                icons: _icons,
-                selectedIndex: _tapIndex,
-                onTap: (index) {
-                  if (index < 2) {
-                    setState(() {
-                      _tapIndex = index;
-                      _screenIndex = index;
-                    });
-                  } else if (index > 2) {
-                    setState(() {
-                      _tapIndex = index;
-                      _screenIndex = index - 1;
-                    });
-                  } else {
-                    createActivityScreen();
-                  }
-                },
+                child: _CustomTabBar(
+                  icons: _icons,
+                  selectedIndex: _tapIndex,
+                  onTap: (index) {
+                    if (index < 2) {
+                      setState(() {
+                        _tapIndex = index;
+                        _screenIndex = index;
+                      });
+                    } else if (index > 2) {
+                      setState(() {
+                        _tapIndex = index;
+                        _screenIndex = index - 1;
+                      });
+                    } else {
+                      createActivityScreen();
+                    }
+                  },
+                ),
               ),
             ),
           ),
