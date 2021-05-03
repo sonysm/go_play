@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
+import 'package:kroma_sport/widgets/refresh/bottom_refresher.dart';
+import 'package:kroma_sport/widgets/refresh/top_refresher.dart';
 
 import 'widget/home_feed_cell.dart';
 
@@ -55,7 +57,32 @@ class _HomeScreenState extends State<HomeScreen> {
       body: CustomScrollView(
         slivers: [
           buildNavbar(),
+            TopRefresher(onRefresh: () {
+                return new Future<void>.delayed(const Duration(seconds: 10))
+                  ..then((re) {
+                    // setState(() {
+                    //   changeRandomList();
+                    //   _scrollController.animateTo(0.0,
+                    //       duration: new Duration(milliseconds: 100),
+                    //       curve: Curves.bounceOut);
+                    // });
+                    print("==============");
+                  });
+              }),
+
           buildHomeFeedList(),
+          BottomRefresher(onRefresh: () {
+              return Future<void>.delayed(const Duration(seconds: 10))
+                  ..then((re) {
+                    // setState(() {
+                    //   changeRandomList();
+                    //   _scrollController.animateTo(0.0,
+                    //       duration: new Duration(milliseconds: 100),
+                    //       curve: Curves.bounceOut);
+                    // });
+                    print("==============");
+                  });
+          })
         ],
       ),
     );
