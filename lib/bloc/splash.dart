@@ -23,7 +23,7 @@ class SplashCubit extends Cubit<SplashState> {
       var data = await KSHttpClient().getApi('/user/profile');
       if (data != null) {
         if (data is! HttpResult) {
-          KS.shared.user = userFromJson(data);
+          KS.shared.user = User.fromJson(data);
         }
       }
       emit(SplashState.Exist);

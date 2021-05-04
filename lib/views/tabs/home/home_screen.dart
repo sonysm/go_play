@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:kroma_sport/bloc/data_state.dart';
+import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -124,68 +127,87 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildHomeFeedList() {
-    return SliverList(
-      delegate: SliverChildListDelegate(
-        List.generate(
-            8,
-            (index) => Column(
+  Widget buildHomeFeedList(HomeData feedData) {
+    return feedData.status == DataState.Loading
+        ? loadingSliver()
+        : SliverList(
+            delegate: SliverChildListDelegate(
+              List.generate(
+                feedData.data.length,
+                (index) => Column(
                   children: [
                     HomeFeedCell(
-                      onCellTap: () =>
-                          launchScreen(context, FeedDetailScreen.tag),
+                      onCellTap: () => launchScreen(
+                          context, FeedDetailScreen.tag,
+                          arguments: feedData.data.elementAt(index)),
                       onLikeTap: () {},
-                      onCommentTap: () =>
-                          launchScreen(context, FeedDetailScreen.tag),
+                      onCommentTap: () => launchScreen(
+                          context, FeedDetailScreen.tag,
+                          arguments: feedData.data.elementAt(index)),
                       onShareTap: () {},
-                      onAddCommentTap: () =>
-                          launchScreen(context, FeedDetailScreen.tag),
+                      onAddCommentTap: () => launchScreen(
+                          context, FeedDetailScreen.tag,
+                          arguments: feedData.data.elementAt(index)),
+                      post: feedData.data.elementAt(index),
                     ),
                     Container(
                       height: 8.0,
                     )
                   ],
-                )),
+                ),
+              ),
+            ),
+          );
+  }
+
+  Widget loadingSliver() {
+    return SliverFillRemaining(
+      child: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-        elevation: 0.0,
-      ),
-      body: EasyRefresh.custom(
-        header: MaterialHeader(
-          valueColor: AlwaysStoppedAnimation<Color>(mainColor),
-        ),
-        footer: ClassicalFooter(
-          enableInfiniteLoad: false,
-          completeDuration: Duration(milliseconds: 1200),
-        ),
-        slivers: [
-          createFeedWidget(),
-          buildHomeFeedList(),
-          //BottomRefresher(onRefresh: () {
-          //    return Future<void>.delayed(const Duration(seconds: 10))
-          //        ..then((re) {
-          //          // setState(() {
-          //          //   changeRandomList();
-          //          //   _scrollController.animateTo(0.0,
-          //          //       duration: new Duration(milliseconds: 100),
-          //          //       curve: Curves.bounceOut);
-          //          // });
-          //          print("==============");
-          //        });
-          //}),
-        ],
-        onRefresh: () async {},
-        onLoad: () async {
-          await Future.delayed(Duration(seconds: 2));
-        },
-      ),
+    return BlocBuilder<HomeCubit, HomeData>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Home'),
+            elevation: 0.0,
+          ),
+          body: EasyRefresh.custom(
+            header: MaterialHeader(
+              valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+            ),
+            footer: ClassicalFooter(
+              enableInfiniteLoad: false,
+              completeDuration: Duration(milliseconds: 1200),
+            ),
+            slivers: [
+              createFeedWidget(),
+              buildHomeFeedList(state),
+              //BottomRefresher(onRefresh: () {
+              //    return Future<void>.delayed(const Duration(seconds: 10))
+              //        ..then((re) {
+              //          // setState(() {
+              //          //   changeRandomList();
+              //          //   _scrollController.animateTo(0.0,
+              //          //       duration: new Duration(milliseconds: 100),
+              //          //       curve: Curves.bounceOut);
+              //          // });
+              //          print("==============");
+              //        });
+              //}),
+            ],
+            onRefresh: () async {},
+            onLoad: () async {
+              await Future.delayed(Duration(seconds: 2));
+            },
+          ),
+        );
+      },
     );
   }
 }

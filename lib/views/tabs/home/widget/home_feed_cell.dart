@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
@@ -12,6 +13,7 @@ class HomeFeedCell extends StatelessWidget {
   final VoidCallback onCommentTap;
   final VoidCallback onShareTap;
   final VoidCallback onAddCommentTap;
+  final Post post;
 
   const HomeFeedCell({
     Key? key,
@@ -20,6 +22,7 @@ class HomeFeedCell extends StatelessWidget {
     required this.onCommentTap,
     required this.onShareTap,
     required this.onAddCommentTap,
+    required this.post,
   }) : super(key: key);
 
   @override
@@ -37,15 +40,15 @@ class HomeFeedCell extends StatelessWidget {
               child: Row(
                 children: [
                   Avatar(
-                      radius: 18.0,
-                      imageUrl:
-                          'https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80'),
+                    radius: 18.0,
+                    imageUrl: post.owner.photo,
+                  ),
                   8.width,
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Vincenzo Cassano',
+                        post.owner.getFullname(),
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1
@@ -84,12 +87,12 @@ class HomeFeedCell extends StatelessWidget {
                 horizontal: 16.0,
               ),
               child: SelectableText(
-                'Hello crush! Your application code can then handle messages as you see fit; updating local cache, displaying a notification or updating UI. The possibilities are endless!',
+                post.description ?? '',
                 style: Theme.of(context).textTheme.bodyText1,
                 onTap: onCellTap,
               ),
             ),
-            InkWell(
+            post.photo != null ? InkWell(
               onTap: () {},
               child: SizedBox(
                 width: double.infinity,
@@ -97,7 +100,7 @@ class HomeFeedCell extends StatelessWidget {
                     imageUrl:
                         'https://images.unsplash.com/photo-1562552052-c72ceddf93dc?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
               ),
-            ),
+            ) : SizedBox(),
             HFButtomAction(
               onLikeTap: onLikeTap,
               onCommentTap: onCommentTap,

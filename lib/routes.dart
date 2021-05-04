@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/auth/register_screen.dart';
 import 'package:kroma_sport/views/auth/verify_code_screen.dart';
@@ -36,7 +37,7 @@ class RouteGenerator {
       case AccountScreen.tag:
         return MaterialPageRoute(builder: (_) => AccountScreen());
       case FeedDetailScreen.tag:
-        return MaterialPageRoute(builder: (_) => FeedDetailScreen());
+        return MaterialPageRoute(builder: (_) => FeedDetailScreen(post: args as Post,));
       case CreatPostScreen.tag:
         return MaterialPageRoute(builder: (_) => CreatPostScreen());
       case SettingScreen.tag:
