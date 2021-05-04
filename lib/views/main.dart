@@ -7,6 +7,8 @@ import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 
 class MainView extends StatefulWidget {
+  static const String tag = '/mainScreen';
+  
   @override
   _MainViewState createState() => _MainViewState();
 }

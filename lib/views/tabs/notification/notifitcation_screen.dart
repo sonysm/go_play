@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NotificationScreen extends StatefulWidget {
-  static String tag = '/notificationScreen';
+  static const String tag = '/notificationScreen';
 
   NotificationScreen({Key? key}) : super(key: key);
 
@@ -16,11 +16,26 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
+  Widget emptyNotification() {
+    return SliverToBoxAdapter(
+      child: Container(
+        alignment: Alignment.center,
+        margin: EdgeInsets.only(
+            top: (MediaQuery.of(context).size.height / 2) -
+                AppBar().preferredSize.height),
+        child: Text('No notification'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
-        slivers: [buildNavbar()],
+        slivers: [
+          buildNavbar(),
+          emptyNotification(),
+        ],
       ),
     );
   }

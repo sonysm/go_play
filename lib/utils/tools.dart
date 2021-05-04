@@ -7,3 +7,7 @@ launchScreen(context, String tag, {Object? arguments}) {
     Navigator.pushNamed(context, tag, arguments: arguments);
   }
 }
+
+dismissScreen(context) {
+  Navigator.pop(context);
+}

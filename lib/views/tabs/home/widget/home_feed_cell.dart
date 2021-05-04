@@ -45,7 +45,7 @@ class HomeFeedCell extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Logan Weaver',
+                        'Vincenzo Cassano',
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1
@@ -130,7 +130,7 @@ class HFButtomAction extends StatefulWidget {
 
 class _HFButtomActionState extends State<HFButtomAction> {
   bool isLike = false;
-  
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -157,6 +157,10 @@ class _HFButtomActionState extends State<HFButtomAction> {
                 icon: FeatherIcons.share2,
                 onTap: widget.onShareTap,
               ),
+              Spacer(),
+              Text('99 likes'),
+              8.width,
+              Text('27 comments'),
             ],
           ),
           Padding(
@@ -182,7 +186,6 @@ class _HFButtomActionState extends State<HFButtomAction> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Add a comment',
-                        style: TextStyle(color: Colors.blueGrey),
                       ),
                     ),
                   ),

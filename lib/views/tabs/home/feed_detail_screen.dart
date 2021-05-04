@@ -8,7 +8,7 @@ import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class FeedDetailScreen extends StatefulWidget {
-  static String tag = '/feedDetailScreen';
+  static const String tag = '/feedDetailScreen';
 
   FeedDetailScreen({Key? key}) : super(key: key);
 
@@ -131,7 +131,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(top: 8.0, bottom: 8.0, left: 16.0, right: 8.0),
-      color: Colors.white,
+      color: Theme.of(context).primaryColor,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
@@ -178,7 +178,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteColor,
+      backgroundColor: Theme.of(context).primaryColor,
       body: SafeArea(
         child: Stack(
           children: [

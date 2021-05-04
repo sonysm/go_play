@@ -4,10 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kroma_sport/bloc/theme.dart';
 import 'package:kroma_sport/routes.dart';
 import 'package:kroma_sport/themes/colors.dart';
-import 'package:kroma_sport/views/main.dart';
+import 'package:kroma_sport/views/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
     (_) {
@@ -31,8 +34,9 @@ class App extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             themeMode: mode,
-            home: MainView(),
-            routes: RouteGenerator.getAllRoutes,
+            home: SplashScreen(),
+            //routes: RouteGenerator.getAllRoutes,
+            onGenerateRoute: RouteGenerator.generateRoute,
             theme: ThemeData.light().copyWith(
                 primaryColor: whiteColor,
                 accentColor: mainColor,

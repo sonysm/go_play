@@ -15,10 +15,14 @@ Widget ksIconBtn({
         padding: const EdgeInsets.all(8.0),
         child: Icon(
           icon,
-          color: iconColor,
+          //color: iconColor,
           size: iconSize,
         ),
       ),
     ),
   );
+}
+
+Widget sliverDivider({double? height}) {
+  return SliverPadding(padding: EdgeInsets.only(bottom: height ?? 8.0));
 }

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 class Avatar extends StatelessWidget {
   final double radius;
-  final String imageUrl;
+  final String? imageUrl;
   final VoidCallback? onTap;
 
   const Avatar({
     Key? key,
     required this.radius,
-    required this.imageUrl,
+    this.imageUrl,
     this.onTap,
   }) : super(key: key);
   @override
@@ -19,7 +19,7 @@ class Avatar extends StatelessWidget {
       child: CircleAvatar(
         radius: radius,
         backgroundColor: Colors.grey[200],
-        foregroundImage: CachedNetworkImageProvider(imageUrl),
+        foregroundImage: CachedNetworkImageProvider(imageUrl ?? ''),
         backgroundImage: AssetImage('assets/images/user.jpg'),
       ),
     );

@@ -30,8 +30,21 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^0.13.1
   flutter_bloc: ^7.0.0
+  equatable: ^2.0.0
   flutter_feather_icons: ^2.0.0+1
   cached_network_image: ^3.0.0
+  flutter_easyrefresh: ^2.2.1
+  image_picker: ^0.7.4
+  image_cropper: ^1.4.0
+  shared_preferences: ^2.0.5
+  intl_phone_number_input: ^0.7.0+1
+  pin_input_text_field: ^4.0.0
+  #slide_countdown_clock: ^1.0.3
+  flutter_countdown_timer: ^4.1.0
+  flutter_vector_icons: ^1.0.0
+  
+  # Firebase
+  firebase_auth: ^1.1.2
 
 dev_dependencies:
   flutter_test:
