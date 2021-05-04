@@ -28,6 +28,11 @@
 	<string>Tms want to access to your Microphone.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Tms want to access to your photos.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
