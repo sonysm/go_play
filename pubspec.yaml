@@ -42,6 +42,9 @@ dependencies:
   #slide_countdown_clock: ^1.0.3
   flutter_countdown_timer: ^4.1.0
   flutter_vector_icons: ^1.0.0
+  multi_image_picker: ^4.8.0
+  timeago: ^3.0.2
+  flutter_swiper_null_safety: ^1.0.1
   
   # Firebase
   firebase_auth: ^1.1.2

@@ -24,7 +24,7 @@ class FeedDetailScreen extends StatefulWidget {
 
 class _FeedDetailScreenState extends State<FeedDetailScreen> {
   TextEditingController _commentController = TextEditingController();
-  
+
   late User user;
 
   Widget buildNavbar() {
@@ -63,7 +63,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                             ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        'a day ago',
+                        widget.post.createdAt.toString().timeAgoString,
                         style: Theme.of(context)
                             .textTheme
                             .caption!
@@ -99,15 +99,18 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ),
-            widget.post.photo != null ? InkWell(
-              onTap: () {},
-              child: SizedBox(
-                width: double.infinity,
-                child: CachedNetworkImage(
-                    imageUrl:
-                        'https://images.unsplash.com/photo-1562552052-c72ceddf93dc?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
-              ),
-            ) : SizedBox(),
+            widget.post.photo != null
+                ? InkWell(
+                    onTap: () {},
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: CachedNetworkImage(
+                        imageUrl: widget.post.photo!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )
+                : SizedBox(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Row(
@@ -126,6 +129,10 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     icon: FeatherIcons.share2,
                     onTap: () {},
                   ),
+                  Spacer(),
+                  Text('99 likes'),
+                  8.width,
+                  Text('27 comments'),
                 ],
               ),
             )
@@ -203,9 +210,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
       ),
     );
   }
-  
+
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     user = widget.post.owner;
   }

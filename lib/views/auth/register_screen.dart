@@ -34,6 +34,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController _lnTextController = TextEditingController();
 
   final userRepository = UserRepository();
+  KSHttpClient ksClient = KSHttpClient();
 
   Widget _buildNavbar() {
     return SliverAppBar(
@@ -251,10 +252,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_lnTextController.text.trim().length > 0) {
       fields['last_name'] = _lnTextController.text;
     }
-    var data = await KSHttpClient()
-        .postFileNoAuth('/user/register', _imageFile, fields: fields);
+    var data = await ksClient.postFileNoAuth('/user/register', _imageFile,
+        fields: fields);
     if (data != null) {
       if (data is! HttpResult) {
+        ksClient.setToken(data['token']);
         userRepository.persistHeaderToken(data['token']);
         userRepository.persistToken(data['refresh_token']);
         KS.shared.user = userFromJson(data['user']);

@@ -5,6 +5,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/ks.dart';
+import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
@@ -131,31 +132,35 @@ class _HomeScreenState extends State<HomeScreen> {
     return feedData.status == DataState.Loading
         ? loadingSliver()
         : SliverList(
-            delegate: SliverChildListDelegate(
-              List.generate(
-                feedData.data.length,
-                (index) => Column(
-                  children: [
-                    HomeFeedCell(
-                      onCellTap: () => launchScreen(
-                          context, FeedDetailScreen.tag,
-                          arguments: feedData.data.elementAt(index)),
-                      onLikeTap: () {},
-                      onCommentTap: () => launchScreen(
-                          context, FeedDetailScreen.tag,
-                          arguments: feedData.data.elementAt(index)),
-                      onShareTap: () {},
-                      onAddCommentTap: () => launchScreen(
-                          context, FeedDetailScreen.tag,
-                          arguments: feedData.data.elementAt(index)),
-                      post: feedData.data.elementAt(index),
-                    ),
-                    Container(
-                      height: 8.0,
-                    )
-                  ],
-                ),
-              ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                var post = feedData.data.elementAt(index);
+                if (post.type == PostType.feed) {
+                  return Column(
+                    children: [
+                      HomeFeedCell(
+                        onCellTap: () => launchScreen(
+                            context, FeedDetailScreen.tag,
+                            arguments: feedData.data.elementAt(index)),
+                        onLikeTap: () {},
+                        onCommentTap: () => launchScreen(
+                            context, FeedDetailScreen.tag,
+                            arguments: feedData.data.elementAt(index)),
+                        onShareTap: () {},
+                        onAddCommentTap: () => launchScreen(
+                            context, FeedDetailScreen.tag,
+                            arguments: feedData.data.elementAt(index)),
+                        post: feedData.data.elementAt(index),
+                      ),
+                      Container(
+                        height: 8.0,
+                      )
+                    ],
+                  );
+                }
+                return SizedBox();
+              },
+              childCount: feedData.data.length,
             ),
           );
   }
@@ -201,7 +206,9 @@ class _HomeScreenState extends State<HomeScreen> {
               //        });
               //}),
             ],
-            onRefresh: () async {},
+            onRefresh: () async {
+              BlocProvider.of<HomeCubit>(context).onRefresh();
+            },
             onLoad: () async {
               await Future.delayed(Duration(seconds: 2));
             },
@@ -210,4 +217,10 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+  
+  //@override
+  //void initState() {
+  //  super.initState();
+  //  BlocProvider.of<HomeCubit>(context).onLoad();
+  //}
 }

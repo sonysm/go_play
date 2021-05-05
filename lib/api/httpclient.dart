@@ -61,7 +61,7 @@ class KSHttpClient {
           if (code == 1) {
             result = json['data'];
           } else {
-            result = HttpResult(code, json['sms']);
+            result = HttpResult(code, json['message']);
           }
         } else {
           result = HttpResult(0, "Something went wrong!");
@@ -95,7 +95,7 @@ class KSHttpClient {
           if (code == 1) {
             result = json['data'];
           } else {
-            result = HttpResult(code, json['sms']);
+            result = HttpResult(code, json['message']);
           }
         } else {
           result = HttpResult(0, "Something went wrong!");
@@ -132,7 +132,7 @@ class KSHttpClient {
           if (code == 1) {
             result = json['data'];
           } else {
-            result = HttpResult(code, json['sms']);
+            result = HttpResult(code, json['message']);
           }
         } else {
           result = HttpResult(0, "Something went wrong!");
@@ -185,7 +185,7 @@ class KSHttpClient {
             if (code == 1) {
               result = json['data'];
             } else {
-              result = HttpResult(code, json['sms']);
+              result = HttpResult(code, json['message']);
             }
           } else {
             result = HttpResult(0, "Something went wrong!");
@@ -206,13 +206,38 @@ class KSHttpClient {
     return result;
   }
 
-  Future postUploads(url, List<http.MultipartFile> images,
+  Future<http.Response> postFile(url, File image,
+      {Map<String, String>? fields, String imageKey = 'photo'}) async {
+    var request = http.MultipartRequest("POST", _getUir(url));
+    if (fields != null) {
+      fields.removeWhere((key, value) => value == null);
+      request.fields.addAll(fields);
+    }
+    if (image != null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          imageKey,
+          image.readAsBytesSync(),
+          filename: basename(image.path),
+        ),
+      );
+    }
+    request.headers.addAll(_getHeader());
+    return request.send().then((stream) {
+      return http.Response.fromStream(stream);
+    });
+  }
+
+  Future postUploads(url, List<http.MultipartFile>? images,
       {Map<String, String>? fields}) async {
     var request = http.MultipartRequest("POST", _getUir(url));
     if (fields != null) {
       request.fields.addAll(fields);
     }
-    request.files.addAll(images);
+    
+    if (images != null) {
+      request.files.addAll(images);
+    }
 
     request.headers.addAll({
       HttpHeaders.authorizationHeader: 'Bearer $_token',
@@ -229,7 +254,7 @@ class KSHttpClient {
           if (code == 1) {
             result = json['data'];
           } else {
-            result = HttpResult(code, json['sms']);
+            result = HttpResult(code, json['message']);
           }
         } else {
           result = HttpResult(0, "Something went wrong!");

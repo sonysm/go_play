@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
+import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class HomeFeedCell extends StatelessWidget {
@@ -55,7 +58,7 @@ class HomeFeedCell extends StatelessWidget {
                             ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        'a day ago',
+                        post.createdAt.toString().timeAgoString,
                         style: Theme.of(context)
                             .textTheme
                             .caption!
@@ -92,15 +95,49 @@ class HomeFeedCell extends StatelessWidget {
                 onTap: onCellTap,
               ),
             ),
-            post.photo != null ? InkWell(
-              onTap: () {},
-              child: SizedBox(
-                width: double.infinity,
-                child: CachedNetworkImage(
-                    imageUrl:
-                        'https://images.unsplash.com/photo-1562552052-c72ceddf93dc?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
-              ),
-            ) : SizedBox(),
+            post.photo != null
+                ? InkWell(
+                    onTap: onCellTap,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: CachedNetworkImage(
+                        imageUrl: post.photo!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )
+                : SizedBox(),
+            /*post.photo != null
+                ? Expanded(
+                    child: Swiper(
+                      itemCount: post.image!.length,
+                      outer: true,
+                      itemBuilder: (context, index) => Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: CacheImage(
+                          url: post.image![index].name,
+                        ),
+                      ),
+                      curve: Curves.easeInOutCubic,
+                      //autoplay: post.image!.isEmpty ? false : true,
+                      loop: false,
+                      // autoplayDelay: 5000,
+                      // duration: 850,
+                      pagination: post.image!.length > 1
+                          ? SwiperPagination(
+                              builder: DotSwiperPaginationBuilder(
+                                activeColor: mainColor,
+                                color: Colors.grey[100],
+                                size: 8.0,
+                                activeSize: 8.0,
+                              ),
+                            )
+                          : null,
+
+                      onTap: (index) {},
+                    ),
+                  )
+                : SizedBox(),*/
             HFButtomAction(
               onLikeTap: onLikeTap,
               onCommentTap: onCommentTap,
@@ -173,8 +210,7 @@ class _HFButtomActionState extends State<HFButtomAction> {
               children: [
                 Avatar(
                     radius: 12.0,
-                    imageUrl:
-                        'https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80'),
+                    imageUrl: KS.shared.user.photo),
                 8.width,
                 Expanded(
                   child: InkWell(

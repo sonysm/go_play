@@ -4,7 +4,7 @@ import 'package:flutter_countdown_timer/index.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/ks.dart';
-import 'package:kroma_sport/models/user.dart';
+import 'package:kroma_sport/models/user.dart' as KSUser;
 import 'package:kroma_sport/repositories/user_repository.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -57,6 +57,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 120;
 
   final userRepository = UserRepository();
+  KSHttpClient ksClient = KSHttpClient();
 
   Stack _buildLoadingScreen() {
     return Stack(
@@ -203,7 +204,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           ),
                         ],
                       );
-                      
+
                     case ValidateStatus.error:
                       return Column(
                         mainAxisSize: MainAxisSize.min,
@@ -553,14 +554,15 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   }
 
   void redirectToScreen() async {
-    var data = await KSHttpClient()
-        .postLogin('/user/login', {'phone': widget.phoneNumber});
+    var data =
+        await ksClient.postLogin('/user/login', {'phone': widget.phoneNumber});
 
     if (data != null) {
       if (data is! HttpResult) {
+        ksClient.setToken(data['token']);
         userRepository.persistToken(data['refresh_token']);
         userRepository.persistHeaderToken(data['token']);
-        KS.shared.user = userFromJson(data['user']);
+        KS.shared.user = KSUser.User.fromJson(data['user']);
         Navigator.pushNamedAndRemoveUntil(
             context, MainView.tag, (route) => false);
       } else {

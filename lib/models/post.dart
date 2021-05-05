@@ -7,51 +7,51 @@ Post postFromJson(String str) => Post.fromJson(json.decode(str));
 String postToJson(Post data) => json.encode(data.toJson());
 
 class Post {
-    Post({
-        required this.id,
-        required this.owner,
-        this.sport,
-        this.reacted,
-        this.photo,
-        this.title,
-        this.description,
-        this.image,
-        required this.type,
-        this.activityLevel,
-        this.activityDate,
-        this.activityStartTime,
-        this.activityEndTime,
-        this.activityLocation,
-        this.price,
-        this.minPeople,
-        this.maxPeople,
-        required this.status,
-        this.createdAt,
-        this.updatedAt,
-    });
+  Post({
+    required this.id,
+    required this.owner,
+    this.sport,
+    this.reacted,
+    this.photo,
+    this.title,
+    this.description,
+    this.image,
+    required this.type,
+    this.activityLevel,
+    this.activityDate,
+    this.activityStartTime,
+    this.activityEndTime,
+    this.activityLocation,
+    this.price,
+    this.minPeople,
+    this.maxPeople,
+    required this.status,
+    this.createdAt,
+    this.updatedAt,
+  });
 
-    int id;
-    User owner;
-    dynamic sport;
-    bool? reacted;
-    String? photo;
-    dynamic title;
-    String? description;
-    String? image;
-    int type;
-    int? activityLevel;
-    dynamic activityDate;
-    dynamic activityStartTime;
-    dynamic activityEndTime;
-    dynamic activityLocation;
-    double? price;
-    int? minPeople;
-    int? maxPeople;
-    int status;
-    DateTime? createdAt;
-    DateTime? updatedAt;
+  int id;
+  User owner;
+  dynamic sport;
+  bool? reacted;
+  String? photo;
+  dynamic title;
+  String? description;
+  List<KSImage>? image;
+  PostType type;
+  int? activityLevel;
+  dynamic activityDate;
+  dynamic activityStartTime;
+  dynamic activityEndTime;
+  dynamic activityLocation;
+  double? price;
+  int? minPeople;
+  int? maxPeople;
+  PostStatus status;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
-    factory Post.fromJson(Map<String, dynamic> json) => Post(
+  factory Post.fromJson(Map<String, dynamic> json) => Post(
         id: json["id"],
         owner: User.fromJson(json["owner"]),
         sport: json["sport"],
@@ -59,8 +59,8 @@ class Post {
         photo: json["photo"],
         title: json["title"],
         description: json["description"],
-        image: json["image"],
-        type: json["type"],
+        image: List<KSImage>.from(json["image"].map((x) => KSImage.fromJson(x))),
+        type: mapPostType((json["type"] as num).toInt()),
         activityLevel: json["activity_level"],
         activityDate: json["activity_date"],
         activityStartTime: json["activity_start_time"],
@@ -69,12 +69,12 @@ class Post {
         price: json["price"],
         minPeople: json["min_people"],
         maxPeople: json["max_people"],
-        status: json["status"],
+        status: mapPostStatus((json["status"] as num).toInt()),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "owner": owner.toJson(),
         "sport": sport,
@@ -95,5 +95,57 @@ class Post {
         "status": status,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
-    };
+      };
+}
+
+class KSImage {
+  KSImage({
+    required this.id,
+    required this.name,
+  });
+
+  String id;
+  String name;
+
+  factory KSImage.fromJson(Map<String, dynamic> json) => KSImage(
+        id: json["id"],
+        name: json["name"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+      };
+}
+
+enum PostStatus { active, done, expired, deleted }
+
+enum PostType { meetUp, activity, feed }
+
+PostStatus mapPostStatus(int status) {
+  switch (status) {
+    case 1:
+      return PostStatus.active;
+    case 2:
+      return PostStatus.done;
+    case 3:
+      return PostStatus.expired;
+    case 4:
+      return PostStatus.deleted;
+    default:
+      return PostStatus.active;
+  }
+}
+
+PostType mapPostType(int type) {
+  switch (type) {
+    case 1:
+      return PostType.meetUp;
+    case 2:
+      return PostType.activity;
+    case 3:
+      return PostType.feed;
+    default:
+      return PostType.meetUp;
+  }
 }

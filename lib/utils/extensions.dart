@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 extension StringExtension on String {
   /// Join two strings with a space
@@ -12,6 +15,17 @@ extension StringExtension on String {
   /// Add string value with currency format
   String toCurrencyFormat({var format = '\$'}) {
     return format + this;
+  }
+  
+  String get timeAgoString {
+    final _dateTime = DateTime.parse(this);
+    if (DateTime.now().difference(_dateTime).inDays < 10) {
+      //timeago.setLocaleMessages('km', timeago.KmMessages());
+      //timeago.setLocaleMessages('ja', timeago.JaMessages());
+      return timeago.format(_dateTime, locale: 'en');
+    }
+    initializeDateFormatting();
+    return DateFormat('MMM dd, y', 'en').format(_dateTime);
   }
 }
 

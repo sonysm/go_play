@@ -42,7 +42,7 @@ class KSConfirmDialogState extends State<KSConfirmDialog>
     super.initState();
 
     controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 400));
     scaleAnimation =
         CurvedAnimation(parent: controller!, curve: Curves.easeInOut);
 

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:http/http.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
@@ -32,7 +35,7 @@ class HomeData extends Equatable {
   }
 
   @override
-  List<Object> get props => [status];
+  List<Object> get props => [status, data, page];
 }
 
 class HomeCubit extends Cubit<HomeData> {
@@ -51,6 +54,24 @@ class HomeCubit extends Cubit<HomeData> {
         emit(state.copyWith(status: DataState.Loaded, data: posts));
       } else {
         print("error");
+      }
+    }
+  }
+
+  Future<void> onRefresh() async {
+    if (state.status == DataState.Loaded) {
+      emit(state.copyWith(status: DataState.None, page: 1));
+      var data = await _client
+          .getApi('/home', queryParameters: {'page': state.page.toString()});
+      if (data != null) {
+        if (data is! HttpResult) {
+          List<Post> posts =
+              (data as List).map((e) => Post.fromJson(e)).toList();
+          await Future.delayed(Duration(milliseconds: 500));
+          emit(state.copyWith(status: DataState.Loaded, data: posts));
+        } else {
+          print("error");
+        }
       }
     }
   }
@@ -75,6 +96,13 @@ class HomeCubit extends Cubit<HomeData> {
           print('error $data');
         }
       }
+    }
+  }
+
+  Future<void> onPostFeed(Post newPost) async {
+    print('____state: ${state.status}');
+    if (state.status == DataState.Loaded) {
+      emit(state.copyWith(data: [newPost] + state.data));
     }
   }
 }
