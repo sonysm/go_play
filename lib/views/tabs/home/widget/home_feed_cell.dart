@@ -1,14 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
-import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
-import 'package:kroma_sport/widgets/cache_image.dart';
-import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:kroma_sport/widgets/ks_icon_button.dart';
 
 class HomeFeedCell extends StatelessWidget {
   final VoidCallback? onCellTap;
@@ -16,6 +13,7 @@ class HomeFeedCell extends StatelessWidget {
   final VoidCallback onCommentTap;
   final VoidCallback onShareTap;
   final VoidCallback onAddCommentTap;
+  final VoidCallback onMoreTap;
   final Post post;
 
   const HomeFeedCell({
@@ -25,6 +23,7 @@ class HomeFeedCell extends StatelessWidget {
     required this.onCommentTap,
     required this.onShareTap,
     required this.onAddCommentTap,
+    required this.onMoreTap,
     required this.post,
   }) : super(key: key);
 
@@ -44,7 +43,7 @@ class HomeFeedCell extends StatelessWidget {
                 children: [
                   Avatar(
                     radius: 18.0,
-                    imageUrl: post.owner.photo,
+                    user: post.owner,
                   ),
                   8.width,
                   Column(
@@ -67,19 +66,10 @@ class HomeFeedCell extends StatelessWidget {
                     ],
                   ),
                   Spacer(),
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {},
-                      borderRadius: BorderRadius.circular(30.0),
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          FeatherIcons.moreHorizontal,
-                          size: 24.0,
-                        ),
-                      ),
-                    ),
+                  KSIconButton(
+                    icon: FeatherIcons.moreHorizontal,
+                    iconSize: 24.0,
+                    onTap: onMoreTap,
                   ),
                 ],
               ),
@@ -179,21 +169,20 @@ class _HFButtomActionState extends State<HFButtomAction> {
         children: [
           Row(
             children: [
-              ksIconBtn(
+              KSIconButton(
                 icon: isLike ? Icons.favorite : FeatherIcons.heart,
-                iconColor: isLike ? mainColor : Colors.blueGrey,
                 onTap: () {
                   widget.onLikeTap();
                   setState(() => isLike = !isLike);
                 },
               ),
               4.width,
-              ksIconBtn(
+              KSIconButton(
                 icon: FeatherIcons.messageSquare,
                 onTap: widget.onCommentTap,
               ),
               4.width,
-              ksIconBtn(
+              KSIconButton(
                 icon: FeatherIcons.share2,
                 onTap: widget.onShareTap,
               ),
@@ -209,8 +198,9 @@ class _HFButtomActionState extends State<HFButtomAction> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Avatar(
-                    radius: 12.0,
-                    imageUrl: KS.shared.user.photo),
+                  radius: 12.0,
+                  user: KS.shared.user,
+                ),
                 8.width,
                 Expanded(
                   child: InkWell(

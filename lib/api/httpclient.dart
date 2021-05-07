@@ -55,7 +55,7 @@ class KSHttpClient {
         HttpHeaders.contentTypeHeader: 'application/json',
       });
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final json = jsonDecode(response.body);
+        final json = jsonDecode(utf8.decode(response.bodyBytes));
         if (json != null) {
           int code = int.parse(json['code'].toString());
           if (code == 1) {
@@ -89,7 +89,7 @@ class KSHttpClient {
           _getUir(url, queryParameters: queryParameters),
           headers: _getHeader());
       if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
+        final json = jsonDecode(utf8.decode(response.bodyBytes));
         if (json != null) {
           int code = int.parse(json['code'].toString());
           if (code == 1) {
@@ -126,7 +126,7 @@ class KSHttpClient {
       final response = await _httpClient.post(_getUir(url),
           body: body, headers: _getHeader());
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final json = jsonDecode(response.body);
+        final json = jsonDecode(utf8.decode(response.bodyBytes));
         if (json != null) {
           int code = int.parse(json['code'].toString());
           if (code == 1) {
@@ -248,7 +248,7 @@ class KSHttpClient {
       final stream = await request.send();
       final response = await http.Response.fromStream(stream);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final json = jsonDecode(response.body);
+        final json = jsonDecode(utf8.decode(response.bodyBytes));
         if (json != null) {
           int code = int.parse(json['code'].toString());
           if (code == 1) {

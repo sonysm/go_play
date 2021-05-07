@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 
 class ActivityScreen extends StatefulWidget {
   static const String tag = '/activityScreen';
@@ -17,13 +19,29 @@ class _ActivityScreenState extends State<ActivityScreen> {
   }
 
   Widget emptyActivity() {
-    return SliverToBoxAdapter(
+    return SliverFillRemaining(
       child: Container(
+        decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            border: Border(top: BorderSide(width: 0.1))),
         alignment: Alignment.center,
-        margin: EdgeInsets.only(
-            top: (MediaQuery.of(context).size.height / 2) -
-                AppBar().preferredSize.height),
-        child: Text('No activity'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              imgEmptyActivity,
+              width: 120.0,
+            ),
+            16.height,
+            Text(
+              'No activity',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(fontWeight: FontWeight.w600, color: Colors.grey),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -31,6 +49,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //backgroundColor: Theme.of(context).primaryColor,
       body: CustomScrollView(
         slivers: [
           buildNavbar(),

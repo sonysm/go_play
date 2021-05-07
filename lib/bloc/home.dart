@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:http/http.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
@@ -100,9 +97,16 @@ class HomeCubit extends Cubit<HomeData> {
   }
 
   Future<void> onPostFeed(Post newPost) async {
-    print('____state: ${state.status}');
     if (state.status == DataState.Loaded) {
       emit(state.copyWith(data: [newPost] + state.data));
+    }
+  }
+
+  Future<void> onDeletePostFeed(int postId) async {
+    if (state.status == DataState.Loaded) {
+      final updatedList =
+          state.data.where((element) => element.id != postId).toList();
+      emit(state.copyWith(data: updatedList));
     }
   }
 }

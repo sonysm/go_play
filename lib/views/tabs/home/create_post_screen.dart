@@ -14,7 +14,6 @@ import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
-import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
@@ -69,7 +68,8 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
           children: [
             Avatar(
               radius: 24.0,
-              imageUrl: KS.shared.user.photo,
+              user: KS.shared.user,
+              isSelectable: false,
             ),
             8.width,
             Expanded(

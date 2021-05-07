@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/views/tabs/notification/widget/notification_cell.dart';
 
 class NotificationScreen extends StatefulWidget {
   static const String tag = '/notificationScreen';
@@ -13,6 +16,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget buildNavbar() {
     return SliverAppBar(
       title: Text('Notification'),
+      elevation: 0.5,
+      forceElevated: true,
+    );
+  }
+
+  Widget buildNoticationList() {
+    return SliverList(
+      delegate: SliverChildListDelegate(List.generate(1, (index) {
+        return NotificationCell();
+      })),
     );
   }
 
@@ -31,11 +44,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
+      appBar: AppBar(
+        title: Text('Notification'),
+        elevation: 0.5,
+      ),
+      body: EasyRefresh.custom(
+        header: MaterialHeader(
+          valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+        ),
         slivers: [
-          buildNavbar(),
-          emptyNotification(),
+          //buildNavbar(),
+          buildNoticationList(),
         ],
+        onRefresh: () async {},
       ),
     );
   }

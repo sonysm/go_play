@@ -45,6 +45,7 @@ dependencies:
   multi_image_picker: ^4.8.0
   timeago: ^3.0.2
   flutter_swiper_null_safety: ^1.0.1
+  extended_image: ^4.0.1
   
   # Firebase
   firebase_auth: ^1.1.2

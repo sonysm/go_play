@@ -1,45 +1,42 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
-import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/sport.dart';
-import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/utils/extensions.dart';
-import 'package:kroma_sport/utils/tools.dart';
-import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
-import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
-import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
-import 'package:kroma_sport/widgets/ks_icon_button.dart';
 
-class AccountScreen extends StatefulWidget {
-  static const String tag = '/accountScreen';
+class ViewUserProfileScreen extends StatefulWidget {
+  static const String tag = '/viewUserProfileScreen';
 
-  AccountScreen({Key? key}) : super(key: key);
+  final User user;
+
+  ViewUserProfileScreen({
+    Key? key,
+    required this.user,
+  }) : super(key: key);
 
   @override
-  _AccountScreenState createState() => _AccountScreenState();
+  _ViewUserProfileScreenState createState() => _ViewUserProfileScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen> {
+class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> {
   KSHttpClient ksClient = KSHttpClient();
   List<FavoriteSport> favSportList = [];
 
   Widget buildNavbar() {
     return SliverAppBar(
-      title: Text('Account'),
-      actions: [
-        CupertinoButton(
-          child: Icon(FeatherIcons.settings,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.grey[600]
-                  : whiteColor),
-          onPressed: () => launchScreen(context, SettingScreen.tag),
-        )
-      ],
+      title: Text(widget.user.getFullname()),
+      //actions: [
+      //  CupertinoButton(
+      //    child: Icon(FeatherIcons.settings,
+      //        color: Theme.of(context).brightness == Brightness.light
+      //            ? Colors.grey[600]
+      //            : whiteColor),
+      //    onPressed: () => launchScreen(context, SettingScreen.tag),
+      //  )
+      //],
     );
   }
 
@@ -79,7 +76,7 @@ class _AccountScreenState extends State<AccountScreen> {
           children: [
             Avatar(
               radius: 48.0,
-              user: KS.shared.user,
+              user: widget.user,
               isSelectable: false,
             ),
             8.width,
@@ -88,7 +85,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    KS.shared.user.getFullname(),
+                    widget.user.getFullname(),
                     style: Theme.of(context)
                         .textTheme
                         .bodyText1
@@ -132,17 +129,20 @@ class _AccountScreenState extends State<AccountScreen> {
                       .bodyText1
                       ?.copyWith(fontWeight: FontWeight.w600),
                 ),
-                Spacer(),
-                KSIconButton(
-                  icon: Feather.plus_circle,
-                  iconSize: 24.0,
-                  onTap: () async {
-                    var value = await launchScreen(context, SportsScreen.tag);
-                    if (value != null && value) {
-                      getFavoriteSport();
-                    }
-                  },
-                ),
+                //Spacer(),
+                //ksIconBtn(
+                //  icon: Feather.plus_circle,
+                //  iconColor: Theme.of(context).brightness == Brightness.light
+                //      ? Colors.blueGrey
+                //      : whiteColor,
+                //  iconSize: 24.0,
+                //  onTap: () async {
+                //    var value = await launchScreen(context, SportsScreen.tag);
+                //    if (value != null && value) {
+                //      getFavoriteSport();
+                //    }
+                //  },
+                //),
               ],
             ),
             favSportList.isNotEmpty
@@ -150,14 +150,15 @@ class _AccountScreenState extends State<AccountScreen> {
                     children: List.generate(favSportList.length, (index) {
                       final sport = favSportList.elementAt(index).sport;
                       return TextButton(
-                        onPressed: () async {
-                          var value = await launchScreen(
-                              context, FavoriteSportDetailScreen.tag,
-                              arguments: sport);
-                          if (value != null && value) {
-                            getFavoriteSport();
-                          }
-                        },
+                        onPressed: null,
+                        //() async {
+                        //  var value = await launchScreen(
+                        //      context, FavoriteSportDetailScreen.tag,
+                        //      arguments: sport);
+                        //  if (value != null && value) {
+                        //    getFavoriteSport();
+                        //  }
+                        //},
                         style: ButtonStyle(
                             padding: MaterialStateProperty.all(
                                 const EdgeInsets.symmetric(horizontal: 0)),
@@ -201,7 +202,7 @@ class _AccountScreenState extends State<AccountScreen> {
         slivers: [
           buildNavbar(),
           buildProfileHeader(),
-          buildFavoriteSport(),
+          //buildFavoriteSport(),
         ],
       ),
     );

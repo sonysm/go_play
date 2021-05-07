@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/activity/activity_screen.dart';
-import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 

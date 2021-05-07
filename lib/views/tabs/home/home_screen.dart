@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/ks.dart';
@@ -13,6 +16,8 @@ import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
+import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
+import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/refresh/bottom_refresher.dart';
 
 import 'widget/home_feed_cell.dart';
@@ -48,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Avatar(
                   radius: 24.0,
-                  imageUrl: KS.shared.user.photo,
+                  user: KS.shared.user,
                 ),
                 8.width,
                 Expanded(
@@ -139,18 +144,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Column(
                     children: [
                       HomeFeedCell(
-                        onCellTap: () => launchScreen(
-                            context, FeedDetailScreen.tag,
-                            arguments: feedData.data.elementAt(index)),
+                        onCellTap: () => launchFeedDetailScreen(post),
                         onLikeTap: () {},
-                        onCommentTap: () => launchScreen(
-                            context, FeedDetailScreen.tag,
-                            arguments: feedData.data.elementAt(index)),
+                        onCommentTap: () => launchFeedDetailScreen(post),
                         onShareTap: () {},
-                        onAddCommentTap: () => launchScreen(
-                            context, FeedDetailScreen.tag,
-                            arguments: feedData.data.elementAt(index)),
-                        post: feedData.data.elementAt(index),
+                        onAddCommentTap: () => launchFeedDetailScreen(post),
+                        onMoreTap: () => showOptionActionBottomSheet(post),
+                        post: post,
                       ),
                       Container(
                         height: 8.0,
@@ -217,10 +217,113 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-  
-  //@override
-  //void initState() {
-  //  super.initState();
-  //  BlocProvider.of<HomeCubit>(context).onLoad();
-  //}
+
+  void launchFeedDetailScreen(Post post) {
+    launchScreen(context, FeedDetailScreen.tag, arguments: post);
+  }
+
+  void showOptionActionBottomSheet(Post post) {
+    showModalBottomSheet(
+      context: context,
+      //backgroundColor: Colors.transparent,
+      //shape: RoundedRectangleBorder(
+      //  borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      //),
+      builder: (context) {
+        return SafeArea(
+          maintainBottomViewPadding: true,
+          child: Container(
+            color: Theme.of(context).primaryColor,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                isMe(post.owner.id)
+                    ? TextButton(
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.symmetric(horizontal: 0.0)),
+                        ),
+                        onPressed: () {
+                          dismissScreen(context);
+                          showKSConfirmDialog(context,
+                              'Are you sure you want to delete this post?', () {
+                            deletePost(post.id);
+                          });
+                        },
+                        child: Container(
+                          height: 54.0,
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(left: 16.0, right: 16.0),
+                                child: Icon(
+                                  Feather.trash_2,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.blueGrey
+                                      : Colors.white,
+                                ),
+                              ),
+                              Text(
+                                'Delete Post',
+                                style: Theme.of(context).textTheme.bodyText1,
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : SizedBox(),
+                TextButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(horizontal: 0.0)),
+                  ),
+                  onPressed: () {
+                    dismissScreen(context);
+                  },
+                  child: Container(
+                    height: 54.0,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                          child: Icon(
+                            Feather.info,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? Colors.blueGrey
+                                    : Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'Report Post',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  KSHttpClient ksClient = KSHttpClient();
+
+  void deletePost(int postId) async {
+    showKSLoading(context);
+    var result = await ksClient.postApi('/delete/post/$postId');
+    if (result != null) {
+      await Future.delayed(Duration(milliseconds: 500));
+      dismissScreen(context);
+      if (result is! HttpResult) {
+        BlocProvider.of<HomeCubit>(context).onDeletePostFeed(postId);
+      }
+    }
+  }
 }

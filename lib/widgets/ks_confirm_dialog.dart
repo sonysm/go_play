@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 
 class KSConfirmDialog extends StatefulWidget {

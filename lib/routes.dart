@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:kroma_sport/models/post.dart';
+import 'package:kroma_sport/models/sport.dart';
+import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/auth/register_screen.dart';
 import 'package:kroma_sport/views/auth/verify_code_screen.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
+import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
+import 'package:kroma_sport/views/tabs/account/sport_activity/sport_detail.dart';
+import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
+import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/activity/activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
@@ -37,11 +43,23 @@ class RouteGenerator {
       case AccountScreen.tag:
         return MaterialPageRoute(builder: (_) => AccountScreen());
       case FeedDetailScreen.tag:
-        return MaterialPageRoute(builder: (_) => FeedDetailScreen(post: args as Post,));
+        return MaterialPageRoute(
+            builder: (_) => FeedDetailScreen(post: args as Post));
       case CreatPostScreen.tag:
         return MaterialPageRoute(builder: (_) => CreatPostScreen());
       case SettingScreen.tag:
         return MaterialPageRoute(builder: (_) => SettingScreen());
+      case SportsScreen.tag:
+        return MaterialPageRoute(builder: (_) => SportsScreen());
+      case FavoriteSportDetailScreen.tag:
+        return MaterialPageRoute(
+            builder: (_) => FavoriteSportDetailScreen(sport: args as Sport));
+      case SportDetailScreen.tag:
+        return MaterialPageRoute(
+            builder: (_) => SportDetailScreen(sport: args as Sport));
+      case ViewUserProfileScreen.tag:
+        return MaterialPageRoute(
+            builder: (_) => ViewUserProfileScreen(user: args as User));
       default:
         return _errorRoute();
     }

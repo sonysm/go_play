@@ -59,7 +59,7 @@ class Post {
         photo: json["photo"],
         title: json["title"],
         description: json["description"],
-        image: List<KSImage>.from(json["image"].map((x) => KSImage.fromJson(x))),
+        image: json["image"] != null ? List<KSImage>.from(json["image"]?.map((x) => KSImage.fromJson(x))) : null,
         type: mapPostType((json["type"] as num).toInt()),
         activityLevel: json["activity_level"],
         activityDate: json["activity_date"],
