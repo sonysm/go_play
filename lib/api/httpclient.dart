@@ -206,7 +206,7 @@ class KSHttpClient {
     return result;
   }
 
-  Future<http.Response> postFile(url, File image,
+  Future<http.Response> postFile(url, File? image,
       {Map<String, String>? fields, String imageKey = 'photo'}) async {
     var request = http.MultipartRequest("POST", _getUir(url));
     if (fields != null) {

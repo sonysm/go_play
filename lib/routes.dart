@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
@@ -13,6 +12,7 @@ import 'package:kroma_sport/views/tabs/account/sport_activity/sport_detail.dart'
 import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/activity/activity_screen.dart';
+import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
@@ -43,8 +43,10 @@ class RouteGenerator {
       case AccountScreen.tag:
         return MaterialPageRoute(builder: (_) => AccountScreen());
       case FeedDetailScreen.tag:
+        var data = args as Map<String, dynamic>;
         return MaterialPageRoute(
-            builder: (_) => FeedDetailScreen(post: args as Post));
+            builder: (_) => FeedDetailScreen(
+                post: data['post'], isCommentTap: data['isCommentTap']));
       case CreatPostScreen.tag:
         return MaterialPageRoute(builder: (_) => CreatPostScreen());
       case SettingScreen.tag:
@@ -60,6 +62,8 @@ class RouteGenerator {
       case ViewUserProfileScreen.tag:
         return MaterialPageRoute(
             builder: (_) => ViewUserProfileScreen(user: args as User));
+      case CreateActivityScreen.tag:
+        return MaterialPageRoute(builder: (_) => CreateActivityScreen());
       default:
         return _errorRoute();
     }

@@ -7,7 +7,6 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
-import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/comment.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
@@ -22,10 +21,12 @@ import 'package:kroma_sport/widgets/ks_loading.dart';
 class FeedDetailScreen extends StatefulWidget {
   static const String tag = '/feedDetailScreen';
   final Post post;
+  final bool isCommentTap;
 
   FeedDetailScreen({
     Key? key,
     required this.post,
+    this.isCommentTap = false,
   }) : super(key: key);
 
   @override
@@ -48,6 +49,18 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
       forceElevated: true,
       pinned: true,
     );
+  }
+
+  Widget buildTotalReaction(int total) {
+    return total > 0
+        ? Text(total > 1 ? '$total likes' : '$total like')
+        : SizedBox();
+  }
+
+  Widget buildTotalComment(int total) {
+    return total > 0
+        ? Text(total > 1 ? '$total comments' : '$total comment')
+        : SizedBox();
   }
 
   Widget buildDetailBody() {
@@ -122,8 +135,22 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
               child: Row(
                 children: [
                   KSIconButton(
-                    icon: FeatherIcons.heart,
-                    onTap: () {},
+                    icon: widget.post.reacted!
+                        ? Icons.favorite
+                        : FeatherIcons.heart,
+                    iconColor: Theme.of(context).brightness == Brightness.light
+                        ? widget.post.reacted!
+                            ? Colors.green
+                            : Colors.blueGrey
+                        : widget.post.reacted!
+                            ? Colors.green
+                            : Colors.white,
+                    onTap: () {
+                      setState(() {
+                        widget.post.reacted = !widget.post.reacted!;
+                        reactPost();
+                      });
+                    },
                   ),
                   4.width,
                   KSIconButton(
@@ -139,9 +166,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     onTap: () {},
                   ),
                   Spacer(),
-                  Text('99 likes'),
+                  buildTotalReaction(widget.post.totalReaction),
                   8.width,
-                  Text('27 comments'),
+                  buildTotalComment(widget.post.totalComment),
                 ],
               ),
             ),
@@ -221,23 +248,29 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  buildNavbar(),
-                  buildDetailBody(),
-                  SliverPadding(padding: EdgeInsets.only(bottom: 60.0)),
-                ],
-              ),
-              Positioned(bottom: 0, child: _bottomCommentAction())
-            ],
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, widget.post);
+        return true;
+      },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: Theme.of(context).primaryColor,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    buildNavbar(),
+                    buildDetailBody(),
+                    SliverPadding(padding: EdgeInsets.only(bottom: 60.0)),
+                  ],
+                ),
+                Positioned(bottom: 0, child: _bottomCommentAction())
+              ],
+            ),
           ),
         ),
       ),
@@ -249,6 +282,19 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     super.initState();
     post = widget.post;
     getPostDetail();
+    if (widget.isCommentTap) {
+      Future.delayed(Duration(milliseconds: 500)).then((value) {
+        _commentTextNode.requestFocus();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    _commentTextNode.unfocus();
+    _commentTextNode.dispose();
+    super.dispose();
   }
 
   void showOptionActionBottomSheet(Post post) {
@@ -376,18 +422,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
         await ksClient.postApi('/create/post/comment/${post.id}', body: fields);
     if (result != null) {
       if (result is! HttpResult) {
-        //var newComment = Comment.fromJson(result);
-
-        var newCmt = Comment(
-          id: 0,
-          user: KS.shared.user,
-          type: 'text',
-          comment: _commentController.text,
-          createdAt: DateTime.now(),
-          post: post.id,
-        );
-
-        commentList.insert(commentList.length, newCmt);
+        var newComment = Comment.fromJson(result);
+        commentList.insert(commentList.length, newComment);
         _commentController.clear();
         setState(() {});
         scrollToBottom();
@@ -403,5 +439,15 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
         curve: Curves.easeOut,
       );
     });
+  }
+
+  void reactPost() async {
+    var result =
+        await ksClient.postApi('/create/post/reaction/${widget.post.id}');
+    if (result != null) {
+      if (result is! HttpResult) {
+        print('success!!!!');
+      }
+    }
   }
 }

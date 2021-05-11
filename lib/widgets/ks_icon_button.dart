@@ -5,11 +5,13 @@ class KSIconButton extends StatelessWidget {
     Key? key,
     required this.icon,
     this.iconSize = 20.0,
+    this.iconColor,
     this.onTap,
   }) : super(key: key);
 
   final IconData icon;
   final double iconSize;
+  final Color? iconColor;
   final VoidCallback? onTap;
 
   @override
@@ -23,9 +25,11 @@ class KSIconButton extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Icon(
             icon,
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.blueGrey
-                : Colors.white,
+            color: iconColor != null
+                ? iconColor
+                : Theme.of(context).brightness == Brightness.light
+                    ? Colors.blueGrey
+                    : Colors.white,
             size: iconSize,
           ),
         ),

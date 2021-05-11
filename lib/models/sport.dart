@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:kroma_sport/models/user.dart';
-
 class Sport {
   Sport({
     required this.id,
@@ -46,26 +44,22 @@ class FavoriteSport {
   FavoriteSport({
     required this.id,
     required this.sport,
-    required this.user,
     required this.createdAt,
   });
 
   int id;
   Sport sport;
-  User user;
   DateTime createdAt;
 
   factory FavoriteSport.fromJson(Map<String, dynamic> json) => FavoriteSport(
         id: json["id"],
         sport: Sport.fromJson(json["sport"]),
-        user: User.fromJson(json["user"]),
         createdAt: DateTime.parse(json["created_at"]),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "sport": sport.toJson(),
-        "user": user.toJson(),
         "created_at": createdAt.toIso8601String(),
       };
 }

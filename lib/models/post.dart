@@ -28,6 +28,8 @@ class Post {
     required this.status,
     this.createdAt,
     this.updatedAt,
+    required this.totalReaction,
+    required this.totalComment,
   });
 
   int id;
@@ -50,6 +52,8 @@ class Post {
   PostStatus status;
   DateTime? createdAt;
   DateTime? updatedAt;
+  int totalReaction;
+  int totalComment;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
         id: json["id"],
@@ -72,6 +76,8 @@ class Post {
         status: mapPostStatus((json["status"] as num).toInt()),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
+        totalReaction: json['total_reaction'],
+        totalComment: json['total_comment'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -95,6 +101,8 @@ class Post {
         "status": status,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
+        "total_reaction": totalReaction,
+        "total_comment": totalComment,
       };
 }
 
