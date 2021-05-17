@@ -88,17 +88,19 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 8.0,
-                horizontal: 16.0,
-              ),
-              child: SelectableText(
-                widget.post.description ?? '',
-                style: Theme.of(context).textTheme.bodyText1,
-                onTap: () => launchFeedDetailScreen(widget.post),
-              ),
-            ),
+            widget.post.description != null
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                      horizontal: 16.0,
+                    ),
+                    child: SelectableText(
+                      widget.post.description!,
+                      style: Theme.of(context).textTheme.bodyText1,
+                      onTap: () => launchFeedDetailScreen(widget.post),
+                    ),
+                  )
+                : SizedBox(height: 8.0),
             widget.post.photo != null
                 ? InkWell(
                     onTap: () => launchFeedDetailScreen(widget.post),

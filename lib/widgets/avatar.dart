@@ -25,8 +25,15 @@ class Avatar extends StatelessWidget {
       child: CircleAvatar(
         radius: radius,
         backgroundColor: Colors.grey[200],
-        foregroundImage: CachedNetworkImageProvider(user.photo ?? ''),
         backgroundImage: AssetImage('assets/images/user.jpg'),
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: user.photo ?? '',
+            errorWidget: (context, s, e) {
+              return Image.asset('assets/images/user.jpg');
+            },
+          ),
+        ),
       ),
     );
   }

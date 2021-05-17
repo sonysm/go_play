@@ -10,13 +10,17 @@ import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/models/comment.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/widget/comment_cell.dart';
+import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:photo_view/photo_view.dart';
 
 class FeedDetailScreen extends StatefulWidget {
   static const String tag = '/feedDetailScreen';
@@ -108,19 +112,27 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 8.0,
-                horizontal: 16.0,
-              ),
-              child: SelectableText(
-                widget.post.description ?? '',
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-            ),
+            widget.post.description != null
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                      horizontal: 16.0,
+                    ),
+                    child: SelectableText(
+                      widget.post.description ?? '',
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  )
+                : SizedBox(height: 8.0),
             widget.post.photo != null
                 ? InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      launchScreen(context, ViewPhotoScreen.tag, arguments: widget.post);
+                      //openDialog(context);
+                      //openBottomSheet(context);
+                      //openBottomSheetModal(context);
+                      //viewImage();
+                    },
                     child: SizedBox(
                       width: double.infinity,
                       child: CachedNetworkImage(
@@ -450,4 +462,165 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
       }
     }
   }
+
+  PhotoViewController photoViewController = PhotoViewController();
+  PhotoViewScaleStateController scaleStateController =
+      PhotoViewScaleStateController();
+  var state;
+
+  void viewImage() {
+    showMaterialModalBottomSheet(
+      context: context,
+      expand: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.black,
+      enableDrag: state == PhotoViewScaleState.initial,
+      builder: (context) {
+        var showDescription = true;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  showDescription = !showDescription;
+                });
+              },
+              child: Container(
+                child: Stack(
+                  children: [
+                    Center(
+                      child: PhotoViewGestureDetectorScope(
+                        axis: Axis.vertical,
+                        child: PhotoView(
+                          controller: photoViewController,
+                          scaleStateController: scaleStateController,
+                          backgroundDecoration: BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                          tightMode: true,
+                          gestureDetectorBehavior: HitTestBehavior.opaque,
+                          minScale: PhotoViewComputedScale.contained,
+                          maxScale: 1.5,
+                          imageProvider:
+                              CachedNetworkImageProvider(widget.post.photo!),
+                          loadingBuilder: (context, event) {
+                            return CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation(whiteColor),
+                            );
+                          },
+                          scaleStateChangedCallback: (photoScaleState) {
+                            print('ssss: $photoScaleState');
+                            state = photoScaleState;
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 16.0,
+                      top: 28.0,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          width: 28.0,
+                          height: 28.0,
+                          decoration: BoxDecoration(
+                              color: whiteColor, shape: BoxShape.circle),
+                          child: Icon(
+                            Icons.close,
+                            color: blackColor,
+                            size: 24.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    widget.post.description != null
+                        ? Positioned(
+                            bottom: 0,
+                            child: showDescription
+                                ? ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxHeight: 300.0,
+                                    ),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(16.0),
+                                      width: AppSize(context).appWidth(100),
+                                      // height: 300.0,
+                                      color: blackColor.withOpacity(0.5),
+                                      child: SingleChildScrollView(
+                                        child: Text(
+                                          widget.post.description!,
+                                          style: TextStyle(color: whiteColor),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox(),
+                          )
+                        : SizedBox()
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void openDialog(BuildContext context) => showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            child: Container(
+              child: PhotoView(
+                tightMode: true,
+                imageProvider: CachedNetworkImageProvider(widget.post.photo!),
+                heroAttributes: const PhotoViewHeroAttributes(tag: "someTag"),
+              ),
+            ),
+          );
+        },
+      );
+
+  void openBottomSheet(BuildContext context) => showBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        shape: const ContinuousRectangleBorder(),
+        builder: (BuildContext context) {
+          return PhotoViewGestureDetectorScope(
+            axis: Axis.vertical,
+            child: PhotoView(
+              backgroundDecoration: BoxDecoration(
+                color: Colors.black.withAlpha(240),
+              ),
+              imageProvider: CachedNetworkImageProvider(widget.post.photo!),
+              heroAttributes: const PhotoViewHeroAttributes(tag: "someTag"),
+            ),
+          );
+        },
+      );
+
+  void openBottomSheetModal(BuildContext context) => showModalBottomSheet(
+        context: context,
+        shape: const ContinuousRectangleBorder(),
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: Container(
+              height: 250,
+              child: PhotoViewGestureDetectorScope(
+                axis: Axis.vertical,
+                child: PhotoView(
+                  tightMode: true,
+                  imageProvider: CachedNetworkImageProvider(widget.post.photo!),
+                  heroAttributes: const PhotoViewHeroAttributes(tag: "someTag"),
+                ),
+              ),
+            ),
+          );
+        },
+      );
 }

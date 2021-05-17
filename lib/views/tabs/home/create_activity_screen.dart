@@ -1,5 +1,8 @@
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
@@ -7,6 +10,7 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class CreateActivityScreen extends StatefulWidget {
   static const tag = '/createActivityScreen';
@@ -113,7 +117,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                 : Theme.of(context).textTheme.bodyText2?.color),
         backgroundColor: MaterialStateProperty.all(
             data.sport.id == selectedSport
-                ? Colors.teal
+                ? mainColor
                 : Theme.of(context).primaryColor),
         shape: MaterialStateProperty.all(
           RoundedRectangleBorder(
@@ -139,7 +143,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
             ? whiteColor
             : Theme.of(context).textTheme.bodyText2?.color),
         backgroundColor: MaterialStateProperty.all(activity == selectedActivity
-            ? Colors.teal
+            ? mainColor
             : Theme.of(context).primaryColor),
         shape: MaterialStateProperty.all(
           RoundedRectangleBorder(
@@ -197,6 +201,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                             child: InkWell(
                               onTap: () {
                                 print('____________set time');
+                                showDateTimePicker();
                               },
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,10 +245,12 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                                   Text(
                                     'Add location (Optional)',
                                     style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: Theme.of(context).brightness == Brightness.light ? Colors.blueGrey[600] : whiteColor
-                                    ),
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? Colors.blueGrey[600]
+                                            : whiteColor),
                                   ),
                                   16.height,
                                   Divider(
@@ -344,7 +351,10 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                               children: [
                                 Text(
                                   'Name',
-                                  style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      ?.copyWith(fontWeight: FontWeight.w600),
                                 ),
                                 8.height,
                                 TextField(
@@ -411,7 +421,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                     onPressed: () {},
                     style: ButtonStyle(
                       elevation: MaterialStateProperty.all(0),
-                      backgroundColor: MaterialStateProperty.all(Colors.teal),
+                      backgroundColor: MaterialStateProperty.all(mainColor),
                     ),
                     child: Text(
                       'Next: Who are with you?',
@@ -520,5 +530,261 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     //    //});
     //  });
     //}
+  }
+
+  ExpandableController expandableController = ExpandableController();
+  ExpandableController expandableTimeController = ExpandableController();
+  String selectedDate = 'Today';
+
+  void showDateTimePicker() {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(.5),
+      builder: (context) {
+        Color icColor = Theme.of(context).brightness == Brightness.light
+            ? Colors.grey
+            : Colors.grey[300]!;
+        return StatefulBuilder(
+          builder: (context, StateSetter setState) {
+            return Center(
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 32.0),
+                  decoration: ShapeDecoration(
+                    color: Theme.of(context).primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ExpandablePanel(
+                        controller: expandableController,
+                        header: Container(
+                          height: 64.0,
+                          child: TextButton(
+                            onPressed: () {
+                              expandableController.toggle();
+                              if (expandableTimeController.value == true) {
+                                expandableTimeController.toggle();
+                              }
+                            },
+                            style: ButtonStyle(
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(4.0),
+                                        bottom: Radius.circular(0.0)),
+                                  ),
+                                )),
+                            child: Row(
+                              children: [
+                                Icon(Feather.calendar, color: icColor),
+                                16.width,
+                                Text(
+                                  selectedDate,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        expanded: Container(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 16.0),
+                          child: SfDateRangePicker(
+                            enablePastDates: false,
+                            showNavigationArrow: true,
+                            headerStyle: DateRangePickerHeaderStyle(
+                              textAlign: TextAlign.center,
+                              textStyle: Theme.of(context).textTheme.caption,
+                            ),
+                            monthCellStyle: DateRangePickerMonthCellStyle(
+                              textStyle: Theme.of(context)
+                                  .textTheme
+                                  .caption
+                                  ?.copyWith(fontSize: 10.0),
+                              weekendTextStyle: Theme.of(context)
+                                  .textTheme
+                                  .caption
+                                  ?.copyWith(fontSize: 10.0),
+                              disabledDatesTextStyle: Theme.of(context)
+                                  .textTheme
+                                  .caption
+                                  ?.copyWith(
+                                      color: Colors.grey, fontSize: 10.0),
+                            ),
+                            onSelectionChanged: (args) {
+                              selectedDate =
+                                  DateFormat('EEE dd MMM').format(args.value);
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                        collapsed: Container(),
+                        theme: ExpandableThemeData(
+                          hasIcon: false,
+                        ),
+                      ),
+                      ExpandablePanel(
+                        controller: expandableTimeController,
+                        header: Container(
+                          height: 64.0,
+                          width: double.infinity,
+                          color: Theme.of(context).primaryColor,
+                          child: TextButton(
+                            onPressed: () {
+                              expandableTimeController.toggle();
+                              if (expandableController.value == true) {
+                                expandableController.toggle();
+                              }
+                            },
+                            style: ButtonStyle(
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Feather.clock, color: icColor),
+                                16.width,
+                                Text(
+                                  '4 pm - 6 pm 2h',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        expanded: Row(
+                          children: [
+                            TimePickerSpinner(
+                              is24HourMode: false,
+                              normalTextStyle: TextStyle(fontSize: 14.0),
+                              highlightedTextStyle: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              spacing: 0,
+                              itemHeight: 40,
+                              isForce2Digits: true,
+                              minutesInterval: 15,
+                              onTimeChange: (time) {
+                                setState(() {});
+                              },
+                            ),
+                            Expanded(
+                              child: Text(
+                                '-',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    ?.copyWith(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            TimePickerSpinner(
+                              is24HourMode: false,
+                              normalTextStyle: TextStyle(fontSize: 14.0),
+                              highlightedTextStyle: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w600),
+                              spacing: 0,
+                              itemHeight: 40,
+                              isForce2Digits: true,
+                              minutesInterval: 15,
+                              onTimeChange: (time) {
+                                setState(() {});
+                              },
+                            ),
+                          ],
+                        ),
+                        collapsed: Container(),
+                        theme: ExpandableThemeData(
+                          hasIcon: false,
+                        ),
+                      ),
+                      //Container(
+                      //  height: 64.0,
+                      //  width: double.infinity,
+                      //  color: Theme.of(context).primaryColor,
+                      //  child: TextButton(
+                      //    onPressed: () {
+                      //      if (expandableController.value == true) {
+                      //        expandableController.toggle();
+                      //      }
+                      //    },
+                      //    style: ButtonStyle(
+                      //      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      //    ),
+                      //    child: Row(
+                      //      children: [
+                      //        Icon(Feather.clock, color: icColor),
+                      //        16.width,
+                      //        Text(
+                      //          '4 pm - 6 pm 2h',
+                      //          style: Theme.of(context)
+                      //              .textTheme
+                      //              .bodyText2
+                      //              ?.copyWith(fontWeight: FontWeight.w600),
+                      //        ),
+                      //      ],
+                      //    ),
+                      //  ),
+                      //),
+                      Container(
+                        height: 64.0,
+                        width: double.infinity,
+                        child: TextButton(
+                          onPressed: () {},
+                          style: ButtonStyle(
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            backgroundColor:
+                                MaterialStateProperty.all(mainColor),
+                            overlayColor: MaterialStateProperty.all(
+                                Colors.grey[200]!.withOpacity(0.5)),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(0),
+                                    bottom: Radius.circular(4.0)),
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            'Update',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(
+                                    color: whiteColor,
+                                    fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    ).then((value) {
+      if (expandableController.value == true) {
+        expandableController.toggle();
+      }
+      if (expandableTimeController.value == true) {
+        expandableTimeController.toggle();
+      }
+    });
   }
 }

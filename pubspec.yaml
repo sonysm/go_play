@@ -45,7 +45,14 @@ dependencies:
   multi_image_picker: ^4.8.0
   timeago: ^3.0.2
   flutter_swiper_null_safety: ^1.0.1
-  extended_image: ^4.0.1
+  syncfusion_flutter_datepicker: ^19.1.63-beta
+  expandable: ^5.0.1
+  intl: ^0.17.0
+  flutter_picker: ^2.0.1
+  flutter_time_picker_spinner:
+    path: packages/flutter_time_picker_spinner-1.0.6+1-null-safety
+  photo_view: ^0.11.1
+  modal_bottom_sheet: ^2.0.0
   
   # Firebase
   firebase_auth: ^1.1.2

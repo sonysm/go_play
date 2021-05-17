@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
@@ -16,6 +17,7 @@ import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
+import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 
 class RouteGenerator {
@@ -64,6 +66,8 @@ class RouteGenerator {
             builder: (_) => ViewUserProfileScreen(user: args as User));
       case CreateActivityScreen.tag:
         return MaterialPageRoute(builder: (_) => CreateActivityScreen());
+      case ViewPhotoScreen.tag:
+        return MaterialPageRoute(builder: (_) => ViewPhotoScreen(post: args as Post));
       default:
         return _errorRoute();
     }
