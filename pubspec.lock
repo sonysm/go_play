@@ -366,13 +366,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
-  multi_image_picker:
+  multi_image_picker2:
     dependency: "direct main"
     description:
-      name: multi_image_picker
+      name: multi_image_picker2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.8.01"
+    version: "5.0.00"
   nested:
     dependency: transitive
     description:
@@ -539,6 +539,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  smooth_page_indicator:
+    dependency: "direct main"
+    description:
+      name: smooth_page_indicator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0-nullsafety.0"
   source_span:
     dependency: transitive
     description:

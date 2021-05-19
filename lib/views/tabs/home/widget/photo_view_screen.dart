@@ -10,7 +10,9 @@ class ViewPhotoScreen extends StatefulWidget {
   static const tag = '/viewPhotoScreen';
 
   final Post post;
-  ViewPhotoScreen({Key? key, required this.post}) : super(key: key);
+  final int initailIndex;
+  ViewPhotoScreen({Key? key, required this.post, this.initailIndex = 0})
+      : super(key: key);
 
   @override
   _ViewPhotoScreenState createState() => _ViewPhotoScreenState();
@@ -18,10 +20,20 @@ class ViewPhotoScreen extends StatefulWidget {
 
 class _ViewPhotoScreenState extends State<ViewPhotoScreen> {
   var showDescription = true;
-
-  PhotoViewController photoViewController = PhotoViewController();
+  PageController pageController = PageController();
   PhotoViewScaleStateController scaleStateController =
       PhotoViewScaleStateController();
+
+  var activeIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    activeIndex = widget.initailIndex + 1;
+    Future.delayed(Duration.zero).then((value) {
+      pageController.jumpToPage(widget.initailIndex);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,18 +55,18 @@ class _ViewPhotoScreenState extends State<ViewPhotoScreen> {
                     builder: (context, index) {
                       var image = widget.post.image!.elementAt(index);
                       return PhotoViewGalleryPageOptions(
-                          imageProvider: CachedNetworkImageProvider(image.name),
-                          initialScale: PhotoViewComputedScale.contained * 0.8,
-                          heroAttributes:
-                              PhotoViewHeroAttributes(tag: image.id),
-                          minScale: PhotoViewComputedScale.contained,
-                          maxScale: 1.0,
-                          scaleStateController: scaleStateController,
-                          scaleStateCycle: (state) {
-                            return state == PhotoViewScaleState.initial
-                                ? PhotoViewScaleState.covering
-                                : PhotoViewScaleState.initial;
-                          });
+                        imageProvider: CachedNetworkImageProvider(image.name),
+                        initialScale: PhotoViewComputedScale.contained,
+                        heroAttributes: PhotoViewHeroAttributes(tag: image.id),
+                        minScale: PhotoViewComputedScale.contained,
+                        maxScale: PhotoViewComputedScale.covered,
+                        scaleStateController: scaleStateController,
+                        scaleStateCycle: (state) {
+                          return state == PhotoViewScaleState.initial
+                              ? PhotoViewScaleState.covering
+                              : PhotoViewScaleState.initial;
+                        },
+                      );
                     },
                     loadingBuilder: (context, event) {
                       return Center(
@@ -68,25 +80,11 @@ class _ViewPhotoScreenState extends State<ViewPhotoScreen> {
                       );
                     },
                     scaleStateChangedCallback: (photoScaleState) {},
-                  ),
-                  /*PhotoView(
-                    //controller: photoViewController,
-                    //scaleStateController: scaleStateController,
-                    backgroundDecoration: BoxDecoration(
-                      color: Colors.transparent,
-                    ),
-                    tightMode: true,
-                    minScale: PhotoViewComputedScale.contained,
-                    maxScale: 1.5,
-                    imageProvider:
-                        CachedNetworkImageProvider(widget.post.photo!),
-                    loadingBuilder: (context, event) {
-                      return CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(whiteColor),
-                      );
+                    pageController: pageController,
+                    onPageChanged: (idx) {
+                      setState(() => activeIndex = idx + 1);
                     },
-                    scaleStateChangedCallback: (photoScaleState) {},
-                  ),*/
+                  ),
                 ),
                 Positioned(
                   left: 16.0,
@@ -107,6 +105,18 @@ class _ViewPhotoScreenState extends State<ViewPhotoScreen> {
                       ),
                     ),
                   ),
+                ),
+                Positioned(
+                  right: 16.0,
+                  top: 16.0,
+                  child: showDescription ? Container(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    child: Text('$activeIndex/${widget.post.image!.length}', style: TextStyle(color: blackColor),),
+                  ) : SizedBox(),
                 ),
                 widget.post.description != null
                     ? Positioned(

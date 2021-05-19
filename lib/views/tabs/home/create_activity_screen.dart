@@ -9,7 +9,7 @@ import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class CreateActivityScreen extends StatefulWidget {
@@ -199,10 +199,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                           16.width,
                           Expanded(
                             child: InkWell(
-                              onTap: () {
-                                print('____________set time');
-                                showDateTimePicker();
-                              },
+                              onTap: showDateTimePicker,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -424,7 +421,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                       backgroundColor: MaterialStateProperty.all(mainColor),
                     ),
                     child: Text(
-                      'Next: Who are with you?',
+                      'Next',
                       style: TextStyle(fontSize: 16.0, color: whiteColor),
                     ),
                   ),
@@ -700,7 +697,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                               spacing: 0,
                               itemHeight: 40,
                               isForce2Digits: true,
-                              minutesInterval: 15,
+                              // minutesInterval: 15,
                               onTimeChange: (time) {
                                 setState(() {});
                               },
@@ -712,34 +709,6 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                           hasIcon: false,
                         ),
                       ),
-                      //Container(
-                      //  height: 64.0,
-                      //  width: double.infinity,
-                      //  color: Theme.of(context).primaryColor,
-                      //  child: TextButton(
-                      //    onPressed: () {
-                      //      if (expandableController.value == true) {
-                      //        expandableController.toggle();
-                      //      }
-                      //    },
-                      //    style: ButtonStyle(
-                      //      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      //    ),
-                      //    child: Row(
-                      //      children: [
-                      //        Icon(Feather.clock, color: icColor),
-                      //        16.width,
-                      //        Text(
-                      //          '4 pm - 6 pm 2h',
-                      //          style: Theme.of(context)
-                      //              .textTheme
-                      //              .bodyText2
-                      //              ?.copyWith(fontWeight: FontWeight.w600),
-                      //        ),
-                      //      ],
-                      //    ),
-                      //  ),
-                      //),
                       Container(
                         height: 64.0,
                         width: double.infinity,

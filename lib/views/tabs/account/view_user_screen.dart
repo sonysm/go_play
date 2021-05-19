@@ -28,6 +28,8 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> {
   Widget buildNavbar() {
     return SliverAppBar(
       title: Text(widget.user.getFullname()),
+      elevation: 0.0,
+      pinned: true,
       //actions: [
       //  CupertinoButton(
       //    child: Icon(FeatherIcons.settings,

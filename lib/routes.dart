@@ -67,7 +67,13 @@ class RouteGenerator {
       case CreateActivityScreen.tag:
         return MaterialPageRoute(builder: (_) => CreateActivityScreen());
       case ViewPhotoScreen.tag:
-        return MaterialPageRoute(builder: (_) => ViewPhotoScreen(post: args as Post));
+        args as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => ViewPhotoScreen(
+            post: args['post'],
+            initailIndex: args['index'],
+          ),
+        );
       default:
         return _errorRoute();
     }

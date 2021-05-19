@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
@@ -16,11 +17,13 @@ import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/widget/comment_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
+import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class FeedDetailScreen extends StatefulWidget {
   static const String tag = '/feedDetailScreen';
@@ -45,6 +48,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
 
   late Post post;
   List<Comment> commentList = [];
+
+  var selectedIndex = 0;
+  PageController pageController = PageController();
 
   Widget buildNavbar() {
     return SliverAppBar(
@@ -124,63 +130,96 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     ),
                   )
                 : SizedBox(height: 8.0),
-            widget.post.photo != null
-                ? InkWell(
-                    onTap: () {
-                      launchScreen(context, ViewPhotoScreen.tag, arguments: widget.post);
-                      //openDialog(context);
-                      //openBottomSheet(context);
-                      //openBottomSheetModal(context);
-                      //viewImage();
-                    },
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: CachedNetworkImage(
-                        imageUrl: widget.post.photo!,
-                        fit: BoxFit.cover,
+
+            widget.post.photo != null && imageSize != null
+                ? SizedBox(
+                    height: (MediaQuery.of(context).size.width *
+                            imageSize!.height) /
+                        imageSize!.width,
+                    child: PageView(
+                      controller: pageController,
+                      children: List.generate(
+                        widget.post.image!.length,
+                        (index) {
+                          return InkWell(
+                            onTap: () {
+                              launchScreen(context, ViewPhotoScreen.tag,
+                                  arguments: {
+                                    'post': widget.post,
+                                    'index': index
+                                  });
+                            },
+                            child: CachedNetworkImage(
+                                imageUrl:
+                                    widget.post.image!.elementAt(index).name),
+                          );
+                        },
                       ),
                     ),
                   )
                 : SizedBox(),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Row(
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  KSIconButton(
-                    icon: widget.post.reacted!
-                        ? Icons.favorite
-                        : FeatherIcons.heart,
-                    iconColor: Theme.of(context).brightness == Brightness.light
-                        ? widget.post.reacted!
-                            ? Colors.green
-                            : Colors.blueGrey
-                        : widget.post.reacted!
-                            ? Colors.green
-                            : Colors.white,
-                    onTap: () {
-                      setState(() {
-                        widget.post.reacted = !widget.post.reacted!;
-                        reactPost();
-                      });
-                    },
+                  Row(
+                    children: [
+                      KSIconButton(
+                        icon: widget.post.reacted!
+                            ? Icons.favorite
+                            : FeatherIcons.heart,
+                        iconColor:
+                            Theme.of(context).brightness == Brightness.light
+                                ? widget.post.reacted!
+                                    ? Colors.green
+                                    : Colors.blueGrey
+                                : widget.post.reacted!
+                                    ? Colors.green
+                                    : Colors.white,
+                        onTap: () {
+                          setState(() {
+                            widget.post.reacted = !widget.post.reacted!;
+                            reactPost();
+                          });
+                        },
+                      ),
+                      4.width,
+                      KSIconButton(
+                        icon: FeatherIcons.messageSquare,
+                        onTap: () {
+                          _commentTextNode.requestFocus();
+                          scrollToBottom();
+                        },
+                      ),
+                      4.width,
+                      KSIconButton(
+                        icon: FeatherIcons.share2,
+                        onTap: () {},
+                      ),
+                      Spacer(),
+                      buildTotalReaction(widget.post.totalReaction),
+                      8.width,
+                      buildTotalComment(widget.post.totalComment),
+                    ],
                   ),
-                  4.width,
-                  KSIconButton(
-                    icon: FeatherIcons.messageSquare,
-                    onTap: () {
-                      _commentTextNode.requestFocus();
-                      scrollToBottom();
-                    },
-                  ),
-                  4.width,
-                  KSIconButton(
-                    icon: FeatherIcons.share2,
-                    onTap: () {},
-                  ),
-                  Spacer(),
-                  buildTotalReaction(widget.post.totalReaction),
-                  8.width,
-                  buildTotalComment(widget.post.totalComment),
+                  widget.post.image != null && widget.post.image!.length > 1
+                      ? Center(
+                          child: SmoothPageIndicator(
+                            controller: pageController,
+                            count: widget.post.image!.length,
+                            effect: ScrollingDotsEffect(
+                              dotHeight: 5.0,
+                              dotWidth: 5.0,
+                              spacing: 6.0,
+                              activeDotScale: 1.5,
+                              maxVisibleDots: 5,
+                              activeDotColor: mainColor,
+                            ),
+                          ),
+                        )
+                      : SizedBox(),
                 ],
               ),
             ),
@@ -289,9 +328,12 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     );
   }
 
+  Size? imageSize;
+
   @override
   void initState() {
     super.initState();
+    getImageSize();
     post = widget.post;
     getPostDetail();
     if (widget.isCommentTap) {
@@ -307,6 +349,13 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     _commentTextNode.unfocus();
     _commentTextNode.dispose();
     super.dispose();
+  }
+
+  void getImageSize() async {
+    if (widget.post.photo != null) {
+      imageSize = await calculateImageDimension(widget.post.photo!);
+      setState(() {});
+    }
   }
 
   void showOptionActionBottomSheet(Post post) {

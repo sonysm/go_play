@@ -19,7 +19,8 @@ import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:kroma_sport/widgets/ks_message_dialog.dart';
+import 'package:multi_image_picker2/multi_image_picker2.dart';
 
 class CreatPostScreen extends StatefulWidget {
   static const String tag = '/createPostScreen';
@@ -44,6 +45,7 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
       title: Text('Create Post'),
       elevation: 0.5,
       forceElevated: true,
+      pinned: true,
       actions: [
         TextButton(
           onPressed: availablePost() ? onPost : null,
@@ -352,6 +354,8 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
     descController = TextEditingController();
   }
 
+  String imageKey = 'images';
+
   Future getImage() async {
     //final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
@@ -365,7 +369,6 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
     //});
 
     List<Asset>? assetList;
-    String imageKey = 'images';
     try {
       assetList = await MultiImagePicker.pickImages(
         maxImages: 10,
@@ -430,6 +433,11 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
         dismissScreen(context);
         var newPost = Post.fromJson(data);
         BlocProvider.of<HomeCubit>(context).onPostFeed(newPost);
+      } else {
+        showKSMessageDialog(
+            context,
+            'Something went wrong with the content! Image size might be too large!',
+            () {});
       }
     }
   }

@@ -8,6 +8,7 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
+import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
@@ -144,6 +145,23 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                     ),
                   )
                 : SizedBox(),*/
+
+            widget.post.image != null && widget.post.image!.length > 1
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text('See more images', style: Theme.of(context).textTheme.bodyText2?.copyWith(fontWeight: FontWeight.w600),),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 18.0,
+                          color: Theme.of(context).brightness == Brightness.light ? Colors.grey : whiteColor,
+                        ),
+                      ],
+                    ),
+                  )
+                : SizedBox(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Column(
