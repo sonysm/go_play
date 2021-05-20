@@ -5,10 +5,13 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/models/address.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/home/choose_location_screen.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -36,6 +39,8 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
 
   DateTime startTime = DateTime.now();
   DateTime endTime = DateTime.now().add(Duration(hours: 2));
+
+  String locationName = 'Add location (Optional)';
 
   Widget buildNavbar() {
     return SliverAppBar(
@@ -244,14 +249,20 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                           16.width,
                           Expanded(
                             child: InkWell(
-                              onTap: () {
+                              onTap: () async {
                                 print('____________set location');
+                                var location = await launchScreen(
+                                    context, SetAddressScreen.tag);
+                                if (location != null) {
+                                  locationName = (location as Address).name;
+                                  setState(() {});
+                                }
                               },
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Add location (Optional)',
+                                    locationName,
                                     style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w600,

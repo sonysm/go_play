@@ -13,6 +13,7 @@ import 'package:kroma_sport/views/tabs/account/sport_activity/sport_detail.dart'
 import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/activity/activity_screen.dart';
+import 'package:kroma_sport/views/tabs/home/choose_location_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
@@ -74,6 +75,8 @@ class RouteGenerator {
             initailIndex: args['index'],
           ),
         );
+      case SetAddressScreen.tag:
+        return MaterialPageRoute(builder: (_) => SetAddressScreen());
       default:
         return _errorRoute();
     }
