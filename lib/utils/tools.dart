@@ -22,16 +22,20 @@ bool isMe(int userId) {
 }
 
 Future<Size> calculateImageDimension(String url) {
-    Completer<Size> completer = Completer();
-    // Image image = Image.network("https://i.stack.imgur.com/lkd0a.png");
-    CachedNetworkImageProvider(url).resolve(ImageConfiguration()).addListener(
-      ImageStreamListener(
-        (ImageInfo image, bool synchronousCall) {
-          var myImage = image.image;
-          Size size = Size(myImage.width.toDouble(), myImage.height.toDouble());
-          completer.complete(size);
-        },
-      ),
-    );
-    return completer.future;
-  }
+  Completer<Size> completer = Completer();
+  // Image image = Image.network("https://i.stack.imgur.com/lkd0a.png");
+  CachedNetworkImageProvider(url).resolve(ImageConfiguration()).addListener(
+    ImageStreamListener(
+      (ImageInfo image, bool synchronousCall) {
+        var myImage = image.image;
+        Size size = Size(myImage.width.toDouble(), myImage.height.toDouble());
+        completer.complete(size);
+      },
+    ),
+  );
+  return completer.future;
+}
+
+bool isLight(context) {
+  return Theme.of(context).brightness == Brightness.light;
+}

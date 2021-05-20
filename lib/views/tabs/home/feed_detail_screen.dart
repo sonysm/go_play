@@ -130,7 +130,6 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     ),
                   )
                 : SizedBox(height: 8.0),
-
             widget.post.photo != null && imageSize != null
                 ? SizedBox(
                     height: (MediaQuery.of(context).size.width *
@@ -158,7 +157,6 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     ),
                   )
                 : SizedBox(),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Stack(
@@ -179,6 +177,11 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                                     ? Colors.green
                                     : Colors.white,
                         onTap: () {
+                          if (widget.post.reacted!) {
+                            widget.post.totalReaction -= 1;
+                          } else {
+                            widget.post.totalReaction += 1;
+                          }
                           setState(() {
                             widget.post.reacted = !widget.post.reacted!;
                             reactPost();
@@ -230,16 +233,6 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     }),
                   )
                 : SizedBox(),
-
-            //commentList.isNotEmpty
-            //    ? ListView.builder(
-            //        itemBuilder: (context, index) {
-            //          return CommentCell(comment: commentList.elementAt(index));
-            //        },
-            //        itemCount: commentList.length,
-            //        shrinkWrap: true,
-            //      )
-            //    : SizedBox(),
           ],
         ),
       ),
@@ -275,7 +268,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     hintStyle: Theme.of(context)
                         .textTheme
                         .bodyText2
-                        ?.copyWith(color: Colors.blueGrey)),
+                        ?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.blueGrey[100])),
                 onChanged: (value) {
                   setState(() {});
                 },
@@ -485,6 +478,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
       if (result is! HttpResult) {
         var newComment = Comment.fromJson(result);
         commentList.insert(commentList.length, newComment);
+        widget.post.totalComment += 1;
         _commentController.clear();
         setState(() {});
         scrollToBottom();

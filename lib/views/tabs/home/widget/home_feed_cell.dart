@@ -76,7 +76,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                         style: Theme.of(context)
                             .textTheme
                             .caption!
-                            .copyWith(color: Colors.blueGrey[200]),
+                            .copyWith(color: isLight(context) ? Colors.blueGrey[400] : Colors.blueGrey[100]),
                       ),
                     ],
                   ),
@@ -114,49 +114,27 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                     ),
                   )
                 : SizedBox(),
-            /*post.photo != null
-                ? Expanded(
-                    child: Swiper(
-                      itemCount: post.image!.length,
-                      outer: true,
-                      itemBuilder: (context, index) => Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: CacheImage(
-                          url: post.image![index].name,
-                        ),
-                      ),
-                      curve: Curves.easeInOutCubic,
-                      //autoplay: post.image!.isEmpty ? false : true,
-                      loop: false,
-                      // autoplayDelay: 5000,
-                      // duration: 850,
-                      pagination: post.image!.length > 1
-                          ? SwiperPagination(
-                              builder: DotSwiperPaginationBuilder(
-                                activeColor: mainColor,
-                                color: Colors.grey[100],
-                                size: 8.0,
-                                activeSize: 8.0,
-                              ),
-                            )
-                          : null,
-
-                      onTap: (index) {},
-                    ),
-                  )
-                : SizedBox(),*/
-
             widget.post.image != null && widget.post.image!.length > 1
                 ? Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text('See more images', style: Theme.of(context).textTheme.bodyText2?.copyWith(fontWeight: FontWeight.w600),),
+                        Text(
+                          'See more images',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
                         Icon(
                           Icons.arrow_forward_ios_rounded,
                           size: 18.0,
-                          color: Theme.of(context).brightness == Brightness.light ? Colors.grey : whiteColor,
+                          color:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? Colors.blueGrey
+                                  : whiteColor,
                         ),
                       ],
                     ),
@@ -181,6 +159,11 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                                     ? Colors.green
                                     : Colors.white,
                         onTap: () {
+                          if (widget.post.reacted!) {
+                            widget.post.totalReaction -= 1;
+                          } else {
+                            widget.post.totalReaction += 1;
+                          }
                           setState(() {
                             widget.post.reacted = !widget.post.reacted!;
                             reactPost();
@@ -229,6 +212,10 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 'Add a comment',
+                                style: TextStyle(
+                                    color: isLight(context)
+                                        ? Colors.blueGrey[300]
+                                        : Colors.blueGrey[100]),
                               ),
                             ),
                           ),

@@ -29,6 +29,14 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   List<String> activityLevelList = ['Chill', 'Moderate', 'Intense'];
   late String selectedActivity;
 
+  ExpandableController expandableController = ExpandableController();
+  ExpandableController expandableTimeController = ExpandableController();
+  String selectedDateString = 'Today';
+  DateTime selectedDate = DateTime.now();
+
+  DateTime startTime = DateTime.now();
+  DateTime endTime = DateTime.now().add(Duration(hours: 2));
+
   Widget buildNavbar() {
     return SliverAppBar(
       title: Text(
@@ -204,12 +212,15 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Tue 11 May',
+                                    selectedDateString,
                                     style:
                                         Theme.of(context).textTheme.bodyText1,
                                   ),
                                   Text(
-                                    '5:30 pm to 6:30 pm',
+                                    '${DateFormat('h:mm a').format(startTime)} to ${DateFormat('h:mm a').format(endTime)}  ' +
+                                        calcHourDuration(
+                                            startTime: startTime,
+                                            endTime: endTime),
                                     style:
                                         Theme.of(context).textTheme.bodyText1,
                                   ),
@@ -529,11 +540,12 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     //}
   }
 
-  ExpandableController expandableController = ExpandableController();
-  ExpandableController expandableTimeController = ExpandableController();
-  String selectedDate = 'Today';
-
   void showDateTimePicker() {
+    var sDate = selectedDate;
+    var sDateString = selectedDateString;
+    var sTime = startTime;
+    var eTime = endTime;
+
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(.5),
@@ -583,7 +595,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                                 Icon(Feather.calendar, color: icColor),
                                 16.width,
                                 Text(
-                                  selectedDate,
+                                  sDateString,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2
@@ -600,6 +612,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                           child: SfDateRangePicker(
                             enablePastDates: false,
                             showNavigationArrow: true,
+                            initialSelectedDate: selectedDate,
                             headerStyle: DateRangePickerHeaderStyle(
                               textAlign: TextAlign.center,
                               textStyle: Theme.of(context).textTheme.caption,
@@ -620,8 +633,8 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                                       color: Colors.grey, fontSize: 10.0),
                             ),
                             onSelectionChanged: (args) {
-                              selectedDate =
-                                  DateFormat('EEE dd MMM').format(args.value);
+                              sDate = args.value;
+                              sDateString = dateString(args.value);
                               setState(() {});
                             },
                           ),
@@ -652,7 +665,9 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                                 Icon(Feather.clock, color: icColor),
                                 16.width,
                                 Text(
-                                  '4 pm - 6 pm 2h',
+                                  '${DateFormat('h:mm a').format(sTime)} - ${DateFormat('h:mm a').format(eTime)}  ' +
+                                      calcHourDuration(
+                                          startTime: sTime, endTime: eTime),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText2
@@ -665,17 +680,19 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                         expanded: Row(
                           children: [
                             TimePickerSpinner(
+                              time: startTime,
                               is24HourMode: false,
-                              normalTextStyle: TextStyle(fontSize: 14.0),
+                              normalTextStyle:
+                                  TextStyle(fontSize: 14.0, color: Colors.grey),
                               highlightedTextStyle: TextStyle(
-                                fontSize: 14,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
                               spacing: 0,
-                              itemHeight: 40,
+                              itemHeight: 30,
                               isForce2Digits: true,
-                              minutesInterval: 15,
                               onTimeChange: (time) {
+                                sTime = time;
                                 setState(() {});
                               },
                             ),
@@ -690,18 +707,21 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                               ),
                             ),
                             TimePickerSpinner(
+                              time: endTime,
                               is24HourMode: false,
-                              normalTextStyle: TextStyle(fontSize: 14.0),
+                              normalTextStyle:
+                                  TextStyle(fontSize: 14.0, color: Colors.grey),
                               highlightedTextStyle: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w600),
+                                  fontSize: 16, fontWeight: FontWeight.w600),
                               spacing: 0,
-                              itemHeight: 40,
+                              itemHeight: 30,
                               isForce2Digits: true,
-                              // minutesInterval: 15,
                               onTimeChange: (time) {
+                                eTime = time;
                                 setState(() {});
                               },
                             ),
+                            16.width,
                           ],
                         ),
                         collapsed: Container(),
@@ -713,7 +733,9 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                         height: 64.0,
                         width: double.infinity,
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context, true);
+                          },
                           style: ButtonStyle(
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             backgroundColor:
@@ -754,6 +776,44 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
       if (expandableTimeController.value == true) {
         expandableTimeController.toggle();
       }
+
+      if (value != null && value) {
+        selectedDate = sDate;
+        selectedDateString = sDateString;
+        startTime = sTime;
+        endTime = eTime;
+        setState(() {});
+      }
     });
+  }
+
+  String dateString(DateTime date) {
+    if (date.isSameDate(DateTime.now())) {
+      return 'Today';
+    } else if (date.difference(DateTime.now()).inDays == 0) {
+      return 'Tomorrow';
+    }
+
+    return DateFormat('EEE dd MMM').format(date);
+  }
+
+  String calcHourDuration(
+      {required DateTime startTime, required DateTime endTime}) {
+    if (endTime.difference(startTime).inMinutes == 0) {
+      return '24h';
+    } else if (endTime.difference(startTime).isNegative) {
+      int dur =
+          (endTime.add(Duration(days: 1))).difference(startTime).inMinutes;
+      int hour = dur ~/ 60;
+      var min = dur % 60;
+
+      return (hour > 0 ? '$hour\h ' : '') + (min > 0 ? '$min\mn' : '');
+    }
+
+    int dur = endTime.difference(startTime).inMinutes;
+    int hour = dur ~/ 60;
+    var min = dur % 60;
+
+    return (hour > 0 ? '$hour\h ' : '') + (min > 0 ? '$min\mn' : '');
   }
 }
