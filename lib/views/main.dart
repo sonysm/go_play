@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
@@ -81,6 +82,26 @@ class _MainViewState extends State<MainView> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() { 
+    super.initState();
+    fetchLocation();
+  }
+
+  fetchLocation() async {
+    if (KS.shared.currentPosition == null) {
+      var service = await KS.shared.locationService.serviceEnabled();
+      if (service) {
+        try {
+          var location = await KS.shared.locationService.getLocation();
+          if (location.latitude != null && location.longitude != null) {
+            KS.shared.setupLocationMintor();
+          } else {}
+        } catch (e) {}
+      } else {}
+    }
   }
 
   void createActivityScreen() {}

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart' as geoCoding;
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/address.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:location/location.dart';
@@ -191,23 +192,25 @@ class _SetAddressScreenState extends State<SetAddressScreen>
         ),
         readOnly: true,
         decoration: InputDecoration(
-          disabledBorder: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          border: InputBorder.none,
-          fillColor: Colors.transparent,
-          hintStyle: TextStyle(
-            color: Colors.grey[700],
-            fontSize: 16.0,
-            fontWeight: FontWeight.w400,
-          ),
-          counterStyle: TextStyle(
-            fontSize: 16.0,
-            color: blackColor,
-            fontWeight: FontWeight.w500,
-          ),
-          hintText: '',
-          icon: Icon(Feather.map_pin, color: mainColor,)
-        ),
+            disabledBorder: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            border: InputBorder.none,
+            fillColor: Colors.transparent,
+            hintStyle: TextStyle(
+              color: Colors.grey[700],
+              fontSize: 16.0,
+              fontWeight: FontWeight.w400,
+            ),
+            counterStyle: TextStyle(
+              fontSize: 16.0,
+              color: blackColor,
+              fontWeight: FontWeight.w500,
+            ),
+            hintText: '',
+            icon: Icon(
+              Feather.map_pin,
+              color: mainColor,
+            )),
         controller: _addressController,
       ),
     );
@@ -399,26 +402,7 @@ class _SetAddressScreenState extends State<SetAddressScreen>
 
   @override
   void initState() {
-    _checkGps();
-
-    // if (widget.oldAddress != null) {
-    //   _initialCameraPosition = CameraPosition(
-    //     target: widget.oldAddress.latLng,
-    //     zoom: 16.0,
-    //   );
-
-    //   _latLng = widget.oldAddress.latLng;
-    //   _titleAs = widget.oldAddress.name;
-    //   _addressController.text = widget.oldAddress.address;
-    //   _phoneController.text = widget.oldAddress.phone ?? '';
-    // } else {
-    //   _initialCameraPosition = CameraPosition(
-    //     target: LatLng(11.556384814188409, 104.92820877581835),
-    //     zoom: 16.0,
-    //   );
-
-    //   _latLng = LatLng(11.556384814188409, 104.92820877581835);
-    // }
+    // _checkGps();
 
     _initialCameraPosition = CameraPosition(
       target: LatLng(11.556384814188409, 104.92820877581835),
@@ -426,6 +410,18 @@ class _SetAddressScreenState extends State<SetAddressScreen>
     );
 
     _latLng = LatLng(11.556384814188409, 104.92820877581835);
+
+    if (KS.shared.currentPosition != null) {
+      _initialCameraPosition = CameraPosition(
+        target: LatLng(KS.shared.currentPosition!.latitude,
+            KS.shared.currentPosition!.longitude),
+        zoom: 16.0,
+      );
+
+      _latLng = LatLng(KS.shared.currentPosition!.latitude,
+          KS.shared.currentPosition!.longitude);
+      _currentPosition = _latLng;
+    }
 
     _dropDownController = AnimationController(
       duration: Duration(milliseconds: 300),
@@ -490,68 +486,68 @@ class _SetAddressScreenState extends State<SetAddressScreen>
     );
   }
 
-  _checkGps() async {
-    Location location = Location();
+  // _checkGps() async {
+  //   Location location = Location();
 
-    bool serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        print('____LOCATION___ERVICE__DISABLE_________');
-      }
-    }
+  //   bool serviceEnabled = await location.serviceEnabled();
+  //   if (!serviceEnabled) {
+  //     serviceEnabled = await location.requestService();
+  //     if (!serviceEnabled) {
+  //       print('____LOCATION___ERVICE__DISABLE_________');
+  //     }
+  //   }
 
-    try {
-      PermissionStatus permissionStatus = await location.hasPermission();
-      if (permissionStatus == PermissionStatus.denied) {
-        permissionStatus = await location.requestPermission();
-        if (permissionStatus != PermissionStatus.granted) {
-          _showLocationAlert();
-          return;
-        }
-      }
+  //   try {
+  //     PermissionStatus permissionStatus = await location.hasPermission();
+  //     if (permissionStatus == PermissionStatus.denied) {
+  //       permissionStatus = await location.requestPermission();
+  //       if (permissionStatus != PermissionStatus.granted) {
+  //         _showLocationAlert();
+  //         return;
+  //       }
+  //     }
 
-      LocationData data = await location.getLocation();
-      if (data.latitude != null && data.longitude != null) {
-        _currentPosition = LatLng(data.latitude!, data.longitude!);
-        gotoCurrentLocation();
-        // KFood.shared.currentPosition = LatLng(data.latitude, data.longitude);
-        // KFood.shared.locationService = location;
-        // KFood.shared.setupLocationMintor();
+  //     LocationData data = await location.getLocation();
+  //     if (data.latitude != null && data.longitude != null) {
+  //       _currentPosition = LatLng(data.latitude!, data.longitude!);
+  //       gotoCurrentLocation();
+  //       // KFood.shared.currentPosition = LatLng(data.latitude, data.longitude);
+  //       // KFood.shared.locationService = location;
+  //       // KFood.shared.setupLocationMintor();
 
-        // if (widget.oldAddress == null) {
-        //   gotoCurrentLocation();
-        // }
-      }
-    } catch (e) {
-      _showLocationAlert();
-      print('____ERROR____GET___LOCATION_________$e');
-    }
-  }
+  //       // if (widget.oldAddress == null) {
+  //       //   gotoCurrentLocation();
+  //       // }
+  //     }
+  //   } catch (e) {
+  //     _showLocationAlert();
+  //     print('____ERROR____GET___LOCATION_________$e');
+  //   }
+  // }
 
-  _showLocationAlert() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Alert'),
-            content: Text('Location disable message'),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    // openAppSettings();
-                  },
-                  child: Text('Open setting')),
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Not now'))
-            ],
-          );
-        });
-  }
+  // _showLocationAlert() {
+  //   showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //           title: Text('Alert'),
+  //           content: Text('Location disable message'),
+  //           actions: <Widget>[
+  //             TextButton(
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                   // openAppSettings();
+  //                 },
+  //                 child: Text('Open setting')),
+  //             TextButton(
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: Text('Not now'))
+  //           ],
+  //         );
+  //       });
+  // }
 
   gotoCurrentLocation() {
     _mapController

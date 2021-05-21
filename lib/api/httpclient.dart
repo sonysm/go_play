@@ -206,7 +206,7 @@ class KSHttpClient {
     return result;
   }
 
-  Future<http.Response> postFile(url, File? image,
+  /*Future<http.Response> postFile(url, File? image,
       {Map<String, String>? fields, String imageKey = 'photo'}) async {
     var request = http.MultipartRequest("POST", _getUir(url));
     if (fields != null) {
@@ -226,6 +226,53 @@ class KSHttpClient {
     return request.send().then((stream) {
       return http.Response.fromStream(stream);
     });
+  }*/
+
+  Future postFile(url, http.MultipartFile? image,
+      {Map<String, String>? fields, String imageKey = 'photo'}) async {
+    var request = http.MultipartRequest("POST", _getUir(url));
+    if (fields != null) {
+      fields.removeWhere((key, value) => value == null);
+      request.fields.addAll(fields);
+    }
+    if (image != null) {
+      request.files.add(image);
+    }
+    request.headers.addAll(_getHeader());
+    // return request.send().then((stream) {
+    //   return http.Response.fromStream(stream);
+    // });
+
+    var result;
+    try {
+      final stream = await request.send();
+      final response = await http.Response.fromStream(stream);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final json = jsonDecode(utf8.decode(response.bodyBytes));
+        if (json != null) {
+          int code = int.parse(json['code'].toString());
+          if (code == 1) {
+            result = json['data'];
+          } else {
+            result = HttpResult(code, json['message']);
+          }
+        } else {
+          result = HttpResult(0, "Something went wrong!");
+        }
+      } else if (response.statusCode == 401) {
+        result = HttpResult(401, "Unauthorized");
+      }
+    } on SocketException catch (e) {
+      result = HttpResult(-500, "Internet connection");
+      print("SocketException = $e");
+    } on TimeoutException catch (e) {
+      result = HttpResult(408, "Something went wrong!");
+      print("TimeoutException = $e");
+    } catch (e) {
+      result = HttpResult(500, "Something went wrong!");
+      print("Exception = $e");
+    }
+    return result;
   }
 
   Future postUploads(url, List<http.MultipartFile>? images,
@@ -234,7 +281,7 @@ class KSHttpClient {
     if (fields != null) {
       request.fields.addAll(fields);
     }
-    
+
     if (images != null) {
       request.files.addAll(images);
     }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kroma_sport/bloc/splash.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/main.dart';
@@ -52,8 +53,28 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
+  @override
+  void initState() { 
+    super.initState();
+    // fetchLocation();
+  }
+
   navigateToLoginScreen() {
     return Timer(Duration(milliseconds: 1500),
         () => Navigator.pushReplacementNamed(context, LoginScreen.tag));
   }
+
+  // fetchLocation() async {
+  //   if (KS.shared.currentPosition == null) {
+  //     var service = await KS.shared.locationService.serviceEnabled();
+  //     if (service) {
+  //       try {
+  //         var location = await KS.shared.locationService.getLocation();
+  //         if (location.latitude != null && location.longitude != null) {
+  //           KS.shared.setupLocationMintor();
+  //         } else {}
+  //       } catch (e) {}
+  //     } else {}
+  //   }
+  // }
 }

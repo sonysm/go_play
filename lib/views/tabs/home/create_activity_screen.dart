@@ -2,16 +2,20 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/address.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/home/activity_preview_screen.dart';
 import 'package:kroma_sport/views/tabs/home/choose_location_screen.dart';
+import 'package:location/location.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -26,8 +30,8 @@ class CreateActivityScreen extends StatefulWidget {
 
 class _CreateActivityScreenState extends State<CreateActivityScreen> {
   KSHttpClient ksClient = KSHttpClient();
-  List<FavoriteSport> favSportList = [];
-  late int selectedSport;
+  List<Sport> sportList = [];
+  late Sport selectedSport;
 
   List<String> activityLevelList = ['Chill', 'Moderate', 'Intense'];
   late String selectedActivity;
@@ -40,7 +44,12 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   DateTime startTime = DateTime.now();
   DateTime endTime = DateTime.now().add(Duration(hours: 2));
 
+  Address? address;
   String locationName = 'Add location (Optional)';
+  late int dourationInMinutes;
+
+  TextEditingController activityNameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
 
   Widget buildNavbar() {
     return SliverAppBar(
@@ -117,31 +126,29 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     );
   }
 
-  Widget buildSportOption(FavoriteSport data) {
+  Widget buildSportOption(Sport sport) {
     return ElevatedButton(
       onPressed: () {
-        setState(() => selectedSport = data.sport.id);
+        setState(() => selectedSport = sport);
       },
       style: ButtonStyle(
         elevation: MaterialStateProperty.all(0),
-        foregroundColor: MaterialStateProperty.all(
-            data.sport.id == selectedSport
-                ? whiteColor
-                : Theme.of(context).textTheme.bodyText2?.color),
-        backgroundColor: MaterialStateProperty.all(
-            data.sport.id == selectedSport
-                ? mainColor
-                : Theme.of(context).primaryColor),
+        foregroundColor: MaterialStateProperty.all(sport.id == selectedSport.id
+            ? whiteColor
+            : Theme.of(context).textTheme.bodyText2?.color),
+        backgroundColor: MaterialStateProperty.all(sport.id == selectedSport.id
+            ? mainColor
+            : Theme.of(context).primaryColor),
         shape: MaterialStateProperty.all(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
-            side: data.sport.id == selectedSport
+            side: sport.id == selectedSport.id
                 ? BorderSide.none
                 : BorderSide(color: Colors.blueGrey),
           ),
         ),
       ),
-      child: Text(data.sport.name),
+      child: Text(sport.name),
     );
   }
 
@@ -250,12 +257,18 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                           Expanded(
                             child: InkWell(
                               onTap: () async {
-                                print('____________set location');
-                                var location = await launchScreen(
-                                    context, SetAddressScreen.tag);
-                                if (location != null) {
-                                  locationName = (location as Address).name;
-                                  setState(() {});
+                                if (permissionStatus ==
+                                    PermissionStatus.granted) {
+                                  print('____________set location');
+                                  var location = await launchScreen(
+                                      context, SetAddressScreen.tag);
+                                  if (location != null) {
+                                    address = location;
+                                    locationName = address!.name;
+                                    setState(() {});
+                                  }
+                                } else {
+                                  checkGps();
                                 }
                               },
                               child: Column(
@@ -292,61 +305,61 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                favSportList.isNotEmpty
+                                sportList.isNotEmpty
                                     ? Wrap(
                                         spacing: 8.0,
                                         children: List.generate(
-                                            favSportList.length, (index) {
+                                            sportList.length, (index) {
                                           final sport =
-                                              favSportList.elementAt(index);
+                                              sportList.elementAt(index);
                                           return buildSportOption(sport);
                                         }),
                                       )
                                     : SizedBox(),
-                                16.height,
-                                Divider(
-                                  color: Colors.blueGrey[100],
-                                  thickness: 1,
-                                  height: 0,
-                                ),
+                                // 16.height,
+                                // Divider(
+                                //   color: Colors.blueGrey[100],
+                                //   thickness: 1,
+                                //   height: 0,
+                                // ),
                               ],
                             ),
                           ),
                         ],
                       ),
-                      16.height,
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          40.width,
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Activity level',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                ),
-                                8.height,
-                                Wrap(
-                                  spacing: 8.0,
-                                  children: List.generate(
-                                    activityLevelList.length,
-                                    (index) {
-                                      final activity =
-                                          activityLevelList.elementAt(index);
-                                      return buildActivityLevel(activity);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      // 16.height,
+                      // Row(
+                      //   crossAxisAlignment: CrossAxisAlignment.start,
+                      //   children: [
+                      //     40.width,
+                      //     Expanded(
+                      //       child: Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           Text(
+                      //             'Activity level',
+                      //             style: Theme.of(context)
+                      //                 .textTheme
+                      //                 .bodyText1
+                      //                 ?.copyWith(fontWeight: FontWeight.w600),
+                      //           ),
+                      //           8.height,
+                      //           Wrap(
+                      //             spacing: 8.0,
+                      //             children: List.generate(
+                      //               activityLevelList.length,
+                      //               (index) {
+                      //                 final activity =
+                      //                     activityLevelList.elementAt(index);
+                      //                 return buildActivityLevel(activity);
+                      //               },
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ),
@@ -377,6 +390,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                                 ),
                                 8.height,
                                 TextField(
+                                  controller: activityNameController,
                                   style: Theme.of(context).textTheme.bodyText2,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.zero,
@@ -386,6 +400,9 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                                     hintStyle:
                                         Theme.of(context).textTheme.bodyText2,
                                   ),
+                                  onChanged: (_) {
+                                    setState(() {});
+                                  },
                                 ),
                                 16.height,
                                 Divider(
@@ -409,6 +426,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextField(
+                                  controller: descriptionController,
                                   style: Theme.of(context).textTheme.bodyText2,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.zero,
@@ -437,10 +455,31 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                   width: double.infinity,
                   height: 48.0,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      var activity = {
+                        'photo': images.isNotEmpty ? images.elementAt(0) : null,
+                        'date': DateFormat('yyyy-MM-dd').format(selectedDate),
+                        'startTime': DateFormat('hh:mm:ss').format(startTime),
+                        'endTime': DateFormat('hh:mm:ss').format(endTime),
+                        'sport': selectedSport,
+                        'locationName': address?.name,
+                        'latitude': address?.latitude,
+                        'logitude': address?.longitude,
+                        'name': activityNameController.text,
+                        'description':
+                            descriptionController.text.trim().isNotEmpty
+                                ? descriptionController.text
+                                : null,
+                        'minute': dourationInMinutes,
+                      };
+                      FocusScope.of(context).unfocus();
+                      launchScreen(context, ActivityPreviewScreen.tag,
+                          arguments: activity);
+                    },
                     style: ButtonStyle(
                       elevation: MaterialStateProperty.all(0),
-                      backgroundColor: MaterialStateProperty.all(mainColor),
+                      backgroundColor: MaterialStateProperty.all(
+                          availableNext() ? mainColor : Colors.green[200]),
                     ),
                     child: Text(
                       'Next',
@@ -477,18 +516,18 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   @override
   void initState() {
     super.initState();
-    getFavoriteSport();
+    checkGps();
+    getSportList();
     selectedActivity = activityLevelList[0];
   }
 
-  void getFavoriteSport() async {
-    var data = await ksClient.getApi('/user/favorite/sport');
+  void getSportList() async {
+    var data = await ksClient.getApi('/user/all/sport');
     if (data != null) {
+      // isLoading = false;
       if (data is! HttpResult) {
-        favSportList =
-            List.from((data as List).map((e) => FavoriteSport.fromJson(e)));
-        if (favSportList.isNotEmpty)
-          selectedSport = favSportList.elementAt(0).sport.id;
+        sportList = List.from((data as List).map((e) => Sport.fromJson(e)));
+        if (sportList.isNotEmpty) selectedSport = sportList.elementAt(0);
         setState(() {});
       }
     }
@@ -817,6 +856,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
           (endTime.add(Duration(days: 1))).difference(startTime).inMinutes;
       int hour = dur ~/ 60;
       var min = dur % 60;
+      dourationInMinutes = dur;
 
       return (hour > 0 ? '$hour\h ' : '') + (min > 0 ? '$min\mn' : '');
     }
@@ -824,7 +864,72 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     int dur = endTime.difference(startTime).inMinutes;
     int hour = dur ~/ 60;
     var min = dur % 60;
+    dourationInMinutes = dur;
 
     return (hour > 0 ? '$hour\h ' : '') + (min > 0 ? '$min\mn' : '');
+  }
+
+  late PermissionStatus permissionStatus;
+
+  checkGps() async {
+    Location location = Location();
+
+    bool serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        print('____LOCATION___SERVICE__DISABLE_________');
+      }
+    }
+
+    try {
+      permissionStatus = await location.hasPermission();
+      if (permissionStatus == PermissionStatus.denied) {
+        permissionStatus = await location.requestPermission();
+        if (permissionStatus != PermissionStatus.granted) {
+          _showLocationAlert();
+          return;
+        }
+      }
+
+      LocationData data = await location.getLocation();
+      if (data.latitude != null && data.longitude != null) {
+        KS.shared.setupLocationMintor();
+      }
+    } catch (e) {
+      _showLocationAlert();
+      print('____ERROR____GET___LOCATION_________$e');
+    }
+  }
+
+  _showLocationAlert() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Alert'),
+            content: Text('Location disable message'),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // openAppSettings();
+                  },
+                  child: Text('Open setting')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Not now'))
+            ],
+          );
+        });
+  }
+
+  bool availableNext() {
+    if (activityNameController.text.trim().length > 0) {
+      return true;
+    }
+    return false;
   }
 }
