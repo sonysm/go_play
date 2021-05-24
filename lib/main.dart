@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kroma_sport/bloc/home.dart';
+import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/bloc/theme.dart';
 import 'package:kroma_sport/routes.dart';
 import 'package:kroma_sport/themes/colors.dart';
@@ -36,6 +37,9 @@ class App extends StatelessWidget {
         BlocProvider<HomeCubit>(
           create: (BuildContext context) => HomeCubit()..onLoad(),
         ),
+        BlocProvider<MeetupCubit>(
+          create: (BuildContext context) => MeetupCubit()..onLoad(),
+        )
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(builder: (_, mode) {
         return MaterialApp(
@@ -61,7 +65,10 @@ class App extends StatelessWidget {
                 headline4: TextStyle(fontSize: 14.0, color: blackColor),
                 headline5: TextStyle(fontSize: 24.0, color: blackColor),
                 headline6: TextStyle(fontSize: 20.0, color: blackColor),
-                bodyText1: TextStyle(fontSize: 16.0, color: blackColor, fontWeight: FontWeight.w400),
+                bodyText1: TextStyle(
+                    fontSize: 16.0,
+                    color: blackColor,
+                    fontWeight: FontWeight.w400),
                 bodyText2: TextStyle(fontSize: 14.0, color: blackColor),
                 caption: TextStyle(fontSize: 12.0, color: blackColor),
               ),

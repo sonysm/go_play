@@ -11,6 +11,7 @@ import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
+import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 
@@ -96,7 +97,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Expanded(
                   child: TextButton(
-                    onPressed: () => launchScreen(context, CreateActivityScreen.tag),
+                    onPressed: () =>
+                        launchScreen(context, CreateActivityScreen.tag),
                     style: ButtonStyle(
                       overlayColor: MaterialStateProperty.all(Colors.grey[200]),
                       foregroundColor: MaterialStateProperty.all(mainColor),
@@ -143,6 +145,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         height: 8.0,
                       )
+                    ],
+                  );
+                } else if (post.type == PostType.activity) {
+                  return Column(
+                    children: [
+                      ActivityCell(post: post),
+                      Container(height: 8.0),
                     ],
                   );
                 }

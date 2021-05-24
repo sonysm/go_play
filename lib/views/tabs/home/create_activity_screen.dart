@@ -464,7 +464,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                         'sport': selectedSport,
                         'locationName': address?.name,
                         'latitude': address?.latitude,
-                        'logitude': address?.longitude,
+                        'longitude': address?.longitude,
                         'name': activityNameController.text,
                         'description':
                             descriptionController.text.trim().isNotEmpty
@@ -850,6 +850,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   String calcHourDuration(
       {required DateTime startTime, required DateTime endTime}) {
     if (endTime.difference(startTime).inMinutes == 0) {
+      dourationInMinutes = 24*60;
       return '24h';
     } else if (endTime.difference(startTime).isNegative) {
       int dur =

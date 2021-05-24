@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
-import 'package:kroma_sport/views/tabs/activity/activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
+import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 
 class MainView extends StatefulWidget {
   static const String tag = '/mainScreen';
-  
+
   @override
   _MainViewState createState() => _MainViewState();
 }
@@ -17,7 +18,7 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   List<Widget> _screens = [
     HomeScreen(),
-    ActivityScreen(),
+    MeetupScreen(),
     NotificationScreen(),
     AccountScreen()
   ];
@@ -85,7 +86,7 @@ class _MainViewState extends State<MainView> {
   }
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     fetchLocation();
   }
@@ -104,7 +105,56 @@ class _MainViewState extends State<MainView> {
     }
   }
 
-  void createActivityScreen() {}
+  void createActivityScreen() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).primaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          maintainBottomViewPadding: true,
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                TextButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(horizontal: 0.0)),
+                  ),
+                  onPressed: () {},
+                  child: Container(
+                    height: 54.0,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                          child: Icon(
+                            Feather.info,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? Colors.blueGrey
+                                    : Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'Create',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class _CustomTabBar extends StatelessWidget {

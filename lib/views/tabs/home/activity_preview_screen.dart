@@ -259,19 +259,6 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
           await (widget.activityData['photo'] as Asset).getByteData();
       List<int> imageData = byteData.buffer.asUint8List();
 
-      if (widget.activityData['description'] != null) {
-        fields['description'] = widget.activityData['description'];
-      }
-
-      fields['name'] = widget.activityData['name'];
-      fields['date'] = widget.activityData['date'];
-      fields['from_time'] = widget.activityData['startTime'];
-      fields['to_time'] = widget.activityData['endTime'];
-      fields['location_name'] = widget.activityData['locationName'];
-      fields['latitude'] = widget.activityData['latitude'];
-      fields['longitude'] = widget.activityData['longitude'];
-      fields['sport'] = (widget.activityData['sport'] as Sport).id.toString();
-
       image = MultipartFile.fromBytes(
         'photo',
         imageData,
@@ -279,6 +266,28 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
             'AC' + DateTime.now().millisecondsSinceEpoch.toString() + '.jpg',
       );
     }
+
+    if (widget.activityData['description'] != null) {
+      fields['description'] = widget.activityData['description'];
+    }
+
+    if (widget.activityData['locationName'] != null) {
+      fields['location_name'] = widget.activityData['locationName'];
+    }
+
+    if (widget.activityData['latitude'] != null) {
+      fields['latitude'] = widget.activityData['latitude'];
+    }
+
+    if (widget.activityData['longitude'] != null) {
+      fields['longitude'] = widget.activityData['longitude'];
+    }
+
+    fields['name'] = widget.activityData['name'];
+    fields['date'] = widget.activityData['date'];
+    fields['from_time'] = widget.activityData['startTime'];
+    fields['to_time'] = widget.activityData['endTime'];
+    fields['sport'] = (widget.activityData['sport'] as Sport).id.toString();
 
     showKSLoading(context);
     var data =

@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:kroma_sport/models/address.dart';
+import 'package:kroma_sport/models/member.dart';
+import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
 
 Post postFromJson(String str) => Post.fromJson(json.decode(str));
@@ -30,11 +33,12 @@ class Post {
     this.updatedAt,
     required this.totalReaction,
     required this.totalComment,
+    this.meetupMember,
   });
 
   int id;
   User owner;
-  dynamic sport;
+  Sport? sport;
   bool? reacted;
   String? photo;
   dynamic title;
@@ -42,10 +46,10 @@ class Post {
   List<KSImage>? image;
   PostType type;
   int? activityLevel;
-  dynamic activityDate;
-  dynamic activityStartTime;
-  dynamic activityEndTime;
-  dynamic activityLocation;
+  String? activityDate;
+  String? activityStartTime;
+  String? activityEndTime;
+  Address? activityLocation;
   double? price;
   int? minPeople;
   int? maxPeople;
@@ -54,36 +58,44 @@ class Post {
   DateTime? updatedAt;
   int totalReaction;
   int totalComment;
+  List<Member>? meetupMember;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
-        id: json["id"],
-        owner: User.fromJson(json["owner"]),
-        sport: json["sport"],
-        reacted: json["reacted"],
-        photo: json["photo"],
-        title: json["title"],
-        description: json["description"],
-        image: json["image"] != null ? List<KSImage>.from(json["image"]?.map((x) => KSImage.fromJson(x))) : null,
-        type: mapPostType((json["type"] as num).toInt()),
-        activityLevel: json["activity_level"],
-        activityDate: json["activity_date"],
-        activityStartTime: json["activity_start_time"],
-        activityEndTime: json["activity_end_time"],
-        activityLocation: json["activity_location"],
-        price: json["price"],
-        minPeople: json["min_people"],
-        maxPeople: json["max_people"],
-        status: mapPostStatus((json["status"] as num).toInt()),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        totalReaction: json['total_reaction'],
-        totalComment: json['total_comment'],
-      );
+      id: json["id"],
+      owner: User.fromJson(json["owner"]),
+      sport: json["sport"] != null ? Sport.fromJson(json["sport"]) : null,
+      reacted: json["reacted"],
+      photo: json["photo"],
+      title: json["title"],
+      description: json["description"],
+      image: json["image"] != null
+          ? List<KSImage>.from(json["image"]?.map((x) => KSImage.fromJson(x)))
+          : null,
+      type: mapPostType((json["type"] as num).toInt()),
+      activityLevel: json["activity_level"],
+      activityDate: json["activity_date"],
+      activityStartTime: json["activity_start_time"],
+      activityEndTime: json["activity_end_time"],
+      activityLocation: json["activity_location"] != null
+          ? Address.fromJson(jsonDecode(json["activity_location"]))
+          : null,
+      price: json["price"],
+      minPeople: json["min_people"],
+      maxPeople: json["max_people"],
+      status: mapPostStatus((json["status"] as num).toInt()),
+      createdAt: DateTime.parse(json["created_at"]),
+      updatedAt: DateTime.parse(json["updated_at"]),
+      totalReaction: json['total_reaction'],
+      totalComment: json['total_comment'],
+      meetupMember: json['meetup_member'] != null
+          ? List<Member>.from(
+              json["meetup_member"]?.map((x) => Member.fromJson(x)))
+          : null);
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "owner": owner.toJson(),
-        "sport": sport,
+        "sport": sport!.toJson(),
         "reacted": reacted,
         "photo": photo,
         "title": title,

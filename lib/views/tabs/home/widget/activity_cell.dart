@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -9,27 +8,50 @@ import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
+import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 
-class HomeFeedCell extends StatefulWidget {
+class ActivityCell extends StatefulWidget {
   final Post post;
 
-  const HomeFeedCell({
+  const ActivityCell({
     Key? key,
     required this.post,
   }) : super(key: key);
 
   @override
-  _HomeFeedCellState createState() => _HomeFeedCellState();
+  _ActivityCellState createState() => _ActivityCellState();
 }
 
-class _HomeFeedCellState extends State<HomeFeedCell> {
+class _ActivityCellState extends State<ActivityCell> {
+  String calcMinuteDuration() {
+    var s = DateTime.parse(
+        widget.post.activityDate! + ' ' + widget.post.activityStartTime!);
+    var e = DateTime.parse(
+        widget.post.activityDate! + ' ' + widget.post.activityEndTime!);
+
+    if (e.difference(s).inMinutes == 0) {
+      int dur = 24 * 60;
+      return '$dur\mn';
+    } else if (e.difference(s).isNegative) {
+      int dur = (e.add(Duration(days: 1))).difference(s).inMinutes;
+      return '$dur\mn';
+    }
+
+    int dur = e.difference(s).inMinutes;
+
+    // print('___dur = $dur');
+
+    return '$dur\mn';
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget buildTotalReaction(int total) {
@@ -55,32 +77,56 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
             Padding(
               padding: const EdgeInsets.only(left: 16.0, right: 8.0),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Avatar(
                     radius: 18.0,
                     user: widget.post.owner,
                   ),
                   8.width,
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.post.owner.getFullname(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        widget.post.createdAt.toString().timeAgoString,
-                        style: Theme.of(context).textTheme.caption!.copyWith(
-                            color: isLight(context)
-                                ? Colors.blueGrey[400]
-                                : Colors.blueGrey[100]),
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: widget.post.owner.getFullname(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                    widget.post.activityLocation != null
+                                        ? TextSpan(
+                                            text:
+                                                ' added an activity at ${widget.post.activityLocation!.name}.',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1,
+                                          )
+                                        : TextSpan(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          widget.post.createdAt.toString().timeAgoString,
+                          style: Theme.of(context).textTheme.caption!.copyWith(
+                              color: isLight(context)
+                                  ? Colors.blueGrey[400]
+                                  : Colors.blueGrey[100]),
+                        ),
+                      ],
+                    ),
                   ),
-                  Spacer(),
                   KSIconButton(
                     icon: FeatherIcons.moreHorizontal,
                     iconSize: 24.0,
@@ -102,44 +148,82 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                     ),
                   )
                 : SizedBox(height: 8.0),
-            widget.post.photo != null
-                ? InkWell(
-                    onTap: () => launchFeedDetailScreen(widget.post),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: CachedNetworkImage(
-                        imageUrl: widget.post.photo!,
-                        fit: BoxFit.cover,
+            Stack(
+              children: [
+                widget.post.photo != null
+                    ? SizedBox(
+                        width: AppSize(context).appWidth(100),
+                        height: AppSize(context).appWidth(100),
+                        child: CacheImage(url: widget.post.photo!),
+                      )
+                    : SizedBox(
+                        width: AppSize(context).appWidth(100),
+                        height: AppSize(context).appWidth(100),
+                        child: CacheImage(
+                            url: widget.post.sport!.id == 1
+                                ? 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1353&q=80'
+                                : 'https://images.unsplash.com/photo-1592656094267-764a45160876?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
                       ),
-                    ),
-                  )
-                : SizedBox(),
-            widget.post.image != null && widget.post.image!.length > 1
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          'See more images',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                Positioned(
+                  left: 16.0,
+                  right: 16.0,
+                  top: 16.0,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.post.sport!.name.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: whiteColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            widget.post.title,
+                            style: TextStyle(
+                              fontSize: 22.0,
+                              color: whiteColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+                      Text(
+                        'Sport',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          color: whiteColor,
+                          fontWeight: FontWeight.w600,
                         ),
-                        Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 18.0,
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? Colors.blueGrey
-                                  : whiteColor,
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  left: 16.0,
+                  bottom: 16.0,
+                  child: Row(
+                    children: [
+                      Icon(Feather.clock, color: whiteColor),
+                      4.width,
+                      Text(
+                        calcMinuteDuration(),
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          color: whiteColor,
+                          fontWeight: FontWeight.w600,
                         ),
-                      ],
-                    ),
-                  )
-                : SizedBox(),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Column(

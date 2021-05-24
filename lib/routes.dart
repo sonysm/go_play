@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
@@ -12,7 +11,6 @@ import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.d
 import 'package:kroma_sport/views/tabs/account/sport_activity/sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
-import 'package:kroma_sport/views/tabs/activity/activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/activity_preview_screen.dart';
 import 'package:kroma_sport/views/tabs/home/choose_location_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
@@ -20,6 +18,7 @@ import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
+import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 
 class RouteGenerator {
@@ -40,8 +39,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => MainView());
       case HomeScreen.tag:
         return MaterialPageRoute(builder: (_) => HomeScreen());
-      case ActivityScreen.tag:
-        return MaterialPageRoute(builder: (_) => ActivityScreen());
+      case MeetupScreen.tag:
+        return MaterialPageRoute(builder: (_) => MeetupScreen());
       case NotificationScreen.tag:
         return MaterialPageRoute(builder: (_) => NotificationScreen());
       case AccountScreen.tag:
