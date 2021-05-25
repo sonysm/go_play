@@ -30,12 +30,12 @@ class CacheImage extends StatelessWidget {
         // useOldImageOnUrlChange: true,
         placeholder: (context, url) => isAvatar
             ? Image.asset('assets/images/user.jpg', fit: fit)
-            : Image.asset('assets/images/img_tms_placeholder.png', fit: fit),
+            : Image.asset('assets/images/img_sport_placeholder.png', fit: fit),
         errorWidget: (context, url, error) {
           if (isAvatar) {
             return Image.asset('assets/images/user.jpg', fit: fit);
           }
-          return Image.asset('assets/images/img_tms_placeholder.png', fit: fit);
+          return Image.asset('assets/images/img_sport_placeholder.png', fit: fit);
         },
         fadeInDuration: Duration(milliseconds: 200),
         fit: fit,

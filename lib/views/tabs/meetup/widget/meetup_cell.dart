@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
+import 'package:kroma_sport/utils/circle_border.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
@@ -105,31 +106,37 @@ class _MeetupCellState extends State<MeetupCell> {
                 ],
               ),
             ),
-            widget.post.description != null
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: 16.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          meetup.sport!.name + ' Meetup',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(fontWeight: FontWeight.w600),
-                        ),
-                        SelectableText(
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 16.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    meetup.sport!.name + ' Meetup',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText2!
+                        .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  widget.post.description != null
+                      ? SelectableText(
                           widget.post.description!,
                           style: Theme.of(context).textTheme.bodyText1,
                           onTap: () {},
-                        ),
-                      ],
-                    ),
-                  )
-                : SizedBox(height: 8.0),
+                        )
+                      : SizedBox(height: 8.0),
+                  CircularBorder(
+                    width: 2,
+                    size: 32,
+                    color: Colors.grey,
+                    //icon: Icon(Icons.access_alarm, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
             // Padding(
             //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
             //   child: Column(
