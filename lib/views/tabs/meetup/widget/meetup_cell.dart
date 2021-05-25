@@ -1,10 +1,13 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:kroma_sport/ks.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:intl/intl.dart';
 import 'package:kroma_sport/models/post.dart';
-import 'package:kroma_sport/utils/circle_border.dart';
+import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/meetup/meetup_detail_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 
@@ -33,11 +36,15 @@ class _MeetupCellState extends State<MeetupCell> {
   Widget build(BuildContext context) {
     final meetup = widget.post;
 
-    return InkWell(
-      onTap: () {},
-      child: Container(
+    return Container(
+      decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        padding: EdgeInsets.only(top: 16.0, bottom: 8.0),
+        borderRadius: BorderRadius.circular(8.0)
+      ),
+      padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+      margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+      child: InkWell(
+        onTap: () => launchScreen(context, MeetupDetailScreen.tag, arguments: widget.post),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -48,7 +55,7 @@ class _MeetupCellState extends State<MeetupCell> {
                 children: [
                   Avatar(
                     radius: 18.0,
-                    user: KS.shared.user,
+                    user: widget.post.owner,
                   ),
                   8.width,
                   Expanded(
@@ -119,8 +126,9 @@ class _MeetupCellState extends State<MeetupCell> {
                     style: Theme.of(context)
                         .textTheme
                         .bodyText2!
-                        .copyWith(fontWeight: FontWeight.w600),
+                        .copyWith(fontWeight: FontWeight.w600, color: isLight(context) ? Colors.blueGrey[600] : Colors.white70),
                   ),
+                  8.height,
                   widget.post.description != null
                       ? SelectableText(
                           widget.post.description!,
@@ -128,100 +136,110 @@ class _MeetupCellState extends State<MeetupCell> {
                           onTap: () {},
                         )
                       : SizedBox(height: 8.0),
-                  CircularBorder(
-                    width: 2,
-                    size: 32,
-                    color: Colors.grey,
-                    //icon: Icon(Icons.access_alarm, color: Colors.grey),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: List.generate(meetup.maxPeople!, (index) {
+                        if (index <= meetup.meetupMember!.length - 1) {
+                          return CircleAvatar(
+                            radius: 17,
+                            backgroundColor: isLight(context) ? Colors.blueGrey : whiteColor,
+                            child: Avatar(
+                              radius: 16,
+                              user: meetup.meetupMember!.elementAt(index).owner,
+                            ),
+                          );
+                        }
+
+                        return DottedBorder(
+                          color: isLight(context) ? Colors.blueGrey : whiteColor,
+                          strokeWidth: 1.5,
+                          dashPattern: [3, 4],
+                          borderType: BorderType.Circle,
+                          strokeCap: StrokeCap.round,
+                          padding: EdgeInsets.zero,
+                          radius: Radius.circular(0),
+                          child: Container(
+                            width: 32.0,
+                            height: 32.0,
+                            decoration: BoxDecoration(
+                              color: isLight(context) ? Colors.grey[100] : Colors.white60,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: meetup.price.toString() + ' USD',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        TextSpan(
+                          text: ' /person',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2
+                              ?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.white70),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Feather.clock,
+                        size: 16.0,
+                        color: isLight(context)
+                            ? Colors.grey[700]
+                            : Colors.grey[300]!,
+                      ),
+                      8.width,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${DateFormat('EEE dd MMM').format(DateTime.parse(meetup.activityDate!))}, ${DateFormat('h:mm a').format(DateTime.parse(meetup.activityDate! + ' ' + meetup.activityStartTime!))} - ${DateFormat('h:mm a').format(DateTime.parse(meetup.activityDate! + ' ' + meetup.activityEndTime!))}',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                          Text(
+                            'One time activity',
+                            style: Theme.of(context).textTheme.caption?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.white70),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  8.height,
+                  Row(
+                    children: [
+                      Icon(
+                        Feather.map_pin,
+                        size: 16.0,
+                        color: isLight(context)
+                            ? Colors.grey[700]
+                            : Colors.grey[300]!,
+                      ),
+                      8.width,
+                      Text(
+                        meetup.activityLocation!.name,
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            //   child: Column(
-            //     children: [
-            //       Row(
-            //         children: [
-            //           KSIconButton(
-            //             icon: widget.post.reacted!
-            //                 ? Icons.favorite
-            //                 : FeatherIcons.heart,
-            //             iconColor:
-            //                 Theme.of(context).brightness == Brightness.light
-            //                     ? widget.post.reacted!
-            //                         ? Colors.green
-            //                         : Colors.blueGrey
-            //                     : widget.post.reacted!
-            //                         ? Colors.green
-            //                         : Colors.white,
-            //             onTap: () {
-            //               if (widget.post.reacted!) {
-            //                 widget.post.totalReaction -= 1;
-            //               } else {
-            //                 widget.post.totalReaction += 1;
-            //               }
-            //               setState(() {
-            //                 widget.post.reacted = !widget.post.reacted!;
-            //                 reactPost();
-            //               });
-            //             },
-            //           ),
-            //           4.width,
-            //           KSIconButton(
-            //             icon: FeatherIcons.messageSquare,
-            //             onTap: () {},
-            //           ),
-            //           4.width,
-            //           KSIconButton(
-            //             icon: FeatherIcons.share2,
-            //             onTap: () {},
-            //           ),
-            //           Spacer(),
-            //           buildTotalReaction(widget.post.totalReaction),
-            //           8.width,
-            //           buildTotalComment(widget.post.totalComment),
-            //         ],
-            //       ),
-            //       Padding(
-            //         padding: const EdgeInsets.symmetric(
-            //             horizontal: 8.0, vertical: 8.0),
-            //         child: Row(
-            //           crossAxisAlignment: CrossAxisAlignment.start,
-            //           children: [
-            //             Avatar(
-            //               radius: 12.0,
-            //               user: KS.shared.user,
-            //             ),
-            //             8.width,
-            //             Expanded(
-            //               child: InkWell(
-            //                 onTap: () {},
-            //                 child: Container(
-            //                   height: 32.0,
-            //                   padding:
-            //                       const EdgeInsets.symmetric(horizontal: 8.0),
-            //                   decoration: BoxDecoration(
-            //                     border: Border.all(color: Color(0XFFB0BEC5)),
-            //                     borderRadius: BorderRadius.circular(16.0),
-            //                   ),
-            //                   alignment: Alignment.centerLeft,
-            //                   child: Text(
-            //                     'Add a comment',
-            //                     style: TextStyle(
-            //                         color: isLight(context)
-            //                             ? Colors.blueGrey[300]
-            //                             : Colors.blueGrey[100]),
-            //                   ),
-            //                 ),
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ),

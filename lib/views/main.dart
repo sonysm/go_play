@@ -3,9 +3,12 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
+import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 
 class MainView extends StatefulWidget {
@@ -125,7 +128,10 @@ class _MainViewState extends State<MainView> {
                     padding: MaterialStateProperty.all(
                         EdgeInsets.symmetric(horizontal: 0.0)),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    dismissScreen(context);
+                    launchScreen(context, OrganizeListScreen.tag);
+                  },
                   child: Container(
                     height: 54.0,
                     child: Row(
@@ -133,7 +139,7 @@ class _MainViewState extends State<MainView> {
                         Padding(
                           padding: EdgeInsets.only(left: 16.0, right: 16.0),
                           child: Icon(
-                            Feather.info,
+                            Feather.activity,
                             color:
                                 Theme.of(context).brightness == Brightness.light
                                     ? Colors.blueGrey
@@ -141,13 +147,15 @@ class _MainViewState extends State<MainView> {
                           ),
                         ),
                         Text(
-                          'Create',
-                          style: Theme.of(context).textTheme.bodyText1,
+                          'Organize activity',
+                          style: Theme.of(context).textTheme.headline6,
                         )
                       ],
                     ),
                   ),
                 ),
+                Divider(indent: 16.0, endIndent: 16.0, height: 0),
+                100.height,
               ],
             ),
           ),

@@ -68,7 +68,10 @@ class _ActivityScreenState extends State<MeetupScreen> {
               (context, index) {
                 var meetup = meetupData.data.elementAt(index);
 
-                return MeetupCell(post: meetup);
+                return Padding(
+                  padding: EdgeInsets.only(top: (index == 0 ? 8.0 : 0)),
+                  child: MeetupCell(post: meetup),
+                );
               },
               childCount: meetupData.data.length,
             ),
@@ -77,22 +80,12 @@ class _ActivityScreenState extends State<MeetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // return Scaffold(
-    //   //backgroundColor: Theme.of(context).primaryColor,
-    //   body: CustomScrollView(
-    //     slivers: [
-    //       buildNavbar(),
-    //       emptyActivity(),
-    //     ],
-    //   ),
-    // );
-
     return BlocBuilder<MeetupCubit, MeetupData>(
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
             title: Text('Meetup'),
-            elevation: 0.0,
+            elevation: 0.5,
           ),
           body: EasyRefresh.custom(
             header: MaterialHeader(

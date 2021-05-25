@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
@@ -18,7 +19,10 @@ import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
+import 'package:kroma_sport/views/tabs/meetup/meetup_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
+import 'package:kroma_sport/views/tabs/meetup/organize_activity_screen.dart';
+import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 
 class RouteGenerator {
@@ -81,6 +85,20 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (_) => ActivityPreviewScreen(
             activityData: args as Map<String, dynamic>,
+          ),
+        );
+      case MeetupDetailScreen.tag:
+        return MaterialPageRoute(
+          builder: (_) => MeetupDetailScreen(
+            meetup: args as Post,
+          ),
+        );
+      case OrganizeListScreen.tag:
+        return MaterialPageRoute(builder: (_) => OrganizeListScreen());
+      case OragnizeActivityScreen.tag:
+        return MaterialPageRoute(
+          builder: (_) => OragnizeActivityScreen(
+            sport: args as Sport,
           ),
         );
       default:
