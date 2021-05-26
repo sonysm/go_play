@@ -40,7 +40,10 @@ class RouteGenerator {
           builder: (_) => VerifyCodeScreen(phoneNumber: args as String),
         );
       case MainView.tag:
-        return MaterialPageRoute(builder: (_) => MainView());
+        return MaterialPageRoute(
+          builder: (_) => MainView(),
+          settings: RouteSettings(name: MainView.tag),
+        );
       case HomeScreen.tag:
         return MaterialPageRoute(builder: (_) => HomeScreen());
       case MeetupScreen.tag:

@@ -1,8 +1,12 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
@@ -103,7 +107,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               double.parse(meetup.activityLocation!.latitude),
               double.parse(meetup.activityLocation!.longitude),
             ),
-            zoom: 14.0,
+            zoom: 15.0,
           ),
           onMapCreated: (controller) {
             _mapController = controller;
@@ -209,57 +213,75 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     );
   }
 
+  var isJoined;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(meetup.title),
         elevation: 0.5,
+        actions: [
+          CupertinoButton(
+            child: Icon(FeatherIcons.moreVertical,
+                color: isLight(context) ? Colors.grey[600] : whiteColor),
+            onPressed: () {},
+          )
+        ],
       ),
       body: Stack(
         children: [
-          CustomScrollView(
+          EasyRefresh.custom(
+            header: MaterialHeader(
+              valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+            ),
             slivers: [
               buildMainInfo(),
               buildMap(),
               buildMember(),
             ],
+            onRefresh: () async {
+              // BlocProvider.of<HomeCubit>(context).onRefresh();
+            },
           ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 64.0,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                boxShadow: [
-                  BoxShadow(
-                      offset: Offset(0, -1),
-                      blurRadius: 4.0,
-                      // spreadRadius: 2.0
-                      color: Colors.black.withOpacity(0.1)),
-                ],
-              ),
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  elevation: MaterialStateProperty.all(0),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  backgroundColor: MaterialStateProperty.all(mainColor),
-                ),
-                child: Text(
-                  'Join Game',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+          meetup.owner.id != KS.shared.user.id
+              ? Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 64.0,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      boxShadow: [
+                        BoxShadow(
+                            offset: Offset(0, -1),
+                            blurRadius: 4.0,
+                            // spreadRadius: 2.0
+                            color: Colors.black.withOpacity(0.1)),
+                      ],
+                    ),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        elevation: MaterialStateProperty.all(0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        backgroundColor: MaterialStateProperty.all(mainColor),
+                      ),
+                      child: Text(
+                        'Join Game',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-          ),
+                )
+              : SizedBox(),
         ],
       ),
     );
@@ -269,5 +291,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   void initState() {
     super.initState();
     meetup = widget.meetup;
+
+    // isJoined = meetup.meetupMember!.firstWhere((e) => e.owner.id == KS.shared.user.id, orElse: () => null);
   }
 }

@@ -96,13 +96,13 @@ class MeetupCubit extends Cubit<MeetupData> {
     }
   }
 
-  Future<void> onPostFeed(Post newPost) async {
+  Future<void> onAddMeetup(Post newPost) async {
     if (state.status == DataState.Loaded) {
       emit(state.copyWith(data: [newPost] + state.data));
     }
   }
 
-  Future<void> onDeletePostFeed(int postId) async {
+  Future<void> onDeleteMeetup(int postId) async {
     if (state.status == DataState.Loaded) {
       final updatedList =
           state.data.where((element) => element.id != postId).toList();

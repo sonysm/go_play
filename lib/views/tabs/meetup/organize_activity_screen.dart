@@ -1,15 +1,23 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/models/address.dart';
+import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/views/tabs/home/choose_location_screen.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
+import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class OragnizeActivityScreen extends StatefulWidget {
@@ -27,6 +35,10 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
   late GameType selectedGameType;
 
   Address? address;
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController descController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
 
   Widget buildTimeAndLocation() {
     return SliverToBoxAdapter(
@@ -53,7 +65,10 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
                     Icon(Feather.clock, size: 18.0),
                     16.width,
                     Text(
-                      'Add time',
+                      selectedDateString != null
+                          ? selectedDateString! +
+                              ', ${DateFormat('h:mm a').format(startTime)} - ${DateFormat('h:mm a').format(endTime)}'
+                          : 'Add time',
                       style: Theme.of(context)
                           .textTheme
                           .bodyText2
@@ -99,7 +114,10 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
   Widget builGameType(GameType gameType) {
     return InkWell(
       onTap: () {
-        setState(() => selectedGameType = gameType);
+        selectedGameType = gameType;
+        minPlayer = gameType.minPlayer;
+        maxPlayer = gameType.minPlayer;
+        setState(() {});
       },
       child: Container(
         width: 100.0,
@@ -183,6 +201,7 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
                             ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       TextField(
+                        controller: nameController,
                         style: Theme.of(context).textTheme.bodyText1,
                         decoration: InputDecoration(
                           hintText: 'Name of game(required)',
@@ -203,6 +222,7 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
                 16.width,
                 Expanded(
                   child: TextField(
+                    controller: descController,
                     style: Theme.of(context).textTheme.bodyText1,
                     decoration: InputDecoration(
                       hintText: '(Optional) Description',
@@ -275,28 +295,39 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Spacer(),
-                KSIconButton(
-                  icon: Feather.minus_circle,
-                  onTap: () {},
-                ),
+                minPlayer > 2
+                    ? KSIconButton(
+                        icon: Feather.minus_circle,
+                        onTap: () {
+                          minPlayer -= 1;
+                          setState(() {});
+                        },
+                      )
+                    : SizedBox(width: 36.0),
                 4.width,
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+                  width: 64.0,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6.0),
                     border: Border.all(color: Colors.blueGrey[600]!),
                   ),
                   child: Text(
-                    '11',
+                    minPlayer.toString(),
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ),
                 4.width,
-                KSIconButton(
-                  icon: Feather.plus_circle,
-                  onTap: () {},
-                ),
+                minPlayer < maxPlayer
+                    ? KSIconButton(
+                        icon: Feather.plus_circle,
+                        onTap: () {
+                          minPlayer += 1;
+                          setState(() {});
+                        },
+                      )
+                    : SizedBox(width: 36.0),
               ],
             ),
             Divider(height: 16),
@@ -307,28 +338,39 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Spacer(),
-                KSIconButton(
-                  icon: Feather.minus_circle,
-                  onTap: () {},
-                ),
+                maxPlayer > minPlayer
+                    ? KSIconButton(
+                        icon: Feather.minus_circle,
+                        onTap: () {
+                          maxPlayer -= 1;
+                          setState(() {});
+                        },
+                      )
+                    : SizedBox(width: 36.0),
                 4.width,
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+                  width: 64.0,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6.0),
                     border: Border.all(color: Colors.blueGrey[600]!),
                   ),
                   child: Text(
-                    '11',
+                    maxPlayer.toString(),
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ),
                 4.width,
-                KSIconButton(
-                  icon: Feather.plus_circle,
-                  onTap: () {},
-                ),
+                maxPlayer <= 60
+                    ? KSIconButton(
+                        icon: Feather.plus_circle,
+                        onTap: () {
+                          maxPlayer += 1;
+                          setState(() {});
+                        },
+                      )
+                    : SizedBox(width: 36.0),
               ],
             ),
             Divider(),
@@ -338,7 +380,9 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
                 16.width,
                 Expanded(
                   child: TextField(
+                    controller: priceController,
                     style: Theme.of(context).textTheme.bodyText1,
+                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       hintText: 'Price (Optional)',
                       border: InputBorder.none,
@@ -410,7 +454,13 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
               ),
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  // print('____min: $minPlayer');
+                  // print('____max: $maxPlayer');
+                  // print(
+                  //     '____price: ${double.parse(priceController.text.replaceAll(',', ''))}');
+                  createMeetup();
+                },
                 style: ButtonStyle(
                   elevation: MaterialStateProperty.all(0),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -437,21 +487,28 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
     super.initState();
     sport = widget.sport;
     selectedGameType = GameType.mapGameTypeToSport(sport.id).elementAt(0);
+    minPlayer = selectedGameType.minPlayer;
+    maxPlayer = selectedGameType.minPlayer;
   }
+
+  late int minPlayer;
+  late int maxPlayer;
 
   ExpandableController expandableController = ExpandableController();
   ExpandableController expandableTimeController = ExpandableController();
   DateTime selectedDate = DateTime.now();
-  String selectedDateString = 'Today';
+  String? selectedDateString;
 
   DateTime startTime = DateTime.now();
   DateTime endTime = DateTime.now().add(Duration(hours: 2));
 
   late int dourationInMinutes;
 
+  KSHttpClient ksClient = KSHttpClient();
+
   void chooseDatetime() {
     var sDate = selectedDate;
-    var sDateString = selectedDateString;
+    var sDateString = selectedDateString ?? 'Today';
     var sTime = startTime;
     var eTime = endTime;
 
@@ -471,6 +528,18 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
                 title: Text('Choose Datetime'),
                 elevation: 0,
                 backgroundColor: Colors.transparent,
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      dismissScreen(context, true);
+                    },
+                    child: Text(
+                      'Done',
+                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                          color: mainColor, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
               ),
               backgroundColor: Colors.transparent,
               body: SingleChildScrollView(
@@ -676,6 +745,14 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
       // if (expandableTimeController.value == true) {
       //   expandableTimeController.toggle();
       // }
+
+      if (value != null && value) {
+        selectedDate = sDate;
+        selectedDateString = sDateString;
+        startTime = sTime;
+        endTime = eTime;
+        setState(() {});
+      }
     });
   }
 
@@ -711,28 +788,84 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
 
     return (hour > 0 ? '$hour\h ' : '') + (min > 0 ? '$min\mn' : '');
   }
+
+  void createMeetup() async {
+    Map<String, String> fields = Map<String, String>();
+    if (selectedDateString == null) {
+      showKSMessageDialog(context, 'Please set match time!', () {});
+      return;
+    }
+    if (address == null) {
+      showKSMessageDialog(context, 'Please set match location!', () {});
+      return;
+    }
+    if (nameController.text.trim().length < 4) {
+      showKSMessageDialog(context, 'Plese set match name properly!', () {});
+      return;
+    }
+
+    if (descController.text.trim().isNotEmpty) {
+      fields['description'] = descController.text;
+    }
+
+    if (priceController.text.trim().isNotEmpty) {
+      fields['price'] =
+          double.parse(priceController.text.replaceAll(',', '')).toString();
+    } else {
+      fields['price'] = '0';
+    }
+
+    fields['name'] = nameController.text;
+    fields['date'] = DateFormat('yyyy-MM-dd').format(selectedDate);
+    fields['from_time'] = DateFormat('hh:mm:ss').format(startTime);
+    fields['to_time'] = DateFormat('hh:mm:ss').format(endTime);
+    fields['sport'] = sport.id.toString();
+    fields['location_name'] = address!.name;
+    fields['latitude'] = address!.latitude;
+    fields['longitude'] = address!.longitude;
+    fields['min_people'] = minPlayer.toString();
+    fields['max_people'] = maxPlayer.toString();
+
+    showKSLoading(context);
+    var data = await ksClient.postApi('/create/meetup', body: fields);
+    if (data != null) {
+      dismissScreen(context);
+      if (data is! HttpResult) {
+        dismissScreen(context);
+        var newMeetup = Post.fromJson(data);
+        BlocProvider.of<MeetupCubit>(context).onAddMeetup(newMeetup);
+        Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
+      } else {
+        showKSMessageDialog(
+            context, 'Something went wrong! Please try again!', () {});
+      }
+    }
+  }
 }
 
 class GameType {
   int id;
   String title;
   String desc;
+  int minPlayer;
 
   GameType({
     required this.id,
     required this.title,
     required this.desc,
+    required this.minPlayer,
   });
 
   static List<GameType> football = <GameType>[
-    GameType(title: 'Futsal', desc: '8++ players', id: 1),
-    GameType(title: '11 Aside', desc: '22++ players', id: 2),
+    GameType(title: 'Futsal', desc: '8++ players', id: 1, minPlayer: 8),
+    GameType(title: '11 Aside', desc: '22++ players', id: 2, minPlayer: 11),
   ];
 
   static List<GameType> volleyball = <GameType>[
-    GameType(title: 'Pratice', desc: '2++ players', id: 1),
-    GameType(title: '3 Aside', desc: '6++ players', id: 2),
-    GameType(title: '6 Aside', desc: '12++ players', id: 3),
+    GameType(title: 'Pratice', desc: '2++ players', id: 1, minPlayer: 2),
+    GameType(title: '3 Aside', desc: '6++ players', id: 2, minPlayer: 6),
+    GameType(title: '4 Aside', desc: '8++ players', id: 3, minPlayer: 8),
+    GameType(title: '6 Aside', desc: '12++ players', id: 4, minPlayer: 12),
   ];
 
   static List<GameType> mapGameTypeToSport(int sportId) {

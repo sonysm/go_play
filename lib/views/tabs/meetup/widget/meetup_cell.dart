@@ -38,13 +38,13 @@ class _MeetupCellState extends State<MeetupCell> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        borderRadius: BorderRadius.circular(8.0)
-      ),
+          color: Theme.of(context).primaryColor,
+          borderRadius: BorderRadius.circular(8.0)),
       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
       margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
       child: InkWell(
-        onTap: () => launchScreen(context, MeetupDetailScreen.tag, arguments: widget.post),
+        onTap: () => launchScreen(context, MeetupDetailScreen.tag,
+            arguments: widget.post),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -123,10 +123,11 @@ class _MeetupCellState extends State<MeetupCell> {
                 children: [
                   Text(
                     meetup.sport!.name + ' Meetup',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText2!
-                        .copyWith(fontWeight: FontWeight.w600, color: isLight(context) ? Colors.blueGrey[600] : Colors.white70),
+                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: isLight(context)
+                            ? Colors.blueGrey[600]
+                            : Colors.white70),
                   ),
                   8.height,
                   widget.post.description != null
@@ -145,7 +146,8 @@ class _MeetupCellState extends State<MeetupCell> {
                         if (index <= meetup.meetupMember!.length - 1) {
                           return CircleAvatar(
                             radius: 17,
-                            backgroundColor: isLight(context) ? Colors.blueGrey : whiteColor,
+                            backgroundColor:
+                                isLight(context) ? Colors.blueGrey : whiteColor,
                             child: Avatar(
                               radius: 16,
                               user: meetup.meetupMember!.elementAt(index).owner,
@@ -154,7 +156,8 @@ class _MeetupCellState extends State<MeetupCell> {
                         }
 
                         return DottedBorder(
-                          color: isLight(context) ? Colors.blueGrey : whiteColor,
+                          color:
+                              isLight(context) ? Colors.blueGrey : whiteColor,
                           strokeWidth: 1.5,
                           dashPattern: [3, 4],
                           borderType: BorderType.Circle,
@@ -165,7 +168,9 @@ class _MeetupCellState extends State<MeetupCell> {
                             width: 32.0,
                             height: 32.0,
                             decoration: BoxDecoration(
-                              color: isLight(context) ? Colors.grey[100] : Colors.white60,
+                              color: isLight(context)
+                                  ? Colors.grey[100]
+                                  : Colors.white60,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -173,26 +178,31 @@ class _MeetupCellState extends State<MeetupCell> {
                       }),
                     ),
                   ),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: meetup.price.toString() + ' USD',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              ?.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                        TextSpan(
-                          text: ' /person',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              ?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.white70),
-                        ),
-                      ],
-                    ),
-                  ),
+                  meetup.price! > 0
+                      ? RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: meetup.price.toString() + ' USD',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2
+                                    ?.copyWith(fontWeight: FontWeight.w600),
+                              ),
+                              TextSpan(
+                                text: ' /person',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2
+                                    ?.copyWith(
+                                        color: isLight(context)
+                                            ? Colors.blueGrey
+                                            : Colors.white70),
+                              ),
+                            ],
+                          ),
+                        )
+                      : SizedBox(),
                   Divider(),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,7 +224,13 @@ class _MeetupCellState extends State<MeetupCell> {
                           ),
                           Text(
                             'One time activity',
-                            style: Theme.of(context).textTheme.caption?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.white70),
+                            style: Theme.of(context)
+                                .textTheme
+                                .caption
+                                ?.copyWith(
+                                    color: isLight(context)
+                                        ? Colors.blueGrey
+                                        : Colors.white70),
                           ),
                         ],
                       ),

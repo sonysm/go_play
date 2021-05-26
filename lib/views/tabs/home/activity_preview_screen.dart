@@ -1,17 +1,21 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:http/http.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/ks.dart';
+import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
@@ -36,9 +40,9 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('date : ${widget.activityData['date']}');
-    print('start time : ${widget.activityData['startTime']}');
-    print('end time : ${widget.activityData['endTime']}');
+    // print('date : ${widget.activityData['date']}');
+    // print('start time : ${widget.activityData['startTime']}');
+    // print('end time : ${widget.activityData['endTime']}');
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -251,6 +255,7 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
   }
 
   void createActivity() async {
+    FocusScope.of(context).unfocus();
     Map<String, String> fields = Map<String, String>();
     var image;
 
@@ -296,6 +301,9 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
       dismissScreen(context);
       if (data is! HttpResult) {
         dismissScreen(context);
+        var newActivity = Post.fromJson(data);
+        BlocProvider.of<HomeCubit>(context).onPostFeed(newActivity);
+        Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
       } else {
         showKSMessageDialog(
             context,
