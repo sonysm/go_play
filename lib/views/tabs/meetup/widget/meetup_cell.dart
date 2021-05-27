@@ -20,6 +20,8 @@ class MeetupCell extends StatefulWidget {
 }
 
 class _MeetupCellState extends State<MeetupCell> {
+  late Post meetup;
+
   Widget buildTotalReaction(int total) {
     return total > 0
         ? Text(total > 1 ? '$total likes' : '$total like')
@@ -34,8 +36,6 @@ class _MeetupCellState extends State<MeetupCell> {
 
   @override
   Widget build(BuildContext context) {
-    final meetup = widget.post;
-
     return Container(
       decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
@@ -43,8 +43,14 @@ class _MeetupCellState extends State<MeetupCell> {
       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
       margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
       child: InkWell(
-        onTap: () => launchScreen(context, MeetupDetailScreen.tag,
-            arguments: widget.post),
+        onTap: () async {
+          var data = await launchScreen(context, MeetupDetailScreen.tag,
+              arguments: widget.post);
+          if (data != null) {
+            meetup = data as Post;
+            setState(() {});
+          }
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -150,7 +156,7 @@ class _MeetupCellState extends State<MeetupCell> {
                                 isLight(context) ? Colors.blueGrey : whiteColor,
                             child: Avatar(
                               radius: 16,
-                              user: meetup.meetupMember!.elementAt(index).owner,
+                              user: meetup.meetupMember!.elementAt(index).user,
                             ),
                           );
                         }
@@ -262,13 +268,9 @@ class _MeetupCellState extends State<MeetupCell> {
     );
   }
 
-  void reactPost() async {
-    // var result =
-    //     await ksClient.postApi('/create/post/reaction/${widget.post.id}');
-    // if (result != null) {
-    //   if (result is! HttpResult) {
-    //     print('success!!!!');
-    //   }
-    // }
+  @override
+  void initState() {
+    super.initState();
+    meetup = widget.post;
   }
 }

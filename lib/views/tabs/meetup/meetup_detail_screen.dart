@@ -6,6 +6,8 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
@@ -13,6 +15,8 @@ import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
+import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
+import 'package:kroma_sport/widgets/ks_loading.dart';
 
 class MeetupDetailScreen extends StatefulWidget {
   static const tag = '/meetUpDetailScreen';
@@ -29,6 +33,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   late Post meetup;
 
   late GoogleMapController _mapController;
+  KSHttpClient ksClient = KSHttpClient();
 
   Widget buildMainInfo() {
     return SliverToBoxAdapter(
@@ -113,6 +118,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             _mapController = controller;
           },
           zoomGesturesEnabled: false,
+          scrollGesturesEnabled: false,
           markers: <Marker>{
             Marker(
                 markerId: MarkerId('venue'),
@@ -150,30 +156,35 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 padding: const EdgeInsets.only(left: 16.0, top: 16.0),
                 itemBuilder: (context, index) {
                   if (index <= meetup.meetupMember!.length - 1) {
-                    return Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 33,
-                          backgroundColor:
-                              isLight(context) ? Colors.blueGrey : whiteColor,
-                          child: Avatar(
-                            radius: 32,
-                            user: meetup.meetupMember!.elementAt(index).owner,
+                    return SizedBox(
+                      // width: 80,
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 33,
+                            backgroundColor:
+                                isLight(context) ? Colors.blueGrey : whiteColor,
+                            child: Avatar(
+                              radius: 32,
+                              user: meetup.meetupMember!.elementAt(index).user,
+                            ),
                           ),
-                        ),
-                        4.height,
-                        Text(
-                          meetup.owner.firstName,
-                          textAlign: TextAlign.center,
-                        ),
-                        meetup.meetupMember!.elementAt(index).owner.id ==
-                                meetup.owner.id
-                            ? Text(
-                                '(Host)',
-                                textAlign: TextAlign.center,
-                              )
-                            : SizedBox(),
-                      ],
+                          4.height,
+                          Text(
+                            meetup.meetupMember!.elementAt(index).user.firstName,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                          ),
+                          meetup.meetupMember!.elementAt(index).user.id ==
+                                  meetup.owner.id
+                              ? Text(
+                                  '(Host)',
+                                  textAlign: TextAlign.center,
+                                )
+                              : SizedBox(),
+                        ],
+                      ),
                     );
                   }
 
@@ -213,76 +224,84 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     );
   }
 
-  var isJoined;
+  late bool isJoined;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(meetup.title),
-        elevation: 0.5,
-        actions: [
-          CupertinoButton(
-            child: Icon(FeatherIcons.moreVertical,
-                color: isLight(context) ? Colors.grey[600] : whiteColor),
-            onPressed: () {},
-          )
-        ],
-      ),
-      body: Stack(
-        children: [
-          EasyRefresh.custom(
-            header: MaterialHeader(
-              valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+    return WillPopScope(
+      onWillPop: () async {
+        dismissScreen(context, widget.meetup);
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(meetup.title),
+          elevation: 0.5,
+          actions: [
+            CupertinoButton(
+              child: Icon(FeatherIcons.moreVertical,
+                  color: isLight(context) ? Colors.grey[600] : whiteColor),
+              onPressed: () {},
+            )
+          ],
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+        body: Stack(
+          children: [
+            EasyRefresh.custom(
+              header: MaterialHeader(
+                valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+              ),
+              slivers: [
+                buildMainInfo(),
+                buildMap(),
+                buildMember(),
+              ],
+              onRefresh: () async {
+                fetchMeetup();
+              },
             ),
-            slivers: [
-              buildMainInfo(),
-              buildMap(),
-              buildMember(),
-            ],
-            onRefresh: () async {
-              // BlocProvider.of<HomeCubit>(context).onRefresh();
-            },
-          ),
-          meetup.owner.id != KS.shared.user.id
-              ? Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 64.0,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      boxShadow: [
-                        BoxShadow(
-                            offset: Offset(0, -1),
-                            blurRadius: 4.0,
-                            // spreadRadius: 2.0
-                            color: Colors.black.withOpacity(0.1)),
-                      ],
-                    ),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        elevation: MaterialStateProperty.all(0),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: MaterialStateProperty.all(mainColor),
+            meetup.owner.id != KS.shared.user.id
+                ? Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 64.0,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        boxShadow: [
+                          BoxShadow(
+                              offset: Offset(0, -1),
+                              blurRadius: 4.0,
+                              // spreadRadius: 2.0
+                              color: Colors.black.withOpacity(0.1)),
+                        ],
                       ),
-                      child: Text(
-                        'Join Game',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: ElevatedButton(
+                        onPressed: isJoined ? leaveGame : joinGame,
+                        style: ButtonStyle(
+                          elevation: MaterialStateProperty.all(0),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          backgroundColor: MaterialStateProperty.all(
+                              isJoined ? Colors.grey[200] : mainColor),
+                        ),
+                        child: Text(
+                          isJoined ? 'Leave Game' : 'Join Game',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: isJoined ? Colors.red : Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )
-              : SizedBox(),
-        ],
+                  )
+                : SizedBox(),
+          ],
+        ),
       ),
     );
   }
@@ -292,6 +311,63 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     super.initState();
     meetup = widget.meetup;
 
-    // isJoined = meetup.meetupMember!.firstWhere((e) => e.owner.id == KS.shared.user.id, orElse: () => null);
+    isJoined = meetup.meetupMember!.any((e) => e.user.id == KS.shared.user.id);
+  }
+
+  void fetchMeetup() {
+    ksClient.getApi('/view/meetup/post/${meetup.id}').then((value) {
+      if (value != null) {
+        if (value is! HttpResult) {
+          meetup = Post.fromJson(value['post']);
+          widget.meetup.meetupMember = meetup.meetupMember;
+          isJoined = meetup.meetupMember!.any((e) => e.user.id == KS.shared.user.id);
+          setState(() {});
+        }
+      }
+    });
+  }
+
+  void joinGame() {
+    showKSConfirmDialog(context, 'Are you sure you want to join the game?',
+        () async {
+      showKSLoading(context);
+      var result = await ksClient.postApi('/join/post/meetup/${meetup.id}');
+      if (result != null) {
+        if (result is! HttpResult) {
+          var res = await ksClient.getApi('/view/meetup/post/${meetup.id}');
+          if (res != null) {
+            dismissScreen(context);
+            if (res is! HttpResult) {
+              meetup = Post.fromJson(res['post']);
+              widget.meetup.meetupMember = meetup.meetupMember;
+              isJoined = true;
+              setState(() {});
+            }
+          }
+        }
+      }
+    });
+  }
+
+  void leaveGame() {
+    showKSConfirmDialog(context, 'Are you sure you want to leave the game?',
+        () async {
+      showKSLoading(context);
+      var result = await ksClient.postApi('/leave/post/meetup/${meetup.id}');
+      if (result != null) {
+        if (result is! HttpResult) {
+          var res = await ksClient.getApi('/view/meetup/post/${meetup.id}');
+          if (res != null) {
+            dismissScreen(context);
+            if (res is! HttpResult) {
+              meetup = Post.fromJson(res['post']);
+              widget.meetup.meetupMember = meetup.meetupMember;
+              isJoined = false;
+              setState(() {});
+            }
+          }
+        }
+      }
+    });
   }
 }
