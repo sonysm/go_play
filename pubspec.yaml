@@ -57,6 +57,7 @@ dependencies:
   geocoding: ^2.0.0
   location: ^4.1.1
   dotted_border: ^2.0.0
+  flutter_svg: ^0.22.0
   
   # Firebase
   firebase_auth: ^1.1.2

@@ -109,4 +109,8 @@ class HomeCubit extends Cubit<HomeData> {
       emit(state.copyWith(data: updatedList));
     }
   }
+
+  onReset() {
+    emit(HomeData(data: []));
+  }
 }

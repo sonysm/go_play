@@ -25,7 +25,7 @@ class _SportsScreenState extends State<SportsScreen> {
 
   Widget buildNavbar() {
     return SliverAppBar(
-      title: Text('Sport'),
+      title: Text('What sport do you play?'),
     );
   }
 
@@ -76,16 +76,16 @@ class _SportsScreenState extends State<SportsScreen> {
                             )
                           : SizedBox(),
                       onTap: () async {
-                        var value = await launchScreen(
-                          context,
-                          SportDetailScreen.tag,
-                          arguments: sport,
-                        );
-                        if (value != null && value) {
-                          sportList.elementAt(index).fav = false;
-                          isChanged = true;
-                          setState(() {});
-                        }
+                        // var value = await launchScreen(
+                        //   context,
+                        //   SportDetailScreen.tag,
+                        //   arguments: sport,
+                        // );
+                        // if (value != null && value) {
+                        //   sportList.elementAt(index).fav = false;
+                        //   isChanged = true;
+                        //   setState(() {});
+                        // }
                       },
                     ),
                   );

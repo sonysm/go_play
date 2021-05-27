@@ -109,4 +109,8 @@ class MeetupCubit extends Cubit<MeetupData> {
       emit(state.copyWith(data: updatedList));
     }
   }
+
+  onReset() {
+    emit(MeetupData(data: []));
+  }
 }

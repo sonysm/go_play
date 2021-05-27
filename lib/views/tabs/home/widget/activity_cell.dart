@@ -47,8 +47,6 @@ class _ActivityCellState extends State<ActivityCell> {
 
     int dur = e.difference(s).inMinutes;
 
-    // print('___dur = $dur');
-
     return '$dur\mn';
   }
 

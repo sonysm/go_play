@@ -261,7 +261,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 fetchMeetup();
               },
             ),
-            meetup.owner.id != KS.shared.user.id
+            meetup.owner.id != KS.shared.user.id && meetup.meetupMember!.length < meetup.maxPeople!
                 ? Positioned(
                     bottom: 0,
                     left: 0,

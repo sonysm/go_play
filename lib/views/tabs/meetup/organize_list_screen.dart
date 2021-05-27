@@ -45,9 +45,7 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
                     margin: const EdgeInsets.only(
                         left: 16.0, top: 10.0, right: 16.0),
                     decoration: BoxDecoration(
-                      color: !sport.fav!
-                          ? Theme.of(context).primaryColor
-                          : Colors.green[100],
+                      color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                     child: ListTile(

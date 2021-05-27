@@ -6,6 +6,7 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
@@ -73,6 +74,10 @@ class _SportDetailScreenState extends State<SportDetailScreen> {
   void showOptionActionBottomSheet() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).primaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
       builder: (context) {
         return SafeArea(
           maintainBottomViewPadding: true,
@@ -116,6 +121,7 @@ class _SportDetailScreenState extends State<SportDetailScreen> {
                     ),
                   ),
                 ),
+                30.height,
               ],
             ),
           ),

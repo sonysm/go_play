@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
@@ -130,33 +129,112 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     ),
                   )
                 : SizedBox(height: 8.0),
-            widget.post.photo != null && imageSize != null
-                ? SizedBox(
-                    height: (MediaQuery.of(context).size.width *
-                            imageSize!.height) /
-                        imageSize!.width,
-                    child: PageView(
-                      controller: pageController,
-                      children: List.generate(
-                        widget.post.image!.length,
-                        (index) {
-                          return InkWell(
-                            onTap: () {
-                              launchScreen(context, ViewPhotoScreen.tag,
-                                  arguments: {
-                                    'post': widget.post,
-                                    'index': index
-                                  });
-                            },
-                            child: CachedNetworkImage(
-                                imageUrl:
-                                    widget.post.image!.elementAt(index).name),
-                          );
-                        },
+            if (widget.post.type == PostType.feed) ...[
+              widget.post.photo != null && imageSize != null
+                  ? SizedBox(
+                      height: (MediaQuery.of(context).size.width *
+                              imageSize!.height) /
+                          imageSize!.width,
+                      child: PageView(
+                        controller: pageController,
+                        children: List.generate(
+                          widget.post.image!.length,
+                          (index) {
+                            return InkWell(
+                              onTap: () {
+                                launchScreen(context, ViewPhotoScreen.tag,
+                                    arguments: {
+                                      'post': widget.post,
+                                      'index': index
+                                    });
+                              },
+                              child: CachedNetworkImage(
+                                  imageUrl:
+                                      widget.post.image!.elementAt(index).name),
+                            );
+                          },
+                        ),
                       ),
+                    )
+                  : SizedBox(),
+            ] else ...[
+              Stack(
+                children: [
+                  widget.post.photo != null
+                      ? SizedBox(
+                          width: AppSize(context).appWidth(100),
+                          height: AppSize(context).appWidth(100),
+                          child: CacheImage(url: widget.post.photo!),
+                        )
+                      : SizedBox(
+                          width: AppSize(context).appWidth(100),
+                          height: AppSize(context).appWidth(100),
+                          child: CacheImage(
+                              url: widget.post.sport!.id == 1
+                                  ? 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1353&q=80'
+                                  : 'https://images.unsplash.com/photo-1592656094267-764a45160876?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
+                        ),
+                  Positioned(
+                    left: 16.0,
+                    right: 16.0,
+                    top: 16.0,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.post.sport!.name.toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: whiteColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              widget.post.title,
+                              style: TextStyle(
+                                fontSize: 22.0,
+                                color: whiteColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        Text(
+                          'Sport',
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            color: whiteColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    left: 16.0,
+                    bottom: 16.0,
+                    child: Row(
+                      children: [
+                        Icon(Feather.clock, color: whiteColor),
+                        4.width,
+                        Text(
+                          calcMinuteDuration(),
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            color: whiteColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   )
-                : SizedBox(),
+                ],
+              )
+            ],
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Stack(
@@ -265,10 +343,10 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     isDense: true,
                     border: InputBorder.none,
                     hintText: 'Add a comment',
-                    hintStyle: Theme.of(context)
-                        .textTheme
-                        .bodyText2
-                        ?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.blueGrey[100])),
+                    hintStyle: Theme.of(context).textTheme.bodyText2?.copyWith(
+                        color: isLight(context)
+                            ? Colors.blueGrey
+                            : Colors.blueGrey[100])),
                 onChanged: (value) {
                   setState(() {});
                 },
@@ -666,4 +744,23 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
           );
         },
       );
+
+  String calcMinuteDuration() {
+    var s = DateTime.parse(
+        widget.post.activityDate! + ' ' + widget.post.activityStartTime!);
+    var e = DateTime.parse(
+        widget.post.activityDate! + ' ' + widget.post.activityEndTime!);
+
+    if (e.difference(s).inMinutes == 0) {
+      int dur = 24 * 60;
+      return '$dur\mn';
+    } else if (e.difference(s).isNegative) {
+      int dur = (e.add(Duration(days: 1))).difference(s).inMinutes;
+      return '$dur\mn';
+    }
+
+    int dur = e.difference(s).inMinutes;
+
+    return '$dur\mn';
+  }
 }

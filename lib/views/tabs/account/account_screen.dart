@@ -12,6 +12,7 @@ import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
+import 'package:kroma_sport/views/tabs/account/widget/sport_card.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 
@@ -194,6 +195,84 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
+  Widget buildFavSport() {
+    return SliverToBoxAdapter(
+      child: Container(
+        height: 220.0,
+        color: Theme.of(context).primaryColor,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+          itemBuilder: (context, index) {
+            if (index < favSportList.length) {
+              final favSport = favSportList.elementAt(index);
+              return SportCard(
+                favSport: favSport,
+                onCardTap: () async {
+                  var value = await launchScreen(
+                    context,
+                    FavoriteSportDetailScreen.tag,
+                    arguments: favSport.sport,
+                  );
+                  if (value != null && value) {
+                    getFavoriteSport();
+                  }
+                },
+              );
+            }
+            return InkWell(
+              onTap: () async {
+                var value = await launchScreen(context, SportsScreen.tag);
+                if (value != null && value) {
+                  getFavoriteSport();
+                }
+              },
+              child: Container(
+                width: 320.0,
+                margin: const EdgeInsets.only(top: 24.0, bottom: 16.0),
+                padding: const EdgeInsets.all(16.0),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  gradient: LinearGradient(
+                    colors: [
+                      mainColor,
+                      mainColor,
+                      mainColor,
+                      Colors.green[400]!,
+                      Colors.lightGreen[400]!,
+                      Colors.lightGreen[300]!,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Feather.plus, color: whiteColor),
+                    8.width,
+                    Text(
+                      'Add Sport',
+                      style: TextStyle(
+                          fontSize: 18.0,
+                          color: whiteColor,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          separatorBuilder: (context, index) {
+            return 16.width;
+          },
+          itemCount: favSportList.length + 1,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,7 +280,8 @@ class _AccountScreenState extends State<AccountScreen> {
         slivers: [
           buildNavbar(),
           buildProfileHeader(),
-          buildFavoriteSport(),
+          // buildFavoriteSport(),
+          buildFavSport(),
         ],
       ),
     );

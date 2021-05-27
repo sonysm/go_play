@@ -6,6 +6,7 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
@@ -73,10 +74,10 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
   void showOptionActionBottomSheet() {
     showModalBottomSheet(
       context: context,
-      //backgroundColor: Colors.transparent,
-      //shape: RoundedRectangleBorder(
-      //  borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-      //),
+      backgroundColor: Theme.of(context).primaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
       builder: (context) {
         return SafeArea(
           maintainBottomViewPadding: true,
@@ -112,14 +113,16 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                         Text(
                           'Remove from favorite sport',
                           style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
-                        )
+                            fontSize: 16.0,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
+                30.height
               ],
             ),
           ),
