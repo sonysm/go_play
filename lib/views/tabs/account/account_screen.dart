@@ -1,10 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/data_state.dart';
+import 'package:kroma_sport/bloc/home.dart';
+import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/ks.dart';
+import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -13,6 +18,9 @@ import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
 import 'package:kroma_sport/views/tabs/account/widget/sport_card.dart';
+import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
+import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
+import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 
@@ -25,12 +33,17 @@ class AccountScreen extends StatefulWidget {
   _AccountScreenState createState() => _AccountScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen> {
+class _AccountScreenState extends State<AccountScreen>
+    with SingleTickerProviderStateMixin {
   KSHttpClient ksClient = KSHttpClient();
   List<FavoriteSport> favSportList = [];
 
+  late TabController tabController;
+  int _currentIndex = 0;
+
   Widget buildNavbar() {
     return SliverAppBar(
+      pinned: true,
       title: Text('Account'),
       actions: [
         CupertinoButton(
@@ -198,7 +211,7 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget buildFavSport() {
     return SliverToBoxAdapter(
       child: Container(
-        height: 220.0,
+        height: 240.0,
         color: Theme.of(context).primaryColor,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
@@ -273,6 +286,111 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
+  Widget buildFeedTabbar() {
+    return SliverPadding(
+      padding: const EdgeInsets.only(top: 8.0),
+      sliver: SliverToBoxAdapter(
+        child: Column(
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              decoration: BoxDecoration(
+                color: whiteColor,
+                border: Border(
+                    bottom:
+                        BorderSide(width: 0.5, color: Colors.blueGrey[50]!)),
+              ),
+              child: TabBar(
+                controller: tabController,
+
+                // labelColor: blackColor,
+                // physics: NeverScrollableScrollPhysics(),
+                labelStyle: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
+                indicatorColor: mainColor,
+                isScrollable: true,
+                onTap: (index) => setState(() => _currentIndex = index),
+                tabs: [
+                  Tab(text: 'Post'),
+                  Tab(text: 'Meetup'),
+                ],
+              ),
+            ),
+            _currentIndex == 0 ? buildPostFeedList() : buildMeetupList()
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildMeetupList() {
+    return BlocBuilder<MeetupCubit, MeetupData>(
+      builder: (context, data) {
+        return data.status == DataState.Loading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : data.ownerMeetup.isNotEmpty
+                ? ListView.separated(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      var meetup = data.ownerMeetup.elementAt(index);
+
+                      return Padding(
+                        padding: EdgeInsets.only(top: (index == 0 ? 8.0 : 0)),
+                        child: MeetupCell(post: meetup),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return 8.height;
+                    },
+                    itemCount: data.ownerMeetup.length,
+                  )
+                : SizedBox();
+      },
+    );
+  }
+
+  Widget buildPostFeedList() {
+    return BlocBuilder<HomeCubit, HomeData>(
+      builder: (context, data) {
+        return data.status == DataState.Loading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : data.ownerPost.isNotEmpty
+                ? ListView.separated(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      var post = data.ownerPost.elementAt(index);
+                      if (post.type == PostType.feed) {
+                        return Padding(
+                          padding: EdgeInsets.only(top: (index == 0 ? 8.0 : 0)),
+                          child: HomeFeedCell(
+                            post: post,
+                          ),
+                        );
+                      } else if (post.type == PostType.activity) {
+                        return Padding(
+                          padding: EdgeInsets.only(top: (index == 0 ? 8.0 : 0)),
+                          child: ActivityCell(post: post),
+                        );
+                      }
+                      return SizedBox();
+                    },
+                    separatorBuilder: (context, index) {
+                      return 8.height;
+                    },
+                    itemCount: data.ownerPost.length)
+                : SizedBox();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -282,6 +400,7 @@ class _AccountScreenState extends State<AccountScreen> {
           buildProfileHeader(),
           // buildFavoriteSport(),
           buildFavSport(),
+          buildFeedTabbar(),
         ],
       ),
     );
@@ -296,6 +415,7 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   void initState() {
     super.initState();
+    tabController = TabController(length: 2, vsync: this);
     getFavoriteSport();
   }
 

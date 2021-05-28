@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 
 class HomeData extends Equatable {
@@ -10,12 +11,14 @@ class HomeData extends Equatable {
   final int page;
   final String? search;
   final DataState status;
+  final List<Post> ownerPost;
 
   HomeData({
     required this.data,
     this.status = DataState.None,
     this.page = 1,
     this.search,
+    required this.ownerPost,
   });
 
   HomeData copyWith({
@@ -23,12 +26,14 @@ class HomeData extends Equatable {
     int? page,
     List<Post>? data,
     String? search,
+    List<Post>? ownerPost,
   }) {
     return HomeData(
         status: status ?? this.status,
         page: page ?? this.page,
         data: data ?? this.data,
-        search: search ?? this.search);
+        search: search ?? this.search,
+        ownerPost: ownerPost ?? this.ownerPost);
   }
 
   @override
@@ -36,7 +41,7 @@ class HomeData extends Equatable {
 }
 
 class HomeCubit extends Cubit<HomeData> {
-  HomeCubit() : super(HomeData(data: []));
+  HomeCubit() : super(HomeData(data: [], ownerPost: []));
 
   final KSHttpClient _client = KSHttpClient();
 
@@ -47,12 +52,35 @@ class HomeCubit extends Cubit<HomeData> {
     if (data != null) {
       if (data is! HttpResult) {
         List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
-        await Future.delayed(Duration(milliseconds: 500));
-        emit(state.copyWith(status: DataState.Loaded, data: posts));
+        // await Future.delayed(Duration(milliseconds: 500));
+
+        List<Post> ownerPosts = [];
+        await _client.getApi('/user/feed/by/${KS.shared.user.id}').then((data) {
+          if (data != null) {
+            if (data is! HttpResult) {
+              ownerPosts = (data as List).map((e) => Post.fromJson(e)).toList();
+              // emit(state.copyWith(
+              //     status: DataState.Loaded, ownerPost: ownerPosts));
+            }
+          }
+        });
+
+        emit(state.copyWith(
+            status: DataState.Loaded, data: posts, ownerPost: ownerPosts));
       } else {
         print("error");
       }
     }
+
+    // _client.getApi('/user/feed/by/${KS.shared.user.id}').then((data) {
+    //   if (data != null) {
+    //     if (data is! HttpResult) {
+    //       List<Post> ownerPosts =
+    //           (data as List).map((e) => Post.fromJson(e)).toList();
+    //       emit(state.copyWith(status: DataState.Loaded, ownerPost: ownerPosts));
+    //     }
+    //   }
+    // });
   }
 
   Future<void> onRefresh() async {
@@ -111,6 +139,6 @@ class HomeCubit extends Cubit<HomeData> {
   }
 
   onReset() {
-    emit(HomeData(data: []));
+    emit(HomeData(data: [], ownerPost: []));
   }
 }

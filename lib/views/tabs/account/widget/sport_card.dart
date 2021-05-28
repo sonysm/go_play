@@ -60,23 +60,71 @@ class SportCard extends StatelessWidget {
                   ),
                 ),
                 16.height,
-                Container(
-                  width: 44.0,
-                  height: 44.0,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.teal[200],
-                    borderRadius: BorderRadius.circular(19.0),
-                  ),
-                  child: Text(
-                    '0',
-                    style: TextStyle(
-                      color: whiteColor,
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w600,
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        Container(
+                          width: 44.0,
+                          height: 44.0,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.teal[200],
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Text(
+                            '0',
+                            style: TextStyle(
+                              color: whiteColor,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        4.height,
+                        Text(
+                          'Games',
+                          style: TextStyle(
+                            color: whiteColor,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                )
+                    16.width,
+                    Column(
+                      children: [
+                        Container(
+                          width: 44.0,
+                          height: 44.0,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.yellow[800],
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Text(
+                            '0',
+                            style: TextStyle(
+                              color: whiteColor,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        4.height,
+                        Text(
+                          'Scores',
+                          style: TextStyle(
+                            color: whiteColor,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ],
             ),
             Positioned(

@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kroma_sport/bloc/home.dart';
-import 'package:kroma_sport/bloc/meetup.dart';
-import 'package:kroma_sport/bloc/splash.dart';
 import 'package:kroma_sport/bloc/theme.dart';
 import 'package:kroma_sport/repositories/user_repository.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
@@ -58,18 +55,11 @@ class _SettingScreenState extends State<SettingScreen> {
                   showKSLoading(context);
                   userRepository.deleteToken();
                   userRepository.deleteHeaderToken();
-                  // BlocProvider.of<HomeCubit>(context).onLoad();
-                  // BlocProvider.of<MeetupCubit>(context).onLoad();
                   Future.delayed(Duration(seconds: 1)).then((value) {
                     Navigator.pushNamedAndRemoveUntil(
                         context, LoginScreen.tag, (route) => false);
                   });
                 });
-
-                //showKSLoading(context);
-                //userRepository.deleteToken();
-                //userRepository.deleteHeaderToken();
-                //Navigator.pushNamedAndRemoveUntil(context, LoginScreen.tag, (route) => false);
               },
               title: Text(
                 'Logout',

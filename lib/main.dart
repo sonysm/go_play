@@ -35,10 +35,10 @@ class App extends StatelessWidget {
           create: (BuildContext context) => ThemeCubit()..init(),
         ),
         BlocProvider<HomeCubit>(
-          create: (BuildContext context) => HomeCubit()..onLoad(),
+          create: (BuildContext context) => HomeCubit(),
         ),
         BlocProvider<MeetupCubit>(
-          create: (BuildContext context) => MeetupCubit()..onLoad(),
+          create: (BuildContext context) => MeetupCubit(),
         )
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(builder: (_, mode) {

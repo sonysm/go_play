@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:kroma_sport/models/member.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -21,6 +22,7 @@ class MeetupCell extends StatefulWidget {
 
 class _MeetupCellState extends State<MeetupCell> {
   late Post meetup;
+  late List<Member> joinMember;
 
   Widget buildTotalReaction(int total) {
     return total > 0
@@ -32,6 +34,15 @@ class _MeetupCellState extends State<MeetupCell> {
     return total > 0
         ? Text(total > 1 ? '$total comments' : '$total comment')
         : SizedBox();
+  }
+
+  @override
+  void didUpdateWidget(MeetupCell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.post != oldWidget.post) {
+      meetup = widget.post;
+      setState(() {});
+    }
   }
 
   @override
@@ -48,6 +59,9 @@ class _MeetupCellState extends State<MeetupCell> {
               arguments: widget.post);
           if (data != null) {
             meetup = data as Post;
+            joinMember = data.meetupMember!
+                .where((element) => element.status == 1)
+                .toList();
             setState(() {});
           }
         },
@@ -114,7 +128,7 @@ class _MeetupCellState extends State<MeetupCell> {
                   KSIconButton(
                     icon: FeatherIcons.moreHorizontal,
                     iconSize: 24.0,
-                    onTap: () {},
+                    onTap: () => showOptionActionBottomSheet(widget.post),
                   ),
                 ],
               ),
@@ -149,14 +163,14 @@ class _MeetupCellState extends State<MeetupCell> {
                       spacing: 8,
                       runSpacing: 8,
                       children: List.generate(meetup.maxPeople!, (index) {
-                        if (index <= meetup.meetupMember!.length - 1) {
+                        if (index <= joinMember.length - 1) {
                           return CircleAvatar(
                             radius: 17,
                             backgroundColor:
                                 isLight(context) ? Colors.blueGrey : whiteColor,
                             child: Avatar(
                               radius: 16,
-                              user: meetup.meetupMember!.elementAt(index).user,
+                              user: joinMember.elementAt(index).user,
                             ),
                           );
                         }
@@ -272,5 +286,98 @@ class _MeetupCellState extends State<MeetupCell> {
   void initState() {
     super.initState();
     meetup = widget.post;
+    joinMember =
+        meetup.meetupMember!.where((element) => element.status == 1).toList();
+  }
+
+  void showOptionActionBottomSheet(Post post) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).primaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          maintainBottomViewPadding: true,
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                isMe(post.owner.id)
+                    ? TextButton(
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.symmetric(horizontal: 0.0)),
+                        ),
+                        onPressed: () {
+                          dismissScreen(context);
+                          // showKSConfirmDialog(context,
+                          //     'Are you sure you want to delete this post?', () {
+                          //   deletePost(post.id);
+                          // });
+                        },
+                        child: Container(
+                          height: 54.0,
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(left: 16.0, right: 16.0),
+                                child: Icon(
+                                  Feather.trash_2,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.blueGrey
+                                      : Colors.white,
+                                ),
+                              ),
+                              Text(
+                                'Delete Meetup',
+                                style: Theme.of(context).textTheme.bodyText1,
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : SizedBox(),
+                TextButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(horizontal: 0.0)),
+                  ),
+                  onPressed: () {
+                    dismissScreen(context);
+                  },
+                  child: Container(
+                    height: 54.0,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                          child: Icon(
+                            Feather.info,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? Colors.blueGrey
+                                    : Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'Report Meetup',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                30.height,
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

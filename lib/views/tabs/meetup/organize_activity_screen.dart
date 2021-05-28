@@ -94,12 +94,14 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
                   children: [
                     Icon(Feather.map_pin, size: 18.0),
                     16.width,
-                    Text(
-                      address != null ? address!.name : 'Add location',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText2
-                          ?.copyWith(fontWeight: FontWeight.w600),
+                    Flexible(
+                      child: Text(
+                        address != null ? address!.name : 'Add location',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
                     )
                   ],
                 ),

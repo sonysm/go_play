@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 
 class MeetupData extends Equatable {
@@ -10,12 +11,14 @@ class MeetupData extends Equatable {
   final int page;
   final String? search;
   final DataState status;
+  final List<Post> ownerMeetup;
 
   MeetupData({
     required this.data,
     this.status = DataState.None,
     this.page = 1,
     this.search,
+    required this.ownerMeetup,
   });
 
   MeetupData copyWith({
@@ -23,20 +26,22 @@ class MeetupData extends Equatable {
     int? page,
     List<Post>? data,
     String? search,
+    List<Post>? ownerMeetup,
   }) {
     return MeetupData(
         status: status ?? this.status,
         page: page ?? this.page,
         data: data ?? this.data,
-        search: search ?? this.search);
+        search: search ?? this.search,
+        ownerMeetup: ownerMeetup ?? this.ownerMeetup);
   }
 
   @override
-  List<Object> get props => [status, data, page];
+  List<Object> get props => [status, data, page, ownerMeetup];
 }
 
 class MeetupCubit extends Cubit<MeetupData> {
-  MeetupCubit() : super(MeetupData(data: []));
+  MeetupCubit() : super(MeetupData(data: [], ownerMeetup: []));
 
   final KSHttpClient _client = KSHttpClient();
 
@@ -47,8 +52,22 @@ class MeetupCubit extends Cubit<MeetupData> {
     if (data != null) {
       if (data is! HttpResult) {
         List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
-        await Future.delayed(Duration(milliseconds: 500));
-        emit(state.copyWith(status: DataState.Loaded, data: posts));
+        // await Future.delayed(Duration(milliseconds: 500));
+
+        List<Post> ownerMeetups = [];
+        await _client
+            .getApi('/user/meetup/by/${KS.shared.user.id}')
+            .then((data) {
+          if (data != null) {
+            if (data is! HttpResult) {
+              ownerMeetups =
+                  (data as List).map((e) => Post.fromJson(e)).toList();
+            }
+          }
+        });
+
+        emit(state.copyWith(
+            status: DataState.Loaded, data: posts, ownerMeetup: ownerMeetups));
       } else {
         print("error");
       }
@@ -102,15 +121,15 @@ class MeetupCubit extends Cubit<MeetupData> {
     }
   }
 
-  Future<void> onDeleteMeetup(int postId) async {
+  Future<void> onDeleteMeetup(int meetupId) async {
     if (state.status == DataState.Loaded) {
       final updatedList =
-          state.data.where((element) => element.id != postId).toList();
+          state.data.where((element) => element.id != meetupId).toList();
       emit(state.copyWith(data: updatedList));
     }
   }
 
   onReset() {
-    emit(MeetupData(data: []));
+    emit(MeetupData(data: [], ownerMeetup: []));
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:kroma_sport/bloc/home.dart';
+import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -92,6 +95,8 @@ class _MainViewState extends State<MainView> {
   void initState() {
     super.initState();
     fetchLocation();
+    BlocProvider.of<HomeCubit>(context).onLoad();
+    BlocProvider.of<MeetupCubit>(context).onLoad();
   }
 
   fetchLocation() async {

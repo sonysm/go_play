@@ -11,8 +11,6 @@ class KSHttpClient {
   final String _baseUrl;
   final http.Client _httpClient;
 
-  Map<String, String>? _header;
-
   String? _token;
 
   KSHttpClient._(this._baseUrl, this._httpClient);
@@ -25,14 +23,10 @@ class KSHttpClient {
   }
 
   Map<String, String> _getHeader() {
-    if (_header != null) {
-      return _header!;
-    }
-    _header = {
+    return {
       HttpHeaders.contentTypeHeader: 'application/json',
       HttpHeaders.authorizationHeader: 'Bearer $_token',
     };
-    return _header!;
   }
 
   void setToken(String token) {

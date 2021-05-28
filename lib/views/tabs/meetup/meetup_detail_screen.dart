@@ -1,6 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -8,7 +9,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/ks.dart';
+import 'package:kroma_sport/models/member.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
@@ -31,6 +34,7 @@ class MeetupDetailScreen extends StatefulWidget {
 
 class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   late Post meetup;
+  late List<Member> joinMember;
 
   late GoogleMapController _mapController;
   KSHttpClient ksClient = KSHttpClient();
@@ -155,7 +159,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.only(left: 16.0, top: 16.0),
                 itemBuilder: (context, index) {
-                  if (index <= meetup.meetupMember!.length - 1) {
+                  if (index <= joinMember.length - 1) {
                     return SizedBox(
                       // width: 80,
                       child: Column(
@@ -166,18 +170,17 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                                 isLight(context) ? Colors.blueGrey : whiteColor,
                             child: Avatar(
                               radius: 32,
-                              user: meetup.meetupMember!.elementAt(index).user,
+                              user: joinMember.elementAt(index).user,
                             ),
                           ),
                           4.height,
                           Text(
-                            meetup.meetupMember!.elementAt(index).user.firstName,
+                            joinMember.elementAt(index).user.firstName,
                             textAlign: TextAlign.center,
                             maxLines: 1,
                             overflow: TextOverflow.clip,
                           ),
-                          meetup.meetupMember!.elementAt(index).user.id ==
-                                  meetup.owner.id
+                          joinMember.elementAt(index).user.id == meetup.owner.id
                               ? Text(
                                   '(Host)',
                                   textAlign: TextAlign.center,
@@ -241,7 +244,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             CupertinoButton(
               child: Icon(FeatherIcons.moreVertical,
                   color: isLight(context) ? Colors.grey[600] : whiteColor),
-              onPressed: () {},
+              onPressed: () => showMeetupBottomSheet(widget.meetup),
             )
           ],
         ),
@@ -261,7 +264,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 fetchMeetup();
               },
             ),
-            meetup.owner.id != KS.shared.user.id && meetup.meetupMember!.length < meetup.maxPeople!
+            (meetup.owner.id != KS.shared.user.id &&
+                        joinMember.length < meetup.maxPeople!) ||
+                    (meetup.owner.id != KS.shared.user.id && isJoined)
                 ? Positioned(
                     bottom: 0,
                     left: 0,
@@ -272,10 +277,10 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                         color: Theme.of(context).primaryColor,
                         boxShadow: [
                           BoxShadow(
-                              offset: Offset(0, -1),
-                              blurRadius: 4.0,
-                              // spreadRadius: 2.0
-                              color: Colors.black.withOpacity(0.1)),
+                            offset: Offset(0, -1),
+                            blurRadius: 4.0,
+                            color: Colors.black.withOpacity(0.1),
+                          ),
                         ],
                       ),
                       padding:
@@ -311,7 +316,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     super.initState();
     meetup = widget.meetup;
 
-    isJoined = meetup.meetupMember!.any((e) => e.user.id == KS.shared.user.id);
+    joinMember =
+        meetup.meetupMember!.where((element) => element.status == 1).toList();
+    isJoined = joinMember.any((e) => e.user.id == KS.shared.user.id);
   }
 
   void fetchMeetup() {
@@ -320,7 +327,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         if (value is! HttpResult) {
           meetup = Post.fromJson(value['post']);
           widget.meetup.meetupMember = meetup.meetupMember;
-          isJoined = meetup.meetupMember!.any((e) => e.user.id == KS.shared.user.id);
+          isJoined =
+              meetup.meetupMember!.any((e) => e.user.id == KS.shared.user.id);
           setState(() {});
         }
       }
@@ -340,6 +348,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             if (res is! HttpResult) {
               meetup = Post.fromJson(res['post']);
               widget.meetup.meetupMember = meetup.meetupMember;
+              joinMember = meetup.meetupMember!
+                  .where((element) => element.status == 1)
+                  .toList();
               isJoined = true;
               setState(() {});
             }
@@ -362,6 +373,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             if (res is! HttpResult) {
               meetup = Post.fromJson(res['post']);
               widget.meetup.meetupMember = meetup.meetupMember;
+              joinMember = meetup.meetupMember!
+                  .where((element) => element.status == 1)
+                  .toList();
               isJoined = false;
               setState(() {});
             }
@@ -369,5 +383,110 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         }
       }
     });
+  }
+
+  void showMeetupBottomSheet(Post meetup) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).primaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          maintainBottomViewPadding: true,
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                isMe(meetup.owner.id)
+                    ? TextButton(
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.symmetric(horizontal: 0.0)),
+                        ),
+                        onPressed: () {
+                          dismissScreen(context);
+                          showKSConfirmDialog(context,
+                              'Are you sure you want to delete this meetup?',
+                              () {
+                            deleteMeetup();
+                          });
+                        },
+                        child: Container(
+                          height: 54.0,
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(left: 16.0, right: 16.0),
+                                child: Icon(
+                                  Feather.trash_2,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.blueGrey
+                                      : Colors.white,
+                                ),
+                              ),
+                              Text(
+                                'Delete Meetup',
+                                style: Theme.of(context).textTheme.bodyText1,
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : SizedBox(),
+                TextButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(horizontal: 0.0)),
+                  ),
+                  onPressed: () {
+                    dismissScreen(context);
+                  },
+                  child: Container(
+                    height: 54.0,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                          child: Icon(
+                            Feather.info,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? Colors.blueGrey
+                                    : Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'Report Meetup',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                30.height,
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void deleteMeetup() async {
+    showKSLoading(context);
+    var result = await ksClient.postApi('/delete/post/${widget.meetup.id}');
+    if (result != null) {
+      await Future.delayed(Duration(milliseconds: 500));
+      dismissScreen(context);
+      if (result is! HttpResult) {
+        BlocProvider.of<MeetupCubit>(context).onDeleteMeetup(result['id']);
+        dismissScreen(context);
+      }
+    }
   }
 }
