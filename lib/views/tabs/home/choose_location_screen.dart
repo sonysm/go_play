@@ -5,7 +5,6 @@ import 'package:geocoding/geocoding.dart' as geoCoding;
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/address.dart';
 import 'package:kroma_sport/themes/colors.dart';
-import 'package:location/location.dart';
 
 class SetAddressScreen extends StatefulWidget {
   static const tag = '/setAddressScreen';
@@ -25,20 +24,11 @@ class _SetAddressScreenState extends State<SetAddressScreen>
   late Animation<double> _dropDownAnimation;
 
   TextEditingController _addressController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
 
   late LatLng _currentPosition;
   late LatLng _latLng;
 
   bool isFirstIdle = false;
-
-  List<String> _addressLabels = [
-    "Home",
-    "Office",
-    "Other",
-  ];
-
-  var _titleAs = "Home";
 
   Widget _googleMap() {
     return GoogleMap(
@@ -132,32 +122,6 @@ class _SetAddressScreenState extends State<SetAddressScreen>
     );
   }
 
-  Widget _btnBack() {
-    return Positioned(
-      top: 10.0,
-      left: 10.0,
-      right: 10.0,
-      child: SafeArea(
-        child: Row(children: <Widget>[
-          FloatingActionButton(
-            heroTag: 'btnback',
-            elevation: 0,
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.keyboard_backspace,
-              color: blackColor,
-              size: 28.0,
-            ),
-            backgroundColor: whiteColor,
-            mini: true,
-          ),
-        ]),
-      ),
-    );
-  }
-
   Widget _btnCurrentLocation() {
     return Positioned(
       right: 12.0,
@@ -212,182 +176,6 @@ class _SetAddressScreenState extends State<SetAddressScreen>
               color: mainColor,
             )),
         controller: _addressController,
-      ),
-    );
-  }
-
-  Widget _btnBottomView() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Container(
-          color: Colors.transparent,
-          child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border: Border.all(
-                      width: 0.5, color: Colors.black.withOpacity(0.2)),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10.0),
-                margin: EdgeInsets.only(left: 12.0, right: 12.0, bottom: 16.0),
-                child: TextField(
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: blackColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    disabledBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    border: InputBorder.none,
-                    fillColor: Colors.transparent,
-                    hintStyle: TextStyle(
-                      color: Colors.grey[700],
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    counterStyle: TextStyle(
-                      fontSize: 16.0,
-                      color: blackColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    hintText: '',
-                  ),
-                  controller: _addressController,
-                ),
-              ),
-              // Container(
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     border: Border.all(
-              //         width: 0.5, color: Colors.black.withOpacity(0.2)),
-              //   ),
-              //   padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10.0),
-              //   margin: EdgeInsets.only(bottom: 16.0),
-              //   child: TextField(
-              //     style: TextStyle(
-              //       fontSize: 16.0,
-              //       color: blackColor,
-              //       fontWeight: FontWeight.w500,
-              //     ),
-              //     // readOnly: true,
-              //     decoration: InputDecoration(
-              //       border: InputBorder.none,
-              //       fillColor: Colors.white,
-              //       hintStyle: TextStyle(
-              //         color: Colors.grey[700],
-              //         fontSize: 16.0,
-              //         fontWeight: FontWeight.w400,
-              //       ),
-              //       counterStyle: TextStyle(
-              //         fontSize: 16.0,
-              //         color: blackColor,
-              //         fontWeight: FontWeight.w500,
-              //       ),
-              //       hintText: 'Phone number',
-              //     ),
-              //     controller: _phoneController,
-              //   ),
-              // ),
-
-              // Container(
-              //   height: 44.0,
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     border: Border.all(
-              //         width: 0.5, color: Colors.black.withOpacity(0.2)),
-              //   ),
-              //   padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10.0),
-              //   margin: EdgeInsets.only(bottom: 16.0),
-              //   child: TextField(
-              //     // focusNode: _addressNoteFocusNode,
-              //     style: TextStyle(
-              //       fontSize: 16.0,
-              //       color: blackColor,
-              //       fontWeight: FontWeight.w400,
-              //     ),
-              //     maxLines: 4,
-              //     decoration: InputDecoration(
-              //       border: InputBorder.none,
-              //       fillColor: Colors.white,
-              //       hintStyle: TextStyle(
-              //         color: Colors.grey.withOpacity(0.4),
-              //         fontSize: 14.0,
-              //         fontWeight: FontWeight.w400,
-              //       ),
-              //       hintText: 'Phone number',
-              //     ),
-              //     controller: _noteController,
-              //   ),
-              // ),
-
-              // Text('Label as'),
-              // SizedBox(height: 8.0),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: List.generate(_addressLabels.length, (index) {
-              //     return ActionChip(
-              //       label: Text(
-              //         _addressLabels.elementAt(index),
-              //         style: TextStyle(
-              //             color: _addressLabels.elementAt(index) != _titleAs
-              //                 ? Colors.grey[400]
-              //                 : mainColor),
-              //       ),
-              //       padding: EdgeInsets.symmetric(horizontal: 24.0),
-              //       // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              //       backgroundColor: whiteColor,
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(4.0),
-              //         side: BorderSide(
-              //             color: _addressLabels.elementAt(index) != _titleAs
-              //                 ? Colors.grey[400]
-              //                 : mainColor),
-              //       ),
-              //       onPressed: () {
-              //         _titleAs = _addressLabels.elementAt(index);
-              //         setState(() {});
-              //       },
-              //     );
-              //   }),
-              // ),
-
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 16.0, right: 16.0, bottom: 16.0),
-                child: Container(
-                  height: 48.0,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(0.5),
-                      backgroundColor: MaterialStateProperty.all(mainColor),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                      ),
-                    ),
-                    child: Text(
-                      'Select Address',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: whiteColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

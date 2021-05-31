@@ -14,6 +14,7 @@ import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/account/edit_profile_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
@@ -22,7 +23,7 @@ import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
-import 'package:kroma_sport/widgets/ks_icon_button.dart';
+import 'package:line_icons/line_icons.dart';
 
 class AccountScreen extends StatefulWidget {
   static const String tag = '/accountScreen';
@@ -47,12 +48,24 @@ class _AccountScreenState extends State<AccountScreen>
       title: Text('Account'),
       actions: [
         CupertinoButton(
+          padding: EdgeInsets.zero,
+          minSize: 0,
+          child: Icon(
+            LineIcons.userEdit,
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.grey[600]
+                : whiteColor,
+            size: 28.0,
+          ),
+          onPressed: () => launchScreen(context, EditProfileScreen.tag),
+        ),
+        CupertinoButton(
           child: Icon(FeatherIcons.settings,
               color: Theme.of(context).brightness == Brightness.light
                   ? Colors.grey[600]
                   : whiteColor),
           onPressed: () => launchScreen(context, SettingScreen.tag),
-        )
+        ),
       ],
     );
   }
@@ -130,85 +143,6 @@ class _AccountScreenState extends State<AccountScreen>
   }
 
   Widget buildFavoriteSport() {
-    return SliverToBoxAdapter(
-      child: Container(
-        color: Theme.of(context).primaryColor,
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-        child: Column(
-          //crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Favorite Sport',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1
-                      ?.copyWith(fontWeight: FontWeight.w600),
-                ),
-                Spacer(),
-                KSIconButton(
-                  icon: Feather.plus_circle,
-                  iconSize: 24.0,
-                  onTap: () async {
-                    var value = await launchScreen(context, SportsScreen.tag);
-                    if (value != null && value) {
-                      getFavoriteSport();
-                    }
-                  },
-                ),
-              ],
-            ),
-            favSportList.isNotEmpty
-                ? Column(
-                    children: List.generate(favSportList.length, (index) {
-                      final sport = favSportList.elementAt(index).sport;
-                      return TextButton(
-                        onPressed: () async {
-                          var value = await launchScreen(
-                              context, FavoriteSportDetailScreen.tag,
-                              arguments: sport);
-                          if (value != null && value) {
-                            getFavoriteSport();
-                          }
-                        },
-                        style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                                const EdgeInsets.symmetric(horizontal: 0)),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                        child: Row(
-                          children: [
-                            Text(
-                              sport.name == 'Volleyball' ? '🏐' : '⚽️',
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                            8.width,
-                            Text(
-                              sport.name,
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  )
-                : Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      'No Favorite Sport',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText2
-                          ?.copyWith(color: Colors.grey[400]),
-                    ),
-                  )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildFavSport() {
     return SliverToBoxAdapter(
       child: Container(
         height: 240.0,
@@ -295,16 +229,13 @@ class _AccountScreenState extends State<AccountScreen>
             Container(
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(
-                color: whiteColor,
+                color: Theme.of(context).primaryColor,
                 border: Border(
                     bottom:
-                        BorderSide(width: 0.5, color: Colors.blueGrey[50]!)),
+                        BorderSide(width: 0.5, color: isLight(context) ? Colors.blueGrey[50]! : Colors.blueGrey)),
               ),
               child: TabBar(
                 controller: tabController,
-
-                // labelColor: blackColor,
-                // physics: NeverScrollableScrollPhysics(),
                 labelStyle: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
@@ -398,8 +329,7 @@ class _AccountScreenState extends State<AccountScreen>
         slivers: [
           buildNavbar(),
           buildProfileHeader(),
-          // buildFavoriteSport(),
-          buildFavSport(),
+          buildFavoriteSport(),
           buildFeedTabbar(),
         ],
       ),

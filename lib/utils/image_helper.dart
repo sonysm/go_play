@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kroma_sport/utils/tools.dart';
 
 Future<File?> _getCameraImage(
     {bool isCropped = true, bool isRectangle = false}) async {
@@ -57,10 +58,10 @@ selectImage(BuildContext context, Function(File?) image,
     {bool isCropped = true, bool isRectangle = false}) {
   showModalBottomSheet(
     context: context,
-    //backgroundColor: Colors.transparent,
-    //shape: RoundedRectangleBorder(
-    //  borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-    //),
+    backgroundColor: Theme.of(context).primaryColor,
+    shape: RoundedRectangleBorder(
+     borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+    ),
     builder: (context) {
       return SafeArea(
         maintainBottomViewPadding: true,
@@ -95,15 +96,12 @@ selectImage(BuildContext context, Function(File?) image,
                         padding: EdgeInsets.only(left: 16.0, right: 16.0),
                         child: Icon(
                           Feather.camera,
-                          color: Colors.blueGrey[700],
+                          color: isLight(context) ? Colors.blueGrey[700] : Colors.blueGrey[100],
                         ),
                       ),
                       Text(
                         'Take Photo',
-                        style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400),
+                        style: Theme.of(context).textTheme.bodyText1,
                       )
                     ],
                   ),
@@ -127,16 +125,12 @@ selectImage(BuildContext context, Function(File?) image,
                         padding: EdgeInsets.only(left: 16.0, right: 16.0),
                         child: Icon(
                           Feather.image,
-                          color: Colors.blueGrey[700],
+                          color: isLight(context) ? Colors.blueGrey[700] : Colors.blueGrey[100],
                         ),
                       ),
                       Text(
                         'Choose from gallery',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400,
-                        ),
+                        style: Theme.of(context).textTheme.bodyText1,
                       )
                     ],
                   ),

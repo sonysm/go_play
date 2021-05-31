@@ -9,6 +9,7 @@ import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/repositories/user_repository.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/image_helper.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
@@ -72,7 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ? ClipOval(child: Image.file(_imageFile!))
                     : ClipOval(
                         child: Image.asset(
-                          'assets/images/user.jpg',
+                          imgUserPlaceholder,
                           color: mainColor,
                           colorBlendMode: BlendMode.softLight,
                         ),

@@ -7,6 +7,7 @@ import 'package:kroma_sport/views/auth/register_screen.dart';
 import 'package:kroma_sport/views/auth/verify_code_screen.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
+import 'package:kroma_sport/views/tabs/account/edit_profile_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sport_detail.dart';
@@ -103,6 +104,10 @@ class RouteGenerator {
           builder: (_) => OragnizeActivityScreen(
             sport: args as Sport,
           ),
+        );
+      case EditProfileScreen.tag:
+        return MaterialPageRoute(
+          builder: (_) => EditProfileScreen(),
         );
       default:
         return _errorRoute();

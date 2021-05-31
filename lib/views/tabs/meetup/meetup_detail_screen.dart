@@ -36,7 +36,6 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   late Post meetup;
   late List<Member> joinMember;
 
-  late GoogleMapController _mapController;
   KSHttpClient ksClient = KSHttpClient();
 
   Widget buildMainInfo() {
@@ -118,9 +117,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             ),
             zoom: 15.0,
           ),
-          onMapCreated: (controller) {
-            _mapController = controller;
-          },
+          onMapCreated: (controller) {},
           zoomGesturesEnabled: false,
           scrollGesturesEnabled: false,
           markers: <Marker>{

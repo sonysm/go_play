@@ -4,7 +4,6 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/utils/tools.dart';
-import 'package:kroma_sport/views/tabs/account/sport_activity/sport_detail.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 
 class SportsScreen extends StatefulWidget {
