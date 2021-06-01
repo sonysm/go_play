@@ -22,6 +22,7 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget buildNavbar() {
     return SliverAppBar(
       title: Text('Settings'),
+      titleSpacing: 0,
     );
   }
 

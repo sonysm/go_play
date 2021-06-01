@@ -6,8 +6,10 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
+import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
+import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
@@ -192,9 +194,13 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Avatar(
-                          radius: 12.0,
-                          user: KS.shared.user,
+                        BlocBuilder<UserCubit, User>(
+                          builder: (context, user) {
+                            return Avatar(
+                              radius: 12.0,
+                              user: user,
+                            );
+                          },
                         ),
                         8.width,
                         Expanded(
@@ -235,7 +241,10 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
   void launchFeedDetailScreen(Post post, [bool isCommentTap = false]) async {
     var p = await launchScreen(context, FeedDetailScreen.tag,
         arguments: {'post': post, 'isCommentTap': isCommentTap}) as Post;
-    setState(() => widget.post.reacted = p.reacted);
+    setState(() {
+      widget.post.owner = p.owner;
+      widget.post.reacted = p.reacted;
+    });
   }
 
   void showOptionActionBottomSheet(Post post) {

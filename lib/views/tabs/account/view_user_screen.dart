@@ -5,6 +5,9 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
+import 'package:kroma_sport/views/tabs/account/widget/sport_card.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 
 class ViewUserProfileScreen extends StatefulWidget {
@@ -24,6 +27,8 @@ class ViewUserProfileScreen extends StatefulWidget {
 class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> {
   KSHttpClient ksClient = KSHttpClient();
   List<FavoriteSport> favSportList = [];
+
+  late User _user;
 
   Widget buildNavbar() {
     return SliverAppBar(
@@ -117,81 +122,31 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> {
   Widget buildFavoriteSport() {
     return SliverToBoxAdapter(
       child: Container(
+        height: 240.0,
         color: Theme.of(context).primaryColor,
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-        child: Column(
-          //crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Favorite Sport',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1
-                      ?.copyWith(fontWeight: FontWeight.w600),
-                ),
-                //Spacer(),
-                //ksIconBtn(
-                //  icon: Feather.plus_circle,
-                //  iconColor: Theme.of(context).brightness == Brightness.light
-                //      ? Colors.blueGrey
-                //      : whiteColor,
-                //  iconSize: 24.0,
-                //  onTap: () async {
-                //    var value = await launchScreen(context, SportsScreen.tag);
-                //    if (value != null && value) {
-                //      getFavoriteSport();
-                //    }
-                //  },
-                //),
-              ],
-            ),
-            favSportList.isNotEmpty
-                ? Column(
-                    children: List.generate(favSportList.length, (index) {
-                      final sport = favSportList.elementAt(index).sport;
-                      return TextButton(
-                        onPressed: null,
-                        //() async {
-                        //  var value = await launchScreen(
-                        //      context, FavoriteSportDetailScreen.tag,
-                        //      arguments: sport);
-                        //  if (value != null && value) {
-                        //    getFavoriteSport();
-                        //  }
-                        //},
-                        style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                                const EdgeInsets.symmetric(horizontal: 0)),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                        child: Row(
-                          children: [
-                            Text(
-                              sport.name == 'Volleyball' ? '🏐' : '⚽️',
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                            8.width,
-                            Text(
-                              sport.name,
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  )
-                : Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      'No Favorite Sport',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText2
-                          ?.copyWith(color: Colors.grey[400]),
-                    ),
-                  )
-          ],
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+          itemBuilder: (context, index) {
+            final favSport = favSportList.elementAt(index);
+            return SportCard(
+              favSport: favSport,
+              onCardTap: () async {
+                var value = await launchScreen(
+                  context,
+                  FavoriteSportDetailScreen.tag,
+                  arguments: favSport.sport,
+                );
+                if (value != null && value) {
+                  // getFavoriteSport();
+                }
+              },
+            );
+          },
+          separatorBuilder: (context, index) {
+            return 16.width;
+          },
+          itemCount: favSportList.length,
         ),
       ),
     );
@@ -204,7 +159,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> {
         slivers: [
           buildNavbar(),
           buildProfileHeader(),
-          //buildFavoriteSport(),
+          buildFavoriteSport(),
         ],
       ),
     );
@@ -219,15 +174,28 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> {
   @override
   void initState() {
     super.initState();
-    getFavoriteSport();
+    _user = widget.user;
+    getUserDetail();
+    // getFavoriteSport();
   }
 
-  void getFavoriteSport() async {
-    var data = await ksClient.getApi('/user/favorite/sport');
+  // void getFavoriteSport() async {
+  //   var data = await ksClient.getApi('/user/favorite/sport');
+  //   if (data != null) {
+  //     if (data is! HttpResult) {
+  //       favSportList =
+  //           List.from((data as List).map((e) => FavoriteSport.fromJson(e)));
+  //       setState(() {});
+  //     }
+  //   }
+  // }
+
+  void getUserDetail() async {
+    var data = await ksClient.getApi('/user/view/user/${widget.user.id}');
     if (data != null) {
       if (data is! HttpResult) {
-        favSportList =
-            List.from((data as List).map((e) => FavoriteSport.fromJson(e)));
+        _user = User.fromJson(data['user']);
+        favSportList = (data['fav_sport'] as List).map((e) => FavoriteSport.fromJson(e)).toList();
         setState(() {});
       }
     }

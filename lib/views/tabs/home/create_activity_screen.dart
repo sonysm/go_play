@@ -83,14 +83,13 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.green,
-            Colors.green[600]!,
-            Colors.green[700]!,
-            Colors.teal[600]!,
-            Colors.teal[700]!,
+            // Color(0xFFFDC830),
+            // Color(0xFFF37335),
+            Color(0xFFF2994A),
+            Color(0xFFF2C94C),
           ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          // begin: Alignment.topLeft,
+          // end: Alignment.bottomRight,
         ),
       ),
       child: images.isEmpty

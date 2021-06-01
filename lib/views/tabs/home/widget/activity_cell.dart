@@ -5,8 +5,10 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
+import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
+import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -274,9 +276,13 @@ class _ActivityCellState extends State<ActivityCell> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Avatar(
-                          radius: 12.0,
-                          user: KS.shared.user,
+                        BlocBuilder<UserCubit, User>(
+                          builder: (context, user) {
+                            return Avatar(
+                              radius: 12.0,
+                              user: user,
+                            );
+                          },
                         ),
                         8.width,
                         Expanded(

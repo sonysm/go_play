@@ -1,10 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:http/http.dart';
 import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/ks.dart';
+import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -12,6 +16,7 @@ import 'package:kroma_sport/utils/image_helper.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/cache_image.dart';
+import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 import 'package:line_icons/line_icons.dart';
@@ -375,12 +380,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           context, 'Please set your first name properly!', () {});
       return;
     }
+    fields['first_name'] = _fnTextController.text;
+
 
     if (_lnTextController.text.trim().length < 3) {
       showKSMessageDialog(
           context, 'Please set your last name properly!', () {});
       return;
     }
+    fields['last_name'] = _lnTextController.text;
+
 
     if (_imageFile != null) {
       List<int> imageData = _imageFile!.readAsBytesSync();
@@ -392,8 +401,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       );
     }
 
-    dismissScreen(context);
+    showKSLoading(context);
+    // Future.delayed(Duration(seconds: 1)).then((value) {
+    //   dismissScreen(context);
+    //   dismissScreen(context);
+    // });
 
-    // var result = await ksClient.postFile('url', image);
+    var result = await ksClient.postFile('/user/profile/update', image, fields: fields);
+    if (result != null) {
+      if (result is! HttpResult) {
+        var user = User.fromJson(result);
+        KS.shared.user = user;
+        BlocProvider.of<UserCubit>(context).emitUser(user);
+        dismissScreen(context);
+        dismissScreen(context);
+      }
+    }
   }
 }

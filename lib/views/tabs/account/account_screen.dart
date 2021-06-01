@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
@@ -183,15 +184,9 @@ class _AccountScreenState extends State<AccountScreen>
                   borderRadius: BorderRadius.circular(8.0),
                   gradient: LinearGradient(
                     colors: [
-                      mainColor,
-                      mainColor,
-                      mainColor,
-                      Colors.green[400]!,
-                      Colors.lightGreen[400]!,
-                      Colors.lightGreen[300]!,
+                      Color(0xFF1D976C),
+                      Color(0xFF93F9B9),
                     ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
                   ),
                 ),
                 child: Row(
@@ -231,8 +226,11 @@ class _AccountScreenState extends State<AccountScreen>
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
                 border: Border(
-                    bottom:
-                        BorderSide(width: 0.5, color: isLight(context) ? Colors.blueGrey[50]! : Colors.blueGrey)),
+                    bottom: BorderSide(
+                        width: 0.5,
+                        color: isLight(context)
+                            ? Colors.blueGrey[50]!
+                            : Colors.blueGrey)),
               ),
               child: TabBar(
                 controller: tabController,
@@ -265,13 +263,14 @@ class _AccountScreenState extends State<AccountScreen>
               )
             : data.ownerMeetup.isNotEmpty
                 ? ListView.separated(
+                    padding: EdgeInsets.zero,
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       var meetup = data.ownerMeetup.elementAt(index);
 
                       return Padding(
-                        padding: EdgeInsets.only(top: (index == 0 ? 8.0 : 0)),
+                        padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                         child: MeetupCell(post: meetup),
                       );
                     },
@@ -294,20 +293,21 @@ class _AccountScreenState extends State<AccountScreen>
               )
             : data.ownerPost.isNotEmpty
                 ? ListView.separated(
+                    padding: EdgeInsets.zero,
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       var post = data.ownerPost.elementAt(index);
                       if (post.type == PostType.feed) {
                         return Padding(
-                          padding: EdgeInsets.only(top: (index == 0 ? 8.0 : 0)),
+                          padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                           child: HomeFeedCell(
                             post: post,
                           ),
                         );
                       } else if (post.type == PostType.activity) {
                         return Padding(
-                          padding: EdgeInsets.only(top: (index == 0 ? 8.0 : 0)),
+                          padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                           child: ActivityCell(post: post),
                         );
                       }
@@ -325,13 +325,45 @@ class _AccountScreenState extends State<AccountScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
+      appBar: AppBar(
+        elevation: 0.5,
+        title: Text('Account'),
+        actions: [
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            minSize: 0,
+            child: Icon(
+              LineIcons.userEdit,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.grey[600]
+                  : whiteColor,
+              size: 28.0,
+            ),
+            onPressed: () => launchScreen(context, EditProfileScreen.tag),
+          ),
+          CupertinoButton(
+            child: Icon(FeatherIcons.settings,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.grey[600]
+                    : whiteColor),
+            onPressed: () => launchScreen(context, SettingScreen.tag),
+          ),
+        ],
+      ),
+      body: EasyRefresh.custom(
+        header: MaterialHeader(
+          valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+        ),
         slivers: [
-          buildNavbar(),
+          // buildNavbar(),
           buildProfileHeader(),
           buildFavoriteSport(),
           buildFeedTabbar(),
         ],
+        onRefresh: () async {
+          BlocProvider.of<HomeCubit>(context).onRefresh();
+          BlocProvider.of<MeetupCubit>(context).onRefresh();
+        },
       ),
     );
   }

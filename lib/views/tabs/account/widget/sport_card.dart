@@ -26,15 +26,9 @@ class SportCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
           gradient: LinearGradient(
             colors: [
-              mainColor,
-              mainColor,
-              mainColor,
-              Colors.green[400]!,
-              Colors.lightGreen[400]!,
-              Colors.lightGreen[300]!,
+              Color(0xFF1D976C),
+              Color(0xFF93F9B9),
             ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
           ),
         ),
         child: Stack(

@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 
 class Avatar extends StatelessWidget {
@@ -19,8 +21,13 @@ class Avatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: isSelectable
-          ? () =>
-              launchScreen(context, ViewUserProfileScreen.tag, arguments: user)
+          ? () {
+            if (user.id != KS.shared.user.id) {
+              launchScreen(context, ViewUserProfileScreen.tag, arguments: user);
+            } else {
+              launchScreen(context, AccountScreen.tag);
+            }
+          }
           : null,
       child: CircleAvatar(
         radius: radius,

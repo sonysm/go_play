@@ -522,6 +522,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     if (data != null) {
       if (data is! HttpResult) {
         post = Post.fromJson(data['post']);
+        widget.post.owner = post.owner;
         commentList = List.from(
             (data['comment'] as List).map((e) => Comment.fromJson(e)));
         setState(() {});

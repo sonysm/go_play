@@ -4,8 +4,10 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/home.dart';
+import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
+import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
@@ -46,9 +48,13 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Avatar(
-                  radius: 24.0,
-                  user: KS.shared.user,
+                BlocBuilder<UserCubit, User>(
+                  builder: (context, user) {
+                    return Avatar(
+                      radius: 24.0,
+                      user: user,
+                    );
+                  },
                 ),
                 8.width,
                 Expanded(
