@@ -1,12 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
+import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
+import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 
 class MeetupScreen extends StatefulWidget {
   static const String tag = '/meetUpScreen';
@@ -86,6 +90,15 @@ class _ActivityScreenState extends State<MeetupScreen> {
           appBar: AppBar(
             title: Text('Meetup'),
             elevation: 0.5,
+            actions: [
+              CupertinoButton(
+                child: Icon(FeatherIcons.bell,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.grey[600]
+                        : whiteColor),
+                onPressed: () => launchScreen(context, NotificationScreen.tag),
+              ),
+            ],
           ),
           body: EasyRefresh.custom(
             header: MaterialHeader(

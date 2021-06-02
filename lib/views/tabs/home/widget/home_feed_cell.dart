@@ -7,7 +7,6 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/user.dart';
-import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
@@ -21,10 +20,12 @@ import 'package:kroma_sport/widgets/ks_loading.dart';
 
 class HomeFeedCell extends StatefulWidget {
   final Post post;
+  final bool isAvatarSelectable;
 
   const HomeFeedCell({
     Key? key,
     required this.post,
+    this.isAvatarSelectable = true,
   }) : super(key: key);
 
   @override
@@ -61,6 +62,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                   Avatar(
                     radius: 18.0,
                     user: widget.post.owner,
+                    isSelectable: widget.isAvatarSelectable,
                   ),
                   8.width,
                   Column(
@@ -199,6 +201,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                             return Avatar(
                               radius: 12.0,
                               user: user,
+                              isSelectable: widget.isAvatarSelectable,
                             );
                           },
                         ),

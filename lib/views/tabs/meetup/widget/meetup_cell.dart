@@ -1,8 +1,13 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/meetup.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/member.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
@@ -10,11 +15,19 @@ import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_detail_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
+import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
+import 'package:kroma_sport/widgets/ks_loading.dart';
 
 class MeetupCell extends StatefulWidget {
   final Post post;
-  MeetupCell({Key? key, required this.post}) : super(key: key);
+  final bool isAvatarSelectable;
+
+  MeetupCell({
+    Key? key,
+    required this.post,
+    this.isAvatarSelectable = true,
+  }) : super(key: key);
 
   @override
   _MeetupCellState createState() => _MeetupCellState();
@@ -23,6 +36,8 @@ class MeetupCell extends StatefulWidget {
 class _MeetupCellState extends State<MeetupCell> {
   late Post meetup;
   late List<Member> joinMember;
+
+  KSHttpClient ksClient = KSHttpClient();
 
   Widget buildTotalReaction(int total) {
     return total > 0
@@ -41,6 +56,9 @@ class _MeetupCellState extends State<MeetupCell> {
     super.didUpdateWidget(oldWidget);
     if (widget.post != oldWidget.post) {
       meetup = widget.post;
+      joinMember = widget.post.meetupMember!
+          .where((element) => element.status == 1)
+          .toList();
       setState(() {});
     }
   }
@@ -76,6 +94,7 @@ class _MeetupCellState extends State<MeetupCell> {
                   Avatar(
                     radius: 18.0,
                     user: widget.post.owner,
+                    isSelectable: widget.isAvatarSelectable,
                   ),
                   8.width,
                   Expanded(
@@ -171,6 +190,9 @@ class _MeetupCellState extends State<MeetupCell> {
                             child: Avatar(
                               radius: 16,
                               user: joinMember.elementAt(index).user,
+                              isSelectable:
+                                  joinMember.elementAt(index).user.id !=
+                                      KS.shared.user.id,
                             ),
                           );
                         }
@@ -313,10 +335,10 @@ class _MeetupCellState extends State<MeetupCell> {
                         ),
                         onPressed: () {
                           dismissScreen(context);
-                          // showKSConfirmDialog(context,
-                          //     'Are you sure you want to delete this post?', () {
-                          //   deletePost(post.id);
-                          // });
+                          showKSConfirmDialog(context,
+                              'Are you sure you want to delete this post?', () {
+                            deleteMeetup();
+                          });
                         },
                         child: Container(
                           height: 54.0,
@@ -379,5 +401,17 @@ class _MeetupCellState extends State<MeetupCell> {
         );
       },
     );
+  }
+
+  void deleteMeetup() async {
+    showKSLoading(context);
+    var result = await ksClient.postApi('/delete/post/${widget.post.id}');
+    if (result != null) {
+      await Future.delayed(Duration(milliseconds: 500));
+      dismissScreen(context);
+      if (result is! HttpResult) {
+        BlocProvider.of<MeetupCubit>(context).onDeleteMeetup(result['id']);
+      }
+    }
   }
 }

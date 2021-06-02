@@ -83,8 +83,27 @@ class MeetupCubit extends Cubit<MeetupData> {
         if (data is! HttpResult) {
           List<Post> posts =
               (data as List).map((e) => Post.fromJson(e)).toList();
-          await Future.delayed(Duration(milliseconds: 500));
-          emit(state.copyWith(status: DataState.Loaded, data: posts));
+          // await Future.delayed(Duration(milliseconds: 500));
+
+          List<Post> ownerMeetups = [];
+          await _client
+              .getApi('/user/meetup/by/${KS.shared.user.id}')
+              .then((data) {
+            if (data != null) {
+              if (data is! HttpResult) {
+                ownerMeetups =
+                    (data as List).map((e) => Post.fromJson(e)).toList();
+              }
+            }
+          });
+
+          emit(
+            state.copyWith(
+              status: DataState.Loaded,
+              data: posts,
+              ownerMeetup: ownerMeetups,
+            ),
+          );
         } else {
           print("error");
         }
@@ -125,7 +144,10 @@ class MeetupCubit extends Cubit<MeetupData> {
     if (state.status == DataState.Loaded) {
       final updatedList =
           state.data.where((element) => element.id != meetupId).toList();
-      emit(state.copyWith(data: updatedList));
+
+      final updateMeetupOwner = state.ownerMeetup.where((element) => element.id != meetupId).toList();
+
+      emit(state.copyWith(data: updatedList, ownerMeetup: updateMeetupOwner));
     }
   }
 

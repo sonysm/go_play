@@ -1,0 +1,358 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
+import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/app_size.dart';
+import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/widgets/cache_image.dart';
+
+class VenueDetailScreen extends StatefulWidget {
+  static const tag = '/venueDetailScreen';
+
+  VenueDetailScreen({Key? key}) : super(key: key);
+
+  @override
+  _VenueDetailScreenState createState() => _VenueDetailScreenState();
+}
+
+class _VenueDetailScreenState extends State<VenueDetailScreen> {
+  Widget buildVenueNavbar() {
+    return SliverPersistentHeader(
+      pinned: true,
+      floating: true,
+      delegate: VenueDetailHeader(
+        toolbarHeight: MediaQuery.of(context).padding.top - 4,
+        openHeight: AppSize(context).appWidth(70),
+        closeHeight: kToolbarHeight,
+      ),
+    );
+  }
+
+  Widget buildVenueTitle() {
+    return SliverToBoxAdapter(
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Downtown Sport Club',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6
+                          ?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.star,
+                          color: Colors.amber[700],
+                        ),
+                        4.width,
+                        Text(
+                          '4.5',
+                          style:
+                              Theme.of(context).textTheme.bodyText1?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18.0,
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Spacer(),
+                CupertinoButton(
+                  child: Icon(FeatherIcons.map,
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.grey[600]
+                          : whiteColor),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+            Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                children: [
+                  Text('⚽️', style: TextStyle(fontSize: 24.0)),
+                  16.width,
+                  Text('🏀', style: TextStyle(fontSize: 24.0)),
+                  16.width,
+                  Text('🏐', style: TextStyle(fontSize: 24.0)),
+                ],
+              ),
+            ),
+            Divider(),
+            ElevatedButton(
+              onPressed: () {},
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.all(0),
+                backgroundColor: MaterialStateProperty.all(Colors.grey[100]),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                  side: BorderSide(color: Colors.grey[200]!),
+                )),
+                padding: MaterialStateProperty.all(
+                  EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    'Futsal / Football',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  Spacer(),
+                  Icon(FeatherIcons.chevronDown, color: blackColor),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildPitchCell(
+      {required String pitchName, required String pitchPrice}) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                pitchName,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              4.height,
+              Text(
+                pitchPrice,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          Spacer(),
+          ElevatedButton(
+            onPressed: () {},
+            style: ButtonStyle(
+              elevation: MaterialStateProperty.all(0),
+              backgroundColor: MaterialStateProperty.all(mainColor),
+              minimumSize: MaterialStateProperty.all(Size(0, 0)),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              padding: MaterialStateProperty.all(
+                EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
+              ),
+            ),
+            child: Text(
+              'Book',
+              style: TextStyle(
+                color: whiteColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildAvailablePitch() {
+    return SliverToBoxAdapter(
+      child: Container(
+        padding: EdgeInsets.only(left: 16.0, right: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Available pitches:',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            16.height,
+            ListView.separated(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return buildPitchCell(
+                  pitchName: 'Pitch $index (5x5)',
+                  pitchPrice: '8\$/h',
+                );
+              },
+              separatorBuilder: (context, index) {
+                return 8.height;
+              },
+              itemCount: 7,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
+      body: EasyRefresh.custom(
+        header: MaterialHeader(
+          valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+        ),
+        slivers: [
+          buildVenueNavbar(),
+          buildVenueTitle(),
+          buildAvailablePitch(),
+        ],
+        onRefresh: () async {},
+      ),
+    );
+  }
+}
+
+class VenueDetailHeader extends SliverPersistentHeaderDelegate {
+  double toolbarHeight;
+  double closeHeight;
+  double openHeight;
+
+  VenueDetailHeader({
+    required this.toolbarHeight,
+    required this.closeHeight,
+    required this.openHeight,
+  });
+
+  List<String> venueImageList = [
+    'https://images.unsplash.com/photo-1487466365202-1afdb86c764e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1052&q=80',
+    'https://images.unsplash.com/photo-1510526292299-20af3f62d453?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1014&q=80',
+    'https://images.unsplash.com/photo-1511439664149-58b346f60448?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=675&q=80',
+    'https://images.unsplash.com/photo-1596740327709-1645e2562a37?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=924&q=80',
+    'https://images.unsplash.com/photo-1531861218190-f90c89febf69?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1050&q=80'
+  ];
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      height: openHeight,
+      color: whiteColor,
+      child: Stack(
+        children: <Widget>[
+          Container(
+            width: AppSize(context).appWidth(100),
+            height: openHeight,
+            color: Colors.grey[200],
+            child: Stack(
+              children: [
+                Swiper(
+                  itemCount: venueImageList.length,
+                  itemBuilder: (context, index) => Container(
+                    child: CacheImage(
+                      url: venueImageList[index],
+                    ),
+                  ),
+                  curve: Curves.easeInOutCubic,
+                  autoplay: true,
+                  loop: false,
+                  // autoplayDelay: 5000,
+                  // duration: 850,
+                  pagination: venueImageList.length > 1
+                      ? SwiperPagination(
+                          builder: DotSwiperPaginationBuilder(
+                            activeColor: mainColor,
+                            color: Colors.grey[100],
+                            size: 8.0,
+                            activeSize: 8.0,
+                          ),
+                        )
+                      : null,
+
+                  // onTap: (index) {},
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            child: AppBar(
+              leading: Container(
+                alignment: Alignment.center,
+                width: 38.0,
+                height: 38.0,
+                margin: EdgeInsets.only(left: 16.0, right: 8.0),
+                decoration: BoxDecoration(
+                  color: (1 - shrinkOffset / openHeight) > 0.7
+                      ? blackColor.withOpacity(0.6)
+                      : whiteColor.withOpacity(backgroundOpacity(shrinkOffset)),
+                  shape: BoxShape.circle,
+                ),
+                child: CupertinoButton(
+                  onPressed: () => Navigator.pop(context, 1),
+                  padding: EdgeInsets.zero,
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: (1 - shrinkOffset / openHeight) > 0.7
+                        ? whiteColor
+                        : mainColor,
+                    size: 22.0,
+                  ),
+                ),
+              ),
+              title: Text(
+                'Downtown Sport Club',
+                style: TextStyle(
+                  color: shrinkOffset < openHeight - 100
+                      ? Colors.transparent
+                      : blackColor,
+                ),
+              ),
+              titleSpacing: 0,
+              backgroundColor: shrinkOffset < openHeight - 100
+                  ? Colors.transparent
+                  : whiteColor,
+              elevation: 0,
+            ),
+            height: MediaQuery.of(context).padding.top + 54.0,
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => openHeight;
+
+  @override
+  double get minExtent => toolbarHeight + closeHeight;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
+
+  double backgroundOpacity(double shrinkOffset) =>
+      (shrinkOffset / (openHeight - toolbarHeight)) < 1
+          ? (shrinkOffset / (openHeight - toolbarHeight))
+          : 1;
+}

@@ -25,6 +25,8 @@ import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
+import 'package:kroma_sport/views/tabs/venue/venue_detail_screen.dart';
+import 'package:kroma_sport/views/tabs/venue/venue_screen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -52,7 +54,10 @@ class RouteGenerator {
       case NotificationScreen.tag:
         return MaterialPageRoute(builder: (_) => NotificationScreen());
       case AccountScreen.tag:
-        return MaterialPageRoute(builder: (_) => AccountScreen());
+        return MaterialPageRoute(
+          builder: (_) => AccountScreen(),
+          // settings: RouteSettings(name: AccountScreen.tag),
+        );
       case FeedDetailScreen.tag:
         var data = args as Map<String, dynamic>;
         return MaterialPageRoute(
@@ -106,9 +111,11 @@ class RouteGenerator {
           ),
         );
       case EditProfileScreen.tag:
-        return MaterialPageRoute(
-          builder: (_) => EditProfileScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => EditProfileScreen());
+      case VenueScreen.tag:
+        return MaterialPageRoute(builder: (_) => VenueScreen());
+      case VenueDetailScreen.tag:
+        return MaterialPageRoute(builder: (_) => VenueDetailScreen());
       default:
         return _errorRoute();
     }

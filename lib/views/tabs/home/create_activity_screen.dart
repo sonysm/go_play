@@ -61,18 +61,6 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
       iconTheme: Theme.of(context).iconTheme.copyWith(color: whiteColor),
       pinned: true,
       elevation: 0.0,
-      //forceElevated: true,
-      //actions: [
-      //  TextButton(
-      //    onPressed: availablePost() ? onPost : null,
-      //    child: Text(
-      //      'Post',
-      //      style: Theme.of(context).textTheme.bodyText1?.copyWith(
-      //          color: availablePost() ? mainColor : Colors.green[200],
-      //          fontWeight: FontWeight.w600),
-      //    ),
-      //  ),
-      //],
     );
   }
 
@@ -83,10 +71,8 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            // Color(0xFFFDC830),
-            // Color(0xFFF37335),
-            Color(0xFFF2994A),
-            Color(0xFFF2C94C),
+            Color(0xFF0ba360),
+            Color(0xFF3cba92),
           ],
           // begin: Alignment.topLeft,
           // end: Alignment.bottomRight,

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -15,6 +16,7 @@ import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
+import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 
 import 'widget/home_feed_cell.dart';
@@ -184,6 +186,15 @@ class _HomeScreenState extends State<HomeScreen> {
           appBar: AppBar(
             title: Text('Home'),
             elevation: 0.0,
+            actions: [
+              CupertinoButton(
+                child: Icon(FeatherIcons.bell,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.grey[600]
+                        : whiteColor),
+                onPressed: () => launchScreen(context, NotificationScreen.tag),
+              ),
+            ],
           ),
           body: EasyRefresh.custom(
             header: MaterialHeader(

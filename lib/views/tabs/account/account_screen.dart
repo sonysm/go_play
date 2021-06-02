@@ -271,7 +271,10 @@ class _AccountScreenState extends State<AccountScreen>
 
                       return Padding(
                         padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
-                        child: MeetupCell(post: meetup),
+                        child: MeetupCell(
+                          post: meetup,
+                          isAvatarSelectable: false,
+                        ),
                       );
                     },
                     separatorBuilder: (context, index) {
@@ -303,12 +306,16 @@ class _AccountScreenState extends State<AccountScreen>
                           padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                           child: HomeFeedCell(
                             post: post,
+                            isAvatarSelectable: false,
                           ),
                         );
                       } else if (post.type == PostType.activity) {
                         return Padding(
                           padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
-                          child: ActivityCell(post: post),
+                          child: ActivityCell(
+                            post: post,
+                            isAvatarSelectable: false,
+                          ),
                         );
                       }
                       return SizedBox();

@@ -143,7 +143,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             Padding(
               padding: const EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
               child: Text(
-                'Going(${meetup.meetupMember!.length}/${meetup.maxPeople})',
+                'Going(${joinMember.length}/${meetup.maxPeople})',
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1
@@ -168,6 +168,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                             child: Avatar(
                               radius: 32,
                               user: joinMember.elementAt(index).user,
+                              isSelectable: joinMember.elementAt(index).user.id != KS.shared.user.id,
                             ),
                           ),
                           4.height,
@@ -349,6 +350,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                   .where((element) => element.status == 1)
                   .toList();
               isJoined = true;
+              BlocProvider.of<MeetupCubit>(context).onRefresh();
               setState(() {});
             }
           }
@@ -374,6 +376,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                   .where((element) => element.status == 1)
                   .toList();
               isJoined = false;
+              BlocProvider.of<MeetupCubit>(context).onRefresh();
               setState(() {});
             }
           }

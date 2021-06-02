@@ -12,7 +12,7 @@ import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
-import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
+import 'package:kroma_sport/views/tabs/venue/venue_screen.dart';
 
 class MainView extends StatefulWidget {
   static const String tag = '/mainScreen';
@@ -25,7 +25,7 @@ class _MainViewState extends State<MainView> {
   List<Widget> _screens = [
     HomeScreen(),
     MeetupScreen(),
-    NotificationScreen(),
+    VenueScreen(),
     AccountScreen()
   ];
 
@@ -33,7 +33,7 @@ class _MainViewState extends State<MainView> {
     FeatherIcons.home,
     FeatherIcons.activity,
     FeatherIcons.plus,
-    FeatherIcons.bell,
+    FeatherIcons.grid,
     FeatherIcons.user,
   ];
   int _tapIndex = 0;
