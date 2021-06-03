@@ -74,7 +74,7 @@ class _VenueScreenState extends State<VenueScreen> {
           ),
         ],
       ),
-      backgroundColor: Theme.of(context).primaryColor,
+      // backgroundColor: Theme.of(context).primaryColor,
       body: EasyRefresh.custom(
         header: MaterialHeader(
           valueColor: AlwaysStoppedAnimation<Color>(mainColor),

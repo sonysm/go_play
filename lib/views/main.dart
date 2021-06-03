@@ -13,6 +13,8 @@ import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_screen.dart';
+import 'package:kroma_sport/widgets/ks_text_button.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class MainView extends StatefulWidget {
   static const String tag = '/mainScreen';
@@ -128,39 +130,17 @@ class _MainViewState extends State<MainView> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                TextButton(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(horizontal: 0.0)),
-                  ),
-                  onPressed: () {
+                bottomSheetBar(context),
+                KSTextButtonBottomSheet(
+                  title: 'Organize activity',
+                  icon: Feather.activity,
+                  onTab: () {
                     dismissScreen(context);
                     launchScreen(context, OrganizeListScreen.tag);
                   },
-                  child: Container(
-                    height: 54.0,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                          child: Icon(
-                            Feather.activity,
-                            color:
-                                Theme.of(context).brightness == Brightness.light
-                                    ? Colors.blueGrey
-                                    : Colors.white,
-                          ),
-                        ),
-                        Text(
-                          'Organize activity',
-                          style: Theme.of(context).textTheme.headline6,
-                        )
-                      ],
-                    ),
-                  ),
                 ),
                 Divider(indent: 16.0, endIndent: 16.0, height: 0),
-                100.height,
+                50.height,
               ],
             ),
           ),
@@ -200,7 +180,7 @@ class _CustomTabBar extends StatelessWidget {
                             borderRadius: BorderRadius.circular(0)),
                       ),
                       elevation: MaterialStateProperty.all(0),
-                      overlayColor: MaterialStateProperty.all(greyColor),
+                      overlayColor: MaterialStateProperty.all(isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
                       backgroundColor:
                           MaterialStateProperty.all(Colors.transparent),
                     ),

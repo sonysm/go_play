@@ -20,6 +20,8 @@ import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_text_button.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -433,81 +435,39 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     FocusScope.of(context).unfocus();
     showModalBottomSheet(
       context: context,
+      backgroundColor: Theme.of(context).primaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
       builder: (context) {
         return SafeArea(
           maintainBottomViewPadding: true,
           child: Container(
-            color: Theme.of(context).primaryColor,
+            padding: const EdgeInsets.only(bottom: 8.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                bottomSheetBar(context),
                 isMe(post.owner.id)
-                    ? TextButton(
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              EdgeInsets.symmetric(horizontal: 0.0)),
-                        ),
-                        onPressed: () {
+                    ? KSTextButtonBottomSheet(
+                        title: 'Delete Post',
+                        icon: Feather.trash_2,
+                        onTab: () {
                           dismissScreen(context);
                           showKSConfirmDialog(context,
                               'Are you sure you want to delete this post?', () {
                             deletePost();
                           });
                         },
-                        child: Container(
-                          height: 54.0,
-                          child: Row(
-                            children: <Widget>[
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(left: 16.0, right: 16.0),
-                                child: Icon(
-                                  Feather.trash_2,
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.light
-                                      ? Colors.blueGrey
-                                      : Colors.white,
-                                ),
-                              ),
-                              Text(
-                                'Delete Post',
-                                style: Theme.of(context).textTheme.bodyText1,
-                              )
-                            ],
-                          ),
-                        ),
                       )
                     : SizedBox(),
-                TextButton(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(horizontal: 0.0)),
-                  ),
-                  onPressed: () {
+                KSTextButtonBottomSheet(
+                  title: 'Report Post',
+                  icon: Feather.info,
+                  onTab: () {
                     dismissScreen(context);
                   },
-                  child: Container(
-                    height: 54.0,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                          child: Icon(
-                            Feather.info,
-                            color:
-                                Theme.of(context).brightness == Brightness.light
-                                    ? Colors.blueGrey
-                                    : Colors.white,
-                          ),
-                        ),
-                        Text(
-                          'Report Post',
-                          style: Theme.of(context).textTheme.bodyText1,
-                        )
-                      ],
-                    ),
-                  ),
                 ),
               ],
             ),

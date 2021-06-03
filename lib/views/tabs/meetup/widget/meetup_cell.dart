@@ -18,6 +18,8 @@ import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_text_button.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class MeetupCell extends StatefulWidget {
   final Post post;
@@ -323,78 +325,32 @@ class _MeetupCellState extends State<MeetupCell> {
         return SafeArea(
           maintainBottomViewPadding: true,
           child: Container(
+            padding: const EdgeInsets.only(bottom: 8.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                bottomSheetBar(context),
                 isMe(post.owner.id)
-                    ? TextButton(
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              EdgeInsets.symmetric(horizontal: 0.0)),
-                        ),
-                        onPressed: () {
+                    ? KSTextButtonBottomSheet(
+                        title: 'Delete Meetup',
+                        icon: Feather.trash_2,
+                        onTab: () {
                           dismissScreen(context);
                           showKSConfirmDialog(context,
                               'Are you sure you want to delete this post?', () {
                             deleteMeetup();
                           });
                         },
-                        child: Container(
-                          height: 54.0,
-                          child: Row(
-                            children: <Widget>[
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(left: 16.0, right: 16.0),
-                                child: Icon(
-                                  Feather.trash_2,
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.light
-                                      ? Colors.blueGrey
-                                      : Colors.white,
-                                ),
-                              ),
-                              Text(
-                                'Delete Meetup',
-                                style: Theme.of(context).textTheme.bodyText1,
-                              )
-                            ],
-                          ),
-                        ),
                       )
                     : SizedBox(),
-                TextButton(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(horizontal: 0.0)),
-                  ),
-                  onPressed: () {
+                KSTextButtonBottomSheet(
+                  title: 'Report Meetup',
+                  icon: Feather.info,
+                  onTab: () {
                     dismissScreen(context);
                   },
-                  child: Container(
-                    height: 54.0,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                          child: Icon(
-                            Feather.info,
-                            color:
-                                Theme.of(context).brightness == Brightness.light
-                                    ? Colors.blueGrey
-                                    : Colors.white,
-                          ),
-                        ),
-                        Text(
-                          'Report Meetup',
-                          style: Theme.of(context).textTheme.bodyText1,
-                        )
-                      ],
-                    ),
-                  ),
                 ),
-                30.height,
               ],
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 Future<File?> _getCameraImage(
     {bool isCropped = true, bool isRectangle = false}) async {
@@ -70,9 +71,10 @@ selectImage(BuildContext context, Function(File?) image,
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              bottomSheetBar(context),
               Container(
                 padding:
-                    const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 16.0),
+                    const EdgeInsets.only(left: 16.0, bottom: 16.0),
                 child: Text(
                   'Choose Photo',
                   style: Theme.of(context).textTheme.headline6,

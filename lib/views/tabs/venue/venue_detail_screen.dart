@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/venue/pitch_booking_screen.dart';
 import 'package:kroma_sport/widgets/cache_image.dart';
 
 class VenueDetailScreen extends StatefulWidget {
@@ -35,6 +38,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
       child: Container(
         padding: EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -91,11 +95,21 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
               ),
             ),
             Divider(),
+            Text(
+              'Sport type:',
+              style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                  color:
+                      isLight(context) ? Colors.grey[600] : Colors.grey[100]),
+            ),
+            8.height,
             ElevatedButton(
-              onPressed: () {},
+              onPressed: showSportTypeOption,
               style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0),
-                backgroundColor: MaterialStateProperty.all(Colors.grey[100]),
+                backgroundColor: MaterialStateProperty.all(
+                    isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4.0),
                   side: BorderSide(color: Colors.grey[200]!),
@@ -114,7 +128,8 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                         ?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   Spacer(),
-                  Icon(FeatherIcons.chevronDown, color: blackColor),
+                  Icon(FeatherIcons.chevronDown,
+                      color: isLight(context) ? blackColor : whiteColor),
                 ],
               ),
             )
@@ -129,7 +144,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: isLight(context) ? Colors.grey[100] : Colors.blueGrey[300],
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(color: Colors.grey[200]!),
       ),
@@ -157,10 +172,13 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
           ),
           Spacer(),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              launchScreen(context, PitchBookingScreen.tag);
+            },
             style: ButtonStyle(
               elevation: MaterialStateProperty.all(0),
-              backgroundColor: MaterialStateProperty.all(mainColor),
+              backgroundColor: MaterialStateProperty.all(
+                  isLight(context) ? mainColor : Color(0xFF2ecc71)),
               minimumSize: MaterialStateProperty.all(Size(0, 0)),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               padding: MaterialStateProperty.all(
@@ -183,7 +201,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
   Widget buildAvailablePitch() {
     return SliverToBoxAdapter(
       child: Container(
-        padding: EdgeInsets.only(left: 16.0, right: 16.0),
+        padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -194,9 +212,9 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                   .bodyText1
                   ?.copyWith(fontWeight: FontWeight.w600),
             ),
-            16.height,
+            8.height,
             ListView.separated(
-              padding: EdgeInsets.zero,
+              padding: EdgeInsets.only(bottom: 16.0),
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
@@ -231,6 +249,76 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
         ],
         onRefresh: () async {},
       ),
+    );
+  }
+
+  void showSportTypeOption() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).primaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          maintainBottomViewPadding: true,
+          child: Container(
+            padding: EdgeInsets.only(bottom: 36.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.only(
+                      top: 16.0, left: 16.0, bottom: 16.0),
+                  child: Text(
+                    'Choose sport type',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                ),
+                TextButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(horizontal: 0.0)),
+                  ),
+                  onPressed: () {
+                    dismissScreen(context);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 12.0),
+                    decoration: BoxDecoration(
+                      color: isLight(context)
+                          ? Colors.grey[200]
+                          : Colors.blueGrey[400],
+                      // border: Border.all(color: isLight(context) ? Colors.grey[300]! : Colors.grey[200]!),
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          '⚽️  Futsal / Football',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        Spacer(),
+                        Icon(
+                          Feather.check,
+                          color:
+                              isLight(context) ? mainColor : Colors.greenAccent,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -306,7 +394,9 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
                 decoration: BoxDecoration(
                   color: (1 - shrinkOffset / openHeight) > 0.7
                       ? blackColor.withOpacity(0.6)
-                      : whiteColor.withOpacity(backgroundOpacity(shrinkOffset)),
+                      : Theme.of(context)
+                          .primaryColor
+                          .withOpacity(backgroundOpacity(shrinkOffset)),
                   shape: BoxShape.circle,
                 ),
                 child: CupertinoButton(
@@ -326,13 +416,15 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
                 style: TextStyle(
                   color: shrinkOffset < openHeight - 100
                       ? Colors.transparent
-                      : blackColor,
+                      : isLight(context)
+                          ? mainColor
+                          : whiteColor,
                 ),
               ),
               titleSpacing: 0,
               backgroundColor: shrinkOffset < openHeight - 100
                   ? Colors.transparent
-                  : whiteColor,
+                  : Theme.of(context).primaryColor,
               elevation: 0,
             ),
             height: MediaQuery.of(context).padding.top + 54.0,

@@ -60,6 +60,7 @@ dependencies:
   flutter_svg: ^0.22.0
   line_icons: ^2.0.1
   toggle_switch: ^0.1.9
+  date_picker_timeline: ^1.2.3
   
   # Firebase
   firebase_auth: ^1.1.2

@@ -6,10 +6,11 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
-import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_text_button.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class FavoriteSportDetailScreen extends StatefulWidget {
   static const String tag = '/favoriteSportDetailScreen';
@@ -34,15 +35,15 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
   Widget buildNavbar() {
     return SliverAppBar(
       title: Text(widget.sport.name),
-      actions: [
-        CupertinoButton(
-          child: Icon(FeatherIcons.moreHorizontal,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.grey[600]
-                  : whiteColor),
-          onPressed: () => showOptionActionBottomSheet(),
-        )
-      ],
+      // actions: [
+      //   CupertinoButton(
+      //     child: Icon(FeatherIcons.moreHorizontal,
+      //         color: Theme.of(context).brightness == Brightness.light
+      //             ? Colors.grey[600]
+      //             : whiteColor),
+      //     onPressed: () => showOptionActionBottomSheet(),
+      //   ),
+      // ],
     );
   }
 
@@ -82,16 +83,16 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
         return SafeArea(
           maintainBottomViewPadding: true,
           child: Container(
+            padding: const EdgeInsets.only(bottom: 8.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                TextButton(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(horizontal: 0.0)),
-                  ),
-                  onPressed: () {
+                bottomSheetBar(context),
+                KSTextButtonBottomSheet(
+                  title: 'Remove from favorite sport',
+                  icon: Feather.info,
+                  onTab: () {
                     dismissScreen(context);
                     showKSConfirmDialog(
                       context,
@@ -99,30 +100,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                       () => removeFavSport(),
                     );
                   },
-                  child: Container(
-                    height: 54.0,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                          child: Icon(
-                            Feather.trash_2,
-                            color: Colors.blueGrey[700],
-                          ),
-                        ),
-                        Text(
-                          'Remove from favorite sport',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
-                30.height
               ],
             ),
           ),
