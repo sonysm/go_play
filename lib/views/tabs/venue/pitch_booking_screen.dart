@@ -2,10 +2,16 @@ import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:intl/intl.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/main.dart';
+import 'package:kroma_sport/widgets/ks_complete_dialog.dart';
+import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_text_button.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class PitchBookingScreen extends StatefulWidget {
   static const tag = '/pitchBookingScreen';
@@ -17,6 +23,15 @@ class PitchBookingScreen extends StatefulWidget {
 }
 
 class _PitchBookingScreenState extends State<PitchBookingScreen> {
+  int? duration;
+  String? timeAvailableString;
+
+  DateTime selectedDate = DateTime.now();
+
+  String? dateTimeString;
+
+  DateFormat format = DateFormat('dd/MM/yyyy');
+
   Widget buildSelectDate() {
     return SliverToBoxAdapter(
       child: Container(
@@ -52,17 +67,24 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
               initialSelectedDate: DateTime.now(),
               selectionColor: mainColor,
               selectedTextColor: Colors.white,
-              monthTextStyle: Theme.of(context).textTheme.caption!.copyWith(fontSize: 11.0),
-              dayTextStyle: Theme.of(context).textTheme.caption!.copyWith(fontSize: 11.0),
+              monthTextStyle:
+                  Theme.of(context).textTheme.caption!.copyWith(fontSize: 11.0),
+              dayTextStyle:
+                  Theme.of(context).textTheme.caption!.copyWith(fontSize: 11.0),
               dateTextStyle: Theme.of(context).textTheme.headline5!,
               height: 90,
               daysCount: 14,
               activeDates: List.generate(
                   14, (index) => DateTime.now().add(Duration(days: index))),
               onDateChange: (date) {
-                setState(() {
-                  // _selectedValue = date;
-                });
+                timeAvailableString = null;
+                dateTimeString = null;
+                selectedDate = date;
+                if (timeAvailableString != null) {
+                  dateTimeString =
+                      format.format(date) + ' - $timeAvailableString';
+                }
+                setState(() {});
               },
             ),
             16.height,
@@ -89,7 +111,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: selectDuration,
                 style: ButtonStyle(
                   elevation: MaterialStateProperty.all(0),
                   backgroundColor: MaterialStateProperty.all(isLight(context)
@@ -106,7 +128,9 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                 child: Row(
                   children: [
                     Text(
-                      'Select Duration',
+                      duration != null
+                          ? '$duration minutes'
+                          : 'Select Duration',
                       style: Theme.of(context)
                           .textTheme
                           .bodyText1
@@ -123,7 +147,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: duration != null ? selectAvailableTime : null,
                 style: ButtonStyle(
                   elevation: MaterialStateProperty.all(0),
                   backgroundColor: MaterialStateProperty.all(isLight(context)
@@ -137,19 +161,22 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                     EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                   ),
                 ),
-                child: Row(
-                  children: [
-                    Text(
-                      'Select Available Time',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          ?.copyWith(fontWeight: FontWeight.w600),
-                    ),
-                    Spacer(),
-                    Icon(FeatherIcons.chevronDown,
-                        color: isLight(context) ? blackColor : whiteColor),
-                  ],
+                child: Opacity(
+                  opacity: duration != null ? 1 : 0.3,
+                  child: Row(
+                    children: [
+                      Text(
+                        timeAvailableString ?? 'Select Available Time',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      Spacer(),
+                      Icon(FeatherIcons.chevronDown,
+                          color: isLight(context) ? blackColor : whiteColor),
+                    ],
+                  ),
                 ),
               ),
             )
@@ -222,9 +249,16 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                   buildTextDetail(
                       label: 'Place',
                       data: 'Downtown Sport Club, Pitch A (5x5)'),
-                  buildTextDetail(label: 'Date & Time'),
-                  buildTextDetail(label: 'Duration'),
-                  buildTextDetail(label: 'Total', data: '\$16.00'),
+                  buildTextDetail(label: 'Date & Time', data: dateTimeString),
+                  buildTextDetail(
+                      label: 'Duration',
+                      data:
+                          duration != null ? duration.toString() + 'mn' : null),
+                  buildTextDetail(
+                      label: 'Total',
+                      data: duration != null
+                          ? '\$' + ((duration! * 8) / 60).toStringAsFixed(2)
+                          : null),
                 ],
               ),
             )
@@ -246,7 +280,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
             margin: const EdgeInsets.only(top: 6.0),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isLight(context) ? blackColor : whiteColor,
+              color: isLight(context) ? Colors.grey[600] : Colors.grey[200],
             ),
           ),
           8.width,
@@ -319,19 +353,25 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                 ],
               ),
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  elevation: MaterialStateProperty.all(0),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  backgroundColor: MaterialStateProperty.all(mainColor),
-                ),
-                child: Text(
-                  'Book - \$16.00',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+              child: Opacity(
+                opacity:
+                    duration != null && timeAvailableString != null ? 1 : 0.5,
+                child: ElevatedButton(
+                  onPressed: duration != null && timeAvailableString != null
+                      ? bookPitch
+                      : null,
+                  style: ButtonStyle(
+                    elevation: MaterialStateProperty.all(0),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    backgroundColor: MaterialStateProperty.all(mainColor),
+                  ),
+                  child: Text(
+                    'Book - \$16.00',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -340,5 +380,151 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
         ],
       ),
     );
+  }
+
+  void selectDuration() {
+    showKSBottomSheet(
+      context,
+      children: [
+        Container(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Text(
+            'Choose Duration',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+        KSTextButtonBottomSheet(
+          title: '30 minutes',
+          height: 40,
+          titleTextStyle: Theme.of(context)
+              .textTheme
+              .bodyText1
+              ?.copyWith(fontWeight: FontWeight.w600),
+          onTab: () {
+            duration = 30;
+            dismissScreen(context);
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: '60 minutes',
+          height: 40,
+          titleTextStyle: Theme.of(context)
+              .textTheme
+              .bodyText1
+              ?.copyWith(fontWeight: FontWeight.w600),
+          onTab: () {
+            duration = 60;
+            dismissScreen(context);
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: '90 minutes',
+          height: 40,
+          titleTextStyle: Theme.of(context)
+              .textTheme
+              .bodyText1
+              ?.copyWith(fontWeight: FontWeight.w600),
+          onTab: () {
+            duration = 90;
+            dismissScreen(context);
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: '120 minutes',
+          height: 40,
+          titleTextStyle: Theme.of(context)
+              .textTheme
+              .bodyText1
+              ?.copyWith(fontWeight: FontWeight.w600),
+          onTab: () {
+            duration = 120;
+            dismissScreen(context);
+          },
+        ),
+      ],
+    ).then((value) {
+      print('______callback! $value');
+      setState(() {});
+    });
+  }
+
+  void selectAvailableTime() {
+    showKSBottomSheet(
+      context,
+      children: [
+        Container(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Text(
+            'Choose Available Time',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+        KSTextButtonBottomSheet(
+          title: '7:00 AM',
+          height: 40,
+          titleTextStyle: Theme.of(context)
+              .textTheme
+              .bodyText1
+              ?.copyWith(fontWeight: FontWeight.w600),
+          onTab: () {
+            timeAvailableString = '7:00 AM';
+            dismissScreen(context);
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: '8:00 AM',
+          height: 40,
+          titleTextStyle: Theme.of(context)
+              .textTheme
+              .bodyText1
+              ?.copyWith(fontWeight: FontWeight.w600),
+          onTab: () {
+            timeAvailableString = '8:00 AM';
+            dismissScreen(context);
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: '9:00 AM',
+          height: 40,
+          titleTextStyle: Theme.of(context)
+              .textTheme
+              .bodyText1
+              ?.copyWith(fontWeight: FontWeight.w600),
+          onTab: () {
+            timeAvailableString = '9:00 AM';
+            dismissScreen(context);
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: '10:00 AM',
+          height: 40,
+          titleTextStyle: Theme.of(context)
+              .textTheme
+              .bodyText1
+              ?.copyWith(fontWeight: FontWeight.w600),
+          onTab: () {
+            timeAvailableString = '10:00 AM';
+            dismissScreen(context);
+          },
+        ),
+      ],
+    ).then((value) {
+      print('______callback! $value');
+      if (timeAvailableString != null) {
+        dateTimeString =
+            format.format(selectedDate) + ' - $timeAvailableString';
+      }
+      setState(() {});
+    });
+  }
+
+  void bookPitch() async {
+    showKSLoading(context);
+    await Future.delayed(Duration(milliseconds: 700));
+    dismissScreen(context);
+    showKSComplete(context, message: 'Book successfully!');
+    await Future.delayed(Duration(milliseconds: 1200));
+    dismissScreen(context);
+    Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
   }
 }

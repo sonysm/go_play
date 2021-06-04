@@ -3,12 +3,16 @@ import 'package:kroma_sport/utils/tools.dart';
 
 class KSTextButtonBottomSheet extends StatelessWidget {
   final String title;
+  final TextStyle? titleTextStyle;
+  final double? height;
   final IconData? icon;
   final VoidCallback? onTab;
 
   const KSTextButtonBottomSheet({
     Key? key,
     required this.title,
+    this.titleTextStyle,
+    this.height = 54.0,
     this.icon,
     this.onTab,
   }) : super(key: key);
@@ -25,7 +29,7 @@ class KSTextButtonBottomSheet extends StatelessWidget {
       ),
       onPressed: onTab,
       child: Container(
-        height: 54.0,
+        height: height,
         child: Row(
           children: <Widget>[
             SizedBox(width: 16.0),
@@ -40,7 +44,7 @@ class KSTextButtonBottomSheet extends StatelessWidget {
                 : SizedBox(),
             Text(
               title,
-              style: Theme.of(context).textTheme.bodyText1,
+              style: titleTextStyle ?? Theme.of(context).textTheme.bodyText1,
             )
           ],
         ),

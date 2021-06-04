@@ -25,6 +25,8 @@ import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
+import 'package:kroma_sport/views/tabs/venue/booking_history_detail.dart';
+import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/pitch_booking_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_screen.dart';
@@ -119,6 +121,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => VenueDetailScreen());
       case PitchBookingScreen.tag:
         return MaterialPageRoute(builder: (_) => PitchBookingScreen());
+      case BookingHistoryScreen.tag:
+        return MaterialPageRoute(builder: (_) => BookingHistoryScreen());
+      case BookingHistoryDetailScreen.tag:
+        return MaterialPageRoute(builder: (_) => BookingHistoryDetailScreen());
       default:
         return _errorRoute();
     }

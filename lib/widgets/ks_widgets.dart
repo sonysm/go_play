@@ -26,3 +26,27 @@ Widget bottomSheetBar(BuildContext context) {
     ],
   );
 }
+
+Future<dynamic> showKSBottomSheet(BuildContext context, {List<Widget> children = const <Widget>[]}) async {
+  children.insert(0, bottomSheetBar(context));
+  await showModalBottomSheet(
+    context: context,
+    backgroundColor: Theme.of(context).primaryColor,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+    ),
+    builder: (context) {
+      return SafeArea(
+        maintainBottomViewPadding: true,
+        child: Container(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
+          ),
+        ),
+      );
+    },
+  );
+}
