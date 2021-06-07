@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/ks.dart';
@@ -13,6 +12,7 @@ import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String tag = '/registerScreen';
@@ -33,6 +33,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   TextEditingController _fnTextController = TextEditingController();
   TextEditingController _lnTextController = TextEditingController();
+  TextEditingController _genderTextController = TextEditingController();
+  TextEditingController _heightTextController = TextEditingController();
+  TextEditingController _weightTextController = TextEditingController();
 
   final userRepository = UserRepository();
   KSHttpClient ksClient = KSHttpClient();
@@ -43,6 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       forceElevated: true,
       centerTitle: true,
       title: Text('Register'),
+      pinned: true,
     );
   }
 
@@ -108,7 +112,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _infoTextWidget() {
     return SliverToBoxAdapter(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
         child: Text(
           'Please input your first name and last name here!',
           style: Theme.of(context).textTheme.bodyText1,
@@ -121,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return SliverToBoxAdapter(
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
+          horizontal: 24.0,
           vertical: 4.0,
         ),
         child: Column(
@@ -166,7 +170,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Container(
         margin: EdgeInsets.only(top: 16.0),
         padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
+          horizontal: 24.0,
           vertical: 4.0,
         ),
         child: Column(
@@ -206,6 +210,219 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  Widget _genderField() {
+    return SliverToBoxAdapter(
+      child: InkWell(
+        onTap: selectGender,
+        child: Container(
+          margin: EdgeInsets.only(top: 16.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24.0,
+            vertical: 4.0,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Gender',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+              IgnorePointer(
+                ignoring: true,
+                child: TextField(
+                  controller: _genderTextController,
+                  style: Theme.of(context).textTheme.bodyText1,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Select gender',
+                    hintStyle: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(color: Colors.grey),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(width: 0.5, color: Colors.grey[300]!),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(width: 0.5, color: Colors.grey[300]!),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _birthdateField() {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(top: 16.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24.0,
+          vertical: 4.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Date of Birth',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            TextField(
+              controller: _lnTextController,
+              style: Theme.of(context).textTheme.bodyText1,
+              readOnly: true,
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: 'Select date of birth',
+                hintStyle: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(color: Colors.grey),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _heightField() {
+    return SliverToBoxAdapter(
+      child: InkWell(
+        onTap: selectHeight,
+        child: Container(
+          margin: EdgeInsets.only(top: 16.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24.0,
+            vertical: 4.0,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Height',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+              IgnorePointer(
+                ignoring: true,
+                child: TextField(
+                  controller: _heightTextController,
+                  style: Theme.of(context).textTheme.bodyText1,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Select Height (optional)',
+                    hintStyle: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(color: Colors.grey),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _weightField() {
+    return SliverToBoxAdapter(
+      child: InkWell(
+        onTap: selectWeight,
+        child: Container(
+          margin: EdgeInsets.only(top: 16.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24.0,
+            vertical: 4.0,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Weight',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+              IgnorePointer(
+                ignoring: true,
+                child: TextField(
+                  controller: _weightTextController,
+                  style: Theme.of(context).textTheme.bodyText1,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: 'Select weight (optional)',
+                    hintStyle: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(color: Colors.grey),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _btnSaveProfileWidget() {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: const EdgeInsets.only(
+          left: 24,
+          right: 24.0,
+          top: 32.0,
+          bottom: 16.0,
+        ),
+        height: 48.0,
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: hasName() ? onStart : null,
+          style: ButtonStyle(
+              elevation: MaterialStateProperty.all(0),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              backgroundColor: MaterialStateProperty.all(
+                hasName() ? mainColor : Colors.grey[400],
+              ),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0)))),
+          child: Text(
+            'Save Profile',
+            style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                color: whiteColor,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'ProximaNova'),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -220,24 +437,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _infoTextWidget(),
               _firstnameTextField(),
               _lastnameTextField(),
+              _genderField(),
+              _birthdateField(),
+              _heightField(),
+              _weightField(),
+              _btnSaveProfileWidget(),
             ],
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: hasName() ? onStart : null,
-        backgroundColor: hasName() ? mainColor : Colors.grey[400],
-        child: Icon(
-          Feather.chevron_right,
-          size: 32.0,
-          color: whiteColor,
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: hasName() ? onStart : null,
+      //   backgroundColor: hasName() ? mainColor : Colors.grey[400],
+      //   child: Icon(
+      //     Feather.chevron_right,
+      //     size: 32.0,
+      //     color: whiteColor,
+      //   ),
+      // ),
     );
   }
 
   bool hasName() {
-    return _fnTextController.text.trim().length > 2 ||
+    return _fnTextController.text.trim().length > 2 &&
             _lnTextController.text.trim().length > 2
         ? true
         : false;
@@ -267,5 +489,95 @@ class _RegisterScreenState extends State<RegisterScreen> {
         dismissScreen(context);
       }
     }
+  }
+
+  String selectedGender = 'male';
+
+  void selectGender() {
+    showKSBottomSheet(context, children: [
+      RadioListTile<String>(
+        value: 'male',
+        groupValue: selectedGender,
+        onChanged: (value) {
+          _genderTextController.text = 'Male';
+          setState(() => selectedGender = value!);
+          dismissScreen(context);
+        },
+        title: Text('Male',
+            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+      ),
+      RadioListTile<String>(
+        value: 'female',
+        groupValue: selectedGender,
+        onChanged: (value) {
+          _genderTextController.text = 'Female';
+          setState(() => selectedGender = value!);
+          dismissScreen(context);
+        },
+        title: Text('Female',
+            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+      ),
+      RadioListTile<String>(
+        value: 'other',
+        groupValue: selectedGender,
+        onChanged: (value) {
+          _genderTextController.text = 'Other';
+          setState(() => selectedGender = value!);
+          dismissScreen(context);
+        },
+        title: Text('Other',
+            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+      ),
+    ]);
+  }
+
+  int selectedHeight = 0;
+
+  void selectHeight() {
+    showKSBottomSheet(
+      context,
+      children: List.generate(
+        71,
+        (index) {
+          return RadioListTile<int>(
+            value: 130 + index,
+            groupValue: selectedHeight,
+            onChanged: (value) {
+              _heightTextController.text = '$value\cm';
+              setState(() => selectedHeight = value!);
+              dismissScreen(context);
+            },
+            title: Text('${130+index}\cm',
+                style:
+                    TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+          );
+        },
+      ),
+    );
+  }
+
+  int selectedWeight = 0;
+
+  void selectWeight() {
+    showKSBottomSheet(
+      context,
+      children: List.generate(
+        71,
+        (index) {
+          return RadioListTile<int>(
+            value: 30 + index,
+            groupValue: selectedWeight,
+            onChanged: (value) {
+              _weightTextController.text = '$value\kg';
+              setState(() => selectedWeight = value!);
+              dismissScreen(context);
+            },
+            title: Text('${30+index}\kg',
+                style:
+                    TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+          );
+        },
+      ),
+    );
   }
 }

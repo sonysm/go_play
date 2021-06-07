@@ -364,6 +364,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                     elevation: MaterialStateProperty.all(0),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     backgroundColor: MaterialStateProperty.all(mainColor),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)))
                   ),
                   child: Text(
                     'Book - \$16.00',

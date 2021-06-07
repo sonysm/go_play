@@ -27,7 +27,8 @@ Widget bottomSheetBar(BuildContext context) {
   );
 }
 
-Future<dynamic> showKSBottomSheet(BuildContext context, {List<Widget> children = const <Widget>[]}) async {
+Future<dynamic> showKSBottomSheet(BuildContext context,
+    {List<Widget> children = const <Widget>[]}) async {
   children.insert(0, bottomSheetBar(context));
   await showModalBottomSheet(
     context: context,
@@ -40,10 +41,12 @@ Future<dynamic> showKSBottomSheet(BuildContext context, {List<Widget> children =
         maintainBottomViewPadding: true,
         child: Container(
           padding: const EdgeInsets.only(bottom: 8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: children,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: children,
+            ),
           ),
         ),
       );

@@ -107,8 +107,8 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with Sing
                     widget.user.getFullname(),
                     style: Theme.of(context)
                         .textTheme
-                        .bodyText1
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                        .headline6
+                        ?.copyWith(fontWeight: FontWeight.w600, fontFamily: 'Metropolis'),
                   ),
                   Text(
                     'Phnom Penh, Cambodia',

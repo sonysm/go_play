@@ -246,13 +246,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
             Container(
-              height: 54.0,
+              height: 48.0,
               child: ToggleSwitch(
                 minWidth: AppSize(context).appWidth(50),
-                cornerRadius: 4,
+                cornerRadius: 8,
                 activeBgColor: mainColor,
                 activeFgColor: Colors.white,
-                inactiveBgColor: Colors.grey[350],
+                inactiveBgColor: Colors.grey[400],
                 inactiveFgColor: Colors.white,
                 fontSize: 16.0,
                 labels: ['Male', 'Female'],
@@ -297,7 +297,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             16.height,
             Row(
               children: <Widget>[
-                Icon(Feather.phone),
+                Icon(Feather.phone, size: 18.0),
                 8.width,
                 Text(
                   KS.shared.user.phone!,
@@ -311,7 +311,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             16.height,
             Row(
               children: <Widget>[
-                Icon(Feather.mail),
+                Icon(Feather.mail, size: 18.0),
                 8.width,
                 Text(
                   KS.shared.user.lastName.toLowerCase() + '@example.com',
@@ -325,7 +325,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             16.height,
             Row(
               children: <Widget>[
-                Icon(Feather.map_pin),
+                Icon(Feather.map_pin, size: 18.0),
                 8.width,
                 Text(
                   'Phnom Penh, Cambodia',

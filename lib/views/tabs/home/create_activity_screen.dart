@@ -462,6 +462,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                     },
                     style: ButtonStyle(
                       elevation: MaterialStateProperty.all(0),
+                      shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
                       backgroundColor: MaterialStateProperty.all(
                           availableNext() ? mainColor : Colors.green[200]),
                     ),

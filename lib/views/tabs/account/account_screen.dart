@@ -119,8 +119,8 @@ class _AccountScreenState extends State<AccountScreen>
                     KS.shared.user.getFullname(),
                     style: Theme.of(context)
                         .textTheme
-                        .bodyText1
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                        .headline6
+                        ?.copyWith(fontWeight: FontWeight.w600, fontFamily: 'Metropolis')
                   ),
                   Text(
                     'Phnom Penh, Cambodia',

@@ -99,7 +99,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1
-                            ?.copyWith(fontWeight: FontWeight.w600),
+                            ?.copyWith(fontWeight: FontWeight.w600, fontFamily: 'Metropolis'),
                       ),
                       Text(
                         widget.post.createdAt.toString().timeAgoString,

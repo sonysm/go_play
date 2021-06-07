@@ -104,7 +104,8 @@ class _ActivityCellState extends State<ActivityCell> {
                                           .textTheme
                                           .bodyText1
                                           ?.copyWith(
-                                              fontWeight: FontWeight.w600),
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'Metropolis'),
                                     ),
                                     widget.post.activityLocation != null
                                         ? TextSpan(

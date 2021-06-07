@@ -59,7 +59,9 @@ class CommentCell extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .bodyText2
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                              ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Metropolis'),
                         ),
                       ),
                       4.height,

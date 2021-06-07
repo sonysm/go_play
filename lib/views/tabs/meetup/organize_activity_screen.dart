@@ -467,6 +467,7 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
                   elevation: MaterialStateProperty.all(0),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   backgroundColor: MaterialStateProperty.all(mainColor),
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
                 ),
                 child: Text(
                   'Organize ${sport.name}',

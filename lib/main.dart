@@ -62,19 +62,20 @@ class App extends StatelessWidget {
             primaryTextTheme:
                 Theme.of(context).primaryTextTheme.apply(bodyColor: blackColor),
             textTheme: TextTheme(
-              headline1: TextStyle(fontSize: 14.0, color: blackColor),
-              headline2: TextStyle(fontSize: 14.0, color: blackColor),
-              headline3: TextStyle(fontSize: 14.0, color: blackColor),
-              headline4: TextStyle(fontSize: 14.0, color: blackColor),
-              headline5: TextStyle(fontSize: 24.0, color: blackColor),
-              headline6: TextStyle(fontSize: 20.0, color: blackColor),
+              headline1: TextStyle(fontSize: 14.0, color: blackColor, fontFamily: 'Avenir'),
+              headline2: TextStyle(fontSize: 14.0, color: blackColor, fontFamily: 'Avenir'),
+              headline3: TextStyle(fontSize: 14.0, color: blackColor, fontFamily: 'Avenir'),
+              headline4: TextStyle(fontSize: 14.0, color: blackColor, fontFamily: 'Avenir'),
+              headline5: TextStyle(fontSize: 24.0, color: blackColor, fontFamily: 'Avenir'),
+              headline6: TextStyle(fontSize: 20.0, color: blackColor, fontFamily: 'Avenir'),
               bodyText1: TextStyle(
                 fontSize: 16.0,
                 color: blackColor,
                 fontWeight: FontWeight.w400,
+                fontFamily: 'Avenir'
               ),
-              bodyText2: TextStyle(fontSize: 14.0, color: blackColor),
-              caption: TextStyle(fontSize: 12.0, color: blackColor),
+              bodyText2: TextStyle(fontSize: 14.0, color: blackColor, fontFamily: 'Avenir'),
+              caption: TextStyle(fontSize: 12.0, color: blackColor, fontFamily: 'Avenir'),
             ),
             appBarTheme: AppBarTheme(
               elevation: 1,
@@ -82,8 +83,8 @@ class App extends StatelessWidget {
                 headline6: TextStyle(
                   fontSize: 20.0,
                   color: mainColor,
-                  fontWeight: FontWeight.w900,
-                  fontFamily: "OpenSans",
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Metropolis'
                 ),
               ),
             ),
@@ -104,15 +105,15 @@ class App extends StatelessWidget {
             primaryTextTheme:
                 Theme.of(context).primaryTextTheme.apply(bodyColor: whiteColor),
             textTheme: TextTheme(
-              headline1: TextStyle(fontSize: 14.0, color: whiteColor),
-              headline2: TextStyle(fontSize: 14.0, color: whiteColor),
-              headline3: TextStyle(fontSize: 14.0, color: whiteColor),
-              headline4: TextStyle(fontSize: 14.0, color: whiteColor),
-              headline5: TextStyle(fontSize: 24.0, color: whiteColor),
-              headline6: TextStyle(fontSize: 20.0, color: whiteColor),
-              bodyText1: TextStyle(fontSize: 16.0, color: whiteColor),
-              bodyText2: TextStyle(fontSize: 14.0, color: whiteColor),
-              caption: TextStyle(fontSize: 12.0, color: whiteColor),
+              headline1: TextStyle(fontSize: 14.0, color: whiteColor, fontFamily: 'Avenir'),
+              headline2: TextStyle(fontSize: 14.0, color: whiteColor, fontFamily: 'Avenir'),
+              headline3: TextStyle(fontSize: 14.0, color: whiteColor, fontFamily: 'Avenir'),
+              headline4: TextStyle(fontSize: 14.0, color: whiteColor, fontFamily: 'Avenir'),
+              headline5: TextStyle(fontSize: 24.0, color: whiteColor, fontFamily: 'Avenir'),
+              headline6: TextStyle(fontSize: 20.0, color: whiteColor, fontFamily: 'Avenir'),
+              bodyText1: TextStyle(fontSize: 16.0, color: whiteColor, fontFamily: 'Avenir'),
+              bodyText2: TextStyle(fontSize: 14.0, color: whiteColor, fontFamily: 'Avenir'),
+              caption: TextStyle(fontSize: 12.0, color: whiteColor, fontFamily: 'Avenir'),
             ),
             appBarTheme: AppBarTheme(
               elevation: 1,
@@ -120,8 +121,8 @@ class App extends StatelessWidget {
                 headline6: TextStyle(
                   fontSize: 20.0,
                   color: whiteColor,
-                  fontWeight: FontWeight.w900,
-                  fontFamily: "OpenSans",
+                  fontWeight: FontWeight.w700,
+                  fontFamily: 'Metropolis'
                 ),
               ),
             ),

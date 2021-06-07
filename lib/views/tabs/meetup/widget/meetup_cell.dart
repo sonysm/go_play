@@ -115,7 +115,7 @@ class _MeetupCellState extends State<MeetupCell> {
                                           .textTheme
                                           .bodyText1
                                           ?.copyWith(
-                                              fontWeight: FontWeight.w600),
+                                              fontWeight: FontWeight.w600, fontFamily: 'Metropolis'),
                                     ),
                                     TextSpan(
                                       text: ' is hosting ',
@@ -128,7 +128,7 @@ class _MeetupCellState extends State<MeetupCell> {
                                           .textTheme
                                           .bodyText1
                                           ?.copyWith(
-                                              fontWeight: FontWeight.w600),
+                                              fontWeight: FontWeight.w600, fontFamily: 'Metropolis'),
                                     ),
                                   ],
                                 ),
@@ -166,6 +166,7 @@ class _MeetupCellState extends State<MeetupCell> {
                     meetup.sport!.name + ' Meetup',
                     style: Theme.of(context).textTheme.bodyText2!.copyWith(
                         fontWeight: FontWeight.w600,
+                        fontFamily: 'Metropolis',
                         color: isLight(context)
                             ? Colors.blueGrey[600]
                             : Colors.white70),

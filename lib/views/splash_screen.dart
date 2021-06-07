@@ -21,8 +21,9 @@ class _SplashScreenState extends State<SplashScreen> {
       textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: 28.0,
-        color: mainColor,
+        color: whiteColor,
         fontWeight: FontWeight.w700,
+        fontFamily: 'ProximaNova'
       ),
     );
   }
@@ -42,10 +43,23 @@ class _SplashScreenState extends State<SplashScreen> {
         },
         child: Scaffold(
           backgroundColor: whiteColor,
-          body: Stack(
-            children: [
-              Center(child: splashText()),
-            ],
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  mainColor,
+                  Color(0xFF3cba92),
+                  Color(0xFF1ba39c),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            child: Stack(
+              children: [
+                Center(child: splashText()),
+              ],
+            ),
           ),
         ),
       ),
@@ -53,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     // fetchLocation();
   }

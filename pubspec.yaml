@@ -96,17 +96,51 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/open_sans/OpenSans-Bold.ttf
+        - asset: assets/fonts/open_sans/OpenSans-BoldItalic.ttf
+        - asset: assets/fonts/open_sans/OpenSans-ExtraBold.ttf
+        - asset: assets/fonts/open_sans/OpenSans-ExtraBoldItalic.ttf
+        - asset: assets/fonts/open_sans/OpenSans-Italic.ttf
+        - asset: assets/fonts/open_sans/OpenSans-Light.ttf
+        - asset: assets/fonts/open_sans/OpenSans-LightItalic.ttf
+        - asset: assets/fonts/open_sans/OpenSans-Regular.ttf
+        - asset: assets/fonts/open_sans/OpenSans-SemiBold.ttf
+        - asset: assets/fonts/open_sans/OpenSans-SemiBoldItalic.ttf
+
+    - family: ProximaNova
+      fonts:
+        - asset: assets/fonts/proxima_nova/ProximaNova-Black.otf
+        - asset: assets/fonts/proxima_nova/ProximaNova-Bold.otf
+        - asset: assets/fonts/proxima_nova/ProximaNova-Light.otf
+        - asset: assets/fonts/proxima_nova/ProximaNova-Regular.otf
+        - asset: assets/fonts/proxima_nova/ProximaNova-Sbold.otf
+        - asset: assets/fonts/proxima_nova/ProximaNova-Thin.otf
+        - asset: assets/fonts/proxima_nova/ProximaNova-Xbold.otf
+
+    - family: Avenir
+      fonts:
+        - asset: assets/fonts/avenir/Avenir-Black.otf
+        - asset: assets/fonts/avenir/Avenir-Light.otf
+        - asset: assets/fonts/avenir/Avenir-Regular.otf
+
+    - family: Metropolis
+      fonts:
+        - asset: assets/fonts/metropolis/Metropolis-Black.otf
+        - asset: assets/fonts/metropolis/Metropolis-BlackItalic.otf
+        - asset: assets/fonts/metropolis/Metropolis-Bold.otf
+        - asset: assets/fonts/metropolis/Metropolis-BoldItalic.otf
+        - asset: assets/fonts/metropolis/Metropolis-ExtraLight.otf
+        - asset: assets/fonts/metropolis/Metropolis-ExtraLightItalic.otf
+        - asset: assets/fonts/metropolis/Metropolis-Light.otf
+        - asset: assets/fonts/metropolis/Metropolis-LightItalic.otf
+        - asset: assets/fonts/metropolis/Metropolis-Medium.otf
+        - asset: assets/fonts/metropolis/Metropolis-MediumItalic.otf
+        - asset: assets/fonts/metropolis/Metropolis-Regular.otf
+        - asset: assets/fonts/metropolis/Metropolis-RegularItalic.otf
+        - asset: assets/fonts/metropolis/Metropolis-SemiBold.otf
+        - asset: assets/fonts/metropolis/Metropolis-SemiBoldItalic.otf
+        - asset: assets/fonts/metropolis/Metropolis-Thin.otf
+        - asset: assets/fonts/metropolis/Metropolis-ThinItalic.otf

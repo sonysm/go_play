@@ -92,12 +92,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         8.width,
                         Text(
                           'Photo',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              ?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: mainColor),
+                          style:
+                              Theme.of(context).textTheme.bodyText1?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: mainColor,
+                                    fontSize: 18.0,
+                                    fontFamily: 'ProximaNova',
+                                  ),
+                          strutStyle: StrutStyle(fontSize: 18),
                         ),
                       ],
                     ),
@@ -118,12 +120,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         8.width,
                         Text(
                           'Activity',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              ?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: mainColor),
+                          style:
+                              Theme.of(context).textTheme.bodyText1?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18.0,
+                                    color: mainColor,
+                                    fontFamily: 'ProximaNova',
+                                  ),
+                          strutStyle: StrutStyle(fontSize: 18),
                         ),
                       ],
                     ),
