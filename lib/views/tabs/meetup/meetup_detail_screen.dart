@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,17 +13,20 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/ks.dart';
+import 'package:kroma_sport/models/discussion.dart';
 import 'package:kroma_sport/models/member.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/meetup/widget/discussion_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:web_socket_channel/io.dart';
 
 class MeetupDetailScreen extends StatefulWidget {
   static const tag = '/meetUpDetailScreen';
@@ -37,8 +42,13 @@ class MeetupDetailScreen extends StatefulWidget {
 class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   late Post meetup;
   late List<Member> joinMember;
+  late bool isJoined;
 
   KSHttpClient ksClient = KSHttpClient();
+
+  late IOWebSocketChannel channel;
+
+  List<Discussion> discussionList = [];
 
   Widget buildMainInfo() {
     return SliverToBoxAdapter(
@@ -229,7 +239,162 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     );
   }
 
-  late bool isJoined;
+  Widget detailsTab() {
+    return Stack(
+      children: [
+        EasyRefresh.custom(
+          key: PageStorageKey('detailsTab'),
+          header: MaterialHeader(
+            valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+          ),
+          slivers: [
+            buildMainInfo(),
+            buildMap(),
+            buildMember(),
+          ],
+          onRefresh: () async {
+            fetchMeetup();
+          },
+        ),
+        (meetup.owner.id != KS.shared.user.id &&
+                    joinMember.length < meetup.maxPeople!) ||
+                (meetup.owner.id != KS.shared.user.id && isJoined)
+            ? Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 64.0,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    boxShadow: [
+                      BoxShadow(
+                        offset: Offset(0, -1),
+                        blurRadius: 4.0,
+                        color: Colors.black.withOpacity(0.1),
+                      ),
+                    ],
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: ElevatedButton(
+                    onPressed: isJoined ? leaveGame : joinGame,
+                    style: ButtonStyle(
+                      elevation: MaterialStateProperty.all(0),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      backgroundColor: MaterialStateProperty.all(
+                          isJoined ? Colors.grey[200] : mainColor),
+                    ),
+                    child: Text(
+                      isJoined ? 'Leave Game' : 'Join Game',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: isJoined ? Colors.red : Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : SizedBox(),
+      ],
+    );
+  }
+
+  // TextEditingController _commentController = TextEditingController();
+
+  // Widget bottomCommentAction() {
+  //   return Container(
+  //     height: 64.0,
+  //     width: MediaQuery.of(context).size.width,
+  //     padding: EdgeInsets.only(top: 8.0, bottom: 8.0, left: 16.0, right: 8.0),
+  //     decoration: BoxDecoration(
+  //       color: Theme.of(context).primaryColor,
+  //       border: Border(top: BorderSide(width: 0.5, color: Colors.black12)),
+  //     ),
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.end,
+  //       children: <Widget>[
+  //         Expanded(
+  //           child: Container(
+  //             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+  //             decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(30.0),
+  //               border: Border.all(color: Colors.blueGrey[200]!),
+  //             ),
+  //             child: TextField(
+  //               controller: _commentController,
+  //               // focusNode: _commentTextNode,
+  //               style: Theme.of(context).textTheme.bodyText2,
+  //               maxLines: 6,
+  //               minLines: 1,
+  //               decoration: InputDecoration(
+  //                   contentPadding: EdgeInsets.zero,
+  //                   isDense: true,
+  //                   border: InputBorder.none,
+  //                   hintText: 'Add a comment',
+  //                   hintStyle: Theme.of(context).textTheme.bodyText2?.copyWith(
+  //                       color: isLight(context)
+  //                           ? Colors.blueGrey
+  //                           : Colors.blueGrey[100])),
+  //               onChanged: (value) {
+  //                 setState(() {});
+  //               },
+  //               onTap: () {},
+  //             ),
+  //           ),
+  //         ),
+  //         CupertinoButton(
+  //           child: _commentController.text.trim().isNotEmpty
+  //               ? Icon(Icons.send, color: mainColor)
+  //               : Text('👍', style: Theme.of(context).textTheme.headline5),
+  //           padding: EdgeInsets.zero,
+  //           onPressed: sendComment,
+  //         )
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  // Widget discussionTab() {
+  //   return Stack(
+  //     children: [
+  //       EasyRefresh(
+  //         header: MaterialHeader(valueColor: AlwaysStoppedAnimation(mainColor)),
+  //         child: StreamBuilder(
+  //           stream: channel.stream,
+  //           builder: (context, snapshot) {
+  //             if (snapshot.hasData) {
+  //               var data = jsonDecode(snapshot.data.toString());
+  //               var newDiscussion = Discussion.fromJson(data['message']);
+  //               discussionList.insert(0, newDiscussion);
+  //             }
+  //             var reverseList = List.from(discussionList.reversed);
+
+  //             return reverseList.isNotEmpty
+  //                 ? ListView.builder(
+  //                     key: PageStorageKey('discussionTab'),
+  //                     padding: const EdgeInsets.only(bottom: 80.0),
+  //                     shrinkWrap: true,
+  //                     itemBuilder: (context, index) {
+  //                       final discussion = reverseList[index];
+
+  //                       return DiscussionCell(discussion: discussion);
+  //                     },
+  //                     itemCount: reverseList.length,
+  //                   )
+  //                 : Container(
+  //                     margin: const EdgeInsets.only(top: 100),
+  //                     child: Center(child: Text('No any discussion yet!')),
+  //                   );
+  //           },
+  //         ),
+  //         onRefresh: () async {},
+  //       ),
+  //       Positioned(bottom: 0, child: bottomCommentAction()),
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -238,76 +403,52 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         dismissScreen(context, widget.meetup);
         return true;
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(meetup.title),
-          elevation: 0.5,
-          actions: [
-            CupertinoButton(
-              child: Icon(FeatherIcons.moreVertical,
-                  color: isLight(context) ? Colors.grey[600] : whiteColor),
-              onPressed: () => showMeetupBottomSheet(widget.meetup),
-            )
-          ],
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        body: Stack(
-          children: [
-            EasyRefresh.custom(
-              header: MaterialHeader(
-                valueColor: AlwaysStoppedAnimation<Color>(mainColor),
-              ),
-              slivers: [
-                buildMainInfo(),
-                buildMap(),
-                buildMember(),
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(meetup.title),
+              elevation: 0.5,
+              actions: [
+                CupertinoButton(
+                  child: Icon(FeatherIcons.moreVertical,
+                      color: isLight(context) ? Colors.grey[600] : whiteColor),
+                  onPressed: () => showMeetupBottomSheet(widget.meetup),
+                )
               ],
-              onRefresh: () async {
-                fetchMeetup();
-              },
-            ),
-            (meetup.owner.id != KS.shared.user.id &&
-                        joinMember.length < meetup.maxPeople!) ||
-                    (meetup.owner.id != KS.shared.user.id && isJoined)
-                ? Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 64.0,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        boxShadow: [
-                          BoxShadow(
-                            offset: Offset(0, -1),
-                            blurRadius: 4.0,
-                            color: Colors.black.withOpacity(0.1),
-                          ),
-                        ],
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                      child: ElevatedButton(
-                        onPressed: isJoined ? leaveGame : joinGame,
-                        style: ButtonStyle(
-                          elevation: MaterialStateProperty.all(0),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          backgroundColor: MaterialStateProperty.all(
-                              isJoined ? Colors.grey[200] : mainColor),
-                        ),
-                        child: Text(
-                          isJoined ? 'Leave Game' : 'Join Game',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: isJoined ? Colors.red : Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+              bottom: PreferredSize(
+                preferredSize: Size(double.infinity, 30),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: TabBar(
+                    labelStyle: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Metropolis',
                     ),
-                  )
-                : SizedBox(),
-          ],
+                    indicatorColor: mainColor,
+                    isScrollable: true,
+                    tabs: [
+                      Tab(text: 'Details'),
+                      Tab(text: 'Discussion'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
+            body: TabBarView(
+              // key: new PageStorageKey('myTabBarView'),
+              children: [
+                detailsTab(),
+                DiscussionTab(discussionList: discussionList, id: meetup.id),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -316,6 +457,13 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   @override
   void initState() {
     super.initState();
+
+    // channel = IOWebSocketChannel.connect(
+    //     'ws://165.232.160.96:8080/ws/meetup/message/${widget.meetup.id}/',
+    //     headers: {'x-key': ksClient.token()});
+
+    getDiscussion();
+
     meetup = widget.meetup;
 
     joinMember =
@@ -335,6 +483,12 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    channel.sink.close();
+    super.dispose();
   }
 
   void joinGame() {
@@ -445,6 +599,150 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         BlocProvider.of<MeetupCubit>(context).onDeleteMeetup(result['id']);
         dismissScreen(context);
       }
+    }
+  }
+
+  // void sendComment() {
+  //   if (_commentController.text.isNotEmpty) {
+  //     channel.sink.add(jsonEncode({'message': _commentController.text}));
+  //   }
+  // }
+
+  void getDiscussion() async {
+    var res = await ksClient.getApi('/meetup/message/${widget.meetup.id}');
+    if (res != null) {
+      if (res is! HttpResult) {
+        discussionList =
+            (res as List).map((e) => Discussion.fromJson(e)).toList();
+        setState(() {});
+      }
+    }
+  }
+}
+
+
+class DiscussionTab extends StatefulWidget {
+  final List<Discussion> discussionList;
+  final int id;
+  DiscussionTab({Key? key, required this.discussionList, required this.id}) : super(key: key);
+
+  @override
+  _DiscussionTabState createState() => _DiscussionTabState();
+}
+
+class _DiscussionTabState extends State<DiscussionTab> {
+  TextEditingController _commentController = TextEditingController();
+
+
+  late IOWebSocketChannel channel;
+
+  KSHttpClient ksClient = KSHttpClient();
+
+  @override
+  void initState() { 
+    super.initState();
+    channel = IOWebSocketChannel.connect(
+        'ws://165.232.160.96:8080/ws/meetup/message/${widget.id}/',
+        headers: {'x-key': ksClient.token()});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        EasyRefresh(
+          header: MaterialHeader(valueColor: AlwaysStoppedAnimation(mainColor)),
+          child: StreamBuilder(
+            stream: channel.stream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var data = jsonDecode(snapshot.data.toString());
+                var newDiscussion = Discussion.fromJson(data['message']);
+                widget.discussionList.insert(0, newDiscussion);
+              }
+              var reverseList = List.from(widget.discussionList.reversed);
+
+              return reverseList.isNotEmpty
+                  ? ListView.builder(
+                      key: PageStorageKey('discussionTab'),
+                      padding: const EdgeInsets.only(bottom: 80.0),
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        final discussion = reverseList[index];
+
+                        return DiscussionCell(discussion: discussion);
+                      },
+                      itemCount: reverseList.length,
+                    )
+                  : Container(
+                      margin: const EdgeInsets.only(top: 100),
+                      child: Center(child: Text('No any discussion yet!')),
+                    );
+            },
+          ),
+          onRefresh: () async {},
+        ),
+        Positioned(bottom: 0, child: bottomCommentAction()),
+      ],
+    );
+  }
+
+  Widget bottomCommentAction() {
+    return Container(
+      height: 64.0,
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.only(top: 8.0, bottom: 8.0, left: 16.0, right: 8.0),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        border: Border(top: BorderSide(width: 0.5, color: Colors.black12)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30.0),
+                border: Border.all(color: Colors.blueGrey[200]!),
+              ),
+              child: TextField(
+                controller: _commentController,
+                // focusNode: _commentTextNode,
+                style: Theme.of(context).textTheme.bodyText2,
+                maxLines: 6,
+                minLines: 1,
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
+                    border: InputBorder.none,
+                    hintText: 'Add a comment',
+                    hintStyle: Theme.of(context).textTheme.bodyText2?.copyWith(
+                        color: isLight(context)
+                            ? Colors.blueGrey
+                            : Colors.blueGrey[100])),
+                onChanged: (value) {
+                  setState(() {});
+                },
+                onTap: () {},
+              ),
+            ),
+          ),
+          CupertinoButton(
+            child: _commentController.text.trim().isNotEmpty
+                ? Icon(Icons.send, color: mainColor)
+                : Text('👍', style: Theme.of(context).textTheme.headline5),
+            padding: EdgeInsets.zero,
+            onPressed: () {},
+          )
+        ],
+      ),
+    );
+  }
+
+  void sendComment() {
+    if (_commentController.text.isNotEmpty) {
+      channel.sink.add(jsonEncode({'message': _commentController.text}));
     }
   }
 }

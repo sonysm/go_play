@@ -61,6 +61,7 @@ dependencies:
   line_icons: ^2.0.1
   toggle_switch: ^0.1.9
   date_picker_timeline: ^1.2.3
+  web_socket_channel: ^2.1.0
   
   # Firebase
   firebase_auth: ^1.1.2
@@ -97,19 +98,6 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: OpenSans
-      fonts:
-        - asset: assets/fonts/open_sans/OpenSans-Bold.ttf
-        - asset: assets/fonts/open_sans/OpenSans-BoldItalic.ttf
-        - asset: assets/fonts/open_sans/OpenSans-ExtraBold.ttf
-        - asset: assets/fonts/open_sans/OpenSans-ExtraBoldItalic.ttf
-        - asset: assets/fonts/open_sans/OpenSans-Italic.ttf
-        - asset: assets/fonts/open_sans/OpenSans-Light.ttf
-        - asset: assets/fonts/open_sans/OpenSans-LightItalic.ttf
-        - asset: assets/fonts/open_sans/OpenSans-Regular.ttf
-        - asset: assets/fonts/open_sans/OpenSans-SemiBold.ttf
-        - asset: assets/fonts/open_sans/OpenSans-SemiBoldItalic.ttf
-
     - family: ProximaNova
       fonts:
         - asset: assets/fonts/proxima_nova/ProximaNova-Black.otf

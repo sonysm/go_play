@@ -28,8 +28,7 @@ Widget bottomSheetBar(BuildContext context) {
 }
 
 Future<dynamic> showKSBottomSheet(BuildContext context,
-    {List<Widget> children = const <Widget>[]}) async {
-  children.insert(0, bottomSheetBar(context));
+    {String? title, List<Widget> children = const <Widget>[]}) async {
   await showModalBottomSheet(
     context: context,
     backgroundColor: Theme.of(context).primaryColor,
@@ -41,12 +40,28 @@ Future<dynamic> showKSBottomSheet(BuildContext context,
         maintainBottomViewPadding: true,
         child: Container(
           padding: const EdgeInsets.only(bottom: 8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: children,
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              bottomSheetBar(context),
+              title != null ? Container(
+                padding: const EdgeInsets.only(left: 16.0, top: 8.0, bottom: 8.0),
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ) : SizedBox(),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    // mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: children,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       );

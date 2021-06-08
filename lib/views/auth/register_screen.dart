@@ -494,7 +494,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String selectedGender = 'male';
 
   void selectGender() {
-    showKSBottomSheet(context, children: [
+    showKSBottomSheet(context,
+    title: 'Choose Gender',
+    children: [
       RadioListTile<String>(
         value: 'male',
         groupValue: selectedGender,
@@ -536,6 +538,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void selectHeight() {
     showKSBottomSheet(
       context,
+      title: 'Choose Height',
       children: List.generate(
         71,
         (index) {
@@ -561,6 +564,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void selectWeight() {
     showKSBottomSheet(
       context,
+      title: 'Choose Weight',
       children: List.generate(
         71,
         (index) {

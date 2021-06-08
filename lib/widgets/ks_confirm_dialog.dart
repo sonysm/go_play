@@ -26,14 +26,12 @@ class KSConfirmDialogState extends State<KSConfirmDialog>
     color: Colors.black,
     fontSize: 18.0,
     fontWeight: FontWeight.w600,
-    fontFamily: "OpenSans",
   );
 
   TextStyle ts18BlackW700 = const TextStyle(
     color: Colors.black,
     fontSize: 18.0,
     fontWeight: FontWeight.w700,
-    fontFamily: "OpenSans",
   );
 
   @override

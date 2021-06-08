@@ -3,11 +3,9 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
-import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/auth/register_screen.dart';
 import 'package:kroma_sport/views/auth/verify_code_screen.dart';
-import 'package:kroma_sport/widgets/ks_round_button.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String tag = '/loginScreen';
@@ -278,8 +276,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   16.height,
                   btnLoginWidget(),
                   32.height,
-                  signupWithText(),
-                  btnFacebookWidget(),
+                  // signupWithText(),
+                  // btnFacebookWidget(),
                 ],
               ),
             ),

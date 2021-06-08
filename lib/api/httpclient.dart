@@ -33,6 +33,10 @@ class KSHttpClient {
     _token = token;
   }
 
+  String token() {
+    return _token != null ? _token! : '';
+  }
+
   Uri _getUir(url, {Map<String, dynamic>? queryParameters}) {
     if (DEBUG) {
       return Uri.http(_baseUrl, '/api/v1$url', queryParameters);
