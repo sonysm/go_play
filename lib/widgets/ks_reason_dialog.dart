@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/tools.dart';
 
-class KSConfirmDialog extends StatefulWidget {
-  final String msg;
+class KSReasonDialog extends StatefulWidget {
+  final String title;
   final VoidCallback onYesPressed;
 
-  KSConfirmDialog({
+  KSReasonDialog({
     Key? key,
-    required this.msg,
+    required this.title,
     required this.onYesPressed,
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => KSConfirmDialogState();
+  State<StatefulWidget> createState() => KSReasonDialogState();
 }
 
-class KSConfirmDialogState extends State<KSConfirmDialog>
+class KSReasonDialogState extends State<KSReasonDialog>
     with SingleTickerProviderStateMixin {
   AnimationController? controller;
   Animation<double>? scaleAnimation;
@@ -63,13 +63,11 @@ class KSConfirmDialogState extends State<KSConfirmDialog>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        controller!.reverse().then((_) {
-          Navigator.pop(context);
-        });
+        // controller!.reverse().then((_) {
+        //   Navigator.pop(context);
+        // });
       },
       child: Container(
-        // width: double.infinity,
-        // height: double.infinity,
         color: Colors.transparent,
         child: Center(
           child: Material(
@@ -88,15 +86,31 @@ class KSConfirmDialogState extends State<KSConfirmDialog>
                         borderRadius: BorderRadius.circular(8.0))),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
                       margin: EdgeInsets.symmetric(vertical: 16.0),
-                      padding: EdgeInsets.symmetric(horizontal: 36.0),
-                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
-                        widget.msg,
+                        widget.title,
                         style: Theme.of(context).textTheme.bodyText1,
                         textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      decoration: BoxDecoration(
+                        color: isLight(context) ? Colors.grey[100]: Colors.blueGrey[400],
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: TextField(
+                        textCapitalization: TextCapitalization.sentences,
+                        style: Theme.of(context).textTheme.bodyText1,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Write here...'
+                        ),
                       ),
                     ),
                     Container(
@@ -117,48 +131,11 @@ class KSConfirmDialogState extends State<KSConfirmDialog>
                                   });
                                 },
                                 child: Text(
-                                  'Yes',
+                                  'Submit',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText1
                                       ?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                      EdgeInsets.zero),
-                                  elevation: MaterialStateProperty.all(0),
-                                  overlayColor: MaterialStateProperty.all(
-                                      Colors.grey[200]),
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Colors.transparent),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4.0),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          16.width,
-                          Expanded(
-                            child: Container(
-                              height: 48.0,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  controller!.reverse().then((_) {
-                                    Navigator.pop(context);
-                                  });
-                                },
-                                child: Text(
-                                  'No',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      ?.copyWith(
-                                        color: Color(0xFFf64747),
                                         fontWeight: FontWeight.w600,
                                       ),
                                 ),
@@ -193,15 +170,15 @@ class KSConfirmDialogState extends State<KSConfirmDialog>
   }
 }
 
-showKSConfirmDialog(
-    BuildContext context, String message, VoidCallback onYesPressed) {
+void showKSReasonDialog(
+    BuildContext context, {required String title, required VoidCallback onSubmit}) {
   showDialog(
     context: context,
     barrierDismissible: false,
     barrierColor: Colors.black.withOpacity(.3),
-    builder: (_) => KSConfirmDialog(
-      msg: message,
-      onYesPressed: onYesPressed,
+    builder: (_) => KSReasonDialog(
+      title: title,
+      onYesPressed: onSubmit,
     ),
   );
 }

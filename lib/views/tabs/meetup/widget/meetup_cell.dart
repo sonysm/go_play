@@ -136,6 +136,7 @@ class _MeetupCellState extends State<MeetupCell> {
                             ),
                           ],
                         ),
+                        4.height,
                         Text(
                           widget.post.createdAt.toString().timeAgoString,
                           style: Theme.of(context).textTheme.caption!.copyWith(

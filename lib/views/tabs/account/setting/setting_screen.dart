@@ -47,6 +47,16 @@ class _SettingScreenState extends State<SettingScreen> {
             color: Theme.of(context).primaryColor,
             margin: EdgeInsets.only(top: 4.0),
             child: ListTile(
+              title: Text(
+                'version 1.0.2',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+          ),
+          Container(
+            color: Theme.of(context).primaryColor,
+            margin: EdgeInsets.only(top: 4.0),
+            child: ListTile(
               onTap: () {
                 showKSConfirmDialog(context, 'Are you sure you want to logout?',
                     () {

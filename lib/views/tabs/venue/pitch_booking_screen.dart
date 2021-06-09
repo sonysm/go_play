@@ -8,6 +8,7 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/main.dart';
+import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/widgets/ks_complete_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
@@ -361,13 +362,17 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                       ? bookPitch
                       : null,
                   style: ButtonStyle(
-                    elevation: MaterialStateProperty.all(0),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    backgroundColor: MaterialStateProperty.all(mainColor),
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)))
-                  ),
+                      elevation: MaterialStateProperty.all(0),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      backgroundColor: MaterialStateProperty.all(mainColor),
+                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0)))),
                   child: Text(
-                    'Book - \$16.00',
+                    'Book' +
+                        (duration != null
+                            ? ' - \$' +
+                                ((duration! * 8) / 60).toStringAsFixed(2)
+                            : ''),
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Colors.white,
@@ -393,18 +398,6 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
             'Choose Duration',
             style: Theme.of(context).textTheme.headline6,
           ),
-        ),
-        KSTextButtonBottomSheet(
-          title: '30 minutes',
-          height: 40,
-          titleTextStyle: Theme.of(context)
-              .textTheme
-              .bodyText1
-              ?.copyWith(fontWeight: FontWeight.w600),
-          onTab: () {
-            duration = 30;
-            dismissScreen(context);
-          },
         ),
         KSTextButtonBottomSheet(
           title: '60 minutes',
@@ -526,6 +519,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
     showKSComplete(context, message: 'Book successfully!');
     await Future.delayed(Duration(milliseconds: 1200));
     dismissScreen(context);
-    Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
+    // Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
+    Navigator.pushNamedAndRemoveUntil(context, BookingHistoryScreen.tag, ModalRoute.withName(MainView.tag));
   }
 }

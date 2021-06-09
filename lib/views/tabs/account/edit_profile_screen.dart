@@ -36,10 +36,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   TextEditingController _fnTextController = TextEditingController();
   TextEditingController _lnTextController = TextEditingController();
+  TextEditingController _genderTextController = TextEditingController();
 
   KSHttpClient ksClient = KSHttpClient();
 
   String gender = 'Male';
+  String selectedGender = 'male';
 
   Widget _buildNavbar() {
     return SliverAppBar(
@@ -305,10 +307,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       .textTheme
                       .bodyText1
                       ?.copyWith(fontSize: 18),
+                  strutStyle: StrutStyle(fontSize: 18.0),
                 ),
               ],
             ),
-            16.height,
+            8.height,
             Row(
               children: <Widget>[
                 Icon(Feather.mail, size: 18.0),
@@ -319,10 +322,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       .textTheme
                       .bodyText1
                       ?.copyWith(fontSize: 18),
+                  strutStyle: StrutStyle(fontSize: 18.0),
                 ),
               ],
             ),
-            16.height,
+            8.height,
             Row(
               children: <Widget>[
                 Icon(Feather.map_pin, size: 18.0),
@@ -333,8 +337,70 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       .textTheme
                       .bodyText1
                       ?.copyWith(fontSize: 18),
+                  strutStyle: StrutStyle(fontSize: 18.0),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _genderField() {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Gender',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            4.height,
+            InkWell(
+              onTap: selectGender,
+              borderRadius: BorderRadius.circular(8.0),
+              child: IgnorePointer(
+                ignoring: true,
+                child: TextField(
+                  controller: _genderTextController,
+                  style: Theme.of(context).textTheme.bodyText1,
+                  readOnly: true,
+                  // decoration: InputDecoration(
+                  //   isDense: true,
+                  //   hintText: 'Select gender',
+                  //   hintStyle: Theme.of(context)
+                  //       .textTheme
+                  //       .bodyText1
+                  //       ?.copyWith(color: Colors.grey),
+                  //   border: InputBorder.none
+                  // ),
+                  decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.keyboard_arrow_down_rounded),
+                    hintText: 'Select gender',
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[400]!)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[400]!)),
+                    fillColor: Colors.white,
+                    labelStyle: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontWeight: FontWeight.w500),
+                    counterStyle: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -355,7 +421,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               _buildProfileImage(),
               _firstnameTextField(),
               _lastnameTextField(),
-              _genderWidget(),
+              // _genderWidget(),
+              _genderField(),
               sliverDivider(context, height: 4.0),
               _phoneWidget(),
             ],
@@ -382,14 +449,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
     fields['first_name'] = _fnTextController.text;
 
-
     if (_lnTextController.text.trim().length < 3) {
       showKSMessageDialog(
           context, 'Please set your last name properly!', () {});
       return;
     }
     fields['last_name'] = _lnTextController.text;
-
 
     if (_imageFile != null) {
       List<int> imageData = _imageFile!.readAsBytesSync();
@@ -407,7 +472,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     //   dismissScreen(context);
     // });
 
-    var result = await ksClient.postFile('/user/profile/update', image, fields: fields);
+    var result =
+        await ksClient.postFile('/user/profile/update', image, fields: fields);
     if (result != null) {
       if (result is! HttpResult) {
         var user = User.fromJson(result);
@@ -417,5 +483,43 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         dismissScreen(context);
       }
     }
+  }
+
+  void selectGender() {
+    showKSBottomSheet(context, title: 'Choose Gender', children: [
+      RadioListTile<String>(
+        value: 'male',
+        groupValue: selectedGender,
+        onChanged: (value) {
+          _genderTextController.text = 'Male';
+          setState(() => selectedGender = value!);
+          dismissScreen(context);
+        },
+        title: Text('Male',
+            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+      ),
+      RadioListTile<String>(
+        value: 'female',
+        groupValue: selectedGender,
+        onChanged: (value) {
+          _genderTextController.text = 'Female';
+          setState(() => selectedGender = value!);
+          dismissScreen(context);
+        },
+        title: Text('Female',
+            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+      ),
+      RadioListTile<String>(
+        value: 'other',
+        groupValue: selectedGender,
+        onChanged: (value) {
+          _genderTextController.text = 'Other';
+          setState(() => selectedGender = value!);
+          dismissScreen(context);
+        },
+        title: Text('Other',
+            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+      ),
+    ]);
   }
 }

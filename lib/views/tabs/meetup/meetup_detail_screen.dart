@@ -24,6 +24,7 @@ import 'package:kroma_sport/views/tabs/meetup/widget/discussion_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_reason_dialog.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 import 'package:web_socket_channel/io.dart';
@@ -58,6 +59,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
           children: [
             ListTile(
               dense: true,
+              horizontalTitleGap: 0,
               leading: Icon(Feather.align_left),
               title: Text(meetup.sport!.name,
                   style: Theme.of(context).textTheme.bodyText2),
@@ -66,6 +68,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             ),
             ListTile(
               dense: true,
+              horizontalTitleGap: 0,
               leading: Icon(Feather.calendar),
               title: Text(
                   '${DateFormat('EEE dd MMM').format(DateTime.parse(meetup.activityDate!))}, ${DateFormat('h:mm a').format(DateTime.parse(meetup.activityDate! + ' ' + meetup.activityStartTime!))} - ${DateFormat('h:mm a').format(DateTime.parse(meetup.activityDate! + ' ' + meetup.activityEndTime!))}',
@@ -81,12 +84,14 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             ),
             ListTile(
               dense: true,
+              horizontalTitleGap: 0,
               leading: Icon(Feather.map_pin),
               title: Text(meetup.activityLocation!.name,
                   style: Theme.of(context).textTheme.bodyText1),
             ),
             ListTile(
               dense: true,
+              horizontalTitleGap: 0,
               leading: Icon(Feather.dollar_sign),
               title: RichText(
                 text: TextSpan(
@@ -301,100 +306,95 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     );
   }
 
-  // TextEditingController _commentController = TextEditingController();
+  TextEditingController _commentController = TextEditingController();
 
-  // Widget bottomCommentAction() {
-  //   return Container(
-  //     height: 64.0,
-  //     width: MediaQuery.of(context).size.width,
-  //     padding: EdgeInsets.only(top: 8.0, bottom: 8.0, left: 16.0, right: 8.0),
-  //     decoration: BoxDecoration(
-  //       color: Theme.of(context).primaryColor,
-  //       border: Border(top: BorderSide(width: 0.5, color: Colors.black12)),
-  //     ),
-  //     child: Row(
-  //       crossAxisAlignment: CrossAxisAlignment.end,
-  //       children: <Widget>[
-  //         Expanded(
-  //           child: Container(
-  //             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-  //             decoration: BoxDecoration(
-  //               borderRadius: BorderRadius.circular(30.0),
-  //               border: Border.all(color: Colors.blueGrey[200]!),
-  //             ),
-  //             child: TextField(
-  //               controller: _commentController,
-  //               // focusNode: _commentTextNode,
-  //               style: Theme.of(context).textTheme.bodyText2,
-  //               maxLines: 6,
-  //               minLines: 1,
-  //               decoration: InputDecoration(
-  //                   contentPadding: EdgeInsets.zero,
-  //                   isDense: true,
-  //                   border: InputBorder.none,
-  //                   hintText: 'Add a comment',
-  //                   hintStyle: Theme.of(context).textTheme.bodyText2?.copyWith(
-  //                       color: isLight(context)
-  //                           ? Colors.blueGrey
-  //                           : Colors.blueGrey[100])),
-  //               onChanged: (value) {
-  //                 setState(() {});
-  //               },
-  //               onTap: () {},
-  //             ),
-  //           ),
-  //         ),
-  //         CupertinoButton(
-  //           child: _commentController.text.trim().isNotEmpty
-  //               ? Icon(Icons.send, color: mainColor)
-  //               : Text('👍', style: Theme.of(context).textTheme.headline5),
-  //           padding: EdgeInsets.zero,
-  //           onPressed: sendComment,
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget bottomCommentAction() {
+    return Container(
+      height: 64.0,
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.only(top: 8.0, bottom: 8.0, left: 16.0, right: 8.0),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        border: Border(top: BorderSide(width: 0.5, color: Colors.black12)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30.0),
+                border: Border.all(color: Colors.blueGrey[200]!),
+              ),
+              child: TextField(
+                controller: _commentController,
+                // focusNode: _commentTextNode,
+                style: Theme.of(context).textTheme.bodyText2,
+                maxLines: 6,
+                minLines: 1,
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
+                    border: InputBorder.none,
+                    hintText: 'Add a comment',
+                    hintStyle: Theme.of(context).textTheme.bodyText2?.copyWith(
+                        color: isLight(context)
+                            ? Colors.blueGrey
+                            : Colors.blueGrey[100])),
+                onChanged: (value) {
+                  setState(() {});
+                },
+                onTap: () {},
+              ),
+            ),
+          ),
+          CupertinoButton(
+            child: _commentController.text.trim().isNotEmpty
+                ? Icon(Icons.send, color: mainColor)
+                : Text('👍', style: Theme.of(context).textTheme.headline5),
+            padding: EdgeInsets.zero,
+            onPressed: sendComment,
+          )
+        ],
+      ),
+    );
+  }
 
-  // Widget discussionTab() {
-  //   return Stack(
-  //     children: [
-  //       EasyRefresh(
-  //         header: MaterialHeader(valueColor: AlwaysStoppedAnimation(mainColor)),
-  //         child: StreamBuilder(
-  //           stream: channel.stream,
-  //           builder: (context, snapshot) {
-  //             if (snapshot.hasData) {
-  //               var data = jsonDecode(snapshot.data.toString());
-  //               var newDiscussion = Discussion.fromJson(data['message']);
-  //               discussionList.insert(0, newDiscussion);
-  //             }
-  //             var reverseList = List.from(discussionList.reversed);
+  Widget discussionTab() {
+    return Stack(
+      children: [
+        CupertinoScrollbar(
+          isAlwaysShown: true,
+          child: EasyRefresh.custom(
+            header:
+                MaterialHeader(valueColor: AlwaysStoppedAnimation(mainColor)),
+            slivers: [
+              discussionList.isNotEmpty
+                  ? SliverPadding(
+                      padding: const EdgeInsets.only(bottom: 80.0),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final discussion = discussionList[index];
 
-  //             return reverseList.isNotEmpty
-  //                 ? ListView.builder(
-  //                     key: PageStorageKey('discussionTab'),
-  //                     padding: const EdgeInsets.only(bottom: 80.0),
-  //                     shrinkWrap: true,
-  //                     itemBuilder: (context, index) {
-  //                       final discussion = reverseList[index];
-
-  //                       return DiscussionCell(discussion: discussion);
-  //                     },
-  //                     itemCount: reverseList.length,
-  //                   )
-  //                 : Container(
-  //                     margin: const EdgeInsets.only(top: 100),
-  //                     child: Center(child: Text('No any discussion yet!')),
-  //                   );
-  //           },
-  //         ),
-  //         onRefresh: () async {},
-  //       ),
-  //       Positioned(bottom: 0, child: bottomCommentAction()),
-  //     ],
-  //   );
-  // }
+                          return DiscussionCell(discussion: discussion);
+                        }, childCount: discussionList.length),
+                      ),
+                    )
+                  : SliverToBoxAdapter(
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 100),
+                        child: Center(child: Text('No any discussion yet!')),
+                      ),
+                    )
+            ],
+            onRefresh: () async {},
+          ),
+        ),
+        Positioned(bottom: 0, child: bottomCommentAction()),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -436,6 +436,11 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                       Tab(text: 'Details'),
                       Tab(text: 'Discussion'),
                     ],
+                    onTap: (index) {
+                      // if (index == 1) {
+                      //   scrollToBottom();
+                      // }
+                    },
                   ),
                 ),
               ),
@@ -445,7 +450,28 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               // key: new PageStorageKey('myTabBarView'),
               children: [
                 detailsTab(),
-                DiscussionTab(discussionList: discussionList, id: meetup.id),
+                // discussionTab(),
+                isJoined
+                    ? Stack(
+                        children: [
+                          discussionList.isNotEmpty
+                              ? DiscussionTab(
+                                  discussionList: discussionList,
+                                  controller: _scrollController,
+                                )
+                              : Container(
+                                  child: Center(
+                                    child: Text('No any discussion yet!'),
+                                  ),
+                                ),
+                          Positioned(bottom: 0, child: bottomCommentAction()),
+                        ],
+                      )
+                    : Container(
+                        child: Center(
+                          child: Text('Only joined member can discuss here.'),
+                        ),
+                      ),
               ],
             ),
           ),
@@ -458,9 +484,16 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   void initState() {
     super.initState();
 
-    // channel = IOWebSocketChannel.connect(
-    //     'ws://165.232.160.96:8080/ws/meetup/message/${widget.meetup.id}/',
-    //     headers: {'x-key': ksClient.token()});
+    channel = IOWebSocketChannel.connect(
+        'ws://165.232.160.96:8080/ws/meetup/message/${widget.meetup.id}/',
+        headers: {'x-key': ksClient.token()});
+
+    channel.stream.listen((message) {
+      var data = jsonDecode(message.toString());
+      var newDiscussion = Discussion.fromJson(data['message']);
+      discussionList.add(newDiscussion);
+      setState(() {});
+    });
 
     getDiscussion();
 
@@ -520,26 +553,54 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   void leaveGame() {
     showKSConfirmDialog(context, 'Are you sure you want to leave the game?',
         () async {
-      showKSLoading(context);
-      var result = await ksClient.postApi('/leave/post/meetup/${meetup.id}');
-      if (result != null) {
-        if (result is! HttpResult) {
-          var res = await ksClient.getApi('/view/meetup/post/${meetup.id}');
-          if (res != null) {
-            dismissScreen(context);
-            if (res is! HttpResult) {
-              meetup = Post.fromJson(res['post']);
-              widget.meetup.meetupMember = meetup.meetupMember;
-              joinMember = meetup.meetupMember!
-                  .where((element) => element.status == 1)
-                  .toList();
-              isJoined = false;
-              BlocProvider.of<MeetupCubit>(context).onRefresh();
-              setState(() {});
+      // showKSLoading(context);
+      // var result = await ksClient.postApi('/leave/post/meetup/${meetup.id}');
+      // if (result != null) {
+      //   if (result is! HttpResult) {
+      //     var res = await ksClient.getApi('/view/meetup/post/${meetup.id}');
+      //     if (res != null) {
+      //       dismissScreen(context);
+      //       if (res is! HttpResult) {
+      //         meetup = Post.fromJson(res['post']);
+      //         widget.meetup.meetupMember = meetup.meetupMember;
+      //         joinMember = meetup.meetupMember!
+      //             .where((element) => element.status == 1)
+      //             .toList();
+      //         isJoined = false;
+      //         BlocProvider.of<MeetupCubit>(context).onRefresh();
+      //         setState(() {});
+      //       }
+      //     }
+      //   }
+      // }
+
+      showKSReasonDialog(
+        context,
+        title: 'Tell the reason why you want to leave:',
+        onSubmit: () async {
+          showKSLoading(context);
+          var result =
+              await ksClient.postApi('/leave/post/meetup/${meetup.id}');
+          if (result != null) {
+            if (result is! HttpResult) {
+              var res = await ksClient.getApi('/view/meetup/post/${meetup.id}');
+              if (res != null) {
+                dismissScreen(context);
+                if (res is! HttpResult) {
+                  meetup = Post.fromJson(res['post']);
+                  widget.meetup.meetupMember = meetup.meetupMember;
+                  joinMember = meetup.meetupMember!
+                      .where((element) => element.status == 1)
+                      .toList();
+                  isJoined = false;
+                  BlocProvider.of<MeetupCubit>(context).onRefresh();
+                  setState(() {});
+                }
+              }
             }
           }
-        }
-      }
+        },
+      );
     });
   }
 
@@ -602,11 +663,15 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     }
   }
 
-  // void sendComment() {
-  //   if (_commentController.text.isNotEmpty) {
-  //     channel.sink.add(jsonEncode({'message': _commentController.text}));
-  //   }
-  // }
+  void sendComment() {
+    if (_commentController.text.isNotEmpty) {
+      channel.sink.add(jsonEncode({'message': _commentController.text}));
+      _commentController.clear();
+      FocusScope.of(context).unfocus();
+    } else {
+      channel.sink.add(jsonEncode({'message': '👍'}));
+    }
+  }
 
   void getDiscussion() async {
     var res = await ksClient.getApi('/meetup/message/${widget.meetup.id}');
@@ -614,135 +679,58 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
       if (res is! HttpResult) {
         discussionList =
             (res as List).map((e) => Discussion.fromJson(e)).toList();
+        discussionList = List.from(discussionList.reversed);
         setState(() {});
       }
     }
   }
+
+  ScrollController _scrollController = ScrollController();
+
+  // void scrollToBottom() {
+  //   Future.delayed(Duration(milliseconds: 300)).then((value) {
+  //     _scrollController.animateTo(
+  //       _scrollController.position.maxScrollExtent,
+  //       duration: Duration(milliseconds: 300),
+  //       curve: Curves.easeOut,
+  //     );
+  //   });
+  // }
 }
 
-
-class DiscussionTab extends StatefulWidget {
+class DiscussionTab extends StatelessWidget {
   final List<Discussion> discussionList;
-  final int id;
-  DiscussionTab({Key? key, required this.discussionList, required this.id}) : super(key: key);
+  final ScrollController? controller;
 
-  @override
-  _DiscussionTabState createState() => _DiscussionTabState();
-}
-
-class _DiscussionTabState extends State<DiscussionTab> {
-  TextEditingController _commentController = TextEditingController();
-
-
-  late IOWebSocketChannel channel;
-
-  KSHttpClient ksClient = KSHttpClient();
-
-  @override
-  void initState() { 
-    super.initState();
-    channel = IOWebSocketChannel.connect(
-        'ws://165.232.160.96:8080/ws/meetup/message/${widget.id}/',
-        headers: {'x-key': ksClient.token()});
-  }
+  DiscussionTab({required this.discussionList, this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        EasyRefresh(
-          header: MaterialHeader(valueColor: AlwaysStoppedAnimation(mainColor)),
-          child: StreamBuilder(
-            stream: channel.stream,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var data = jsonDecode(snapshot.data.toString());
-                var newDiscussion = Discussion.fromJson(data['message']);
-                widget.discussionList.insert(0, newDiscussion);
-              }
-              var reverseList = List.from(widget.discussionList.reversed);
+    return PrimaryScrollController(
+      controller: controller!,
+      child: CupertinoScrollbar(
+        isAlwaysShown: true,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 64.0),
+          child: EasyRefresh.custom(
+            header:
+                MaterialHeader(valueColor: AlwaysStoppedAnimation(mainColor)),
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.only(bottom: 0.0),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final discussion = discussionList[index];
 
-              return reverseList.isNotEmpty
-                  ? ListView.builder(
-                      key: PageStorageKey('discussionTab'),
-                      padding: const EdgeInsets.only(bottom: 80.0),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final discussion = reverseList[index];
-
-                        return DiscussionCell(discussion: discussion);
-                      },
-                      itemCount: reverseList.length,
-                    )
-                  : Container(
-                      margin: const EdgeInsets.only(top: 100),
-                      child: Center(child: Text('No any discussion yet!')),
-                    );
-            },
+                    return DiscussionCell(discussion: discussion);
+                  }, childCount: discussionList.length),
+                ),
+              )
+            ],
+            onRefresh: () async {},
           ),
-          onRefresh: () async {},
         ),
-        Positioned(bottom: 0, child: bottomCommentAction()),
-      ],
-    );
-  }
-
-  Widget bottomCommentAction() {
-    return Container(
-      height: 64.0,
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.only(top: 8.0, bottom: 8.0, left: 16.0, right: 8.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        border: Border(top: BorderSide(width: 0.5, color: Colors.black12)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30.0),
-                border: Border.all(color: Colors.blueGrey[200]!),
-              ),
-              child: TextField(
-                controller: _commentController,
-                // focusNode: _commentTextNode,
-                style: Theme.of(context).textTheme.bodyText2,
-                maxLines: 6,
-                minLines: 1,
-                decoration: InputDecoration(
-                    contentPadding: EdgeInsets.zero,
-                    isDense: true,
-                    border: InputBorder.none,
-                    hintText: 'Add a comment',
-                    hintStyle: Theme.of(context).textTheme.bodyText2?.copyWith(
-                        color: isLight(context)
-                            ? Colors.blueGrey
-                            : Colors.blueGrey[100])),
-                onChanged: (value) {
-                  setState(() {});
-                },
-                onTap: () {},
-              ),
-            ),
-          ),
-          CupertinoButton(
-            child: _commentController.text.trim().isNotEmpty
-                ? Icon(Icons.send, color: mainColor)
-                : Text('👍', style: Theme.of(context).textTheme.headline5),
-            padding: EdgeInsets.zero,
-            onPressed: () {},
-          )
-        ],
       ),
     );
-  }
-
-  void sendComment() {
-    if (_commentController.text.isNotEmpty) {
-      channel.sink.add(jsonEncode({'message': _commentController.text}));
-    }
   }
 }

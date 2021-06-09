@@ -4,6 +4,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -21,6 +22,13 @@ class VenueDetailScreen extends StatefulWidget {
 }
 
 class _VenueDetailScreenState extends State<VenueDetailScreen> {
+  List<String> facilityList = [
+    'Parking',
+    'Bath',
+    'Changing Room',
+    'Drinking Water Room'
+  ];
+
   Widget buildVenueNavbar() {
     return SliverPersistentHeader(
       pinned: true,
@@ -36,7 +44,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
   Widget buildVenueTitle() {
     return SliverToBoxAdapter(
       child: Container(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -71,17 +79,17 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                     ),
                   ],
                 ),
-                Spacer(),
-                CupertinoButton(
-                  child: Icon(FeatherIcons.map,
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? Colors.grey[600]
-                          : whiteColor),
-                  onPressed: () {},
-                ),
               ],
             ),
             Divider(),
+            Text(
+              'Sport type',
+              style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                  color:
+                      isLight(context) ? Colors.grey[600] : Colors.grey[100]),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Row(
@@ -95,8 +103,9 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
               ),
             ),
             Divider(),
+            8.height,
             Text(
-              'Sport type:',
+              'Facilites',
               style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
@@ -104,37 +113,68 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                       isLight(context) ? Colors.grey[600] : Colors.grey[100]),
             ),
             8.height,
-            ElevatedButton(
-              onPressed: showSportTypeOption,
-              style: ButtonStyle(
-                elevation: MaterialStateProperty.all(0),
-                backgroundColor: MaterialStateProperty.all(
-                    isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  side: BorderSide(color: Colors.grey[200]!),
-                )),
-                padding: MaterialStateProperty.all(
-                  EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    'Futsal / Football',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  Spacer(),
-                  Icon(FeatherIcons.chevronDown,
-                      color: isLight(context) ? blackColor : whiteColor),
-                ],
-              ),
-            )
+            Wrap(
+              children: facilityList.map(
+                (e) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 4.0),
+                    decoration: BoxDecoration(
+                      color: isLight(context) ? Colors.grey[100] : Colors.blueGrey[400],
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: Text(
+                      e,
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  );
+                },
+              ).toList(),
+              runSpacing: 8.0,
+              spacing: 8.0,
+            ),
+            Divider(height: 32.0,),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildVenueLocation() {
+    return SliverToBoxAdapter(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+            child: Text(
+              'Location',
+              style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                  color:
+                      isLight(context) ? Colors.grey[600] : Colors.grey[100]),
+            ),
+          ),
+          Container(
+            height: 200.0,
+            width: AppSize(context).appWidth(100),
+            child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(11.54803335279915, 104.86841649559258),
+                zoom: 15.0,
+              ),
+              onMapCreated: (controller) {},
+              zoomGesturesEnabled: false,
+              scrollGesturesEnabled: false,
+              markers: <Marker>{
+                Marker(
+                    markerId: MarkerId('venue'),
+                    position: LatLng(11.54803335279915, 104.86841649559258)),
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -144,7 +184,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: isLight(context) ? Colors.grey[100] : Colors.blueGrey[300],
+        color: isLight(context) ? Colors.grey[100] : Colors.blueGrey[400],
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(color: Colors.grey[200]!),
       ),
@@ -201,10 +241,48 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
   Widget buildAvailablePitch() {
     return SliverToBoxAdapter(
       child: Container(
-        padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0),
+        padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 32.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              'Select sport type',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            8.height,
+            ElevatedButton(
+              onPressed: showSportTypeOption,
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.all(0),
+                backgroundColor: MaterialStateProperty.all(
+                    isLight(context) ? Colors.grey[100] : Colors.blueGrey[400]),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                  side: BorderSide(color: Colors.grey[200]!),
+                )),
+                padding: MaterialStateProperty.all(
+                  EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    'Futsal / Football',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  Spacer(),
+                  Icon(FeatherIcons.chevronDown,
+                      color: isLight(context) ? blackColor : whiteColor),
+                ],
+              ),
+            ),
+            16.height,
             Text(
               'Available pitches:',
               style: Theme.of(context)
@@ -245,6 +323,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
         slivers: [
           buildVenueNavbar(),
           buildVenueTitle(),
+          buildVenueLocation(),
           buildAvailablePitch(),
         ],
         onRefresh: () async {},

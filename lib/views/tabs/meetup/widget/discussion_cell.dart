@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/discussion.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 
 class DiscussionCell extends StatelessWidget {
@@ -43,7 +44,7 @@ class DiscussionCell extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .caption
-                        ?.copyWith(color: Colors.grey[600])),
+                        ?.copyWith(color: isLight(context) ? Colors.grey[600]: Colors.grey[400])),
               ],
             ),
           ),
