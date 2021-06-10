@@ -51,6 +51,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
 
   List<Discussion> discussionList = [];
 
+  bool isShowMap = false;
+
   Widget buildMainInfo() {
     return SliverToBoxAdapter(
       child: Container(
@@ -125,8 +127,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     return SliverToBoxAdapter(
       child: Container(
         height: 200.0,
+        color: Colors.grey[200],
         width: AppSize(context).appWidth(100),
-        child: GoogleMap(
+        child: isShowMap ? GoogleMap(
           initialCameraPosition: CameraPosition(
             target: LatLng(
               double.parse(meetup.activityLocation!.latitude),
@@ -144,7 +147,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                     double.parse(meetup.activityLocation!.latitude),
                     double.parse(meetup.activityLocation!.longitude))),
           },
-        ),
+        ) : SizedBox(),
       ),
     );
   }
@@ -553,27 +556,6 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   void leaveGame() {
     showKSConfirmDialog(context, 'Are you sure you want to leave the game?',
         () async {
-      // showKSLoading(context);
-      // var result = await ksClient.postApi('/leave/post/meetup/${meetup.id}');
-      // if (result != null) {
-      //   if (result is! HttpResult) {
-      //     var res = await ksClient.getApi('/view/meetup/post/${meetup.id}');
-      //     if (res != null) {
-      //       dismissScreen(context);
-      //       if (res is! HttpResult) {
-      //         meetup = Post.fromJson(res['post']);
-      //         widget.meetup.meetupMember = meetup.meetupMember;
-      //         joinMember = meetup.meetupMember!
-      //             .where((element) => element.status == 1)
-      //             .toList();
-      //         isJoined = false;
-      //         BlocProvider.of<MeetupCubit>(context).onRefresh();
-      //         setState(() {});
-      //       }
-      //     }
-      //   }
-      // }
-
       showKSReasonDialog(
         context,
         title: 'Tell the reason why you want to leave:',
@@ -680,7 +662,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         discussionList =
             (res as List).map((e) => Discussion.fromJson(e)).toList();
         discussionList = List.from(discussionList.reversed);
-        setState(() {});
+        isShowMap = true;
+        Future.delayed(Duration(milliseconds: 300)).then((_) => setState(() {}));
       }
     }
   }

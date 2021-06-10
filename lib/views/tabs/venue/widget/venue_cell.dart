@@ -1,26 +1,29 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:kroma_sport/models/venue.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_detail_screen.dart';
 
 class VenueCell extends StatelessWidget {
-  final String venueName;
-  final String venueImage;
+  final Venue venue;
 
   const VenueCell({
     Key? key,
-    required this.venueName,
-    required this.venueImage,
+    required this.venue,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        launchScreen(context, VenueDetailScreen.tag);
+        launchScreen(
+          context,
+          VenueDetailScreen.tag,
+          arguments: venue,
+        );
       },
       child: Container(
         height: 220.0,
@@ -30,7 +33,8 @@ class VenueCell extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
           image: DecorationImage(
             image: CachedNetworkImageProvider(
-              venueImage,
+              venue.coverPhoto ??
+                  'https://images.unsplash.com/photo-1487466365202-1afdb86c764e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1052&q=80',
             ),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
@@ -43,7 +47,7 @@ class VenueCell extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                venueName,
+                venue.name,
                 style: TextStyle(
                   color: whiteColor,
                   fontSize: 16.0,
@@ -59,7 +63,7 @@ class VenueCell extends StatelessWidget {
                   ),
                   4.width,
                   Text(
-                    'Phnom Penh',
+                    venue.address,
                     style: TextStyle(
                       color: whiteColor,
                       fontSize: 14.0,
@@ -91,14 +95,14 @@ class VenueCell extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    'Pitches: 7',
-                    style: TextStyle(
-                      color: whiteColor,
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  // Text(
+                  //   'Pitches: 7',
+                  //   style: TextStyle(
+                  //     color: whiteColor,
+                  //     fontSize: 14.0,
+                  //     fontWeight: FontWeight.w600,
+                  //   ),
+                  // ),
                   Spacer(),
                   ElevatedButton(
                     style: ButtonStyle(
@@ -110,7 +114,11 @@ class VenueCell extends StatelessWidget {
                       foregroundColor: MaterialStateProperty.all(mainColor),
                     ),
                     onPressed: () {
-                      launchScreen(context, VenueDetailScreen.tag);
+                      launchScreen(
+                        context,
+                        VenueDetailScreen.tag,
+                        arguments: venue,
+                      );
                     },
                     child: Text(
                       'View',

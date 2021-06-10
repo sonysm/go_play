@@ -62,6 +62,7 @@ dependencies:
   toggle_switch: ^0.1.9
   date_picker_timeline: ^1.2.3
   web_socket_channel: ^2.1.0
+  shimmer: ^2.0.0
   
   # Firebase
   firebase_auth: ^1.1.2

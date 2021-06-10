@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
+import 'package:kroma_sport/models/venue.dart';
+import 'package:kroma_sport/models/venue_detail.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/auth/register_screen.dart';
 import 'package:kroma_sport/views/auth/verify_code_screen.dart';
@@ -63,7 +65,11 @@ class RouteGenerator {
         );
       case FeedDetailScreen.tag:
         var data = args as Map<String, dynamic>;
-        return MaterialPageRoute(
+        // return MaterialPageRoute(
+        //     builder: (_) => FeedDetailScreen(
+        //         post: data['post'], isCommentTap: data['isCommentTap']));
+
+        return KSPageRoute(
             builder: (_) => FeedDetailScreen(
                 post: data['post'], isCommentTap: data['isCommentTap']));
       case CreatPostScreen.tag:
@@ -79,7 +85,9 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (_) => SportDetailScreen(sport: args as Sport));
       case ViewUserProfileScreen.tag:
-        return MaterialPageRoute(
+        // return MaterialPageRoute(
+        //     builder: (_) => ViewUserProfileScreen(user: args as User));
+        return KSPageRoute(
             builder: (_) => ViewUserProfileScreen(user: args as User));
       case CreateActivityScreen.tag:
         return MaterialPageRoute(builder: (_) => CreateActivityScreen());
@@ -100,7 +108,13 @@ class RouteGenerator {
           ),
         );
       case MeetupDetailScreen.tag:
-        return MaterialPageRoute(
+        // return MaterialPageRoute(
+        //   builder: (_) => MeetupDetailScreen(
+        //     meetup: args as Post,
+        //   ),
+        // );
+
+        return KSPageRoute(
           builder: (_) => MeetupDetailScreen(
             meetup: args as Post,
           ),
@@ -118,9 +132,17 @@ class RouteGenerator {
       case VenueScreen.tag:
         return MaterialPageRoute(builder: (_) => VenueScreen());
       case VenueDetailScreen.tag:
-        return MaterialPageRoute(builder: (_) => VenueDetailScreen());
+        return KSPageRoute(
+          builder: (_) => VenueDetailScreen(venue: args as Venue),
+        );
       case PitchBookingScreen.tag:
-        return MaterialPageRoute(builder: (_) => PitchBookingScreen());
+        args as Map<String, dynamic>;
+        return KSPageRoute(
+          builder: (_) => PitchBookingScreen(
+            venue: args['venue'],
+            venueService: args['venueService'],
+          ),
+        );
       case BookingHistoryScreen.tag:
         return MaterialPageRoute(builder: (_) => BookingHistoryScreen());
       case BookingHistoryDetailScreen.tag:
@@ -141,5 +163,36 @@ class RouteGenerator {
         ),
       );
     });
+  }
+}
+
+class KSPageRoute<T> extends MaterialPageRoute<T> {
+  KSPageRoute({required WidgetBuilder builder, RouteSettings? settings})
+      : super(builder: builder, settings: settings);
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 350);
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    animation = CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+
+    return SlideTransition(
+      position: animation.drive(
+        Tween<Offset>(
+          begin: Offset(1.0, 0.0),
+          end: Offset.zero,
+        ),
+      ),
+      child: child,
+      // child: SlideTransition(
+      //   position: Tween<Offset>(
+      //     begin: Offset.zero,
+      //     end: Offset(-1.0, 0.0),
+      //   ).animate(secondaryAnimation),
+      //   child: child,
+      // ),
+    );
   }
 }

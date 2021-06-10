@@ -1,11 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
-import 'package:kroma_sport/bloc/data_state.dart';
-import 'package:kroma_sport/bloc/home.dart';
-import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -18,6 +14,7 @@ import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ViewUserProfileScreen extends StatefulWidget {
   static const String tag = '/viewUserProfileScreen';
@@ -33,7 +30,8 @@ class ViewUserProfileScreen extends StatefulWidget {
   _ViewUserProfileScreenState createState() => _ViewUserProfileScreenState();
 }
 
-class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with SingleTickerProviderStateMixin {
+class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
+    with SingleTickerProviderStateMixin {
   KSHttpClient ksClient = KSHttpClient();
   List<FavoriteSport> favSportList = [];
 
@@ -41,6 +39,8 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with Sing
 
   late TabController tabController;
   int _currentIndex = 0;
+
+  bool isLoaded = false;
 
   Widget buildNavbar() {
     return SliverAppBar(
@@ -105,10 +105,8 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with Sing
                 children: [
                   Text(
                     widget.user.getFullname(),
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        ?.copyWith(fontWeight: FontWeight.w600, fontFamily: 'Metropolis'),
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                        fontWeight: FontWeight.w600, fontFamily: 'Metropolis'),
                   ),
                   Text(
                     'Phnom Penh, Cambodia',
@@ -131,35 +129,59 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with Sing
     );
   }
 
+  Widget buildSportShimmer() {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            width: 320.0,
+            margin: const EdgeInsets.only(right: 16.0, top: 16.0, bottom: 16.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        );
+      },
+      itemCount: 2,
+    );
+  }
+
   Widget buildFavoriteSport() {
     return SliverToBoxAdapter(
       child: Container(
         height: 240.0,
         color: Theme.of(context).primaryColor,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-          itemBuilder: (context, index) {
-            final favSport = favSportList.elementAt(index);
-            return SportCard(
-              favSport: favSport,
-              onCardTap: () async {
-                var value = await launchScreen(
-                  context,
-                  FavoriteSportDetailScreen.tag,
-                  arguments: favSport.sport,
-                );
-                if (value != null && value) {
-                  // getFavoriteSport();
-                }
-              },
-            );
-          },
-          separatorBuilder: (context, index) {
-            return 16.width;
-          },
-          itemCount: favSportList.length,
-        ),
+        child: isLoaded
+            ? ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                itemBuilder: (context, index) {
+                  final favSport = favSportList.elementAt(index);
+                  return SportCard(
+                    favSport: favSport,
+                    onCardTap: () async {
+                      var value = await launchScreen(
+                        context,
+                        FavoriteSportDetailScreen.tag,
+                        arguments: favSport.sport,
+                      );
+                      if (value != null && value) {
+                        // getFavoriteSport();
+                      }
+                    },
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return 16.width;
+                },
+                itemCount: favSportList.length,
+              )
+            : buildSportShimmer(),
       ),
     );
   }
@@ -291,18 +313,19 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with Sing
     var postData = await ksClient.getApi('/user/feed/by/${widget.user.id}');
     if (postData != null) {
       if (postData is! HttpResult) {
-        userPostList = List.from((postData as List).map((e) => Post.fromJson(e)));
+        userPostList =
+            List.from((postData as List).map((e) => Post.fromJson(e)));
       }
     }
 
     var meetupData = await ksClient.getApi('/user/meetup/by/${widget.user.id}');
     if (meetupData != null) {
       if (meetupData is! HttpResult) {
-        userMeetupList = List.from((meetupData as List).map((e) => Post.fromJson(e)));
+        userMeetupList =
+            List.from((meetupData as List).map((e) => Post.fromJson(e)));
       }
     }
-
-    setState(() {});
+    Future.delayed(Duration(milliseconds: 300)).then((_) => setState(() {}));
   }
 
   void getUserDetail() async {
@@ -313,7 +336,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with Sing
         favSportList = (data['fav_sport'] as List)
             .map((e) => FavoriteSport.fromJson(e))
             .toList();
-        setState(() {});
+        isLoaded = true;
       }
     }
   }

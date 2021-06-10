@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/ks.dart';
+import 'package:kroma_sport/models/venue.dart';
+import 'package:kroma_sport/models/venue_detail.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
@@ -17,13 +21,24 @@ import 'package:kroma_sport/widgets/ks_widgets.dart';
 class PitchBookingScreen extends StatefulWidget {
   static const tag = '/pitchBookingScreen';
 
-  PitchBookingScreen({Key? key}) : super(key: key);
+  final Venue venue;
+  final VenueService venueService;
+
+  PitchBookingScreen({
+    Key? key,
+    required this.venue,
+    required this.venueService,
+  }) : super(key: key);
 
   @override
   _PitchBookingScreenState createState() => _PitchBookingScreenState();
 }
 
 class _PitchBookingScreenState extends State<PitchBookingScreen> {
+  late VenueService _venueService;
+
+  String picthTitle = '';
+
   int? duration;
   String? timeAvailableString;
 
@@ -32,6 +47,10 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
   String? dateTimeString;
 
   DateFormat format = DateFormat('dd/MM/yyyy');
+
+  bool isLoaded = false;
+
+  KSHttpClient ksClient = KSHttpClient();
 
   Widget buildSelectDate() {
     return SliverToBoxAdapter(
@@ -98,7 +117,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                 ),
                 8.width,
                 Text(
-                  'Select Duration',
+                  'Select Start Time',
                   style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w600,
@@ -112,43 +131,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: ElevatedButton(
-                onPressed: selectDuration,
-                style: ButtonStyle(
-                  elevation: MaterialStateProperty.all(0),
-                  backgroundColor: MaterialStateProperty.all(isLight(context)
-                      ? Colors.grey[100]
-                      : Colors.blueGrey[300]),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    side: BorderSide(color: Colors.grey[200]!),
-                  )),
-                  padding: MaterialStateProperty.all(
-                    EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      duration != null
-                          ? '$duration minutes'
-                          : 'Select Duration',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          ?.copyWith(fontWeight: FontWeight.w600),
-                    ),
-                    Spacer(),
-                    Icon(FeatherIcons.chevronDown,
-                        color: isLight(context) ? blackColor : whiteColor),
-                  ],
-                ),
-              ),
-            ),
-            16.height,
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: ElevatedButton(
-                onPressed: duration != null ? selectAvailableTime : null,
+                onPressed: isLoaded ? selectAvailableTime : null,
                 style: ButtonStyle(
                   elevation: MaterialStateProperty.all(0),
                   backgroundColor: MaterialStateProperty.all(isLight(context)
@@ -163,11 +146,11 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                   ),
                 ),
                 child: Opacity(
-                  opacity: duration != null ? 1 : 0.3,
+                  opacity: isLoaded ? 1 : 0.3,
                   child: Row(
                     children: [
                       Text(
-                        timeAvailableString ?? 'Select Available Time',
+                        timeAvailableString ?? 'Select Start Time',
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1
@@ -180,7 +163,46 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                   ),
                 ),
               ),
-            )
+            ),
+            16.height,
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: ElevatedButton(
+                onPressed: timeAvailableString != null ? selectDuration : null,
+                style: ButtonStyle(
+                  elevation: MaterialStateProperty.all(0),
+                  backgroundColor: MaterialStateProperty.all(isLight(context)
+                      ? Colors.grey[100]
+                      : Colors.blueGrey[300]),
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    side: BorderSide(color: Colors.grey[200]!),
+                  )),
+                  padding: MaterialStateProperty.all(
+                    EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                  ),
+                ),
+                child: Opacity(
+                  opacity: timeAvailableString != null ? 1 : 0.3,
+                  child: Row(
+                    children: [
+                      Text(
+                        duration != null
+                            ? '$duration minutes'
+                            : 'Select Duration',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      Spacer(),
+                      Icon(FeatherIcons.chevronDown,
+                          color: isLight(context) ? blackColor : whiteColor),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -249,7 +271,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                   buildTextDetail(label: 'Phone', data: KS.shared.user.phone),
                   buildTextDetail(
                       label: 'Place',
-                      data: 'Downtown Sport Club, Pitch A (5x5)'),
+                      data: '${widget.venue.name}, $picthTitle'),
                   buildTextDetail(label: 'Date & Time', data: dateTimeString),
                   buildTextDetail(
                       label: 'Duration',
@@ -258,7 +280,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                   buildTextDetail(
                       label: 'Total',
                       data: duration != null
-                          ? '\$' + ((duration! * 8) / 60).toStringAsFixed(2)
+                          ? '\$' + ((duration! * _venueService.hourPrice) / 60).toStringAsFixed(2)
                           : null),
                 ],
               ),
@@ -325,7 +347,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.5,
-        title: Text('Pitch A (5x5)'),
+        title: Text(picthTitle),
       ),
       backgroundColor: Theme.of(context).primaryColor,
       body: Stack(
@@ -371,7 +393,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                     'Book' +
                         (duration != null
                             ? ' - \$' +
-                                ((duration! * 8) / 60).toStringAsFixed(2)
+                                ((duration! * _venueService.hourPrice) / 60).toStringAsFixed(2)
                             : ''),
                     style: TextStyle(
                       fontSize: 16.0,
@@ -386,6 +408,16 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _venueService = widget.venueService;
+    picthTitle = _venueService.name +
+        ' (${_venueService.serviceData.people! ~/ 2}x${_venueService.serviceData.people! ~/ 2})';
+
+    getUnavailableTime();
   }
 
   void selectDuration() {
@@ -445,63 +477,79 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
   void selectAvailableTime() {
     showKSBottomSheet(
       context,
-      children: [
-        Container(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Text(
-            'Choose Available Time',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-        ),
-        KSTextButtonBottomSheet(
-          title: '7:00 AM',
+      title: 'Choose Start Time',
+      children: List.generate(availableTimeList.length, (index) {
+        final time = availableTimeList[index];
+        return KSTextButtonBottomSheet(
+          title: DateFormat('hh:mm a').format(time),
           height: 40,
           titleTextStyle: Theme.of(context)
               .textTheme
               .bodyText1
               ?.copyWith(fontWeight: FontWeight.w600),
           onTab: () {
-            timeAvailableString = '7:00 AM';
+            timeAvailableString = DateFormat('hh:mm a').format(time);
             dismissScreen(context);
           },
-        ),
-        KSTextButtonBottomSheet(
-          title: '8:00 AM',
-          height: 40,
-          titleTextStyle: Theme.of(context)
-              .textTheme
-              .bodyText1
-              ?.copyWith(fontWeight: FontWeight.w600),
-          onTab: () {
-            timeAvailableString = '8:00 AM';
-            dismissScreen(context);
-          },
-        ),
-        KSTextButtonBottomSheet(
-          title: '9:00 AM',
-          height: 40,
-          titleTextStyle: Theme.of(context)
-              .textTheme
-              .bodyText1
-              ?.copyWith(fontWeight: FontWeight.w600),
-          onTab: () {
-            timeAvailableString = '9:00 AM';
-            dismissScreen(context);
-          },
-        ),
-        KSTextButtonBottomSheet(
-          title: '10:00 AM',
-          height: 40,
-          titleTextStyle: Theme.of(context)
-              .textTheme
-              .bodyText1
-              ?.copyWith(fontWeight: FontWeight.w600),
-          onTab: () {
-            timeAvailableString = '10:00 AM';
-            dismissScreen(context);
-          },
-        ),
-      ],
+        );
+      }),
+      // [
+      //   Container(
+      //     padding: const EdgeInsets.only(left: 16.0),
+      //     child: Text(
+      //       'Choose Start Time',
+      //       style: Theme.of(context).textTheme.headline6,
+      //     ),
+      //   ),
+      // KSTextButtonBottomSheet(
+      //   title: '7:00 AM',
+      //   height: 40,
+      //   titleTextStyle: Theme.of(context)
+      //       .textTheme
+      //       .bodyText1
+      //       ?.copyWith(fontWeight: FontWeight.w600),
+      //   onTab: () {
+      //     timeAvailableString = '7:00 AM';
+      //     dismissScreen(context);
+      //   },
+      // ),
+      //   KSTextButtonBottomSheet(
+      //     title: '8:00 AM',
+      //     height: 40,
+      //     titleTextStyle: Theme.of(context)
+      //         .textTheme
+      //         .bodyText1
+      //         ?.copyWith(fontWeight: FontWeight.w600),
+      //     onTab: () {
+      //       timeAvailableString = '8:00 AM';
+      //       dismissScreen(context);
+      //     },
+      //   ),
+      //   KSTextButtonBottomSheet(
+      //     title: '9:00 AM',
+      //     height: 40,
+      //     titleTextStyle: Theme.of(context)
+      //         .textTheme
+      //         .bodyText1
+      //         ?.copyWith(fontWeight: FontWeight.w600),
+      //     onTab: () {
+      //       timeAvailableString = '9:00 AM';
+      //       dismissScreen(context);
+      //     },
+      //   ),
+      //   KSTextButtonBottomSheet(
+      //     title: '10:00 AM',
+      //     height: 40,
+      //     titleTextStyle: Theme.of(context)
+      //         .textTheme
+      //         .bodyText1
+      //         ?.copyWith(fontWeight: FontWeight.w600),
+      //     onTab: () {
+      //       timeAvailableString = '10:00 AM';
+      //       dismissScreen(context);
+      //     },
+      //   ),
+      // ],
     ).then((value) {
       print('______callback! $value');
       if (timeAvailableString != null) {
@@ -520,6 +568,47 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
     await Future.delayed(Duration(milliseconds: 1200));
     dismissScreen(context);
     // Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
-    Navigator.pushNamedAndRemoveUntil(context, BookingHistoryScreen.tag, ModalRoute.withName(MainView.tag));
+    Navigator.pushNamedAndRemoveUntil(
+        context, BookingHistoryScreen.tag, ModalRoute.withName(MainView.tag));
+  }
+
+  void getUnavailableTime() async {
+    // var res = await ksClient.getApi('/venue/service/unavailable/time/${_venueService.id}');
+    // if (res != null) {
+    //   if (res is! HttpResult) {
+
+    //   }
+    // }
+    generateAvailableTime();
+
+    Future.delayed(Duration(milliseconds: 300)).then((_) {
+      isLoaded = true;
+      setState(() {});
+    });
+  }
+
+  List<DateTime> availableTimeList = [];
+
+  void generateAvailableTime() {
+    var day = DateFormat('EEE').format(selectedDate).toLowerCase();
+    print('______: $day');
+
+    // int venueOpenTime = int.parse(widget.venue.schedule!.firstWhere((e) => e.day == day).openTime.substring(0, 2));
+    // int venueCloseTime = int.parse(widget.venue.schedule!.firstWhere((e) => e.day == day).closeTime.substring(0, 2));
+    // print('____$venueOpenTime - $venueCloseTime');
+
+    var oTime = DateFormat("yyyy-MM-dd hh:mm:ss").parse(
+        '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).openTime}');
+    var cTime = DateFormat("yyyy-MM-dd hh:mm:ss").parse(
+        '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).closeTime}');
+
+    var amtHour = cTime.difference(oTime).inHours;
+
+    for (var i = 0; i <= amtHour; i++) {
+      var date = oTime.add(Duration(hours: i));
+      availableTimeList.add(date);
+    }
+
+    setState(() {});
   }
 }

@@ -5,6 +5,10 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/models/venue.dart';
+import 'package:kroma_sport/models/venue_detail.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -15,7 +19,12 @@ import 'package:kroma_sport/widgets/cache_image.dart';
 class VenueDetailScreen extends StatefulWidget {
   static const tag = '/venueDetailScreen';
 
-  VenueDetailScreen({Key? key}) : super(key: key);
+  final Venue venue;
+
+  VenueDetailScreen({
+    Key? key,
+    required this.venue,
+  }) : super(key: key);
 
   @override
   _VenueDetailScreenState createState() => _VenueDetailScreenState();
@@ -28,6 +37,12 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     'Changing Room',
     'Drinking Water Room'
   ];
+
+  late Venue _venue;
+  bool isMaploaded = false;
+  List<VenueService> venueServiceList = [];
+
+  KSHttpClient ksClient = KSHttpClient();
 
   Widget buildVenueNavbar() {
     return SliverPersistentHeader(
@@ -54,7 +69,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Downtown Sport Club',
+                      _venue.name,
                       style: Theme.of(context)
                           .textTheme
                           .headline6
@@ -120,7 +135,9 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 4.0),
                     decoration: BoxDecoration(
-                      color: isLight(context) ? Colors.grey[100] : Colors.blueGrey[400],
+                      color: isLight(context)
+                          ? Colors.grey[100]
+                          : Colors.blueGrey[400],
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                     child: Text(
@@ -133,7 +150,9 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
               runSpacing: 8.0,
               spacing: 8.0,
             ),
-            Divider(height: 32.0,),
+            Divider(
+              height: 32.0,
+            ),
           ],
         ),
       ),
@@ -158,21 +177,31 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
           ),
           Container(
             height: 200.0,
+            color: Colors.grey[100],
             width: AppSize(context).appWidth(100),
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(11.54803335279915, 104.86841649559258),
-                zoom: 15.0,
-              ),
-              onMapCreated: (controller) {},
-              zoomGesturesEnabled: false,
-              scrollGesturesEnabled: false,
-              markers: <Marker>{
-                Marker(
-                    markerId: MarkerId('venue'),
-                    position: LatLng(11.54803335279915, 104.86841649559258)),
-              },
-            ),
+            child: isMaploaded
+                ? GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(
+                        double.parse(_venue.latitude),
+                        double.parse(_venue.latitude),
+                      ),
+                      zoom: 15.0,
+                    ),
+                    onMapCreated: (controller) {},
+                    zoomGesturesEnabled: false,
+                    scrollGesturesEnabled: false,
+                    markers: <Marker>{
+                      Marker(
+                        markerId: MarkerId('venue'),
+                        position: LatLng(
+                          double.parse(_venue.latitude),
+                          double.parse(_venue.latitude),
+                        ),
+                      ),
+                    },
+                  )
+                : SizedBox(),
           ),
         ],
       ),
@@ -180,7 +209,9 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
   }
 
   Widget buildPitchCell(
-      {required String pitchName, required String pitchPrice}) {
+      {required String pitchName,
+      required String pitchPrice,
+      required VenueService venueService}) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -213,7 +244,14 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
           Spacer(),
           ElevatedButton(
             onPressed: () {
-              launchScreen(context, PitchBookingScreen.tag);
+              launchScreen(
+                context,
+                PitchBookingScreen.tag,
+                arguments: {
+                  'venue': _venue,
+                  'venueService': venueService,
+                },
+              );
             },
             style: ButtonStyle(
               elevation: MaterialStateProperty.all(0),
@@ -291,21 +329,26 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                   ?.copyWith(fontWeight: FontWeight.w600),
             ),
             8.height,
-            ListView.separated(
-              padding: EdgeInsets.only(bottom: 16.0),
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return buildPitchCell(
-                  pitchName: 'Pitch $index (5x5)',
-                  pitchPrice: '8\$/h',
-                );
-              },
-              separatorBuilder: (context, index) {
-                return 8.height;
-              },
-              itemCount: 7,
-            )
+            venueServiceList.isNotEmpty
+                ? ListView.separated(
+                    padding: EdgeInsets.only(bottom: 16.0),
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final service = venueServiceList[index];
+                      return buildPitchCell(
+                        pitchName: service.name +
+                            ' (${service.serviceData.people! ~/ 2}x${service.serviceData.people! ~/ 2})',
+                        pitchPrice:
+                            '\$${service.hourPrice.toStringAsFixed(2)}/h',
+                        venueService: service,
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return 8.height;
+                    },
+                    itemCount: venueServiceList.length)
+                : SizedBox()
           ],
         ),
       ),
@@ -329,6 +372,13 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
         onRefresh: () async {},
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _venue = widget.venue;
+    getVenueDetail();
   }
 
   void showSportTypeOption() {
@@ -399,6 +449,22 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
         );
       },
     );
+  }
+
+  void getVenueDetail() async {
+    var res = await ksClient.getApi('/venue/detail/${_venue.id}');
+    if (res != null) {
+      if (res is! HttpResult) {
+        var detail = VenueDetail.fromJson(res);
+        _venue = detail.venue;
+        venueServiceList = detail.service;
+
+        Future.delayed(Duration(milliseconds: 300)).then((_) {
+          isMaploaded = true;
+          setState(() {});
+        });
+      }
+    }
   }
 }
 

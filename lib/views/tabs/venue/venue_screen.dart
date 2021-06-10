@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/models/venue.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
@@ -19,7 +22,6 @@ class VenueScreen extends StatefulWidget {
 }
 
 class _VenueScreenState extends State<VenueScreen> {
-
   List<String> venueImageList = [
     'https://images.unsplash.com/photo-1487466365202-1afdb86c764e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1052&q=80',
     'https://images.unsplash.com/photo-1510526292299-20af3f62d453?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1014&q=80',
@@ -36,26 +38,35 @@ class _VenueScreenState extends State<VenueScreen> {
     'Champion Sport Club',
   ];
 
+  KSHttpClient ksClient = KSHttpClient();
+
+  List<Venue> venueList = [];
 
   Widget buildVenueList() {
     return SliverToBoxAdapter(
-      child: ListView.separated(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 8.0),
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: EdgeInsets.only(top: index == 0 ? 8.0 : 0),
-              child: VenueCell(
-                venueName: venueNameList[index],
-                venueImage: venueImageList[index],
+      child: venueList.isNotEmpty
+          ? ListView.separated(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 8.0),
+              itemBuilder: (context, index) {
+                final venue = venueList[index];
+                return Padding(
+                  padding: EdgeInsets.only(top: index == 0 ? 8.0 : 0),
+                  child: VenueCell(venue: venue),
+                );
+              },
+              separatorBuilder: (context, index) {
+                return 8.height;
+              },
+              itemCount: venueList.length,
+            )
+          : Container(
+              margin: const EdgeInsets.only(top: 100.0),
+              child: Center(
+                child: Text('No any available venue.'),
               ),
-            );
-          },
-          separatorBuilder: (context, index) {
-            return 8.height;
-          },
-          itemCount: 5),
+            ),
     );
   }
 
@@ -95,5 +106,22 @@ class _VenueScreenState extends State<VenueScreen> {
         onRefresh: () async {},
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getVenueList();
+  }
+
+  void getVenueList() async {
+    var res = await ksClient.getApi('/venue/list');
+    if (res != null) {
+      if (res is! HttpResult) {
+        venueList =
+            List<Venue>.from((res as List).map((e) => Venue.fromJson(e)));
+        setState(() {});
+      }
+    }
   }
 }
