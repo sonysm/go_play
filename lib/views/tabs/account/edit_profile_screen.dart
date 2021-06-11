@@ -489,6 +489,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     showKSBottomSheet(context, title: 'Choose Gender', children: [
       RadioListTile<String>(
         value: 'male',
+        activeColor: mainColor,
         groupValue: selectedGender,
         onChanged: (value) {
           _genderTextController.text = 'Male';
@@ -500,6 +501,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       RadioListTile<String>(
         value: 'female',
+        activeColor: mainColor,
         groupValue: selectedGender,
         onChanged: (value) {
           _genderTextController.text = 'Female';
@@ -511,6 +513,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       RadioListTile<String>(
         value: 'other',
+        activeColor: mainColor,
         groupValue: selectedGender,
         onChanged: (value) {
           _genderTextController.text = 'Other';

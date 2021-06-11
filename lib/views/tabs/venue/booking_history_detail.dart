@@ -3,17 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:kroma_sport/ks.dart';
+import 'package:intl/intl.dart';
+import 'package:kroma_sport/models/booking.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
+import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_reason_dialog.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class BookingHistoryDetailScreen extends StatefulWidget {
   static const tag = '/bookingHistoryDetail';
 
-  BookingHistoryDetailScreen({Key? key}) : super(key: key);
+  final Booking booking;
+
+  BookingHistoryDetailScreen({
+    Key? key,
+    required this.booking,
+  }) : super(key: key);
 
   @override
   _BookingHistoryDetailScreenState createState() =>
@@ -22,6 +31,8 @@ class BookingHistoryDetailScreen extends StatefulWidget {
 
 class _BookingHistoryDetailScreenState
     extends State<BookingHistoryDetailScreen> {
+  late Booking _booking;
+
   Widget buildTextInfo({required String data}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4.0),
@@ -74,6 +85,11 @@ class _BookingHistoryDetailScreenState
   }
 
   Widget buildBookingInfo() {
+    var startTime = DateTime.parse(_booking.bookDate + ' ' + _booking.fromTime);
+    var endTime = DateTime.parse(_booking.bookDate + ' ' + _booking.toTime);
+    var duration =
+        endTime.difference(startTime).inMinutes.toString() + ' minutes';
+
     return SliverToBoxAdapter(
       child: Container(
         color: Theme.of(context).primaryColor,
@@ -85,9 +101,9 @@ class _BookingHistoryDetailScreenState
                 dense: true,
                 leading: Icon(Feather.map_pin, size: 20.0),
                 horizontalTitleGap: 0,
-                title: Text('Downtown Sport Club',
+                title: Text(_booking.venue.name,
                     style: Theme.of(context).textTheme.bodyText1),
-                subtitle: Text('Phnom Penh',
+                subtitle: Text(_booking.venue.address,
                     style: Theme.of(context).textTheme.headline2),
               ),
             ),
@@ -97,7 +113,9 @@ class _BookingHistoryDetailScreenState
                 dense: true,
                 leading: SizedBox(width: 20.0),
                 horizontalTitleGap: 0,
-                title: Text('Pitch A (5x5)',
+                title: Text(
+                    _booking.service.name +
+                        ' (${_booking.service.serviceData.people! ~/ 2}x${_booking.service.serviceData.people! ~/ 2})',
                     style: Theme.of(context).textTheme.bodyText1),
               ),
             ),
@@ -107,7 +125,9 @@ class _BookingHistoryDetailScreenState
                 dense: true,
                 leading: Icon(Feather.calendar, size: 20.0),
                 horizontalTitleGap: 0,
-                title: Text('10/07/2021 - 10:00 AM',
+                title: Text(
+                    DateFormat('dd/MM/yyyy - hh:mm a').format(DateTime.parse(
+                        _booking.bookDate + ' ' + _booking.fromTime)),
                     style: Theme.of(context).textTheme.bodyText1),
               ),
             ),
@@ -117,17 +137,7 @@ class _BookingHistoryDetailScreenState
                 dense: true,
                 leading: Icon(Feather.clock, size: 20.0),
                 horizontalTitleGap: 0,
-                title: Text('120 minutes',
-                    style: Theme.of(context).textTheme.bodyText1),
-              ),
-            ),
-            SizedBox(
-              height: 48.0,
-              child: ListTile(
-                dense: true,
-                leading: Icon(Feather.user, size: 20.0),
-                horizontalTitleGap: 0,
-                title: Text('${KS.shared.user.getFullname()}',
+                title: Text(duration,
                     style: Theme.of(context).textTheme.bodyText1),
               ),
             ),
@@ -137,8 +147,8 @@ class _BookingHistoryDetailScreenState
                 dense: true,
                 leading: Icon(Feather.dollar_sign, size: 20.0),
                 horizontalTitleGap: 0,
-                title:
-                    Text('16.00', style: Theme.of(context).textTheme.bodyText1),
+                title: Text(_booking.price.toString(),
+                    style: Theme.of(context).textTheme.bodyText1),
               ),
             ),
             SizedBox(
@@ -147,7 +157,7 @@ class _BookingHistoryDetailScreenState
                 dense: true,
                 leading: Icon(Feather.pocket, size: 20.0),
                 horizontalTitleGap: 0,
-                title: Text('Success',
+                title: Text(_booking.status.capitalize,
                     style: Theme.of(context)
                         .textTheme
                         .bodyText1
@@ -168,7 +178,7 @@ class _BookingHistoryDetailScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ID - KS170707'),
+        title: Text('ID - KS${_booking.id}'),
         actions: [
           CupertinoButton(
             child: Icon(FeatherIcons.moreVertical,
@@ -191,6 +201,12 @@ class _BookingHistoryDetailScreenState
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _booking = widget.booking;
+  }
+
   void cancelBooking() {
     showKSBottomSheet(
       context,
@@ -204,9 +220,25 @@ class _BookingHistoryDetailScreenState
           height: 44.0,
           onTab: () {
             dismissScreen(context);
+            confirmCancel();
           },
         ),
       ],
     );
+  }
+
+  void confirmCancel() {
+    showKSConfirmDialog(context, 'Are you sure you want to cancel booking?',
+        () async {
+      showKSReasonDialog(
+        context,
+        title: 'Tell the reason why you want to cancel booking:',
+        onSubmit: () async {
+          showKSLoading(context);
+          dismissScreen(context);
+          dismissScreen(context);
+        },
+      );
+    });
   }
 }

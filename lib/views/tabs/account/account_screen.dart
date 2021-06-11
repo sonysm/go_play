@@ -129,7 +129,7 @@ class _AccountScreenState extends State<AccountScreen>
                   16.height,
                   Row(
                     children: [
-                      actionHeader(amt: '22', title: 'Activities'),
+                      actionHeader(amt: '0', title: 'Coin'),
                       actionHeader(amt: '1.7k', title: 'Followers'),
                       actionHeader(amt: '337', title: 'Following'),
                     ],

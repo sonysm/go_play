@@ -259,6 +259,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             buildMainInfo(),
             buildMap(),
             buildMember(),
+            SliverPadding(padding: EdgeInsets.only(bottom: 64.0))
           ],
           onRefresh: () async {
             fetchMeetup();

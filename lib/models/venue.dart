@@ -11,7 +11,7 @@ String venueToJson(Venue data) => json.encode(data.toJson());
 class Venue {
   Venue({
     required this.id,
-    required this.owner,
+    this.owner,
     this.schedule,
     required this.isActive,
     required this.name,
@@ -23,7 +23,7 @@ class Venue {
   });
 
   int id;
-  Owner owner;
+  Owner? owner;
   List<Schedule>? schedule;
   bool isActive;
   String name;
@@ -35,7 +35,7 @@ class Venue {
 
   factory Venue.fromJson(Map<String, dynamic> json) => Venue(
         id: json["id"],
-        owner: Owner.fromJson(json["owner"]),
+        owner: (json["owner"] is Map) ? Owner.fromJson(json["owner"]) : null,
         schedule: json["schedule"] != null ? List<Schedule>.from(json["schedule"].map((x) => Schedule.fromJson(x))) : null,
         isActive: json["is_active"],
         name: json["name"],
@@ -48,7 +48,7 @@ class Venue {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "owner": owner.toJson(),
+        "owner": owner!.toJson(),
         "schedule": List<dynamic>.from(schedule!.map((x) => x.toJson())),
         "is_active": isActive,
         "name": name,

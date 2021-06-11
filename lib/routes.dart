@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/models/booking.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -75,7 +76,7 @@ class RouteGenerator {
       case CreatPostScreen.tag:
         return MaterialPageRoute(builder: (_) => CreatPostScreen());
       case SettingScreen.tag:
-        return MaterialPageRoute(builder: (_) => SettingScreen());
+        return KSPageRoute(builder: (_) => SettingScreen());
       case SportsScreen.tag:
         return MaterialPageRoute(builder: (_) => SportsScreen());
       case FavoriteSportDetailScreen.tag:
@@ -128,7 +129,7 @@ class RouteGenerator {
           ),
         );
       case EditProfileScreen.tag:
-        return MaterialPageRoute(builder: (_) => EditProfileScreen());
+        return KSPageRoute(builder: (_) => EditProfileScreen());
       case VenueScreen.tag:
         return MaterialPageRoute(builder: (_) => VenueScreen());
       case VenueDetailScreen.tag:
@@ -144,9 +145,13 @@ class RouteGenerator {
           ),
         );
       case BookingHistoryScreen.tag:
-        return MaterialPageRoute(builder: (_) => BookingHistoryScreen());
+        return KSPageRoute(builder: (_) => BookingHistoryScreen());
       case BookingHistoryDetailScreen.tag:
-        return MaterialPageRoute(builder: (_) => BookingHistoryDetailScreen());
+        return MaterialPageRoute(
+          builder: (_) => BookingHistoryDetailScreen(
+            booking: args as Booking,
+          ),
+        );
       default:
         return _errorRoute();
     }

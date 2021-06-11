@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:kroma_sport/models/booking.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_detail.dart';
 
 class BookingCell extends StatelessWidget {
-  const BookingCell({Key? key}) : super(key: key);
+  const BookingCell({Key? key, required this.booking}) : super(key: key);
+
+  final Booking booking;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        launchScreen(context, BookingHistoryDetailScreen.tag);
+        launchScreen(
+          context,
+          BookingHistoryDetailScreen.tag,
+          arguments: booking,
+        );
       },
       child: Container(
         height: 100.0,
-        padding: const EdgeInsets.only(left: 16.0, top: 8.0, right: 8.0, bottom: 8.0),
+        padding: const EdgeInsets.only(
+            left: 16.0, top: 8.0, right: 8.0, bottom: 8.0),
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
           // borderRadius: BorderRadius.circular(8.0),
@@ -32,18 +41,18 @@ class BookingCell extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'May',
+                    DateFormat('MMM').format(DateTime.parse(booking.bookDate)),
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                   Text(
-                    '10',
+                    DateFormat('dd').format(DateTime.parse(booking.bookDate)),
                     style: Theme.of(context)
                         .textTheme
                         .headline6
                         ?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   Text(
-                    'Mon',
+                    DateFormat('EEE').format(DateTime.parse(booking.bookDate)),
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ],
@@ -62,7 +71,7 @@ class BookingCell extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Downtown Sport Club',
+                              booking.venue.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context)
@@ -71,7 +80,7 @@ class BookingCell extends StatelessWidget {
                                   ?.copyWith(fontWeight: FontWeight.w600),
                             ),
                             Text(
-                              'Phnom Penh',
+                              booking.venue.address,
                               style: Theme.of(context).textTheme.bodyText2,
                             ),
                           ],
@@ -79,7 +88,7 @@ class BookingCell extends StatelessWidget {
                       ),
                       8.width,
                       Text(
-                        'Success',
+                        booking.status.capitalize,
                         style: TextStyle(color: Colors.green),
                       ),
                     ],
@@ -95,7 +104,8 @@ class BookingCell extends StatelessWidget {
                               style: Theme.of(context).textTheme.caption,
                             ),
                             TextSpan(
-                              text: '10:00 AM',
+                              text: DateFormat('hh:mm a').format(DateTime.parse(
+                                  booking.bookDate + ' ' + booking.fromTime)),
                               style: Theme.of(context)
                                   .textTheme
                                   .caption
@@ -112,7 +122,7 @@ class BookingCell extends StatelessWidget {
                                 text: 'Booking ID: ',
                                 style: Theme.of(context).textTheme.caption),
                             TextSpan(
-                                text: 'KS170707',
+                                text: 'KS${booking.id}',
                                 style: Theme.of(context)
                                     .textTheme
                                     .caption

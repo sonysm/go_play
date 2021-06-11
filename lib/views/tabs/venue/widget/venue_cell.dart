@@ -73,7 +73,7 @@ class VenueCell extends StatelessWidget {
                 ],
               ),
               8.height,
-              Row(
+              /*Row(
                 children: [
                   Icon(
                     Icons.star,
@@ -90,7 +90,7 @@ class VenueCell extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
+              ),*/
               Spacer(),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -103,6 +103,20 @@ class VenueCell extends StatelessWidget {
                   //     fontWeight: FontWeight.w600,
                   //   ),
                   // ),
+                  Icon(
+                    Icons.star,
+                    color: Colors.amber[700],
+                    size: 20.0,
+                  ),
+                  4.width,
+                  Text(
+                    '4.5',
+                    style: TextStyle(
+                      color: whiteColor,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   Spacer(),
                   ElevatedButton(
                     style: ButtonStyle(

@@ -14,7 +14,9 @@ import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/widgets/ks_complete_dialog.dart';
+import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 
@@ -43,6 +45,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
   String? timeAvailableString;
 
   DateTime selectedDate = DateTime.now();
+  DateTime? selectedStartTime;
 
   String? dateTimeString;
 
@@ -51,6 +54,9 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
   bool isLoaded = false;
 
   KSHttpClient ksClient = KSHttpClient();
+
+  List<DateTime> availableTimeList = [];
+  List<int> durationList = [];
 
   Widget buildSelectDate() {
     return SliverToBoxAdapter(
@@ -97,14 +103,9 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
               activeDates: List.generate(
                   14, (index) => DateTime.now().add(Duration(days: index))),
               onDateChange: (date) {
-                timeAvailableString = null;
-                dateTimeString = null;
-                selectedDate = date;
-                if (timeAvailableString != null) {
-                  dateTimeString =
-                      format.format(date) + ' - $timeAvailableString';
+                if (date != selectedDate) {
+                  onSelectDate(date);
                 }
-                setState(() {});
               },
             ),
             16.height,
@@ -280,7 +281,9 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                   buildTextDetail(
                       label: 'Total',
                       data: duration != null
-                          ? '\$' + ((duration! * _venueService.hourPrice) / 60).toStringAsFixed(2)
+                          ? '\$' +
+                              ((duration! * _venueService.hourPrice) / 60)
+                                  .toStringAsFixed(2)
                           : null),
                 ],
               ),
@@ -393,7 +396,8 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                     'Book' +
                         (duration != null
                             ? ' - \$' +
-                                ((duration! * _venueService.hourPrice) / 60).toStringAsFixed(2)
+                                ((duration! * _venueService.hourPrice) / 60)
+                                    .toStringAsFixed(2)
                             : ''),
                     style: TextStyle(
                       fontSize: 16.0,
@@ -420,56 +424,39 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
     getUnavailableTime();
   }
 
+  void onSelectDate(DateTime date) {
+    timeAvailableString = null;
+    dateTimeString = null;
+    duration = null;
+    selectedDate = date;
+    if (timeAvailableString != null) {
+      dateTimeString = format.format(date) + ' - $timeAvailableString';
+    }
+
+    setState(() {});
+    getUnavailableTime(showLoading: true);
+  }
+
   void selectDuration() {
     showKSBottomSheet(
       context,
-      children: [
-        Container(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Text(
-            'Choose Duration',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-        ),
-        KSTextButtonBottomSheet(
-          title: '60 minutes',
+      title: 'Choose Duration',
+      children: List.generate(durationList.length, (index) {
+        return KSTextButtonBottomSheet(
+          title: '${durationList[index]} minutes',
           height: 40,
           titleTextStyle: Theme.of(context)
               .textTheme
               .bodyText1
               ?.copyWith(fontWeight: FontWeight.w600),
           onTab: () {
-            duration = 60;
+            duration = durationList[index];
             dismissScreen(context);
           },
-        ),
-        KSTextButtonBottomSheet(
-          title: '90 minutes',
-          height: 40,
-          titleTextStyle: Theme.of(context)
-              .textTheme
-              .bodyText1
-              ?.copyWith(fontWeight: FontWeight.w600),
-          onTab: () {
-            duration = 90;
-            dismissScreen(context);
-          },
-        ),
-        KSTextButtonBottomSheet(
-          title: '120 minutes',
-          height: 40,
-          titleTextStyle: Theme.of(context)
-              .textTheme
-              .bodyText1
-              ?.copyWith(fontWeight: FontWeight.w600),
-          onTab: () {
-            duration = 120;
-            dismissScreen(context);
-          },
-        ),
-      ],
+        );
+      }),
     ).then((value) {
-      print('______callback! $value');
+      // print('______callback! $value');
       setState(() {});
     });
   }
@@ -488,70 +475,32 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
               .bodyText1
               ?.copyWith(fontWeight: FontWeight.w600),
           onTab: () {
+            selectedStartTime = time;
             timeAvailableString = DateFormat('hh:mm a').format(time);
+
+            var dur = 60;
+            durationList.clear();
+
+            for (var i = index; i < availableTimeList.length; i++) {
+              if (i + 1 < availableTimeList.length) {
+                if (availableTimeList[i].add(Duration(hours: 1)) ==
+                    availableTimeList[i + 1]) {
+                  durationList.add(dur);
+                  dur += 60;
+                } else {
+                  durationList.add(dur);
+                  break;
+                }
+              } else if (i == availableTimeList.length -1) {
+                durationList.add(dur);
+              }
+            }
+
             dismissScreen(context);
           },
         );
       }),
-      // [
-      //   Container(
-      //     padding: const EdgeInsets.only(left: 16.0),
-      //     child: Text(
-      //       'Choose Start Time',
-      //       style: Theme.of(context).textTheme.headline6,
-      //     ),
-      //   ),
-      // KSTextButtonBottomSheet(
-      //   title: '7:00 AM',
-      //   height: 40,
-      //   titleTextStyle: Theme.of(context)
-      //       .textTheme
-      //       .bodyText1
-      //       ?.copyWith(fontWeight: FontWeight.w600),
-      //   onTab: () {
-      //     timeAvailableString = '7:00 AM';
-      //     dismissScreen(context);
-      //   },
-      // ),
-      //   KSTextButtonBottomSheet(
-      //     title: '8:00 AM',
-      //     height: 40,
-      //     titleTextStyle: Theme.of(context)
-      //         .textTheme
-      //         .bodyText1
-      //         ?.copyWith(fontWeight: FontWeight.w600),
-      //     onTab: () {
-      //       timeAvailableString = '8:00 AM';
-      //       dismissScreen(context);
-      //     },
-      //   ),
-      //   KSTextButtonBottomSheet(
-      //     title: '9:00 AM',
-      //     height: 40,
-      //     titleTextStyle: Theme.of(context)
-      //         .textTheme
-      //         .bodyText1
-      //         ?.copyWith(fontWeight: FontWeight.w600),
-      //     onTab: () {
-      //       timeAvailableString = '9:00 AM';
-      //       dismissScreen(context);
-      //     },
-      //   ),
-      //   KSTextButtonBottomSheet(
-      //     title: '10:00 AM',
-      //     height: 40,
-      //     titleTextStyle: Theme.of(context)
-      //         .textTheme
-      //         .bodyText1
-      //         ?.copyWith(fontWeight: FontWeight.w600),
-      //     onTab: () {
-      //       timeAvailableString = '10:00 AM';
-      //       dismissScreen(context);
-      //     },
-      //   ),
-      // ],
     ).then((value) {
-      print('______callback! $value');
       if (timeAvailableString != null) {
         dateTimeString =
             format.format(selectedDate) + ' - $timeAvailableString';
@@ -561,41 +510,78 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
   }
 
   void bookPitch() async {
-    showKSLoading(context);
-    await Future.delayed(Duration(milliseconds: 700));
-    dismissScreen(context);
-    showKSComplete(context, message: 'Book successfully!');
-    await Future.delayed(Duration(milliseconds: 1200));
-    dismissScreen(context);
-    // Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
-    Navigator.pushNamedAndRemoveUntil(
-        context, BookingHistoryScreen.tag, ModalRoute.withName(MainView.tag));
-  }
+    showKSConfirmDialog(
+        context, 'You are about to book a pitch\n\nPlease confirm!', () async {
+      showKSLoading(context);
+      // await Future.delayed(Duration(milliseconds: 700));
 
-  void getUnavailableTime() async {
-    // var res = await ksClient.getApi('/venue/service/unavailable/time/${_venueService.id}');
-    // if (res != null) {
-    //   if (res is! HttpResult) {
+      Map<String, dynamic> fields = {
+        'book_date': DateFormat('yyyy-MM-dd').format(selectedDate),
+        'from_time': DateFormat('HH:mm:ss').format(selectedStartTime!),
+        'to_time': DateFormat('HH:mm:ss')
+            .format(selectedStartTime!.add(Duration(minutes: duration!))),
+        'price': (duration! * _venueService.hourPrice) / 60
+      };
 
-    //   }
-    // }
-    generateAvailableTime();
+      var res =
+          await ksClient.postApi('/booking/service/${_venueService.id}', body: fields);
+      if (res != null) {
+        if (res is! HttpResult) {
+          dismissScreen(context);
+          showKSComplete(context, message: 'Book successfully!');
+          await Future.delayed(Duration(milliseconds: 1200));
+          dismissScreen(context);
+          Navigator.pushNamedAndRemoveUntil(context, BookingHistoryScreen.tag,
+              ModalRoute.withName(MainView.tag));
+        } else {
+          dismissScreen(context);
+          showKSMessageDialog(context, 'Booking failed. Please try again!', () {});
+        }
+      }
 
-    Future.delayed(Duration(milliseconds: 300)).then((_) {
-      isLoaded = true;
-      setState(() {});
+      // dismissScreen(context);
+      // showKSComplete(context, message: 'Book successfully!');
+      // await Future.delayed(Duration(milliseconds: 1200));
+      // dismissScreen(context);
+      // Navigator.pushNamedAndRemoveUntil(
+      //     context, BookingHistoryScreen.tag, ModalRoute.withName(MainView.tag));
     });
   }
 
-  List<DateTime> availableTimeList = [];
+  void getUnavailableTime({bool showLoading = false}) async {
+    if (showLoading) {
+      showKSLoading(context);
+    }
+    availableTimeList.clear();
+    var queryDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+    List<DateTime> unAvailableTimeList = [];
 
-  void generateAvailableTime() {
+    var res = await ksClient.getApi(
+        '/venue/service/unavailable/time/${_venueService.id}',
+        queryParameters: {'date': queryDate});
+    if (res != null) {
+      if (res is! HttpResult) {
+        for (var e in (res as List)) {
+          List<DateTime> tempDate = [];
+          var fromTime = DateFormat('yyyy-MM-dd HH:mm:ss')
+              .parse('${e['date']} ${e['from_time']}');
+          var toTime = DateFormat('yyyy-MM-dd HH:mm:ss')
+              .parse('${e['date']} ${e['to_time']}');
+          var amt = toTime.difference(fromTime).inHours;
+          for (var i = 0; i < amt; i++) {
+            var date = fromTime.add(Duration(hours: i));
+            tempDate.add(date);
+          }
+          unAvailableTimeList.addAll(tempDate);
+        }
+        generateAvailableTime(unAvailableTimeList, showLoading: showLoading);
+      }
+    }
+  }
+
+  void generateAvailableTime(List<DateTime> unAvailableTimes,
+      {bool showLoading = false}) {
     var day = DateFormat('EEE').format(selectedDate).toLowerCase();
-    print('______: $day');
-
-    // int venueOpenTime = int.parse(widget.venue.schedule!.firstWhere((e) => e.day == day).openTime.substring(0, 2));
-    // int venueCloseTime = int.parse(widget.venue.schedule!.firstWhere((e) => e.day == day).closeTime.substring(0, 2));
-    // print('____$venueOpenTime - $venueCloseTime');
 
     var oTime = DateFormat("yyyy-MM-dd hh:mm:ss").parse(
         '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).openTime}');
@@ -604,11 +590,26 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
 
     var amtHour = cTime.difference(oTime).inHours;
 
-    for (var i = 0; i <= amtHour; i++) {
+    for (var i = 0; i < amtHour; i++) {
       var date = oTime.add(Duration(hours: i));
       availableTimeList.add(date);
     }
 
-    setState(() {});
+    DateTime tempDate = DateTime(2021, 1, 1);
+    availableTimeList = List.from(availableTimeList.where((x) {
+      return x.hour !=
+          unAvailableTimes
+              .firstWhere((e) => e.hour == x.hour, orElse: () => tempDate)
+              .hour;
+    }));
+
+    Future.delayed(Duration(milliseconds: 300)).then((_) {
+      isLoaded = true;
+      setState(() {});
+
+      if (showLoading) {
+        dismissScreen(context);
+      }
+    });
   }
 }

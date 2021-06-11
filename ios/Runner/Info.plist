@@ -25,9 +25,11 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Access camera</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Tms want to access to your Microphone.</string>
+	<string>KSport want to access to your Microphone.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Tms want to access to your photos.</string>
+	<string>Ksport want to access to your photos.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>KSport like to access location</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

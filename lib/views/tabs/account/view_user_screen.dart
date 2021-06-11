@@ -115,9 +115,8 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                   16.height,
                   Row(
                     children: [
-                      actionHeader(amt: '22', title: 'Activities'),
-                      actionHeader(amt: '1.7k', title: 'Followers'),
-                      actionHeader(amt: '337', title: 'Following'),
+                      actionHeader(amt: '17', title: 'Followers'),
+                      actionHeader(amt: '5', title: 'Following'),
                     ],
                   )
                 ],
