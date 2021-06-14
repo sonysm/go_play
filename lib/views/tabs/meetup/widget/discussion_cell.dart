@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/discussion.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';

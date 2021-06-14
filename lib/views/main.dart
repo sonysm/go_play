@@ -71,6 +71,10 @@ class _MainViewState extends State<MainView> {
                 icons: _icons,
                 selectedIndex: _tapIndex,
                 onTap: (index) {
+                  if (index == _tapIndex) {
+                    return;
+                  }
+
                   if (index < 2) {
                     setState(() {
                       _tapIndex = index;
@@ -180,7 +184,9 @@ class _CustomTabBar extends StatelessWidget {
                             borderRadius: BorderRadius.circular(0)),
                       ),
                       elevation: MaterialStateProperty.all(0),
-                      overlayColor: MaterialStateProperty.all(isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
+                      overlayColor: MaterialStateProperty.all(isLight(context)
+                          ? Colors.grey[100]
+                          : Colors.blueGrey[300]),
                       backgroundColor:
                           MaterialStateProperty.all(Colors.transparent),
                     ),

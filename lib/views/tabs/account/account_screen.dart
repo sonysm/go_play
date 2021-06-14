@@ -16,6 +16,7 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/edit_profile_screen.dart';
+import 'package:kroma_sport/views/tabs/account/follow_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
@@ -71,11 +72,12 @@ class _AccountScreenState extends State<AccountScreen>
     );
   }
 
-  Widget actionHeader({String? amt, required String title}) {
+  Widget actionHeader(
+      {String? amt, required String title, VoidCallback? onTap}) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {},
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: Column(
@@ -115,13 +117,10 @@ class _AccountScreenState extends State<AccountScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    KS.shared.user.getFullname(),
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        ?.copyWith(fontWeight: FontWeight.w600, fontFamily: 'Metropolis')
-                  ),
+                  Text(KS.shared.user.getFullname(),
+                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Metropolis')),
                   Text(
                     'Phnom Penh, Cambodia',
                     style: Theme.of(context).textTheme.bodyText2,
@@ -130,8 +129,16 @@ class _AccountScreenState extends State<AccountScreen>
                   Row(
                     children: [
                       actionHeader(amt: '0', title: 'Coin'),
-                      actionHeader(amt: '1.7k', title: 'Followers'),
-                      actionHeader(amt: '337', title: 'Following'),
+                      actionHeader(
+                        amt: '${KS.shared.user.followerCount}',
+                        title: 'Followers',
+                        onTap: () => launchScreen(context, FollowScreen.tag),
+                      ),
+                      actionHeader(
+                        amt: '${KS.shared.user.followingCount}',
+                        title: 'Following',
+                        onTap: () => launchScreen(context, FollowScreen.tag),
+                      ),
                     ],
                   )
                 ],
@@ -385,7 +392,10 @@ class _AccountScreenState extends State<AccountScreen>
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
-    getFavoriteSport();
+
+    Future.delayed(Duration(milliseconds: 300)).then((_) {
+      getFavoriteSport();
+    });
   }
 
   void getFavoriteSport() async {

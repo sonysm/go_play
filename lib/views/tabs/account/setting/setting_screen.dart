@@ -101,16 +101,7 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void changeTheme() async {
-    // showKSLoading(context);
-    // await Future.delayed(Duration(milliseconds: 700));
     BlocProvider.of<ThemeCubit>(context)
         .emitTheme(isLight(context) ? ThemeMode.dark : ThemeMode.light);
-    await Future.delayed(Duration(milliseconds: 1200));
-    // dismissScreen(context);
-    if (mounted) {
-      showKSComplete(context, message: 'Theme changed!');
-      await Future.delayed(Duration(milliseconds: 1500));
-      dismissScreen(context);
-    }
   }
 }

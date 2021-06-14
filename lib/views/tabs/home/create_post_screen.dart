@@ -383,32 +383,32 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
       setState(() {});
     }
 
-    if (assetList != null) {
-      Future.forEach(assetList, (element) async {
-        {
-          ByteData byteData = await (element as Asset).getByteData();
-          List<int> imageData = byteData.buffer.asUint8List();
+    // if (assetList != null) {
+    //   Future.forEach(assetList, (element) async {
+    //     {
+    //       ByteData byteData = await (element as Asset).getByteData();
+    //       List<int> imageData = byteData.buffer.asUint8List();
 
-          files.add(MultipartFile.fromBytes(
-            imageKey,
-            imageData,
-            filename: 'FD' +
-                DateTime.now().millisecondsSinceEpoch.toString() +
-                '.jpg',
-          ));
-        }
-      }).then((value) {
-        //showKSLoading(context);
-        //TmsService().uploadPhotoGallery(files: files).then((user) {
-        //  if (user != null) {
-        //    widget.userDetails.user = user;
-        //    TMS.shared.user = user;
-        //    Navigator.pop(context);
-        //    setState(() {});
-        //  }
-        //});
-      });
-    }
+    //       files.add(MultipartFile.fromBytes(
+    //         imageKey,
+    //         imageData,
+    //         filename: 'FD' +
+    //             DateTime.now().millisecondsSinceEpoch.toString() +
+    //             '.jpg',
+    //       ));
+    //     }
+    //   }).then((value) {
+    //     //showKSLoading(context);
+    //     //TmsService().uploadPhotoGallery(files: files).then((user) {
+    //     //  if (user != null) {
+    //     //    widget.userDetails.user = user;
+    //     //    TMS.shared.user = user;
+    //     //    Navigator.pop(context);
+    //     //    setState(() {});
+    //     //  }
+    //     //});
+    //   });
+    // }
   }
 
   bool availablePost() {
@@ -425,6 +425,21 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
     if (descController.text.trim().isNotEmpty) {
       fields['description'] = descController.text;
     }
+
+    await Future.forEach(images, (element) async {
+      {
+        ByteData byteData = await (element as Asset).getByteData();
+        List<int> imageData = byteData.buffer.asUint8List();
+
+        files.add(MultipartFile.fromBytes(
+          imageKey,
+          imageData,
+          filename:
+              'FD' + DateTime.now().millisecondsSinceEpoch.toString() + '.jpg',
+        ));
+      }
+    });
+
     showKSLoading(context);
     var data = await _client.postUploads('/create/feed', files, fields: fields);
     if (data != null) {

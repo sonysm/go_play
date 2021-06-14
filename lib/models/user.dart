@@ -22,6 +22,8 @@ class User {
     this.deviceToken,
     this.createdAt,
     this.updatedAt,
+    required this.followerCount,
+    required this.followingCount,
   });
 
   int id;
@@ -40,6 +42,8 @@ class User {
   String? deviceToken;
   DateTime? createdAt;
   DateTime? updatedAt;
+  int followerCount;
+  int followingCount;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],
@@ -58,6 +62,8 @@ class User {
         deviceToken: json["device_token"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
+        followerCount: json['follower_count'],
+        followingCount: json['following_count'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -77,6 +83,8 @@ class User {
         "device_token": deviceToken,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
+        "follower_count": followerCount,
+        "following_count": followingCount,
       };
 
   String getFullname() {

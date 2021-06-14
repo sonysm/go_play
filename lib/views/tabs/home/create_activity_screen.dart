@@ -502,8 +502,11 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   void initState() {
     super.initState();
     checkGps();
-    getSportList();
     selectedActivity = activityLevelList[0];
+
+    Future.delayed(Duration(milliseconds: 300)).then((_) {
+      getSportList();
+    });
   }
 
   void getSportList() async {

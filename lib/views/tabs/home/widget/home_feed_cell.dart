@@ -65,18 +65,22 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                     radius: 18.0,
                     user: widget.post.owner,
                     isSelectable: widget.isAvatarSelectable,
+                    onTap: (user) {
+                      widget.post.owner = user;
+                      setState(() {});
+                    },
                   ),
                   8.width,
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.post.owner.getFullname(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            ?.copyWith(fontWeight: FontWeight.w600, fontFamily: 'Metropolis')
-                      ),
+                      Text(widget.post.owner.getFullname(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Metropolis')),
                       Text(
                         widget.post.createdAt.toString().timeAgoString,
                         style: Theme.of(context).textTheme.caption!.copyWith(

@@ -10,20 +10,25 @@ class Avatar extends StatelessWidget {
   final double radius;
   final User user;
   final bool isSelectable;
+  final Function(User)? onTap;
 
   const Avatar({
     Key? key,
     required this.radius,
     required this.user,
     this.isSelectable = true,
+    this.onTap,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: isSelectable
-          ? () {
+          ? () async {
             if (user.id != KS.shared.user.id) {
-              launchScreen(context, ViewUserProfileScreen.tag, arguments: user);
+              var data = await launchScreen(context, ViewUserProfileScreen.tag, arguments: user);
+              if (data != null) {
+                onTap!(data as User);
+              }
             } else {
               launchScreen(context, AccountScreen.tag);
             }

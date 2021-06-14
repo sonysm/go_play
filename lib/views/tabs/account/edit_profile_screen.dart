@@ -231,7 +231,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _genderWidget() {
+  Widget genderWidget() {
     return SliverToBoxAdapter(
       child: Container(
         margin: const EdgeInsets.only(top: 16.0),

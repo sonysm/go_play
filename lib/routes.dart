@@ -4,13 +4,13 @@ import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/models/venue.dart';
-import 'package:kroma_sport/models/venue_detail.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/auth/register_screen.dart';
 import 'package:kroma_sport/views/auth/verify_code_screen.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/edit_profile_screen.dart';
+import 'package:kroma_sport/views/tabs/account/follow_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sport_detail.dart';
@@ -60,7 +60,7 @@ class RouteGenerator {
       case NotificationScreen.tag:
         return MaterialPageRoute(builder: (_) => NotificationScreen());
       case AccountScreen.tag:
-        return MaterialPageRoute(
+        return KSPageRoute(
           builder: (_) => AccountScreen(),
           // settings: RouteSettings(name: AccountScreen.tag),
         );
@@ -91,7 +91,7 @@ class RouteGenerator {
         return KSPageRoute(
             builder: (_) => ViewUserProfileScreen(user: args as User));
       case CreateActivityScreen.tag:
-        return MaterialPageRoute(builder: (_) => CreateActivityScreen());
+        return KSPageRoute(builder: (_) => CreateActivityScreen());
       case ViewPhotoScreen.tag:
         args as Map<String, dynamic>;
         return MaterialPageRoute(
@@ -152,6 +152,8 @@ class RouteGenerator {
             booking: args as Booking,
           ),
         );
+      case FollowScreen.tag:
+        return KSPageRoute(builder: (_) => FollowScreen());
       default:
         return _errorRoute();
     }
@@ -176,12 +178,15 @@ class KSPageRoute<T> extends MaterialPageRoute<T> {
       : super(builder: builder, settings: settings);
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 350);
+  Duration get transitionDuration => const Duration(milliseconds: 500);
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    animation = CurvedAnimation(parent: animation, curve: Curves.easeInOut);
+    animation = CurvedAnimation(
+        parent: animation,
+        curve: Curves.fastLinearToSlowEaseIn,
+        reverseCurve: Curves.easeOut);
 
     return SlideTransition(
       position: animation.drive(

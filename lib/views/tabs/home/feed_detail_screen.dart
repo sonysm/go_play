@@ -9,10 +9,12 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/models/comment.dart';
 import 'package:kroma_sport/models/post.dart';
+import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/comment_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
@@ -64,7 +66,15 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
 
   Widget buildTotalReaction(int total) {
     return total > 0
-        ? Text(total > 1 ? '$total likes' : '$total like')
+        ? TextButton(
+            style: ButtonStyle(
+              overlayColor: MaterialStateProperty.all(Colors.grey[100]),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              minimumSize: MaterialStateProperty.all(Size(0,0)),
+              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0))
+            ),
+            onPressed: showUserLike,
+            child: Text(total > 1 ? '$total likes' : '$total like', style: Theme.of(context).textTheme.bodyText2,))
         : SizedBox();
   }
 
@@ -96,10 +106,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     children: [
                       Text(
                         post.owner.getFullname(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            ?.copyWith(fontWeight: FontWeight.w600, fontFamily: 'Metropolis'),
+                        style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Metropolis'),
                       ),
                       Text(
                         widget.post.createdAt.toString().timeAgoString,
@@ -406,9 +415,10 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   @override
   void initState() {
     super.initState();
-    getImageSize();
     post = widget.post;
+    getImageSize();
     getPostDetail();
+
     if (widget.isCommentTap) {
       Future.delayed(Duration(milliseconds: 500)).then((value) {
         _commentTextNode.requestFocus();
@@ -488,6 +498,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
         setState(() {});
       }
     }
+    getUserLike();
   }
 
   void deletePost() async {
@@ -723,5 +734,59 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     int dur = e.difference(s).inMinutes;
 
     return '$dur\mn';
+  }
+
+  List<User> likeUsers = [];
+
+  Future<void> getUserLike() async {
+    var res = await ksClient.getApi('/view/post/reaction/${widget.post.id}');
+    if (res != null) {
+      if (res is! HttpResult) {
+        likeUsers =
+            List.from((res as List).map((e) => User.fromJson(e['user'])));
+        setState(() {});
+      }
+    }
+  }
+
+  void showUserLike() async {
+    await getUserLike();
+    showKSBottomSheet(
+      context,
+      title: 'Like by',
+      children: likeUsers.isNotEmpty
+          ? List.generate(
+              likeUsers.length,
+              (index) {
+                final user = likeUsers[index];
+                return InkWell(
+                  onTap: () {
+                    launchScreen(context, ViewUserProfileScreen.tag, arguments: user);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Row(
+                      children: [
+                        Avatar(radius: 18, user: user),
+                        8.width,
+                        Text(
+                          user.getFullname(),
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            )
+          : [
+              Container(
+                height: 100,
+              )
+            ],
+    );
   }
 }
