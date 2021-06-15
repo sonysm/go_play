@@ -44,6 +44,8 @@ class _AccountScreenState extends State<AccountScreen>
   late TabController tabController;
   int _currentIndex = 0;
 
+  bool isLoaded = false;
+
   Widget buildNavbar() {
     return SliverAppBar(
       pinned: true,
@@ -245,7 +247,8 @@ class _AccountScreenState extends State<AccountScreen>
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
                 ),
-                indicatorColor: mainColor,
+                indicatorColor:
+                      isLight(context) ? mainColor : Colors.greenAccent,
                 isScrollable: true,
                 onTap: (index) => setState(() => _currentIndex = index),
                 tabs: [
@@ -372,7 +375,7 @@ class _AccountScreenState extends State<AccountScreen>
           // buildNavbar(),
           buildProfileHeader(),
           buildFavoriteSport(),
-          buildFeedTabbar(),
+          isLoaded ? buildFeedTabbar() : SliverToBoxAdapter(),
         ],
         onRefresh: () async {
           BlocProvider.of<HomeCubit>(context).onRefresh();
@@ -404,6 +407,7 @@ class _AccountScreenState extends State<AccountScreen>
       if (data is! HttpResult) {
         favSportList =
             List.from((data as List).map((e) => FavoriteSport.fromJson(e)));
+        isLoaded = true;
         setState(() {});
       }
     }

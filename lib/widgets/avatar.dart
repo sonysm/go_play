@@ -24,15 +24,15 @@ class Avatar extends StatelessWidget {
     return InkWell(
       onTap: isSelectable
           ? () async {
-            if (user.id != KS.shared.user.id) {
-              var data = await launchScreen(context, ViewUserProfileScreen.tag, arguments: user);
-              if (data != null) {
+              if (user.id != KS.shared.user.id) {
+                var data = await launchScreen(
+                    context, ViewUserProfileScreen.tag,
+                    arguments: user);
                 onTap!(data as User);
+              } else {
+                launchScreen(context, AccountScreen.tag);
               }
-            } else {
-              launchScreen(context, AccountScreen.tag);
             }
-          }
           : null,
       child: CircleAvatar(
         radius: radius,

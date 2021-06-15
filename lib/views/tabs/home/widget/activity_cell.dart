@@ -86,6 +86,10 @@ class _ActivityCellState extends State<ActivityCell> {
                     radius: 18.0,
                     user: widget.post.owner,
                     isSelectable: widget.isAvatarSelectable,
+                    onTap: (user) {
+                      widget.post.owner = user;
+                      setState(() {});
+                    },
                   ),
                   8.width,
                   Expanded(

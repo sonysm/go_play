@@ -96,11 +96,11 @@ class App extends StatelessWidget {
           ),
           darkTheme: ThemeData.dark().copyWith(
             primaryColor: Color(0xFF536872),
-            accentColor: mainColor,
+            accentColor: Colors.greenAccent,
             scaffoldBackgroundColor: Color(0xFF36454f), // Color(0xFF485b63),
-            iconTheme: IconThemeData(color: mainColor),
-            accentIconTheme: IconThemeData(color: mainColor),
-            primaryIconTheme: IconThemeData(color: mainColor),
+            iconTheme: IconThemeData(color: Colors.greenAccent),
+            accentIconTheme: IconThemeData(color: Colors.greenAccent),
+            primaryIconTheme: IconThemeData(color: Colors.greenAccent),
             visualDensity: VisualDensity.adaptivePlatformDensity,
             primaryTextTheme:
                 Theme.of(context).primaryTextTheme.apply(bodyColor: whiteColor),
@@ -127,7 +127,7 @@ class App extends StatelessWidget {
               ),
             ),
             tabBarTheme: TabBarTheme(
-              labelColor: mainColor,
+              labelColor: Colors.greenAccent,
               unselectedLabelColor: whiteColor,
               labelStyle: Theme.of(context).textTheme.bodyText1,
             ),

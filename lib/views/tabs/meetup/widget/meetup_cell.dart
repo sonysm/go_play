@@ -97,6 +97,10 @@ class _MeetupCellState extends State<MeetupCell> {
                     radius: 18.0,
                     user: widget.post.owner,
                     isSelectable: widget.isAvatarSelectable,
+                    onTap: (user) {
+                      widget.post.owner = user;
+                      setState(() {});
+                    },
                   ),
                   8.width,
                   Expanded(
@@ -115,7 +119,8 @@ class _MeetupCellState extends State<MeetupCell> {
                                           .textTheme
                                           .bodyText1
                                           ?.copyWith(
-                                              fontWeight: FontWeight.w600, fontFamily: 'Metropolis'),
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'Metropolis'),
                                     ),
                                     TextSpan(
                                       text: ' is hosting ',
@@ -128,7 +133,8 @@ class _MeetupCellState extends State<MeetupCell> {
                                           .textTheme
                                           .bodyText1
                                           ?.copyWith(
-                                              fontWeight: FontWeight.w600, fontFamily: 'Metropolis'),
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'Metropolis'),
                                     ),
                                   ],
                                 ),

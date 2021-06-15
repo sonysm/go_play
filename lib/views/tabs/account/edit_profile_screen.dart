@@ -55,7 +55,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Text(
             'Save',
             style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                  color: mainColor,
+                  color: isLight(context) ? mainColor : Colors.greenAccent,
                   fontWeight: FontWeight.w600,
                 ),
           ),

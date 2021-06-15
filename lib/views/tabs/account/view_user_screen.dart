@@ -8,6 +8,7 @@ import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/account/follow_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/widget/sport_card.dart';
 import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
@@ -67,11 +68,12 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
     );
   }
 
-  Widget actionHeader({String? amt, required String title}) {
+  Widget actionHeader(
+      {String? amt, required String title, VoidCallback? onTap}) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {},
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: Column(
@@ -127,11 +129,17 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                       Row(
                         children: [
                           actionHeader(
-                              amt: '${_user.followerCount}',
-                              title: 'Followers'),
+                            amt: '${_user.followerCount}',
+                            title: 'Followers',
+                            onTap: () => launchScreen(context, FollowScreen.tag,
+                                arguments: _user),
+                          ),
                           actionHeader(
-                              amt: '${_user.followingCount}',
-                              title: 'Following'),
+                            amt: '${_user.followingCount}',
+                            title: 'Following',
+                            onTap: () => launchScreen(context, FollowScreen.tag,
+                                arguments: _user),
+                          ),
                         ],
                       )
                     ],
@@ -157,7 +165,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4.0),
                                   side: isFollow
-                                      ? BorderSide(color: Color(0xFF1D976C))
+                                      ? BorderSide(color: isLight(context) ? Color(0xFF1D976C) : whiteColor)
                                       : BorderSide.none),
                             ),
                           ),
@@ -166,7 +174,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                                   isFollow ? 'Following' : 'Follow',
                                   style: TextStyle(
                                     color: isFollow
-                                        ? Color(0xFF1D976C)
+                                        ? isLight(context) ? Color(0xFF1D976C) : whiteColor
                                         : whiteColor,
                                     fontSize: 16.0,
                                     fontFamily: 'ProximaNova',
@@ -220,39 +228,41 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
 
   Widget buildFavoriteSport() {
     return SliverToBoxAdapter(
-      child: Container(
-        height: 240.0,
-        color: Theme.of(context).primaryColor,
-        child: isLoaded
-            ? FadeTransition(
-                opacity: animation,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-                  itemBuilder: (context, index) {
-                    final favSport = favSportList.elementAt(index);
-                    return SportCard(
-                      favSport: favSport,
-                      onCardTap: () async {
-                        var value = await launchScreen(
-                          context,
-                          FavoriteSportDetailScreen.tag,
-                          arguments: favSport.sport,
-                        );
-                        if (value != null && value) {
-                          // getFavoriteSport();
-                        }
-                      },
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return 16.width;
-                  },
-                  itemCount: favSportList.length,
-                ),
-              )
-            : buildSportShimmer(),
-      ),
+      child: favSportList.isNotEmpty
+          ? Container(
+              height: 240.0,
+              color: Theme.of(context).primaryColor,
+              child: isLoaded
+                  ? FadeTransition(
+                      opacity: animation,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                        itemBuilder: (context, index) {
+                          final favSport = favSportList.elementAt(index);
+                          return SportCard(
+                            favSport: favSport,
+                            onCardTap: () async {
+                              var value = await launchScreen(
+                                context,
+                                FavoriteSportDetailScreen.tag,
+                                arguments: favSport.sport,
+                              );
+                              if (value != null && value) {
+                                // getFavoriteSport();
+                              }
+                            },
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return 16.width;
+                        },
+                        itemCount: favSportList.length,
+                      ),
+                    )
+                  : buildSportShimmer(),
+            )
+          : SizedBox(),
     );
   }
 
@@ -279,7 +289,8 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
                 ),
-                indicatorColor: mainColor,
+                indicatorColor:
+                      isLight(context) ? mainColor : Colors.greenAccent,
                 isScrollable: true,
                 onTap: (index) => setState(() => _currentIndex = index),
                 tabs: [
@@ -333,17 +344,11 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                     },
                     itemCount: userPostList.length),
               )
-            : SizedBox()
-        : Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
-            child: Container(
-              margin: const EdgeInsets.only(top: 8.0),
-              width: double.infinity,
-              height: 400,
-              color: Colors.grey[300],
-            ),
-          );
+            : Container(
+              margin: const EdgeInsets.only(top: 100),
+              child: Center(child: Text('No any post'),),
+            )
+        : SizedBox();
   }
 
   Widget buildMeetupList() {
@@ -368,7 +373,10 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
             },
             itemCount: userMeetupList.length,
           )
-        : SizedBox();
+        : Container(
+              margin: const EdgeInsets.only(top: 100),
+              child: Center(child: Text('No any meetup'),),
+            );
   }
 
   @override

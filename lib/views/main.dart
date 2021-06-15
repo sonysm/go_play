@@ -60,9 +60,7 @@ class _MainViewState extends State<MainView> {
                 color: Theme.of(context).primaryColor,
                 border: Border(
                   top: BorderSide(
-                    color: Theme.of(context).brightness == Brightness.light
-                        ? Colors.grey
-                        : Color(0xFF455A64),
+                    color: isLight(context) ? Colors.grey : Color(0xFF455A64),
                     width: 0.1,
                   ),
                 ),
@@ -195,9 +193,10 @@ class _CustomTabBar extends StatelessWidget {
                       icon: key != 2
                           ? Icon(value,
                               color: key == selectedIndex
-                                  ? mainColor
-                                  : Theme.of(context).brightness ==
-                                          Brightness.light
+                                  ? isLight(context)
+                                      ? mainColor
+                                      : Colors.greenAccent
+                                  : isLight(context)
                                       ? darkColor
                                       : whiteColor)
                           : Container(
@@ -208,7 +207,9 @@ class _CustomTabBar extends StatelessWidget {
                                     side: BorderSide(
                                         width: 0, color: Colors.transparent)),
                                 clipBehavior: Clip.hardEdge,
-                                color: mainColor,
+                                color: isLight(context)
+                                    ? mainColor
+                                    : Colors.greenAccent,
                                 child: Icon(
                                   value,
                                   color: Colors.white,

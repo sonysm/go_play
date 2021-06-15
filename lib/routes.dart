@@ -153,7 +153,7 @@ class RouteGenerator {
           ),
         );
       case FollowScreen.tag:
-        return KSPageRoute(builder: (_) => FollowScreen());
+        return KSPageRoute(builder: (_) => FollowScreen(user: args as User?));
       default:
         return _errorRoute();
     }

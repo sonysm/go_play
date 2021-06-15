@@ -17,6 +17,7 @@ import 'package:kroma_sport/views/tabs/home/choose_location_screen.dart';
 import 'package:location/location.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:permission_handler/permission_handler.dart' as permissionHandler;
 
 class CreateActivityScreen extends StatefulWidget {
   static const tag = '/createActivityScreen';
@@ -311,39 +312,6 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                           ),
                         ],
                       ),
-                      // 16.height,
-                      // Row(
-                      //   crossAxisAlignment: CrossAxisAlignment.start,
-                      //   children: [
-                      //     40.width,
-                      //     Expanded(
-                      //       child: Column(
-                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                      //         children: [
-                      //           Text(
-                      //             'Activity level',
-                      //             style: Theme.of(context)
-                      //                 .textTheme
-                      //                 .bodyText1
-                      //                 ?.copyWith(fontWeight: FontWeight.w600),
-                      //           ),
-                      //           8.height,
-                      //           Wrap(
-                      //             spacing: 8.0,
-                      //             children: List.generate(
-                      //               activityLevelList.length,
-                      //               (index) {
-                      //                 final activity =
-                      //                     activityLevelList.elementAt(index);
-                      //                 return buildActivityLevel(activity);
-                      //               },
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
                     ],
                   ),
                 ),
@@ -534,6 +502,11 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     //    print('No image selected.');
     //  }
     //});
+
+    var permission = await checkAndRequestPhotoPermissions();
+    if (!permission) {
+      return;
+    }
 
     List<Asset>? assetList;
     //String imageKey = 'images';
@@ -921,4 +894,21 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     }
     return false;
   }
+
+  Future<bool> checkAndRequestPhotoPermissions() async {
+    permissionHandler.PermissionStatus photoPermission = await permissionHandler.Permission.photos.status;
+    if (photoPermission != permissionHandler.PermissionStatus.granted) {
+      var status = await permissionHandler.Permission.photos.request();
+      return status == permissionHandler.PermissionStatus.granted;
+    } else {
+      return true;
+    }
+  }
+
+  // void addPhoto() async {
+  //   var permission = await checkAndRequestPhotoPermissions();
+  //   if (permission) {
+  //     launchScreen(context, CreatPostScreen.tag);
+  //   }
+  // }
 }

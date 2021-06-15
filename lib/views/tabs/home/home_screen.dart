@@ -18,6 +18,7 @@ import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'widget/home_feed_cell.dart';
 
@@ -80,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Expanded(
                   child: TextButton(
-                    onPressed: () => launchScreen(context, CreatPostScreen.tag),
+                    onPressed: addPhoto,
                     style: ButtonStyle(
                       overlayColor: MaterialStateProperty.all(Colors.grey[200]),
                       foregroundColor: MaterialStateProperty.all(mainColor),
@@ -234,5 +235,22 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  Future<bool> checkAndRequestPhotoPermissions() async {
+    PermissionStatus photoPermission = await Permission.photos.status;
+    if (photoPermission != PermissionStatus.granted) {
+      var status = await Permission.photos.request();
+      return status == PermissionStatus.granted;
+    } else {
+      return true;
+    }
+  }
+
+  void addPhoto() async {
+    var permission = await checkAndRequestPhotoPermissions();
+    if (permission) {
+      launchScreen(context, CreatPostScreen.tag);
+    }
   }
 }

@@ -8,6 +8,7 @@ import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/widgets/ks_complete_dialog.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingScreen extends StatefulWidget {
   static const String tag = '/settingScreen';
@@ -48,7 +49,7 @@ class _SettingScreenState extends State<SettingScreen> {
             margin: EdgeInsets.only(top: 4.0),
             child: ListTile(
               title: Text(
-                'version 1.0.3',
+                'version 1.0.4',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ),
@@ -101,7 +102,11 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void changeTheme() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     BlocProvider.of<ThemeCubit>(context)
         .emitTheme(isLight(context) ? ThemeMode.dark : ThemeMode.light);
+
+    prefs.setString('theme', isLight(context) ? 'dark' : 'light');
   }
 }
