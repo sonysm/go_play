@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         'Share a photo, post or activity with your followers.',
                         style: Theme.of(context).textTheme.bodyText2,
-                      )
+                      ),
                     ],
                   ),
                 )
@@ -240,8 +241,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<bool> checkAndRequestPhotoPermissions() async {
     PermissionStatus photoPermission = await Permission.photos.status;
     if (photoPermission != PermissionStatus.granted) {
-      var status = await Permission.photos.request();
-      return status == PermissionStatus.granted;
+      var status = await Permission.photos.request().isGranted;
+      return status;
     } else {
       return true;
     }
@@ -251,6 +252,39 @@ class _HomeScreenState extends State<HomeScreen> {
     var permission = await checkAndRequestPhotoPermissions();
     if (permission) {
       launchScreen(context, CreatPostScreen.tag);
+    } else {
+      _showPhotoAlert();
     }
+  }
+
+  _showPhotoAlert() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Photo disable'),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+            content: Text(
+              'Please enable your photo.',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    AppSettings.openAppSettings();
+                  },
+                  child: Text('Open setting')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Not now'))
+            ],
+          );
+        });
   }
 }

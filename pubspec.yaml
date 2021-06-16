@@ -64,6 +64,7 @@ dependencies:
   web_socket_channel: ^2.1.0
   shimmer: ^2.0.0
   permission_handler: ^8.1.0
+  app_settings: ^4.1.0
   
   # Firebase
   firebase_auth: ^1.1.2

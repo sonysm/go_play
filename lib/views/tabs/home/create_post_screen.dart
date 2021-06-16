@@ -357,17 +357,6 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
   String imageKey = 'images';
 
   Future getImage() async {
-    //final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    //setState(() {
-    //  if (pickedFile != null) {
-    //    imageFile = File(pickedFile.path);
-    //    reuseImage = File(pickedFile.path);
-    //  } else {
-    //    print('No image selected.');
-    //  }
-    //});
-
     List<Asset>? assetList;
     try {
       assetList = await MultiImagePicker.pickImages(

@@ -5,7 +5,6 @@ import 'package:kroma_sport/bloc/theme.dart';
 import 'package:kroma_sport/repositories/user_repository.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
-import 'package:kroma_sport/widgets/ks_complete_dialog.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';

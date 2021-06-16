@@ -17,7 +17,9 @@ import 'package:kroma_sport/views/tabs/home/choose_location_screen.dart';
 import 'package:location/location.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:permission_handler/permission_handler.dart' as permissionHandler;
+import 'package:permission_handler/permission_handler.dart'
+    as permissionHandler;
+import 'package:app_settings/app_settings.dart';
 
 class CreateActivityScreen extends StatefulWidget {
   static const tag = '/createActivityScreen';
@@ -430,7 +432,8 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                     },
                     style: ButtonStyle(
                       elevation: MaterialStateProperty.all(0),
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0))),
                       backgroundColor: MaterialStateProperty.all(
                           availableNext() ? mainColor : Colors.green[200]),
                     ),
@@ -505,7 +508,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
 
     var permission = await checkAndRequestPhotoPermissions();
     if (!permission) {
-      return;
+      _showPhotoAlert();
     }
 
     List<Asset>? assetList;
@@ -811,7 +814,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   String calcHourDuration(
       {required DateTime startTime, required DateTime endTime}) {
     if (endTime.difference(startTime).inMinutes == 0) {
-      dourationInMinutes = 24*60;
+      dourationInMinutes = 24 * 60;
       return '24h';
     } else if (endTime.difference(startTime).isNegative) {
       int dur =
@@ -869,13 +872,19 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Alert'),
-            content: Text('Location disable message'),
+            title: Text('Location disable'),
+            // insetPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+            content: Text(
+              'Please enable your location.',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
             actions: <Widget>[
               TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    // openAppSettings();
+                    AppSettings.openLocationSettings();
                   },
                   child: Text('Open setting')),
               TextButton(
@@ -896,19 +905,45 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   }
 
   Future<bool> checkAndRequestPhotoPermissions() async {
-    permissionHandler.PermissionStatus photoPermission = await permissionHandler.Permission.photos.status;
+    permissionHandler.PermissionStatus photoPermission =
+        await permissionHandler.Permission.photos.status;
     if (photoPermission != permissionHandler.PermissionStatus.granted) {
-      var status = await permissionHandler.Permission.photos.request();
-      return status == permissionHandler.PermissionStatus.granted;
+      var status = await permissionHandler.Permission.photos.request().isGranted;
+      return status;
     } else {
       return true;
     }
   }
 
-  // void addPhoto() async {
-  //   var permission = await checkAndRequestPhotoPermissions();
-  //   if (permission) {
-  //     launchScreen(context, CreatPostScreen.tag);
-  //   }
-  // }
+  _showPhotoAlert() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Photo disable'),
+            // insetPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+            content: Text(
+              'Please enable your photo.',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    AppSettings.openAppSettings();
+                  },
+                  child: Text('Open setting')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Not now'))
+            ],
+          );
+        });
+  }
 }
