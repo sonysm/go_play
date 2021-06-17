@@ -65,6 +65,15 @@ class _MeetupCellState extends State<MeetupCell> {
     }
   }
 
+  bool isMeetupAvailable() {
+    var meetupDate = DateFormat('yyyy-MM-dd').parse(meetup.activityDate!);
+    if (DateTime.now().isAfter(meetupDate)) {
+      return false;
+    }
+
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -302,6 +311,24 @@ class _MeetupCellState extends State<MeetupCell> {
                       Text(
                         meetup.activityLocation!.name,
                         style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                    ],
+                  ),
+                  16.height,
+                  Row(
+                    children: [
+                      Icon(
+                        Feather.pocket,
+                        size: 16.0,
+                        color: isLight(context)
+                            ? Colors.grey[700]
+                            : Colors.grey[300]!,
+                      ),
+                      8.width,
+                      Text(
+                        isMeetupAvailable() ? 'Meetup Available' : 'Meetup Expired',
+                        style: Theme.of(context).textTheme.bodyText2?.copyWith(color: isMeetupAvailable() ? mainColor : Colors.amber[700]),
+                        strutStyle: StrutStyle(fontSize: 14.0),
                       ),
                     ],
                   ),

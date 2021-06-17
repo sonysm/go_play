@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
@@ -24,6 +26,10 @@ class SplashCubit extends Cubit<SplashState> {
       if (data != null) {
         if (data is! HttpResult) {
           KS.shared.user = User.fromJson(data);
+          userRepository.persistUserPrefs(jsonEncode(data));
+        } else {
+          var localUser = await userRepository.fetchUserPrefs();
+          KS.shared.user = localUser;
         }
       }
       emit(SplashState.Exist);

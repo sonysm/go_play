@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/user.dart';
@@ -12,6 +13,7 @@ import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
@@ -19,6 +21,7 @@ import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'widget/home_feed_cell.dart';
@@ -84,8 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: TextButton(
                     onPressed: addPhoto,
                     style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all(Colors.grey[200]),
-                      foregroundColor: MaterialStateProperty.all(mainColor),
+                      overlayColor: MaterialStateProperty.all(isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
+                      foregroundColor: MaterialStateProperty.all(isLight(context) ? mainColor : Colors.greenAccent),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -97,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           style:
                               Theme.of(context).textTheme.bodyText1?.copyWith(
                                     fontWeight: FontWeight.w600,
-                                    color: mainColor,
+                                    color: isLight(context) ? mainColor : Colors.greenAccent,
                                     fontSize: 18.0,
                                     fontFamily: 'ProximaNova',
                                   ),
@@ -112,8 +115,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () =>
                         launchScreen(context, CreateActivityScreen.tag),
                     style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all(Colors.grey[200]),
-                      foregroundColor: MaterialStateProperty.all(mainColor),
+                      overlayColor: MaterialStateProperty.all(isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
+                      foregroundColor: MaterialStateProperty.all(isLight(context) ? mainColor : Colors.greenAccent),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -126,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Theme.of(context).textTheme.bodyText1?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 18.0,
-                                    color: mainColor,
+                                    color: isLight(context) ? mainColor : Colors.greenAccent,
                                     fontFamily: 'ProximaNova',
                                   ),
                           strutStyle: StrutStyle(fontSize: 18),
@@ -144,6 +147,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildHomeFeedList(HomeData feedData) {
+    if (feedData.status == DataState.ErrorSocket && feedData.data.isEmpty) {
+      return SliverFillRemaining(
+        child: noConnection(context),
+      );
+    }
+
     return feedData.status == DataState.Loading
         ? loadingSliver()
         : SliverList(
@@ -181,6 +190,12 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Center(
         child: CircularProgressIndicator(),
       ),
+    );
+  }
+
+  Widget noInternet() {
+    return SliverFillRemaining(
+      child: noConnection(context),
     );
   }
 

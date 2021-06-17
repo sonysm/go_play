@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:kroma_sport/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepository {
@@ -55,6 +58,12 @@ class UserRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('user_prefs', userPrefs);
     return;
+  }
+
+  Future<User> fetchUserPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var user = prefs.getString('user_prefs');
+    return User.fromJson(jsonDecode(user!));
   }
 
   Future<void> persistHeaderToken(String token) async {

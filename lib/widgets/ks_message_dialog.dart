@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class KSMessageDialog extends StatefulWidget {
   final String msg;
+  final String buttonTitle;
   final VoidCallback onYesPressed;
 
   KSMessageDialog({
     Key? key,
     required this.msg,
     required this.onYesPressed,
+    required this.buttonTitle,
   }) : super(key: key);
 
   @override
@@ -116,7 +118,7 @@ class KSMessageDialogState extends State<KSMessageDialog>
                                   });
                                 },
                                 child: Text(
-                                  'Yes',
+                                  widget.buttonTitle,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText1
@@ -193,7 +195,8 @@ class KSMessageDialogState extends State<KSMessageDialog>
 }
 
 void showKSMessageDialog(
-    BuildContext context, String message, VoidCallback onYesPressed) {
+    BuildContext context, String message, VoidCallback onYesPressed,
+    {String? buttonTitle}) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -201,6 +204,7 @@ void showKSMessageDialog(
     builder: (_) => KSMessageDialog(
       msg: message,
       onYesPressed: onYesPressed,
+      buttonTitle: buttonTitle ?? 'Yes',
     ),
   );
 }

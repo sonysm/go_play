@@ -116,6 +116,32 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 ),
               ),
             ),
+            ListTile(
+              dense: true,
+              horizontalTitleGap: 0,
+              leading: Icon(Feather.pocket),
+              title: RichText(
+                text: TextSpan(
+                  children: [
+                    // TextSpan(
+                    //   text: meetup.price.toString() + ' USD',
+                    //   style: Theme.of(context)
+                    //       .textTheme
+                    //       .bodyText1
+                    //       ?.copyWith(fontWeight: FontWeight.w600),
+                    // ),
+                    TextSpan(
+                        text: isMeetupAvailable()
+                            ? 'Meetup Available'
+                            : 'Meetup Expired',
+                        style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                            color: isMeetupAvailable()
+                                ? mainColor
+                                : Colors.amber[700])),
+                  ],
+                ),
+              ),
+            ),
             16.height,
           ],
         ),
@@ -129,25 +155,29 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         height: 200.0,
         color: Colors.grey[200],
         width: AppSize(context).appWidth(100),
-        child: isShowMap ? GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: LatLng(
-              double.parse(meetup.activityLocation!.latitude),
-              double.parse(meetup.activityLocation!.longitude),
-            ),
-            zoom: 15.0,
-          ),
-          onMapCreated: (controller) {},
-          zoomGesturesEnabled: false,
-          scrollGesturesEnabled: false,
-          markers: <Marker>{
-            Marker(
-                markerId: MarkerId('venue'),
-                position: LatLng(
+        child: isShowMap
+            ? GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(
                     double.parse(meetup.activityLocation!.latitude),
-                    double.parse(meetup.activityLocation!.longitude))),
-          },
-        ) : SizedBox(),
+                    double.parse(meetup.activityLocation!.longitude),
+                  ),
+                  zoom: 15.0,
+                ),
+                onMapCreated: (controller) {},
+                zoomGesturesEnabled: false,
+                scrollGesturesEnabled: false,
+                markers: <Marker>{
+                  Marker(
+                    markerId: MarkerId('venue'),
+                    position: LatLng(
+                      double.parse(meetup.activityLocation!.latitude),
+                      double.parse(meetup.activityLocation!.longitude),
+                    ),
+                  ),
+                },
+              )
+            : SizedBox(),
       ),
     );
   }
@@ -265,47 +295,49 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             fetchMeetup();
           },
         ),
-        (meetup.owner.id != KS.shared.user.id &&
-                    joinMember.length < meetup.maxPeople!) ||
-                (meetup.owner.id != KS.shared.user.id && isJoined)
-            ? Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 64.0,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    boxShadow: [
-                      BoxShadow(
-                        offset: Offset(0, -1),
-                        blurRadius: 4.0,
-                        color: Colors.black.withOpacity(0.1),
-                      ),
-                    ],
-                  ),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  child: ElevatedButton(
-                    onPressed: isJoined ? leaveGame : joinGame,
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(0),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      backgroundColor: MaterialStateProperty.all(
-                          isJoined ? Colors.grey[200] : mainColor),
+        if (isMeetupAvailable()) ...[
+          (meetup.owner.id != KS.shared.user.id &&
+                      joinMember.length < meetup.maxPeople!) ||
+                  (meetup.owner.id != KS.shared.user.id && isJoined)
+              ? Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 64.0,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      boxShadow: [
+                        BoxShadow(
+                          offset: Offset(0, -1),
+                          blurRadius: 4.0,
+                          color: Colors.black.withOpacity(0.1),
+                        ),
+                      ],
                     ),
-                    child: Text(
-                      isJoined ? 'Leave Game' : 'Join Game',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: isJoined ? Colors.red : Colors.white,
-                        fontWeight: FontWeight.w600,
+                    padding:
+                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    child: ElevatedButton(
+                      onPressed: isJoined ? leaveGame : joinGame,
+                      style: ButtonStyle(
+                        elevation: MaterialStateProperty.all(0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        backgroundColor: MaterialStateProperty.all(
+                            isJoined ? Colors.grey[200] : mainColor),
+                      ),
+                      child: Text(
+                        isJoined ? 'Leave Game' : 'Join Game',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: isJoined ? Colors.red : Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
-            : SizedBox(),
+                )
+              : SizedBox(),
+        ]
       ],
     );
   }
@@ -508,6 +540,15 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     isJoined = joinMember.any((e) => e.user.id == KS.shared.user.id);
   }
 
+  bool isMeetupAvailable() {
+    var meetupDate = DateFormat('yyyy-MM-dd').parse(meetup.activityDate!);
+    if (DateTime.now().isAfter(meetupDate)) {
+      return false;
+    }
+
+    return true;
+  }
+
   void fetchMeetup() {
     ksClient.getApi('/view/meetup/post/${meetup.id}').then((value) {
       if (value != null) {
@@ -520,6 +561,12 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         }
       }
     });
+  }
+
+  @override
+  void setState(fn) {
+    if (!mounted) return;
+    super.setState(fn);
   }
 
   @override
@@ -664,7 +711,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             (res as List).map((e) => Discussion.fromJson(e)).toList();
         discussionList = List.from(discussionList.reversed);
         isShowMap = true;
-        Future.delayed(Duration(milliseconds: 300)).then((_) => setState(() {}));
+        Future.delayed(Duration(milliseconds: 300))
+            .then((_) => setState(() {}));
       }
     }
   }

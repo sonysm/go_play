@@ -52,7 +52,13 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
           child: Text(
             'Post',
             style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                color: availablePost() ? mainColor : Colors.green[200],
+                color: availablePost()
+                    ? isLight(context)
+                        ? mainColor
+                        : mainDarkColor
+                    : isLight(context)
+                        ? Colors.green[200]
+                        : Colors.green[100],
                 fontWeight: FontWeight.w600),
           ),
         ),
@@ -132,7 +138,8 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
               onPressed: getImage,
               style: ButtonStyle(
                 overlayColor: MaterialStateProperty.all(Colors.grey[200]),
-                foregroundColor: MaterialStateProperty.all(mainColor),
+                foregroundColor: MaterialStateProperty.all(
+                    isLight(context) ? mainColor : mainDarkColor),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -141,8 +148,11 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                   8.width,
                   Text(
                     'Add Photo',
+                    strutStyle: StrutStyle(fontSize: 20.0),
                     style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                        fontWeight: FontWeight.w600, color: mainColor),
+                          fontWeight: FontWeight.w600,
+                          color: isLight(context) ? mainColor : mainDarkColor,
+                        ),
                   ),
                 ],
               ),
@@ -438,10 +448,16 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
         var newPost = Post.fromJson(data);
         BlocProvider.of<HomeCubit>(context).onPostFeed(newPost);
       } else {
+        if (data.code == -500) {
+          showKSMessageDialog(context, 'No Internet Connnection', () {},
+              buttonTitle: 'OK');
+          return;
+        }
         showKSMessageDialog(
             context,
             'Something went wrong with the content! Image size might be too large!',
-            () {});
+            () {},
+            buttonTitle: 'OK');
       }
     }
   }

@@ -73,7 +73,7 @@ class CommentCell extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+                  padding: const EdgeInsets.only(left: 8.0, top: 4.0),
                   child: Row(
                     children: [
                       Text(

@@ -5,6 +5,7 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class SportsScreen extends StatefulWidget {
   static const String tag = '/sportsScreen';
@@ -21,6 +22,8 @@ class _SportsScreenState extends State<SportsScreen> {
   List<Sport> sportList = [];
   bool isLoading = true;
   bool isChanged = false;
+
+  bool isConnection = true;
 
   Widget buildNavbar() {
     return SliverAppBar(
@@ -97,6 +100,12 @@ class _SportsScreenState extends State<SportsScreen> {
             : emptySportList();
   }
 
+  Widget noInternet() {
+    return SliverFillRemaining(
+      child: noConnection(context),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -110,7 +119,7 @@ class _SportsScreenState extends State<SportsScreen> {
         body: CustomScrollView(
           slivers: [
             buildNavbar(),
-            buildSportList(),
+            isConnection ? buildSportList() : noInternet()
           ],
         ),
       ),
@@ -126,7 +135,8 @@ class _SportsScreenState extends State<SportsScreen> {
   @override
   void initState() {
     super.initState();
-    getSportList();
+    
+    Future.delayed(Duration(milliseconds: 300)).then((_) => getSportList());
   }
 
   void getSportList() async {
@@ -135,8 +145,13 @@ class _SportsScreenState extends State<SportsScreen> {
       isLoading = false;
       if (data is! HttpResult) {
         sportList = List.from((data as List).map((e) => Sport.fromJson(e)));
-        setState(() {});
+        isConnection = true;
+      } else {
+        if (data.code == -500) {
+          isConnection = false;
+        }
       }
+      setState(() {});
     }
   }
 

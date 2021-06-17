@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 
 Widget sliverDivider(BuildContext context, {double? height, Color? color}) {
@@ -25,6 +28,27 @@ Widget bottomSheetBar(BuildContext context) {
       ),
     ],
   );
+}
+
+Widget noConnection(BuildContext context) {
+  return Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(icNoConnection, width: 70, color: isLight(context) ? Colors.grey[600] : Colors.white60),
+            32.height,
+            Text(
+              'No Internet connection!',
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600, color: isLight(context) ? Colors.grey[600] : Colors.white60),
+            ),
+            4.height,
+            Text(
+              'Please check your network connection.',
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(color: isLight(context) ? Colors.grey : Colors.white54),
+            ),
+          ],
+        ),
+      );
 }
 
 Future<dynamic> showKSBottomSheet(BuildContext context,

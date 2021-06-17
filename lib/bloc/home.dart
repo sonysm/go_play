@@ -68,6 +68,10 @@ class HomeCubit extends Cubit<HomeData> {
         emit(state.copyWith(
             status: DataState.Loaded, data: posts, ownerPost: ownerPosts));
       } else {
+        if (data.code == -500) {
+          emit(state.copyWith(status: DataState.ErrorSocket));
+          return;
+        }
         print("error");
       }
     }
@@ -95,6 +99,10 @@ class HomeCubit extends Cubit<HomeData> {
           await Future.delayed(Duration(milliseconds: 500));
           emit(state.copyWith(status: DataState.Loaded, data: posts));
         } else {
+          if (data.code == -500) {
+            emit(state.copyWith(status: DataState.ErrorSocket));
+            return;
+          }
           print("error");
         }
       }

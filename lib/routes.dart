@@ -58,7 +58,7 @@ class RouteGenerator {
       case MeetupScreen.tag:
         return MaterialPageRoute(builder: (_) => MeetupScreen());
       case NotificationScreen.tag:
-        return MaterialPageRoute(builder: (_) => NotificationScreen());
+        return KSPageRoute(builder: (_) => NotificationScreen());
       case AccountScreen.tag:
         return KSPageRoute(
           builder: (_) => AccountScreen(),
@@ -78,7 +78,7 @@ class RouteGenerator {
       case SettingScreen.tag:
         return KSPageRoute(builder: (_) => SettingScreen());
       case SportsScreen.tag:
-        return MaterialPageRoute(builder: (_) => SportsScreen());
+        return KSPageRoute(builder: (_) => SportsScreen());
       case FavoriteSportDetailScreen.tag:
         return MaterialPageRoute(
             builder: (_) => FavoriteSportDetailScreen(sport: args as Sport));
@@ -109,12 +109,6 @@ class RouteGenerator {
           ),
         );
       case MeetupDetailScreen.tag:
-        // return MaterialPageRoute(
-        //   builder: (_) => MeetupDetailScreen(
-        //     meetup: args as Post,
-        //   ),
-        // );
-
         return KSPageRoute(
           builder: (_) => MeetupDetailScreen(
             meetup: args as Post,

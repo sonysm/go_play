@@ -182,9 +182,7 @@ class _CustomTabBar extends StatelessWidget {
                             borderRadius: BorderRadius.circular(0)),
                       ),
                       elevation: MaterialStateProperty.all(0),
-                      overlayColor: MaterialStateProperty.all(isLight(context)
-                          ? Colors.grey[100]
-                          : Colors.blueGrey[300]),
+                      overlayColor: MaterialStateProperty.all(Colors.transparent),
                       backgroundColor:
                           MaterialStateProperty.all(Colors.transparent),
                     ),

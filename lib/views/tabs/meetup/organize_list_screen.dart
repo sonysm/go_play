@@ -4,6 +4,7 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_activity_screen.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class OrganizeListScreen extends StatefulWidget {
   static const tag = '/organizeListScreen';
@@ -20,6 +21,7 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
   List<Sport> sportList = <Sport>[];
 
   bool isLoading = true;
+  bool isConnection = false;
 
   Widget emptySportList() {
     return SliverToBoxAdapter(
@@ -34,42 +36,48 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
   }
 
   Widget buildSportList() {
-    return sportList.isNotEmpty
-        ? SliverList(
-            delegate: SliverChildListDelegate(
-              List.generate(
-                sportList.length,
-                (index) {
-                  final sport = sportList.elementAt(index);
-                  return Container(
-                    margin: const EdgeInsets.only(
-                        left: 16.0, top: 10.0, right: 16.0),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        sport.name,
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      contentPadding: EdgeInsets.only(left: 16.0, right: 8),
-                      onTap: () {
-                        launchScreen(
-                          context,
-                          OragnizeActivityScreen.tag,
-                          arguments: sport,
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-          )
-        : isLoading
-            ? SliverToBoxAdapter()
-            : emptySportList();
+    return !isLoading
+        ? isConnection
+            ? SliverList(
+                delegate: SliverChildListDelegate(
+                  List.generate(
+                    sportList.length,
+                    (index) {
+                      final sport = sportList.elementAt(index);
+                      return Container(
+                        margin: const EdgeInsets.only(
+                            left: 16.0, top: 10.0, right: 16.0),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            sport.name,
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                          contentPadding: EdgeInsets.only(left: 16.0, right: 8),
+                          onTap: () {
+                            launchScreen(
+                              context,
+                              OragnizeActivityScreen.tag,
+                              arguments: sport,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
+            : noInternet()
+        : SliverToBoxAdapter();
+  }
+
+  Widget noInternet() {
+    return SliverFillRemaining(
+      child: noConnection(context),
+    );
   }
 
   @override
@@ -89,7 +97,7 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
   @override
   void initState() {
     super.initState();
-    getSportList();
+    Future.delayed(Duration(milliseconds: 300)).then((_) => getSportList());
   }
 
   void getSportList() async {
@@ -98,8 +106,13 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
       isLoading = false;
       if (data is! HttpResult) {
         sportList = List.from((data as List).map((e) => Sport.fromJson(e)));
-        setState(() {});
+        isConnection = true;
+      } else {
+        if (data.code == -500) {
+          isConnection = false;
+        }
       }
+      setState(() {});
     }
   }
 }

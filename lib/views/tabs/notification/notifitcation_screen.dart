@@ -87,7 +87,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     var res = await ksClient.getApi('/user/my_notification');
     if (res != null) {
       if (res is! HttpResult) {
-        Future.delayed(Duration(milliseconds: 500)).then((_) {
+        Future.delayed(Duration(milliseconds: 300)).then((_) {
           isLoading = false;
           setState(() {});
         });

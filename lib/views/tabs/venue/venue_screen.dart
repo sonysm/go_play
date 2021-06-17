@@ -11,6 +11,7 @@ import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/widget/venue_cell.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class VenueScreen extends StatefulWidget {
   static const tag = '/venueScreen';
@@ -42,6 +43,8 @@ class _VenueScreenState extends State<VenueScreen> {
 
   List<Venue> venueList = [];
 
+  bool isConnection = false;
+
   Widget buildVenueList() {
     return SliverToBoxAdapter(
       child: venueList.isNotEmpty
@@ -67,6 +70,12 @@ class _VenueScreenState extends State<VenueScreen> {
                 child: Text('No any available venue.'),
               ),
             ),
+    );
+  }
+
+  Widget noInternet() {
+    return SliverFillRemaining(
+      child: noConnection(context),
     );
   }
 
@@ -101,9 +110,11 @@ class _VenueScreenState extends State<VenueScreen> {
           valueColor: AlwaysStoppedAnimation<Color>(mainColor),
         ),
         slivers: [
-          buildVenueList(),
+          isConnection ? buildVenueList() : noInternet(),
         ],
-        onRefresh: () async {},
+        onRefresh: () async {
+          getVenueList();
+        },
       ),
     );
   }
@@ -118,10 +129,15 @@ class _VenueScreenState extends State<VenueScreen> {
     var res = await ksClient.getApi('/venue/list');
     if (res != null) {
       if (res is! HttpResult) {
+        isConnection = true;
         venueList =
             List<Venue>.from((res as List).map((e) => Venue.fromJson(e)));
-        setState(() {});
+      } else {
+        if (res.code == -500) {
+          isConnection = false;
+        }
       }
+      setState(() {});
     }
   }
 }

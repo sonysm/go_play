@@ -57,8 +57,11 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     return SliverAppBar(
       title: Text(
         'Add Activity',
-        style:
-            Theme.of(context).textTheme.headline6?.copyWith(color: whiteColor),
+        style: Theme.of(context).textTheme.headline6?.copyWith(
+              color: whiteColor,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Metropolis',
+            ),
       ),
       backgroundColor: Colors.transparent,
       iconTheme: Theme.of(context).iconTheme.copyWith(color: whiteColor),
@@ -135,7 +138,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
           ),
         ),
       ),
-      child: Text(sport.name),
+      child: Text(sport.name, style: TextStyle(fontFamily: 'Metropolis'),),
     );
   }
 
@@ -173,10 +176,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
       delegate: SliverChildListDelegate(
         [
           InkWell(
-            onTap: () {
-              print('Add photo___________');
-              getImage();
-            },
+            onTap: getImage,
             child: Container(
               width: AppSize(context).appWidth(100),
               height: AppSize(context).appWidth(100) -
@@ -246,7 +246,6 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                               onTap: () async {
                                 if (permissionStatus ==
                                     PermissionStatus.granted) {
-                                  print('____________set location');
                                   var location = await launchScreen(
                                       context, SetAddressScreen.tag);
                                   if (location != null) {
@@ -265,9 +264,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                                     locationName,
                                     style: TextStyle(
                                         fontSize: 16.0,
-                                        fontWeight: FontWeight.w600,
-                                        color: Theme.of(context).brightness ==
-                                                Brightness.light
+                                        color: isLight(context)
                                             ? Colors.blueGrey[600]
                                             : whiteColor),
                                   ),
@@ -439,7 +436,12 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                     ),
                     child: Text(
                       'Next',
-                      style: TextStyle(fontSize: 16.0, color: whiteColor),
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: whiteColor,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Metropolis',
+                      ),
                     ),
                   ),
                 ),
@@ -874,12 +876,14 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
           return AlertDialog(
             title: Text('Location disable'),
             // insetPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-            contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
             content: Text(
               'Please enable your location.',
               style: Theme.of(context).textTheme.bodyText1,
             ),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)),
             actions: <Widget>[
               TextButton(
                   onPressed: () {
@@ -908,7 +912,8 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     permissionHandler.PermissionStatus photoPermission =
         await permissionHandler.Permission.photos.status;
     if (photoPermission != permissionHandler.PermissionStatus.granted) {
-      var status = await permissionHandler.Permission.photos.request().isGranted;
+      var status =
+          await permissionHandler.Permission.photos.request().isGranted;
       return status;
     } else {
       return true;
