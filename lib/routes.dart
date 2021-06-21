@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kroma_sport/models/booking.dart';
+import 'package:kroma_sport/models/member.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -23,6 +24,7 @@ import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
+import 'package:kroma_sport/views/tabs/meetup/invite_meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_activity_screen.dart';
@@ -148,6 +150,14 @@ class RouteGenerator {
         );
       case FollowScreen.tag:
         return KSPageRoute(builder: (_) => FollowScreen(user: args as User?));
+      case InviteMeetupScreen.tag:
+        args as Map<String, dynamic>;
+        return KSPageRoute(
+          builder: (_) => InviteMeetupScreen(
+            joinMember: args['joinMember'],
+            meetup: args['meetup'],
+          ),
+        );
       default:
         return _errorRoute();
     }

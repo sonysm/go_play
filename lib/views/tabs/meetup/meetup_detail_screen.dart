@@ -20,10 +20,12 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/meetup/invite_meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/discussion_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:kroma_sport/widgets/ks_reason_dialog.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
@@ -204,7 +206,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               height: 130.0,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+                padding:
+                    const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0),
                 itemBuilder: (context, index) {
                   if (index <= joinMember.length - 1) {
                     return SizedBox(
@@ -241,28 +244,57 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                     );
                   }
 
-                  return Stack(
-                    children: [
-                      DottedBorder(
-                        color: isLight(context) ? Colors.blueGrey : whiteColor,
-                        strokeWidth: 1.5,
-                        dashPattern: [3, 4],
-                        borderType: BorderType.Circle,
-                        strokeCap: StrokeCap.round,
-                        padding: EdgeInsets.zero,
-                        radius: Radius.circular(0),
-                        child: Container(
-                          width: 64.0,
-                          height: 64.0,
-                          decoration: BoxDecoration(
-                            color: isLight(context)
-                                ? Colors.grey[100]
-                                : Colors.white60,
-                            shape: BoxShape.circle,
+                  return Opacity(
+                    opacity: isMeetupAvailable() ? 1 : 0.3,
+                    child: Stack(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            if (KS.shared.user.id == meetup.owner.id) {
+                              if (isMeetupAvailable()) {
+                                launchScreen(
+                                  context,
+                                  InviteMeetupScreen.tag,
+                                  arguments: {
+                                    'joinMember': joinMember,
+                                    'meetup': meetup
+                                  },
+                                );
+                              } else {
+                                showKSMessageDialog(
+                                    context, 'You cannot invite player.\nMeetup is expired.', () {}, buttonTitle: 'OK');
+                              }
+                            }
+                          },
+                          child: DottedBorder(
+                            color:
+                                isLight(context) ? Colors.blueGrey : whiteColor,
+                            strokeWidth: 1.5,
+                            dashPattern: [3, 4],
+                            borderType: BorderType.Circle,
+                            strokeCap: StrokeCap.round,
+                            padding: EdgeInsets.zero,
+                            radius: Radius.circular(0),
+                            child: Container(
+                              width: 64.0,
+                              height: 64.0,
+                              decoration: BoxDecoration(
+                                color: isLight(context)
+                                    ? Colors.grey[100]
+                                    : Colors.white60,
+                                shape: BoxShape.circle,
+                              ),
+                              child: KS.shared.user.id == meetup.owner.id
+                                  ? Icon(
+                                      Feather.plus,
+                                      color: Colors.blueGrey,
+                                    )
+                                  : SizedBox(),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 },
                 separatorBuilder: (context, index) {
