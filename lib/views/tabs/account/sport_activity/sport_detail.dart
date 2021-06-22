@@ -95,8 +95,8 @@ class _SportDetailScreenState extends State<SportDetailScreen> {
                     dismissScreen(context);
                     showKSConfirmDialog(
                       context,
-                      'Are you sure you want to remove this sport from your favorite?',
-                      () => removeFavSport(),
+                      message: 'Are you sure you want to remove this sport from your favorite?',
+                      onYesPressed: () => removeFavSport(),
                     );
                   },
                   child: Container(

@@ -20,6 +20,7 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/meetup/connect_booking_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/invite_meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/discussion_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
@@ -64,7 +65,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             ListTile(
               dense: true,
               horizontalTitleGap: 0,
-              leading: Icon(Feather.align_left),
+              leading: Icon(Feather.align_left, size: 20.0),
               title: Text(meetup.sport!.name,
                   style: Theme.of(context).textTheme.bodyText2),
               subtitle: Text(meetup.title,
@@ -73,7 +74,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             ListTile(
               dense: true,
               horizontalTitleGap: 0,
-              leading: Icon(Feather.calendar),
+              leading: Icon(Feather.calendar, size: 20.0),
               title: Text(
                   '${DateFormat('EEE dd MMM').format(DateTime.parse(meetup.activityDate!))}, ${DateFormat('h:mm a').format(DateTime.parse(meetup.activityDate! + ' ' + meetup.activityStartTime!))} - ${DateFormat('h:mm a').format(DateTime.parse(meetup.activityDate! + ' ' + meetup.activityEndTime!))}',
                   style: Theme.of(context)
@@ -89,14 +90,14 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             ListTile(
               dense: true,
               horizontalTitleGap: 0,
-              leading: Icon(Feather.map_pin),
+              leading: Icon(Feather.map_pin, size: 20.0),
               title: Text(meetup.activityLocation!.name,
                   style: Theme.of(context).textTheme.bodyText1),
             ),
             ListTile(
               dense: true,
               horizontalTitleGap: 0,
-              leading: Icon(Feather.dollar_sign),
+              leading: Icon(Feather.dollar_sign, size: 20.0),
               title: RichText(
                 text: TextSpan(
                   children: [
@@ -118,28 +119,43 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 ),
               ),
             ),
+            meetup.book != null
+                ? ListTile(
+                    dense: true,
+                    horizontalTitleGap: 0,
+                    leading: Icon(Feather.bookmark, size: 20.0),
+                    title: Text('Field Booked',
+                        style: Theme.of(context).textTheme.bodyText1),
+                  )
+                : SizedBox(),
             ListTile(
               dense: true,
               horizontalTitleGap: 0,
-              leading: Icon(Feather.pocket),
+              leading: Icon(Feather.pocket, size: 20.0),
               title: RichText(
                 text: TextSpan(
                   children: [
-                    // TextSpan(
-                    //   text: meetup.price.toString() + ' USD',
-                    //   style: Theme.of(context)
-                    //       .textTheme
-                    //       .bodyText1
-                    //       ?.copyWith(fontWeight: FontWeight.w600),
-                    // ),
-                    TextSpan(
-                        text: isMeetupAvailable()
-                            ? 'Meetup Available'
-                            : 'Meetup Expired',
-                        style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                            color: isMeetupAvailable()
-                                ? mainColor
-                                : Colors.amber[700])),
+                    meetup.status == PostStatus.active
+                        ? TextSpan(
+                            text: isMeetupAvailable()
+                                ? 'Meetup Available'
+                                : 'Meetup Expired',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(
+                                    color: isMeetupAvailable()
+                                        ? mainColor
+                                        : Colors.amber[700]))
+                        : TextSpan(
+                            text: 'Meetup Canceled',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.red),
+                          ),
                   ],
                 ),
               ),
@@ -262,7 +278,10 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                                 );
                               } else {
                                 showKSMessageDialog(
-                                    context, 'You cannot invite player.\nMeetup is expired.', () {}, buttonTitle: 'OK');
+                                    context,
+                                    'You cannot invite player.\nMeetup is expired.',
+                                    () {},
+                                    buttonTitle: 'OK');
                               }
                             }
                           },
@@ -468,7 +487,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        dismissScreen(context, widget.meetup);
+        dismissScreen(context, meetup);
         return true;
       },
       child: GestureDetector(
@@ -485,7 +504,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 CupertinoButton(
                   child: Icon(FeatherIcons.moreVertical,
                       color: isLight(context) ? Colors.grey[600] : whiteColor),
-                  onPressed: () => showMeetupBottomSheet(widget.meetup),
+                  onPressed: () => showMeetupBottomSheet(meetup),
                 )
               ],
               bottom: PreferredSize(
@@ -551,9 +570,10 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   @override
   void initState() {
     super.initState();
+    meetup = widget.meetup;
 
     channel = IOWebSocketChannel.connect(
-        'ws://165.232.160.96:8080/ws/meetup/message/${widget.meetup.id}/',
+        'ws://165.232.160.96:8080/ws/meetup/message/${meetup.id}/',
         headers: {'x-key': ksClient.token()});
 
     channel.stream.listen((message) {
@@ -564,8 +584,6 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     });
 
     getDiscussion();
-
-    meetup = widget.meetup;
 
     joinMember =
         meetup.meetupMember!.where((element) => element.status == 1).toList();
@@ -586,7 +604,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
       if (value != null) {
         if (value is! HttpResult) {
           meetup = Post.fromJson(value['post']);
-          widget.meetup.meetupMember = meetup.meetupMember;
+          // widget.meetup.meetupMember = meetup.meetupMember;
           isJoined =
               meetup.meetupMember!.any((e) => e.user.id == KS.shared.user.id);
           setState(() {});
@@ -608,8 +626,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   }
 
   void joinGame() {
-    showKSConfirmDialog(context, 'Are you sure you want to join the game?',
-        () async {
+    showKSConfirmDialog(context,
+        message: 'Are you sure you want to join the game?',
+        onYesPressed: () async {
       showKSLoading(context);
       var result = await ksClient.postApi('/join/post/meetup/${meetup.id}');
       if (result != null) {
@@ -619,7 +638,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             dismissScreen(context);
             if (res is! HttpResult) {
               meetup = Post.fromJson(res['post']);
-              widget.meetup.meetupMember = meetup.meetupMember;
+              // widget.meetup.meetupMember = meetup.meetupMember;
               joinMember = meetup.meetupMember!
                   .where((element) => element.status == 1)
                   .toList();
@@ -634,36 +653,40 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   }
 
   void leaveGame() {
-    showKSConfirmDialog(context, 'Are you sure you want to leave the game?',
-        () async {
-      showKSReasonDialog(
-        context,
-        title: 'Tell the reason why you want to leave:',
-        onSubmit: () async {
-          showKSLoading(context);
-          var result =
-              await ksClient.postApi('/leave/post/meetup/${meetup.id}');
-          if (result != null) {
-            if (result is! HttpResult) {
-              var res = await ksClient.getApi('/view/meetup/post/${meetup.id}');
-              if (res != null) {
-                dismissScreen(context);
-                if (res is! HttpResult) {
-                  meetup = Post.fromJson(res['post']);
-                  widget.meetup.meetupMember = meetup.meetupMember;
-                  joinMember = meetup.meetupMember!
-                      .where((element) => element.status == 1)
-                      .toList();
-                  isJoined = false;
-                  BlocProvider.of<MeetupCubit>(context).onRefresh();
-                  setState(() {});
+    showKSConfirmDialog(
+      context,
+      message: 'Are you sure you want to leave the game?',
+      onYesPressed: () async {
+        showKSReasonDialog(
+          context,
+          title: 'Tell the reason why you want to leave:',
+          onSubmit: () async {
+            showKSLoading(context);
+            var result =
+                await ksClient.postApi('/leave/post/meetup/${meetup.id}');
+            if (result != null) {
+              if (result is! HttpResult) {
+                var res =
+                    await ksClient.getApi('/view/meetup/post/${meetup.id}');
+                if (res != null) {
+                  dismissScreen(context);
+                  if (res is! HttpResult) {
+                    meetup = Post.fromJson(res['post']);
+                    // widget.meetup.meetupMember = meetup.meetupMember;
+                    joinMember = meetup.meetupMember!
+                        .where((element) => element.status == 1)
+                        .toList();
+                    isJoined = false;
+                    BlocProvider.of<MeetupCubit>(context).onRefresh();
+                    setState(() {});
+                  }
                 }
               }
             }
-          }
-        },
-      );
-    });
+          },
+        );
+      },
+    );
   }
 
   void showMeetupBottomSheet(Post meetup) {
@@ -683,17 +706,37 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 bottomSheetBar(context),
+                if (isMeetupAvailable()) ...[
+                  isMe(meetup.owner.id)
+                      ? KSTextButtonBottomSheet(
+                          title: 'Connect with booking',
+                          icon: Feather.link_2,
+                          onTab: () async {
+                            dismissScreen(context);
+                            var booked = await launchScreen(
+                                context, ConnectBookingScreen.tag,
+                                arguments: meetup);
+                            meetup.book = booked;
+                            setState(() {});
+                          },
+                        )
+                      : SizedBox()
+                ],
                 isMe(meetup.owner.id)
                     ? KSTextButtonBottomSheet(
-                        title: 'Delete Meetup',
-                        icon: Feather.trash_2,
+                        title: 'Cancel Meetup',
+                        icon: Feather.x,
                         onTab: () {
                           dismissScreen(context);
-                          showKSConfirmDialog(context,
-                              'Are you sure you want to delete this meetup?',
-                              () {
-                            deleteMeetup();
-                          });
+                          showKSConfirmDialog(
+                            context,
+                            message:
+                                'Are you sure you want to cancel this meetup?',
+                            onYesPressed: () {
+                              // deleteMeetup();
+                              cancelMeetup();
+                            },
+                          );
                         },
                       )
                     : SizedBox(),
@@ -714,7 +757,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
 
   void deleteMeetup() async {
     showKSLoading(context);
-    var result = await ksClient.postApi('/delete/post/${widget.meetup.id}');
+    var result = await ksClient.postApi('/delete/post/${meetup.id}');
     if (result != null) {
       await Future.delayed(Duration(milliseconds: 500));
       dismissScreen(context);
@@ -722,6 +765,26 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         BlocProvider.of<MeetupCubit>(context).onDeleteMeetup(result['id']);
         dismissScreen(context);
       }
+    }
+  }
+
+  void cancelMeetup() async {
+    if (meetup.book != null) {
+      showKSMessageDialog(
+        context,
+        'Please disconnect booking from Meetup before cancel!',
+        () {},
+        buttonTitle: 'OK',
+      );
+      return;
+    }
+
+    showKSLoading(context);
+    var result = await ksClient.postApi('/cancel/post/meetup/${meetup.id}');
+    if (result != null) {
+      await Future.delayed(Duration(milliseconds: 300));
+      dismissScreen(context);
+      fetchMeetup();
     }
   }
 

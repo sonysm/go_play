@@ -194,7 +194,10 @@ class KSConfirmDialogState extends State<KSConfirmDialog>
 }
 
 showKSConfirmDialog(
-    BuildContext context, String message, VoidCallback onYesPressed) {
+  BuildContext context, {
+  required String message,
+  required VoidCallback onYesPressed,
+}) {
   showDialog(
     context: context,
     barrierDismissible: false,

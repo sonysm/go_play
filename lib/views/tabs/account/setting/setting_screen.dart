@@ -48,7 +48,7 @@ class _SettingScreenState extends State<SettingScreen> {
             margin: EdgeInsets.only(top: 4.0),
             child: ListTile(
               title: Text(
-                'version 1.0.5',
+                'version 1.0.6',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ),
@@ -58,16 +58,21 @@ class _SettingScreenState extends State<SettingScreen> {
             margin: EdgeInsets.only(top: 4.0),
             child: ListTile(
               onTap: () {
-                showKSConfirmDialog(context, 'Are you sure you want to logout?',
-                    () {
-                  showKSLoading(context);
-                  userRepository.deleteToken();
-                  userRepository.deleteHeaderToken();
-                  Future.delayed(Duration(seconds: 1)).then((value) {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, LoginScreen.tag, (route) => false);
-                  });
-                });
+                showKSConfirmDialog(
+                  context,
+                  message: 'Are you sure you want to logout?',
+                  onYesPressed: () {
+                    showKSLoading(context);
+                    userRepository.deleteToken();
+                    userRepository.deleteHeaderToken();
+                    Future.delayed(Duration(seconds: 1)).then(
+                      (value) {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, LoginScreen.tag, (route) => false);
+                      },
+                    );
+                  },
+                );
               },
               title: Text(
                 'Logout',

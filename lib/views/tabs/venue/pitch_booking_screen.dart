@@ -217,7 +217,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 150.0,
+            width: 130.0,
             child: Text(
               label + ':',
               style: TextStyle(
@@ -491,7 +491,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                   durationList.add(dur);
                   break;
                 }
-              } else if (i == availableTimeList.length -1) {
+              } else if (i == availableTimeList.length - 1) {
                 durationList.add(dur);
               }
             }
@@ -511,41 +511,45 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
 
   void bookPitch() async {
     showKSConfirmDialog(
-        context, 'You are about to book a pitch\n\nPlease confirm!', () async {
-      showKSLoading(context);
-      // await Future.delayed(Duration(milliseconds: 700));
+      context,
+      message: 'You are about to book a pitch.\n\nPlease confirm!',
+      onYesPressed: () async {
+        showKSLoading(context);
+        // await Future.delayed(Duration(milliseconds: 700));
 
-      Map<String, dynamic> fields = {
-        'book_date': DateFormat('yyyy-MM-dd').format(selectedDate),
-        'from_time': DateFormat('HH:mm:ss').format(selectedStartTime!),
-        'to_time': DateFormat('HH:mm:ss')
-            .format(selectedStartTime!.add(Duration(minutes: duration!))),
-        'price': (duration! * _venueService.hourPrice) / 60
-      };
+        Map<String, dynamic> fields = {
+          'book_date': DateFormat('yyyy-MM-dd').format(selectedDate),
+          'from_time': DateFormat('HH:mm:ss').format(selectedStartTime!),
+          'to_time': DateFormat('HH:mm:ss')
+              .format(selectedStartTime!.add(Duration(minutes: duration!))),
+          'price': (duration! * _venueService.hourPrice) / 60
+        };
 
-      var res =
-          await ksClient.postApi('/booking/service/${_venueService.id}', body: fields);
-      if (res != null) {
-        if (res is! HttpResult) {
-          dismissScreen(context);
-          showKSComplete(context, message: 'Book successfully!');
-          await Future.delayed(Duration(milliseconds: 1200));
-          dismissScreen(context);
-          Navigator.pushNamedAndRemoveUntil(context, BookingHistoryScreen.tag,
-              ModalRoute.withName(MainView.tag));
-        } else {
-          dismissScreen(context);
-          showKSMessageDialog(context, 'Booking failed. Please try again!', () {});
+        var res = await ksClient.postApi('/booking/service/${_venueService.id}',
+            body: fields);
+        if (res != null) {
+          if (res is! HttpResult) {
+            dismissScreen(context);
+            showKSComplete(context, message: 'Book successfully!');
+            await Future.delayed(Duration(milliseconds: 1200));
+            dismissScreen(context);
+            Navigator.pushNamedAndRemoveUntil(context, BookingHistoryScreen.tag,
+                ModalRoute.withName(MainView.tag));
+          } else {
+            dismissScreen(context);
+            showKSMessageDialog(
+                context, 'Booking failed. Please try again!', () {});
+          }
         }
-      }
 
-      // dismissScreen(context);
-      // showKSComplete(context, message: 'Book successfully!');
-      // await Future.delayed(Duration(milliseconds: 1200));
-      // dismissScreen(context);
-      // Navigator.pushNamedAndRemoveUntil(
-      //     context, BookingHistoryScreen.tag, ModalRoute.withName(MainView.tag));
-    });
+        // dismissScreen(context);
+        // showKSComplete(context, message: 'Book successfully!');
+        // await Future.delayed(Duration(milliseconds: 1200));
+        // dismissScreen(context);
+        // Navigator.pushNamedAndRemoveUntil(
+        //     context, BookingHistoryScreen.tag, ModalRoute.withName(MainView.tag));
+      },
+    );
   }
 
   void getUnavailableTime({bool showLoading = false}) async {

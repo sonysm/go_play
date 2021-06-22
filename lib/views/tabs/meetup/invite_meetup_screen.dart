@@ -173,8 +173,8 @@ class _InviteMeetupScreenState extends State<InviteMeetupScreen> {
     FocusScope.of(context).unfocus();
     showKSConfirmDialog(
       context,
-      'Invite\n${user.getFullname()}',
-      () {},
+      message: 'Invite\n${user.getFullname()}',
+      onYesPressed: () {},
     );
   }
 }

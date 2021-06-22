@@ -17,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   Widget splashText() {
     return Text(
-      'Kroma Sport',
+      'Vplay',
       textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: 28.0,

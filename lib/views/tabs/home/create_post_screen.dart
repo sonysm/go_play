@@ -323,10 +323,13 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
       onWillPop: () async {
         if (availablePost()) {
           FocusScope.of(context).unfocus();
-          showKSConfirmDialog(context, 'Are you sure you want to discard post?',
-              () {
-            dismissScreen(context);
-          });
+          showKSConfirmDialog(
+            context,
+            message: 'Are you sure you want to discard post?',
+            onYesPressed: () {
+              dismissScreen(context);
+            },
+          );
           return false;
         }
         return true;

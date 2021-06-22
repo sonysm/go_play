@@ -50,6 +50,8 @@ class _SetAddressScreenState extends State<SetAddressScreen>
                 '${placeMark.name} ${placeMark.subAdministrativeArea} ${placeMark.administrativeArea}';
             _addressController.text = locationName;
           }
+        }).onError((error, stackTrace) {
+          _addressController.text = 'No name';
         });
         // if (widget.oldAddress == null) {
         //   _mapController
@@ -78,6 +80,8 @@ class _SetAddressScreenState extends State<SetAddressScreen>
                   '${placeMark.name}, ${placeMark.subAdministrativeArea}, ${placeMark.administrativeArea}';
               _addressController.text = locationName;
             }
+          }).onError((error, stackTrace) {
+            _addressController.text = 'No name';
           });
           // if (placeVM == null) {
           //   _mapController

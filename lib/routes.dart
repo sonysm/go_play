@@ -24,6 +24,7 @@ import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
+import 'package:kroma_sport/views/tabs/meetup/connect_booking_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/invite_meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
@@ -158,6 +159,8 @@ class RouteGenerator {
             meetup: args['meetup'],
           ),
         );
+      case ConnectBookingScreen.tag:
+        return KSPageRoute(builder: (_) => ConnectBookingScreen(meetup: args as Post,));
       default:
         return _errorRoute();
     }

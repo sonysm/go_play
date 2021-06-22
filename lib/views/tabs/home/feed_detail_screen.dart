@@ -68,13 +68,16 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     return total > 0
         ? TextButton(
             style: ButtonStyle(
-              overlayColor: MaterialStateProperty.all(Colors.grey[100]),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              minimumSize: MaterialStateProperty.all(Size(0,0)),
-              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0))
-            ),
+                overlayColor: MaterialStateProperty.all(Colors.grey[100]),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                minimumSize: MaterialStateProperty.all(Size(0, 0)),
+                padding: MaterialStateProperty.all(const EdgeInsets.symmetric(
+                    vertical: 4.0, horizontal: 8.0))),
             onPressed: showUserLike,
-            child: Text(total > 1 ? '$total likes' : '$total like', style: Theme.of(context).textTheme.bodyText2,))
+            child: Text(
+              total > 1 ? '$total likes' : '$total like',
+              style: Theme.of(context).textTheme.bodyText2,
+            ))
         : SizedBox();
   }
 
@@ -465,10 +468,14 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                         icon: Feather.trash_2,
                         onTab: () {
                           dismissScreen(context);
-                          showKSConfirmDialog(context,
-                              'Are you sure you want to delete this post?', () {
-                            deletePost();
-                          });
+                          showKSConfirmDialog(
+                            context,
+                            message:
+                                'Are you sure you want to delete this post?',
+                            onYesPressed: () {
+                              deletePost();
+                            },
+                          );
                         },
                       )
                     : SizedBox(),
@@ -761,7 +768,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 final user = likeUsers[index];
                 return InkWell(
                   onTap: () {
-                    launchScreen(context, ViewUserProfileScreen.tag, arguments: user);
+                    launchScreen(context, ViewUserProfileScreen.tag,
+                        arguments: user);
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(

@@ -279,10 +279,14 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                         icon: Feather.trash_2,
                         onTab: () {
                           dismissScreen(context);
-                          showKSConfirmDialog(context,
-                              'Are you sure you want to delete this post?', () {
-                            deletePost(post.id);
-                          });
+                          showKSConfirmDialog(
+                            context,
+                            message:
+                                'Are you sure you want to delete this post?',
+                            onYesPressed: () {
+                              deletePost(post.id);
+                            },
+                          );
                         },
                       )
                     : SizedBox(),

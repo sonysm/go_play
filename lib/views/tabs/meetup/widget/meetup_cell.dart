@@ -18,6 +18,7 @@ import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 
@@ -311,9 +312,32 @@ class _MeetupCellState extends State<MeetupCell> {
                       Text(
                         meetup.activityLocation!.name,
                         style: Theme.of(context).textTheme.bodyText2,
+                        strutStyle: StrutStyle(fontSize: 14),
                       ),
                     ],
                   ),
+                  meetup.book != null
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Feather.bookmark,
+                                size: 16.0,
+                                color: isLight(context)
+                                    ? Colors.grey[700]
+                                    : Colors.grey[300]!,
+                              ),
+                              8.width,
+                              Text(
+                                'Field booked',
+                                style: Theme.of(context).textTheme.bodyText2,
+                                strutStyle: StrutStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        )
+                      : SizedBox(),
                   16.height,
                   Row(
                     children: [
@@ -325,11 +349,28 @@ class _MeetupCellState extends State<MeetupCell> {
                             : Colors.grey[300]!,
                       ),
                       8.width,
-                      Text(
-                        isMeetupAvailable() ? 'Meetup Available' : 'Meetup Expired',
-                        style: Theme.of(context).textTheme.bodyText2?.copyWith(color: isMeetupAvailable() ? mainColor : Colors.amber[700]),
-                        strutStyle: StrutStyle(fontSize: 14.0),
-                      ),
+                      meetup.status == PostStatus.active
+                          ? Text(
+                              isMeetupAvailable()
+                                  ? 'Meetup Available'
+                                  : 'Meetup Expired',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2
+                                  ?.copyWith(
+                                      color: isMeetupAvailable()
+                                          ? mainColor
+                                          : Colors.amber[700]),
+                              strutStyle: StrutStyle(fontSize: 14.0),
+                            )
+                          : Text(
+                              'Meetup Canceled',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText2
+                                  ?.copyWith(color: Colors.red),
+                              strutStyle: StrutStyle(fontSize: 14.0),
+                            ),
                     ],
                   ),
                 ],
@@ -368,14 +409,19 @@ class _MeetupCellState extends State<MeetupCell> {
                 bottomSheetBar(context),
                 isMe(post.owner.id)
                     ? KSTextButtonBottomSheet(
-                        title: 'Delete Meetup',
-                        icon: Feather.trash_2,
+                        title: 'Cancel Meetup',
+                        icon: Feather.x,
                         onTab: () {
                           dismissScreen(context);
-                          showKSConfirmDialog(context,
-                              'Are you sure you want to delete this post?', () {
-                            deleteMeetup();
-                          });
+                          showKSConfirmDialog(
+                            context,
+                            message:
+                                'Are you sure you want to cancel this Meetup?',
+                            onYesPressed: () {
+                              // deleteMeetup();
+                              cancelMeetup();
+                            },
+                          );
                         },
                       )
                     : SizedBox(),
@@ -398,11 +444,32 @@ class _MeetupCellState extends State<MeetupCell> {
     showKSLoading(context);
     var result = await ksClient.postApi('/delete/post/${widget.post.id}');
     if (result != null) {
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(Duration(milliseconds: 300));
       dismissScreen(context);
       if (result is! HttpResult) {
         BlocProvider.of<MeetupCubit>(context).onDeleteMeetup(result['id']);
       }
+    }
+  }
+
+  void cancelMeetup() async {
+    if (meetup.book != null) {
+      showKSMessageDialog(
+        context,
+        'Please disconnect booking from Meetup before cancel!',
+        () {},
+        buttonTitle: 'OK',
+      );
+      return;
+    }
+
+    showKSLoading(context);
+    var result =
+        await ksClient.postApi('/cancel/post/meetup/${widget.post.id}');
+    if (result != null) {
+      await Future.delayed(Duration(milliseconds: 300));
+      dismissScreen(context);
+      
     }
   }
 }

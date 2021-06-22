@@ -228,17 +228,20 @@ class _BookingHistoryDetailScreenState
   }
 
   void confirmCancel() {
-    showKSConfirmDialog(context, 'Are you sure you want to cancel booking?',
-        () async {
-      showKSReasonDialog(
-        context,
-        title: 'Tell the reason why you want to cancel booking:',
-        onSubmit: () async {
-          showKSLoading(context);
-          dismissScreen(context);
-          dismissScreen(context);
-        },
-      );
-    });
+    showKSConfirmDialog(
+      context,
+      message: 'Are you sure you want to cancel booking?',
+      onYesPressed: () async {
+        showKSReasonDialog(
+          context,
+          title: 'Tell the reason why you want to cancel booking:',
+          onSubmit: () async {
+            showKSLoading(context);
+            dismissScreen(context);
+            dismissScreen(context);
+          },
+        );
+      },
+    );
   }
 }

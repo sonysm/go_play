@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Kroma Sport',
+          'Vplay',
           style: TextStyle(
             color: whiteColor,
             fontSize: 36.0,

@@ -165,7 +165,10 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4.0),
                                   side: isFollow
-                                      ? BorderSide(color: isLight(context) ? Color(0xFF1D976C) : whiteColor)
+                                      ? BorderSide(
+                                          color: isLight(context)
+                                              ? Color(0xFF1D976C)
+                                              : whiteColor)
                                       : BorderSide.none),
                             ),
                           ),
@@ -174,7 +177,9 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                                   isFollow ? 'Following' : 'Follow',
                                   style: TextStyle(
                                     color: isFollow
-                                        ? isLight(context) ? Color(0xFF1D976C) : whiteColor
+                                        ? isLight(context)
+                                            ? Color(0xFF1D976C)
+                                            : whiteColor
                                         : whiteColor,
                                     fontSize: 16.0,
                                     fontFamily: 'ProximaNova',
@@ -290,7 +295,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                   fontWeight: FontWeight.w600,
                 ),
                 indicatorColor:
-                      isLight(context) ? mainColor : Colors.greenAccent,
+                    isLight(context) ? mainColor : Colors.greenAccent,
                 isScrollable: true,
                 onTap: (index) => setState(() => _currentIndex = index),
                 tabs: [
@@ -345,9 +350,11 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                     itemCount: userPostList.length),
               )
             : Container(
-              margin: const EdgeInsets.only(top: 100),
-              child: Center(child: Text('No any post'),),
-            )
+                margin: const EdgeInsets.only(top: 100),
+                child: Center(
+                  child: Text('No any post'),
+                ),
+              )
         : SizedBox();
   }
 
@@ -374,9 +381,11 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
             itemCount: userMeetupList.length,
           )
         : Container(
-              margin: const EdgeInsets.only(top: 100),
-              child: Center(child: Text('No any meetup'),),
-            );
+            margin: const EdgeInsets.only(top: 100),
+            child: Center(
+              child: Text('No any meetup'),
+            ),
+          );
   }
 
   @override
@@ -481,18 +490,21 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
         onTab: () {
           dismissScreen(context);
 
-          showKSConfirmDialog(context,
-              'Are you sure you want to unfollow ${_user.getFullname()}?',
-              () async {
-            var res = await ksClient.postApi('/user/unfollow/${_user.id}');
-            if (res != null) {
-              if (res is! HttpResult) {
-                _user.followerCount -= 1;
-                isFollow = false;
-                setState(() {});
+          showKSConfirmDialog(
+            context,
+            message:
+                'Are you sure you want to unfollow ${_user.getFullname()}?',
+            onYesPressed: () async {
+              var res = await ksClient.postApi('/user/unfollow/${_user.id}');
+              if (res != null) {
+                if (res is! HttpResult) {
+                  _user.followerCount -= 1;
+                  isFollow = false;
+                  setState(() {});
+                }
               }
-            }
-          });
+            },
+          );
         },
       )
     ]);
