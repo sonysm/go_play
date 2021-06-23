@@ -1,5 +1,7 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
@@ -40,6 +42,9 @@ class _MainViewState extends State<MainView> {
   ];
   int _tapIndex = 0;
   int _screenIndex = 0;
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +103,8 @@ class _MainViewState extends State<MainView> {
   @override
   void initState() {
     super.initState();
+    setupFirebaseMessage();
+    // setupLocalNotification();
     fetchLocation();
     BlocProvider.of<HomeCubit>(context).onLoad();
     BlocProvider.of<MeetupCubit>(context).onLoad();
@@ -150,6 +157,93 @@ class _MainViewState extends State<MainView> {
       },
     );
   }
+
+  setupFirebaseMessage() {
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        print('remote_message: ${message.category}');
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification!;
+      showLocalNotification(notification, message.data);
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      print("____onMessageOpenedApp____: $message");
+      //serializeAndNavigate(message.data);
+    });
+
+    FirebaseMessaging.instance.requestPermission();
+    FirebaseMessaging.instance.getToken().then((token) {
+      // Todo update token
+      print('___fcm: $token');
+    });
+  }
+
+  setupLocalNotification() async {
+    var android = new AndroidInitializationSettings('ic_notification');
+    var ios = new IOSInitializationSettings();
+    var platform = new InitializationSettings(android: android, iOS: ios);
+    flutterLocalNotificationsPlugin.initialize(platform);
+  }
+
+  Future<void> showLocalNotification(
+      RemoteNotification notification, Map<String, dynamic> data) async {
+    AndroidNotification androidNotification = notification.android!;
+    // AppleNotification appleNotification = notification.apple!;
+
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      'This channel is used for important notifications.', // description
+      importance: Importance.max,
+    );
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    if (notification != null && androidNotification != null) {
+      flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channel.description,
+              icon: androidNotification.smallIcon,
+              // other properties...
+            ),
+          ));
+    }
+
+    // const AndroidNotificationDetails android = AndroidNotificationDetails(
+    //   'channel ID',
+    //   "CHANNLE NAME",
+    //   "channelDescription",
+    //   importance: Importance.max,
+    //   priority: Priority.high,
+    //   ongoing: false,
+    //   autoCancel: true,
+    // );
+
+    // const IOSNotificationDetails iOS = IOSNotificationDetails(
+    //   presentAlert: true,
+    //   presentBadge: true,
+    //   presentSound: true,
+    // );
+    // const NotificationDetails platform =
+    //     NotificationDetails(android: android, iOS: iOS);
+
+    // await flutterLocalNotificationsPlugin.show(
+    //     notification.hashCode, notification.title, notification.body, platform);
+  }
 }
 
 class _CustomTabBar extends StatelessWidget {
@@ -182,7 +276,8 @@ class _CustomTabBar extends StatelessWidget {
                             borderRadius: BorderRadius.circular(0)),
                       ),
                       elevation: MaterialStateProperty.all(0),
-                      overlayColor: MaterialStateProperty.all(Colors.transparent),
+                      overlayColor:
+                          MaterialStateProperty.all(Colors.transparent),
                       backgroundColor:
                           MaterialStateProperty.all(Colors.transparent),
                     ),

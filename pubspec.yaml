@@ -69,9 +69,11 @@ dependencies:
   url_launcher: ^6.0.7
   flutter_linkify: ^5.0.2
   flutter_web_browser: ^0.14.0
+  flutter_local_notifications: ^6.0.0
   
   # Firebase
   firebase_auth: ^1.1.2
+  firebase_messaging: ^10.0.2
 
 dev_dependencies:
   flutter_test:
