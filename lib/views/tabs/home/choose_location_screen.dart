@@ -44,12 +44,10 @@ class _SetAddressScreenState extends State<SetAddressScreen>
         geoCoding
             .placemarkFromCoordinates(_latLng.latitude, _latLng.longitude)
             .then((value) {
-          if (value != null) {
-            var placeMark = value[0];
-            var locationName =
-                '${placeMark.name} ${placeMark.subAdministrativeArea} ${placeMark.administrativeArea}';
-            _addressController.text = locationName;
-          }
+          var placeMark = value[0];
+          var locationName =
+              '${placeMark.name} ${placeMark.subAdministrativeArea} ${placeMark.administrativeArea}';
+          _addressController.text = locationName;
         }).onError((error, stackTrace) {
           _addressController.text = 'No name';
         });
@@ -74,12 +72,10 @@ class _SetAddressScreenState extends State<SetAddressScreen>
           geoCoding
               .placemarkFromCoordinates(_latLng.latitude, _latLng.longitude)
               .then((value) {
-            if (value != null) {
-              var placeMark = value[0];
-              var locationName =
-                  '${placeMark.name}, ${placeMark.subAdministrativeArea}, ${placeMark.administrativeArea}';
-              _addressController.text = locationName;
-            }
+            var placeMark = value[0];
+            var locationName =
+                '${placeMark.name}, ${placeMark.subAdministrativeArea}, ${placeMark.administrativeArea}';
+            _addressController.text = locationName;
           }).onError((error, stackTrace) {
             _addressController.text = 'No name';
           });

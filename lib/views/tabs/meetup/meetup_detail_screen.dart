@@ -23,6 +23,7 @@ import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/meetup/connect_booking_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/invite_meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/discussion_cell.dart';
+import 'package:kroma_sport/views/tabs/venue/booking_history_detail.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
@@ -126,6 +127,21 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                     leading: Icon(Feather.bookmark, size: 20.0),
                     title: Text('Field Booked',
                         style: Theme.of(context).textTheme.bodyText1),
+                    trailing: TextButton(
+                      onPressed: () {
+                        launchScreen(
+                          context,
+                          BookingHistoryDetailScreen.tag,
+                          arguments: {'id': meetup.book},
+                        );
+                      },
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.grey[300]),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                      child: Text('view',
+                          style: Theme.of(context).textTheme.bodyText2),
+                    ),
                   )
                 : SizedBox(),
             ListTile(

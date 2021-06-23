@@ -66,6 +66,9 @@ dependencies:
   permission_handler: ^8.1.0
   app_settings: ^4.1.0
   connectivity: ^3.0.6
+  url_launcher: ^6.0.7
+  flutter_linkify: ^5.0.2
+  flutter_web_browser: ^0.14.0
   
   # Firebase
   firebase_auth: ^1.1.2

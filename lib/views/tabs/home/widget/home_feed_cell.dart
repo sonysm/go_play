@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
@@ -19,6 +20,8 @@ import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_web_browser/flutter_web_browser.dart';
 
 class HomeFeedCell extends StatefulWidget {
   final Post post;
@@ -105,11 +108,23 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                       vertical: 8.0,
                       horizontal: 16.0,
                     ),
-                    child: SelectableText(
-                      widget.post.description!,
+                    child: SelectableLinkify(
+                      text: widget.post.description!,
                       style: Theme.of(context).textTheme.bodyText1,
-                      onTap: () => launchFeedDetailScreen(widget.post),
+                      onOpen: (link) async {
+                        if (await canLaunch(link.url)) {
+                          // await launch(link.url);
+                          FlutterWebBrowser.openWebPage(url: link.url);
+                        } else {
+                          throw 'Could not launch $link';
+                        }
+                      },
                     ),
+                    // SelectableText(
+                    //   widget.post.description!,
+                    //   style: Theme.of(context).textTheme.bodyText1,
+                    //   onTap: () => launchFeedDetailScreen(widget.post),
+                    // ),
                   )
                 : SizedBox(height: 8.0),
             widget.post.photo != null
@@ -323,9 +338,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
     var result =
         await ksClient.postApi('/create/post/reaction/${widget.post.id}');
     if (result != null) {
-      if (result is! HttpResult) {
-        print('success!!!!');
-      }
+      if (result is! HttpResult) {}
     }
   }
 }

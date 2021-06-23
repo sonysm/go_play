@@ -4,6 +4,8 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/booking.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -17,11 +19,13 @@ import 'package:kroma_sport/widgets/ks_widgets.dart';
 class BookingHistoryDetailScreen extends StatefulWidget {
   static const tag = '/bookingHistoryDetail';
 
-  final Booking booking;
+  final Booking? booking;
+  final int? bookingId;
 
   BookingHistoryDetailScreen({
     Key? key,
-    required this.booking,
+    this.booking,
+    this.bookingId,
   }) : super(key: key);
 
   @override
@@ -32,6 +36,10 @@ class BookingHistoryDetailScreen extends StatefulWidget {
 class _BookingHistoryDetailScreenState
     extends State<BookingHistoryDetailScreen> {
   late Booking _booking;
+  late bool isLoading;
+  String title = '';
+
+  KSHttpClient ksClient = KSHttpClient();
 
   Widget buildTextInfo({required String data}) {
     return Padding(
@@ -157,11 +165,11 @@ class _BookingHistoryDetailScreenState
                 dense: true,
                 leading: Icon(Feather.pocket, size: 20.0),
                 horizontalTitleGap: 0,
-                title: Text(_booking.status.capitalize,
+                title: Text(mapStatusTitle(),
                     style: Theme.of(context)
                         .textTheme
                         .bodyText1
-                        ?.copyWith(color: mainColor)),
+                        ?.copyWith(color: mapStatusColor())),
               ),
             ),
             Divider(
@@ -174,37 +182,81 @@ class _BookingHistoryDetailScreenState
     );
   }
 
+  String mapStatusTitle() {
+    if (isMeetupAvailable()) {
+      return _booking.status.capitalize;
+    }
+
+    return 'Finished';
+  }
+
+  Color mapStatusColor() {
+    if (isMeetupAvailable()) {
+      return mainColor;
+    }
+
+    return blackColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ID - KS${_booking.id}'),
+        title: Text('ID - KS$title'),
         actions: [
-          CupertinoButton(
-            child: Icon(FeatherIcons.moreVertical,
-                color: isLight(context) ? Colors.grey[600] : whiteColor),
-            onPressed: cancelBooking,
-          )
+          !isLoading ? isMeetupAvailable()
+              ? CupertinoButton(
+                  child: Icon(FeatherIcons.moreVertical,
+                      color: isLight(context) ? Colors.grey[600] : whiteColor),
+                  onPressed: cancelBooking,
+                )
+              : SizedBox() : SizedBox()
         ],
       ),
       backgroundColor: Theme.of(context).primaryColor,
-      body: EasyRefresh.custom(
-        header: MaterialHeader(
-          valueColor: AlwaysStoppedAnimation<Color>(mainColor),
-        ),
-        slivers: [
-          buildBookingInfo(),
-          buildInfo(),
-        ],
-        onRefresh: () async {},
-      ),
+      body: !isLoading
+          ? EasyRefresh.custom(
+              header: MaterialHeader(
+                valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+              ),
+              slivers: [
+                buildBookingInfo(),
+                buildInfo(),
+              ],
+              onRefresh: () async {},
+            )
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 
   @override
   void initState() {
     super.initState();
-    _booking = widget.booking;
+    if (widget.booking != null) {
+      isLoading = false;
+      _booking = widget.booking!;
+      title = widget.booking!.id.toString();
+    } else {
+      title = widget.bookingId.toString();
+      isLoading = true;
+      getBookingDetail();
+    }
+  }
+
+  void getBookingDetail() async {
+    var res = await ksClient.getApi('/booking/detail/${widget.bookingId}');
+    if (res != null) {
+      if (res is! HttpResult) {
+        _booking = Booking.fromJson(res);
+      }
+    }
+
+    Future.delayed(Duration(milliseconds: 300)).then((_) {
+      isLoading = false;
+      setState(() {});
+    });
   }
 
   void cancelBooking() {
@@ -243,5 +295,15 @@ class _BookingHistoryDetailScreenState
         );
       },
     );
+  }
+
+  bool isMeetupAvailable() {
+    var bookDate = DateFormat('yyyy-MM-dd hh:mm:ss')
+        .parse(_booking.bookDate + ' ' + _booking.fromTime);
+    if (DateTime.now().isAfter(bookDate)) {
+      return false;
+    }
+
+    return true;
   }
 }

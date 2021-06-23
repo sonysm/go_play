@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kroma_sport/models/booking.dart';
+import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_detail.dart';
@@ -12,12 +13,38 @@ class BookingCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isMeetupAvailable() {
+      var bookDate = DateFormat('yyyy-MM-dd hh:mm:ss')
+          .parse(booking.bookDate + ' ' + booking.fromTime);
+      if (DateTime.now().isAfter(bookDate)) {
+        return false;
+      }
+
+      return true;
+    }
+
+    String mapStatusTitle() {
+      if (isMeetupAvailable()) {
+        return booking.status.capitalize;
+      }
+
+      return 'Finished';
+    }
+
+    Color mapStatusColor() {
+      if (isMeetupAvailable()) {
+        return mainColor;
+      }
+
+      return blackColor;
+    }
+
     return InkWell(
       onTap: () {
         launchScreen(
           context,
           BookingHistoryDetailScreen.tag,
-          arguments: booking,
+          arguments: {'booking': booking},
         );
       },
       child: Container(
@@ -88,8 +115,8 @@ class BookingCell extends StatelessWidget {
                       ),
                       8.width,
                       Text(
-                        booking.status.capitalize,
-                        style: TextStyle(color: Colors.green),
+                        mapStatusTitle(),
+                        style: TextStyle(color: mapStatusColor()),
                       ),
                     ],
                   ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kroma_sport/models/booking.dart';
-import 'package:kroma_sport/models/member.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -144,9 +143,11 @@ class RouteGenerator {
       case BookingHistoryScreen.tag:
         return KSPageRoute(builder: (_) => BookingHistoryScreen());
       case BookingHistoryDetailScreen.tag:
+        args as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (_) => BookingHistoryDetailScreen(
-            booking: args as Booking,
+            booking: args['booking'],
+            bookingId: args['id'],
           ),
         );
       case FollowScreen.tag:
@@ -160,7 +161,10 @@ class RouteGenerator {
           ),
         );
       case ConnectBookingScreen.tag:
-        return KSPageRoute(builder: (_) => ConnectBookingScreen(meetup: args as Post,));
+        return KSPageRoute(
+            builder: (_) => ConnectBookingScreen(
+                  meetup: args as Post,
+                ));
       default:
         return _errorRoute();
     }

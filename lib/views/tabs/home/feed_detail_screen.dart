@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
@@ -27,6 +29,7 @@ import 'package:kroma_sport/widgets/ks_widgets.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FeedDetailScreen extends StatefulWidget {
   static const String tag = '/feedDetailScreen';
@@ -137,10 +140,22 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                       vertical: 8.0,
                       horizontal: 16.0,
                     ),
-                    child: SelectableText(
-                      widget.post.description ?? '',
+                    child: SelectableLinkify(
+                      text: widget.post.description!,
                       style: Theme.of(context).textTheme.bodyText1,
+                      onOpen: (link) async {
+                        if (await canLaunch(link.url)) {
+                          // await launch(link.url);
+                          FlutterWebBrowser.openWebPage(url: link.url);
+                        } else {
+                          throw 'Could not launch $link';
+                        }
+                      },
                     ),
+                    // SelectableText(
+                    //   widget.post.description ?? '',
+                    //   style: Theme.of(context).textTheme.bodyText1,
+                    // ),
                   )
                 : SizedBox(height: 8.0),
             if (widget.post.type == PostType.feed) ...[
