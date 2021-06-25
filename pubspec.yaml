@@ -41,7 +41,7 @@ dependencies:
   pin_input_text_field: ^4.0.0
   flutter_countdown_timer: ^4.1.0
   flutter_vector_icons: ^1.0.0
-  multi_image_picker2: ^5.0.0
+  multi_image_picker2: ^5.0.2
   timeago: ^3.0.2
   flutter_swiper_null_safety: ^1.0.1
   syncfusion_flutter_datepicker: ^19.1.63-beta
@@ -64,7 +64,7 @@ dependencies:
   web_socket_channel: ^2.1.0
   shimmer: ^2.0.0
   permission_handler: ^8.1.0
-  app_settings: ^4.1.0
+  app_settings: ^4.1.1
   connectivity: ^3.0.6
   url_launcher: ^6.0.7
   flutter_linkify: ^5.0.2
