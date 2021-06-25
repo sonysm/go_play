@@ -104,7 +104,7 @@ class _MainViewState extends State<MainView> {
   void initState() {
     super.initState();
     setupFirebaseMessage();
-    // setupLocalNotification();
+    setupLocalNotification();
     fetchLocation();
     BlocProvider.of<HomeCubit>(context).onLoad();
     BlocProvider.of<MeetupCubit>(context).onLoad();
@@ -192,57 +192,57 @@ class _MainViewState extends State<MainView> {
 
   Future<void> showLocalNotification(
       RemoteNotification notification, Map<String, dynamic> data) async {
-    AndroidNotification androidNotification = notification.android!;
+    // AndroidNotification androidNotification = notification.android!;
     // AppleNotification appleNotification = notification.apple!;
 
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'high_importance_channel', // id
-      'High Importance Notifications', // title
-      'This channel is used for important notifications.', // description
+    // const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    //   'high_importance_channel', // id
+    //   'High Importance Notifications', // title
+    //   'This channel is used for important notifications.', // description
+    //   importance: Importance.max,
+    // );
+
+    // await flutterLocalNotificationsPlugin
+    //     .resolvePlatformSpecificImplementation<
+    //         AndroidFlutterLocalNotificationsPlugin>()
+    //     ?.createNotificationChannel(channel);
+
+    // if (notification != null && androidNotification != null) {
+    //   flutterLocalNotificationsPlugin.show(
+    //       notification.hashCode,
+    //       notification.title,
+    //       notification.body,
+    //       NotificationDetails(
+    //         android: AndroidNotificationDetails(
+    //           channel.id,
+    //           channel.name,
+    //           channel.description,
+    //           icon: androidNotification.smallIcon,
+    //           // other properties...
+    //         ),
+    //       ));
+    // }
+
+    const AndroidNotificationDetails android = AndroidNotificationDetails(
+      'channel ID',
+      "CHANNLE NAME",
+      "channelDescription",
       importance: Importance.max,
+      priority: Priority.high,
+      ongoing: false,
+      autoCancel: true,
     );
 
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+    const IOSNotificationDetails iOS = IOSNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+    const NotificationDetails platform =
+        NotificationDetails(android: android, iOS: iOS);
 
-    if (notification != null && androidNotification != null) {
-      flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              channel.description,
-              icon: androidNotification.smallIcon,
-              // other properties...
-            ),
-          ));
-    }
-
-    // const AndroidNotificationDetails android = AndroidNotificationDetails(
-    //   'channel ID',
-    //   "CHANNLE NAME",
-    //   "channelDescription",
-    //   importance: Importance.max,
-    //   priority: Priority.high,
-    //   ongoing: false,
-    //   autoCancel: true,
-    // );
-
-    // const IOSNotificationDetails iOS = IOSNotificationDetails(
-    //   presentAlert: true,
-    //   presentBadge: true,
-    //   presentSound: true,
-    // );
-    // const NotificationDetails platform =
-    //     NotificationDetails(android: android, iOS: iOS);
-
-    // await flutterLocalNotificationsPlugin.show(
-    //     notification.hashCode, notification.title, notification.body, platform);
+    await flutterLocalNotificationsPlugin.show(
+        notification.hashCode, notification.title, notification.body, platform);
   }
 }
 

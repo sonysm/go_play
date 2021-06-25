@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "992038809066-gep8u6shoo7f73qtd0kt5e2na957gbh1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kroma.kromasport",
+            "certificate_hash": "8874c6ff1ee76ac82e487752369bec35f10d823c"
+          }
+        },
+        {
+          "client_id": "992038809066-miu6586bafdr8145ouo23nulbj5macfo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kroma.kromasport",
+            "certificate_hash": "028d78b5e88f46f247e00e05cd7c24afd069b025"
+          }
+        },
+        {
           "client_id": "992038809066-99aeilisr26ibdk8abfbupvq3rhrue6f.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +45,65 @@
             {
               "client_id": "992038809066-99aeilisr26ibdk8abfbupvq3rhrue6f.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "992038809066-sticubm2vpq0r0nd9hgjsl9h2op69jfj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kroma.kromasport"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992038809066:android:5bcc45d8a5b52516321693",
+        "android_client_info": {
+          "package_name": "com.kroma.vplay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "992038809066-2dvgtl2lc4ulg4niruh6h84s36c3p3un.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kroma.vplay",
+            "certificate_hash": "8874c6ff1ee76ac82e487752369bec35f10d823c"
+          }
+        },
+        {
+          "client_id": "992038809066-o3gpdha1gbrf43efmrngeg6iibl427b9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kroma.vplay",
+            "certificate_hash": "028d78b5e88f46f247e00e05cd7c24afd069b025"
+          }
+        },
+        {
+          "client_id": "992038809066-99aeilisr26ibdk8abfbupvq3rhrue6f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqBVL4jJ2TquHV03ftoXFpPLaZUu6s4ck"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "992038809066-99aeilisr26ibdk8abfbupvq3rhrue6f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "992038809066-sticubm2vpq0r0nd9hgjsl9h2op69jfj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kroma.kromasport"
+              }
             }
           ]
         }

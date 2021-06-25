@@ -48,7 +48,7 @@ class _SettingScreenState extends State<SettingScreen> {
             margin: EdgeInsets.only(top: 4.0),
             child: ListTile(
               title: Text(
-                'version 1.0.6',
+                'version 1.0.7',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ),

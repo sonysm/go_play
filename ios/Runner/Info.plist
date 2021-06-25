@@ -18,23 +18,37 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.992038809066-sticubm2vpq0r0nd9hgjsl9h2op69jfj</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>http</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>Access camera</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>KSport want to access to your Microphone.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Ksport want to access to your photos.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>KSport like to access location</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Access camera</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>KSport like to access location</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>KSport want to access to your Microphone.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Ksport want to access to your photos.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -54,19 +68,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.992038809066-sticubm2vpq0r0nd9hgjsl9h2op69jfj</string>
-			</array>
-		</dict>
-	</array>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>https</string>
-		<string>http</string>
-	</array>
 </dict>
 </plist>
