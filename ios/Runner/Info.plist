@@ -11,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Kroma Sport</string>
+	<string>VPlay</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -23,7 +23,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.992038809066-sticubm2vpq0r0nd9hgjsl9h2op69jfj</string>
+				<string>com.googleusercontent.apps.992038809066-ivs6oe5vcvlpj2faru5f6m6k6crdncfn</string>
 			</array>
 		</dict>
 	</array>

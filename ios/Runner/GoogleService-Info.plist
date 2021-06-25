@@ -3,9 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>992038809066-sticubm2vpq0r0nd9hgjsl9h2op69jfj.apps.googleusercontent.com</string>
+	<string>992038809066-ivs6oe5vcvlpj2faru5f6m6k6crdncfn.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.992038809066-sticubm2vpq0r0nd9hgjsl9h2op69jfj</string>
+	<string>com.googleusercontent.apps.992038809066-ivs6oe5vcvlpj2faru5f6m6k6crdncfn</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>992038809066-2dvgtl2lc4ulg4niruh6h84s36c3p3un.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDcgdDh8kxlgcJT0OmysYz0Q67qmUQVRwk</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.kroma.kromasport</string>
+	<string>com.kroma.vplay</string>
 	<key>PROJECT_ID</key>
 	<string>kroma-sport-6b416</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:992038809066:ios:e15859928a146168321693</string>
+	<string>1:992038809066:ios:d5f3f15745c4f8cd321693</string>
 </dict>
 </plist>
