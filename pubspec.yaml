@@ -59,7 +59,7 @@ dependencies:
   dotted_border: ^2.0.0
   flutter_svg: ^0.22.0
   line_icons: ^2.0.1
-  toggle_switch: ^0.1.9
+  toggle_switch: ^1.2.0
   date_picker_timeline: ^1.2.3
   web_socket_channel: ^2.1.0
   shimmer: ^2.0.0

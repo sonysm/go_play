@@ -4,20 +4,24 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
+import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/app_size.dart';
+import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class FavoriteSportDetailScreen extends StatefulWidget {
   static const String tag = '/favoriteSportDetailScreen';
 
-  final Sport sport;
+  final FavoriteSport favSport;
 
   FavoriteSportDetailScreen({
     Key? key,
-    required this.sport,
+    required this.favSport,
   }) : super(key: key);
 
   @override
@@ -30,9 +34,14 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
 
   KSHttpClient ksClient = KSHttpClient();
 
+  late FavoriteSport _favSport;
+  late int skillLevel;
+
   Widget buildNavbar() {
     return SliverAppBar(
-      title: Text(widget.sport.name),
+      elevation: 0.5,
+      forceElevated: true,
+      title: Text(widget.favSport.sport.name),
       // actions: [
       //   CupertinoButton(
       //     child: Icon(FeatherIcons.moreHorizontal,
@@ -57,17 +66,64 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
     );
   }
 
+  Widget buildContent() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 30),
+        child: Column(
+          children: [
+            Text(
+              'Skill Level',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            8.height,
+            ToggleSwitch(
+              minHeight: 50,
+              minWidth: AppSize(context).appWidth(90 / 3),
+              fontSize: 16.0,
+              initialLabelIndex: skillLevel,
+              activeBgColor: [mainColor],
+              activeFgColor: Colors.white,
+              cornerRadius: 8.0,
+              inactiveBgColor: Colors.grey[200],
+              inactiveFgColor: Colors.grey[900],
+              totalSwitches: 3,
+              labels: ['Begineer', 'Intermediate', 'Advanced'],
+              onToggle: (index) {
+                print('switched to: $index');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: Theme.of(context).primaryColor,
       body: CustomScrollView(
         slivers: [
           buildNavbar(),
-          emptyActivity(),
+          // emptyActivity(),
+          buildContent(),
         ],
       ),
     );
+  }
+
+  
+
+  @override
+  void initState() {
+    super.initState();
+    _favSport = widget.favSport;
+    skillLevel = widget.favSport.playLevel!;
   }
 
   void showOptionActionBottomSheet() {
@@ -94,7 +150,8 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                     dismissScreen(context);
                     showKSConfirmDialog(
                       context,
-                      message: 'Are you sure you want to remove this sport from your favorite?',
+                      message:
+                          'Are you sure you want to remove this sport from your favorite?',
                       onYesPressed: () => removeFavSport(),
                     );
                   },
@@ -110,7 +167,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
   void removeFavSport() async {
     showKSLoading(context);
     var data = await ksClient
-        .postApi('/user/remove/favorite/sport/${widget.sport.id}');
+        .postApi('/user/remove/favorite/sport/${widget.favSport.sport.id}');
     if (data != null) {
       dismissScreen(context);
       if (data is! HttpResult) {

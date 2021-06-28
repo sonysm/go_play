@@ -252,12 +252,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: ToggleSwitch(
                 minWidth: AppSize(context).appWidth(50),
                 cornerRadius: 8,
-                activeBgColor: mainColor,
+                activeBgColor: [mainColor],
                 activeFgColor: Colors.white,
                 inactiveBgColor: Colors.grey[400],
                 inactiveFgColor: Colors.white,
                 fontSize: 16.0,
                 labels: ['Male', 'Female'],
+                totalSwitches: 2,
                 initialLabelIndex: 0,
                 icons: [LineIcons.mars, LineIcons.venus],
                 onToggle: (index) {

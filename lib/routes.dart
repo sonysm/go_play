@@ -82,8 +82,8 @@ class RouteGenerator {
       case SportsScreen.tag:
         return KSPageRoute(builder: (_) => SportsScreen());
       case FavoriteSportDetailScreen.tag:
-        return MaterialPageRoute(
-            builder: (_) => FavoriteSportDetailScreen(sport: args as Sport));
+        return KSPageRoute(
+            builder: (_) => FavoriteSportDetailScreen(favSport: args as FavoriteSport));
       case SportDetailScreen.tag:
         return MaterialPageRoute(
             builder: (_) => SportDetailScreen(sport: args as Sport));

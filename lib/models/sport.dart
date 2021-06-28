@@ -106,22 +106,54 @@ class FavoriteSport {
   FavoriteSport({
     required this.id,
     required this.sport,
+    this.playLevel,
+    this.playAttribute,
     required this.createdAt,
+    required this.isDeleted,
   });
 
   int id;
   Sport sport;
+  int? playLevel;
+  PlayAttribute? playAttribute;
   DateTime createdAt;
+  bool isDeleted;
 
   factory FavoriteSport.fromJson(Map<String, dynamic> json) => FavoriteSport(
         id: json["id"],
         sport: Sport.fromJson(json["sport"]),
+        playLevel: json["play_level"],
+        playAttribute: PlayAttribute.fromJson(json["play_attribute"]),
         createdAt: DateTime.parse(json["created_at"]),
+        isDeleted: json["is_deleted"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "sport": sport.toJson(),
+        "play_level": playLevel,
+        "play_attribute": playAttribute!.toJson(),
         "created_at": createdAt.toIso8601String(),
+        "is_deleted": isDeleted,
       };
+}
+
+class PlayAttribute {
+    PlayAttribute({
+        this.type,
+        this.positions,
+    });
+
+    List<String>? type;
+    List<String>? positions;
+
+    factory PlayAttribute.fromJson(Map<String, dynamic> json) => PlayAttribute(
+        type: List<String>.from(json["type"].map((x) => x)),
+        positions: List<String>.from(json["positions"].map((x) => x)),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "type": List<dynamic>.from(type!.map((x) => x)),
+        "positions": List<dynamic>.from(positions!.map((x) => x)),
+    };
 }
