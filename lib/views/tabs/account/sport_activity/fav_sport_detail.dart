@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
@@ -7,6 +8,7 @@ import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
@@ -37,11 +39,14 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
   late FavoriteSport _favSport;
   late int skillLevel;
 
+  // bool isSwitched = false;
+
   Widget buildNavbar() {
     return SliverAppBar(
-      elevation: 0.5,
+      elevation: 0,
       forceElevated: true,
-      title: Text(widget.favSport.sport.name),
+      title: Text(widget.favSport.sport.name, style: TextStyle().copyWith(color: whiteColor),),
+      iconTheme: IconThemeData().copyWith(color: whiteColor),
       // actions: [
       //   CupertinoButton(
       //     child: Icon(FeatherIcons.moreHorizontal,
@@ -51,6 +56,13 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
       //     onPressed: () => showOptionActionBottomSheet(),
       //   ),
       // ],
+      expandedHeight: 270,
+      floating: true,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        // collapseMode: CollapseMode.pin,
+        background: FavSportFlexibleAppbar(),
+      ),
     );
   }
 
@@ -66,12 +78,18 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
     );
   }
 
-  Widget buildContent() {
+  Widget buildSkillLevel() {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.only(top: 30),
         child: Column(
           children: [
+            SvgPicture.asset(
+              svgSoccerBall2,
+              width: 80,
+              height: 80,
+            ),
+            24.height,
             Text(
               'Skill Level',
               style: Theme.of(context)
@@ -89,7 +107,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
               activeFgColor: Colors.white,
               cornerRadius: 8.0,
               inactiveBgColor: Colors.grey[200],
-              inactiveFgColor: Colors.grey[900],
+              inactiveFgColor: Colors.grey[900]!.withOpacity(0.5),
               totalSwitches: 3,
               labels: ['Begineer', 'Intermediate', 'Advanced'],
               onToggle: (index) {
@@ -102,28 +120,132 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Theme.of(context).primaryColor,
-      body: CustomScrollView(
-        slivers: [
-          buildNavbar(),
-          // emptyActivity(),
-          buildContent(),
-        ],
+  Widget buildPreferPosition() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+        child: ListView.builder(
+          shrinkWrap: true,
+          primary: false,
+          itemBuilder: (context, index) {
+            final attributeData = _favSport.sport.attribute!.elementAt(index);
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    attributeData.title!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  Column(
+                    children: List.generate(
+                      attributeData.data!.length,
+                      (index) {
+                        final attr = attributeData.data![index];
+                        bool isSwitched = false;
+                        if (attributeData.slug == 'positions') {
+                          isSwitched = _favSport.playAttribute!.positions!
+                              .any((element) => element == attr.slug);
+                        } else if (attributeData.slug == 'foot') {
+                          isSwitched = _favSport.playAttribute!.type!
+                              .any((element) => element == attr.slug);
+                        }
+                        return Container(
+                          height: 44.0,
+                          child: ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              attr.title!,
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                            trailing: Switch(
+                              value: isSwitched,
+                              onChanged: (value) {
+                                if (isSwitched) {
+                                  if (attributeData.slug == 'positions') {
+                                    _favSport.playAttribute!.positions!
+                                        .removeWhere(
+                                            (element) => element == attr.slug);
+                                  } else if (attributeData.slug == 'foot') {
+                                    _favSport.playAttribute!.type!.removeWhere(
+                                        (element) => element == attr.slug);
+                                  }
+                                } else {
+                                  if (attributeData.slug == 'positions') {
+                                    _favSport.playAttribute!.positions!
+                                        .add(attr.slug!);
+                                  } else if (attributeData.slug == 'foot') {
+                                    _favSport.playAttribute!.type!
+                                        .add(attr.slug!);
+                                  }
+                                }
+
+                                setState(() {
+                                  // print(isSwitched);
+                                });
+                              },
+                              activeTrackColor: Colors.lightGreenAccent,
+                              activeColor: Colors.green,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+          itemCount: _favSport.sport.attribute!.length,
+        ),
       ),
     );
   }
 
-  
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.amber,
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Theme.of(context).primaryColor,
+        body: CustomScrollView(
+          slivers: [
+            buildNavbar(),
+            // emptyActivity(),
+            // buildSkillLevel(),
+            buildPreferPosition(),
+            // SliverToBoxAdapter(
+            //   child: Container(
+            //     color: Colors.amber,
+            //     width: double.infinity,
+            //     height: 400,
+            //   ),
+            // )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Attribute? preferPosition;
+  // Attribute? preferFoot;
 
   @override
   void initState() {
     super.initState();
     _favSport = widget.favSport;
     skillLevel = widget.favSport.playLevel!;
+
+    // preferPosition = widget.favSport.sport.attribute!
+    //     .firstWhere((element) => element.slug == 'positions');
+    // preferFoot = widget.favSport.sport.attribute!
+    //     .firstWhere((element) => element.slug == 'foot');
   }
 
   void showOptionActionBottomSheet() {
@@ -174,5 +296,81 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
         dismissScreen(context, true);
       }
     }
+  }
+}
+
+class FavSportFlexibleAppbar extends StatelessWidget {
+  const FavSportFlexibleAppbar({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    return Container(
+      padding: new EdgeInsets.only(top: statusBarHeight, bottom: 16.0),
+      height: statusBarHeight + AppBar().preferredSize.height,
+      color: Colors.teal[200],
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            SvgPicture.asset(
+              svgSoccerBall2,
+              width: 80,
+              height: 80,
+            ),
+            24.height,
+            Text(
+              'Skill Level',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(fontWeight: FontWeight.w600, color: whiteColor),
+            ),
+            8.height,
+            ToggleSwitch(
+              minHeight: 50,
+              minWidth: AppSize(context).appWidth(90 / 3),
+              fontSize: 16.0,
+              initialLabelIndex: 2,
+              activeBgColor: [mainColor],
+              activeFgColor: Colors.white,
+              cornerRadius: 8.0,
+              inactiveBgColor: Colors.grey[200]!.withOpacity(0.3),
+              inactiveFgColor: Colors.grey[800],
+              totalSwitches: 3,
+              labels: ['Begineer', 'Intermediate', 'Advanced'],
+              onToggle: (index) {
+                print('switched to: $index');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MyAppBar extends StatelessWidget {
+  final double barHeight = 66.0;
+
+  const MyAppBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              child: Text(
+                'Football Lover',
+                style: TextStyle(color: mainColor, fontSize: 20.0),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
