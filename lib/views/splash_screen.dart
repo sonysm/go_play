@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kroma_sport/bloc/splash.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/main.dart';
+import 'package:package_info/package_info.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -69,12 +71,18 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _initPackageInfo();
     // fetchLocation();
   }
 
   navigateToLoginScreen() {
     return Timer(Duration(milliseconds: 1500),
         () => Navigator.pushReplacementNamed(context, LoginScreen.tag));
+  }
+
+  Future<void> _initPackageInfo() async {
+    final PackageInfo info = await PackageInfo.fromPlatform();
+    KS.shared.packageInfo = info;
   }
 
   // fetchLocation() async {

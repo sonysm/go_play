@@ -45,7 +45,10 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
     return SliverAppBar(
       elevation: 0,
       forceElevated: true,
-      title: Text(widget.favSport.sport.name, style: TextStyle().copyWith(color: whiteColor),),
+      title: Text(
+        widget.favSport.sport.name,
+        style: TextStyle().copyWith(color: whiteColor),
+      ),
       iconTheme: IconThemeData().copyWith(color: whiteColor),
       // actions: [
       //   CupertinoButton(
@@ -295,6 +298,52 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
       if (data is! HttpResult) {
         dismissScreen(context, true);
       }
+    }
+  }
+
+  void addPlayAttribute({
+    required String slug,
+    required String addSlug,
+  }) async {
+    var res = await ksClient.postApi(
+      '/user/add/sport/play_attribute/${_favSport.sport.id}',
+      body: {
+        'slug': slug,
+        'add_slug': addSlug,
+      },
+    );
+    if (res != null) {
+      if (res is! HttpResult) {}
+    }
+  }
+
+  void removePlayAttribute({
+    required String slug,
+    required String addSlug,
+  }) async {
+    var res = await ksClient.postApi(
+      '/user/remove/sport/play_attribute/${_favSport.sport.id}',
+      body: {
+        'slug': slug,
+        'add_slug': addSlug,
+      },
+    );
+    if (res != null) {
+      if (res is! HttpResult) {}
+    }
+  }
+
+  void updatePlayLevel({
+    required int playLevel,
+  }) async {
+    var res = await ksClient.postApi(
+      '/user/update/sport/level/${_favSport.sport.id}',
+      body: {
+        'play_level': playLevel,
+      },
+    );
+    if (res != null) {
+      if (res is! HttpResult) {}
     }
   }
 }

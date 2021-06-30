@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:package_info/package_info.dart';
 
 import 'models/user.dart';
 
@@ -19,6 +20,13 @@ class KS {
   }
 
   late User user;
+
+  PackageInfo packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+  );
 
   Location locationService = Location();
   // StreamSubscription<LocationData> _positionStreamSubscription;

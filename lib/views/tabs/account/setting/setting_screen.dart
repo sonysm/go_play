@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kroma_sport/bloc/theme.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/repositories/user_repository.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
@@ -48,7 +49,7 @@ class _SettingScreenState extends State<SettingScreen> {
             margin: EdgeInsets.only(top: 4.0),
             child: ListTile(
               title: Text(
-                'version 1.0.7',
+                'version ${KS.shared.packageInfo.version}',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ),

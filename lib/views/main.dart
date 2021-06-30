@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/ks.dart';
@@ -42,6 +44,8 @@ class _MainViewState extends State<MainView> {
   ];
   int _tapIndex = 0;
   int _screenIndex = 0;
+
+  KSHttpClient ksClient = KSHttpClient();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -181,6 +185,24 @@ class _MainViewState extends State<MainView> {
       // Todo update token
       print('___fcm: $token');
     });
+  }
+
+  void setFCMToken({
+    required String deviceToken,
+    required String deviceId,
+  }) async {
+    var res = await ksClient.postApi(
+      '/user/update/device_token',
+      body: {
+        'device_token': deviceToken,
+        'device_id': deviceId,
+      },
+    );
+    if (res != null) {
+      if (res is! HttpResult) {
+        print('______update token success!');
+      }
+    }
   }
 
   setupLocalNotification() async {
