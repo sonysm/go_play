@@ -85,8 +85,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: TextButton(
                     onPressed: addPhoto,
                     style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all(isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
-                      foregroundColor: MaterialStateProperty.all(isLight(context) ? mainColor : Colors.greenAccent),
+                      overlayColor: MaterialStateProperty.all(isLight(context)
+                          ? Colors.grey[100]
+                          : Colors.blueGrey[300]),
+                      foregroundColor: MaterialStateProperty.all(
+                          isLight(context) ? mainColor : Colors.greenAccent),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -98,7 +101,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           style:
                               Theme.of(context).textTheme.bodyText1?.copyWith(
                                     fontWeight: FontWeight.w600,
-                                    color: isLight(context) ? mainColor : Colors.greenAccent,
+                                    color: isLight(context)
+                                        ? mainColor
+                                        : Colors.greenAccent,
                                     fontSize: 18.0,
                                     fontFamily: 'ProximaNova',
                                   ),
@@ -113,8 +118,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () =>
                         launchScreen(context, CreateActivityScreen.tag),
                     style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all(isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
-                      foregroundColor: MaterialStateProperty.all(isLight(context) ? mainColor : Colors.greenAccent),
+                      overlayColor: MaterialStateProperty.all(isLight(context)
+                          ? Colors.grey[100]
+                          : Colors.blueGrey[300]),
+                      foregroundColor: MaterialStateProperty.all(
+                          isLight(context) ? mainColor : Colors.greenAccent),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -127,7 +135,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               Theme.of(context).textTheme.bodyText1?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 18.0,
-                                    color: isLight(context) ? mainColor : Colors.greenAccent,
+                                    color: isLight(context)
+                                        ? mainColor
+                                        : Colors.greenAccent,
                                     fontFamily: 'ProximaNova',
                                   ),
                           strutStyle: StrutStyle(fontSize: 18),
@@ -197,13 +207,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  ScrollController _homeScrollController = ScrollController();
+
+  void scrollToBottom() {
+    Future.delayed(Duration(milliseconds: 300)).then((value) {
+      _homeScrollController.animateTo(
+        _homeScrollController.position.minScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeData>(
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('Home'),
+            title: InkWell(
+              onTap: scrollToBottom,
+              child: Text('Home'),
+            ),
             elevation: 0.0,
             actions: [
               CupertinoButton(
@@ -216,6 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           body: EasyRefresh.custom(
+            scrollController: _homeScrollController,
             header: MaterialHeader(
               valueColor: AlwaysStoppedAnimation<Color>(mainColor),
             ),
@@ -244,6 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             onLoad: () async {
               await Future.delayed(Duration(seconds: 2));
+              BlocProvider.of<HomeCubit>(context).onLoadMore();
             },
           ),
         );

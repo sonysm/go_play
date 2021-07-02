@@ -173,29 +173,40 @@ class _MeetupCellState extends State<MeetupCell> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: 8.0,
                 horizontal: 16.0,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      meetup.sport!.name + ' Meetup',
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Metropolis',
+                          color: isLight(context) ? mainColor : Colors.white70),
+                    ),
+                  ),
+                  Divider(),
+                  widget.post.description != null
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 24.0),
+                          child: SelectableText(
+                            widget.post.description!,
+                            style: Theme.of(context).textTheme.bodyText1,
+                            onTap: () {},
+                          ),
+                        )
+                      : SizedBox(),
+                  // Divider(),
                   Text(
-                    meetup.sport!.name + ' Meetup',
+                    'Members Joined',
                     style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Metropolis',
                         color: isLight(context)
-                            ? Colors.blueGrey[600]
+                            ? Colors.grey[600]
                             : Colors.white70),
                   ),
-                  8.height,
-                  widget.post.description != null
-                      ? SelectableText(
-                          widget.post.description!,
-                          style: Theme.of(context).textTheme.bodyText1,
-                          onTap: () {},
-                        )
-                      : SizedBox(height: 8.0),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Wrap(
@@ -266,6 +277,17 @@ class _MeetupCellState extends State<MeetupCell> {
                         )
                       : SizedBox(),
                   Divider(),
+                  // 8.height,
+                  // Text(
+                  //   meetup.sport!.name + ' Meetup',
+                  //   style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                  //       fontWeight: FontWeight.w600,
+                  //       fontFamily: 'Metropolis',
+                  //       color: isLight(context)
+                  //           ? Colors.blueGrey[600]
+                  //           : Colors.white70),
+                  // ),
+                  // 16.height,
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -300,6 +322,7 @@ class _MeetupCellState extends State<MeetupCell> {
                   ),
                   8.height,
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Icon(
                         Feather.map_pin,
@@ -309,10 +332,12 @@ class _MeetupCellState extends State<MeetupCell> {
                             : Colors.grey[300]!,
                       ),
                       8.width,
-                      Text(
-                        meetup.activityLocation!.name,
-                        style: Theme.of(context).textTheme.bodyText2,
-                        strutStyle: StrutStyle(fontSize: 14),
+                      Flexible(
+                        child: Text(
+                          meetup.activityLocation!.name,
+                          style: Theme.of(context).textTheme.bodyText2,
+                          strutStyle: StrutStyle(fontSize: 14),
+                        ),
                       ),
                     ],
                   ),
@@ -373,6 +398,7 @@ class _MeetupCellState extends State<MeetupCell> {
                             ),
                     ],
                   ),
+                  8.height,
                 ],
               ),
             ),
@@ -407,7 +433,7 @@ class _MeetupCellState extends State<MeetupCell> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 bottomSheetBar(context),
-                isMe(post.owner.id)
+                isMe(post.owner.id) && meetup.status == PostStatus.active
                     ? KSTextButtonBottomSheet(
                         title: 'Cancel Meetup',
                         icon: Feather.x,
@@ -453,6 +479,12 @@ class _MeetupCellState extends State<MeetupCell> {
   }
 
   void cancelMeetup() async {
+    if (!isMeetupAvailable()) {
+      // dismissScreen(context);
+      _showToast(context);
+      return;
+    }
+
     if (meetup.book != null) {
       showKSMessageDialog(
         context,
@@ -469,7 +501,21 @@ class _MeetupCellState extends State<MeetupCell> {
     if (result != null) {
       await Future.delayed(Duration(milliseconds: 300));
       dismissScreen(context);
-      
     }
+  }
+
+  void _showToast(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        elevation: 0,
+        backgroundColor: Color(0xFF696969),
+        behavior: SnackBarBehavior.floating,
+        content: const Text('Meetup Expired'),
+        margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        // action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
+      ),
+    );
   }
 }

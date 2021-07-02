@@ -738,7 +738,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                         )
                       : SizedBox()
                 ],
-                isMe(meetup.owner.id)
+                isMe(meetup.owner.id) && meetup.status == PostStatus.active
                     ? KSTextButtonBottomSheet(
                         title: 'Cancel Meetup',
                         icon: Feather.x,
@@ -785,6 +785,11 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   }
 
   void cancelMeetup() async {
+    if (!isMeetupAvailable()) {
+      _showToast(context);
+      return;
+    }
+
     if (meetup.book != null) {
       showKSMessageDialog(
         context,
@@ -826,6 +831,21 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             .then((_) => setState(() {}));
       }
     }
+  }
+
+  void _showToast(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        elevation: 0,
+        backgroundColor: Color(0xFF696969),
+        behavior: SnackBarBehavior.floating,
+        content: const Text('Meetup Expired'),
+        margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        // action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
+      ),
+    );
   }
 
   ScrollController _scrollController = ScrollController();

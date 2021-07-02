@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
+import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
@@ -27,6 +29,8 @@ class _SportsScreenState extends State<SportsScreen> {
 
   Widget buildNavbar() {
     return SliverAppBar(
+      elevation: 0.5,
+      forceElevated: true,
       title: Text('What sport do you play?'),
     );
   }
@@ -55,10 +59,14 @@ class _SportsScreenState extends State<SportsScreen> {
                     margin: const EdgeInsets.only(
                         left: 16.0, top: 10.0, right: 16.0),
                     decoration: BoxDecoration(
-                      color: !sport.fav!
-                          ? Theme.of(context).primaryColor
-                          : Colors.green[100],
+                      color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(4.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: blackColor.withOpacity(0.1),
+                          blurRadius: 8,
+                        )
+                      ]
                     ),
                     child: ListTile(
                       title: Text(
@@ -76,7 +84,10 @@ class _SportsScreenState extends State<SportsScreen> {
                                 setState(() {});
                               },
                             )
-                          : SizedBox(),
+                          : Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Icon(FeatherIcons.check, color: mainColor,),
+                          ),
                       onTap: () async {
                         // var value = await launchScreen(
                         //   context,
@@ -116,6 +127,7 @@ class _SportsScreenState extends State<SportsScreen> {
         return true;
       },
       child: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
         body: CustomScrollView(
           slivers: [
             buildNavbar(),

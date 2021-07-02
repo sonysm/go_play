@@ -20,10 +20,12 @@ class FavoriteSportDetailScreen extends StatefulWidget {
   static const String tag = '/favoriteSportDetailScreen';
 
   final FavoriteSport favSport;
+  final bool? isMe;
 
   FavoriteSportDetailScreen({
     Key? key,
     required this.favSport,
+    this.isMe,
   }) : super(key: key);
 
   @override
@@ -39,7 +41,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
   late FavoriteSport _favSport;
   late int skillLevel;
 
-  // bool isSwitched = false;
+  late bool _isMe;
 
   Widget buildNavbar() {
     return SliverAppBar(
@@ -62,9 +64,17 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
       expandedHeight: 270,
       floating: true,
       pinned: true,
+      backgroundColor: Color(0xFF1D976C),
       flexibleSpace: FlexibleSpaceBar(
         // collapseMode: CollapseMode.pin,
-        background: FavSportFlexibleAppbar(),
+        background: FavSportFlexibleAppbar(
+          isMe: widget.isMe ?? true,
+          playLevel: _favSport.playLevel != null ? _favSport.playLevel! - 1 : 0,
+          onToggleChange: (level) {
+            updatePlayLevel(playLevel: level + 1);
+            widget.favSport.playLevel = level + 1;
+          },
+        ),
       ),
     );
   }
@@ -81,7 +91,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
     );
   }
 
-  Widget buildSkillLevel() {
+  /*Widget buildSkillLevel() {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.only(top: 30),
@@ -121,7 +131,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget buildPreferPosition() {
     return SliverToBoxAdapter(
@@ -132,6 +142,11 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
           primary: false,
           itemBuilder: (context, index) {
             final attributeData = _favSport.sport.attribute!.elementAt(index);
+            List? selectedList;
+            if (_favSport.playAttribute![attributeData.slug] != null) {
+              selectedList = _favSport.playAttribute![attributeData.slug];
+            }
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Column(
@@ -150,13 +165,9 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                       (index) {
                         final attr = attributeData.data![index];
                         bool isSwitched = false;
-                        if (attributeData.slug == 'positions') {
-                          isSwitched = _favSport.playAttribute!.positions!
-                              .any((element) => element == attr.slug);
-                        } else if (attributeData.slug == 'foot') {
-                          isSwitched = _favSport.playAttribute!.type!
-                              .any((element) => element == attr.slug);
-                        }
+
+                        isSwitched = selectedList!.indexOf(attr.slug) > -1;
+
                         return Container(
                           height: 44.0,
                           child: ListTile(
@@ -170,29 +181,20 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                               value: isSwitched,
                               onChanged: (value) {
                                 if (isSwitched) {
-                                  if (attributeData.slug == 'positions') {
-                                    _favSport.playAttribute!.positions!
-                                        .removeWhere(
-                                            (element) => element == attr.slug);
-                                  } else if (attributeData.slug == 'foot') {
-                                    _favSport.playAttribute!.type!.removeWhere(
-                                        (element) => element == attr.slug);
-                                  }
+                                  selectedList!.remove(attr.slug);
+                                  removePlayAttribute(
+                                      slug: attributeData.slug!,
+                                      addSlug: attr.slug!);
                                 } else {
-                                  if (attributeData.slug == 'positions') {
-                                    _favSport.playAttribute!.positions!
-                                        .add(attr.slug!);
-                                  } else if (attributeData.slug == 'foot') {
-                                    _favSport.playAttribute!.type!
-                                        .add(attr.slug!);
-                                  }
+                                  selectedList!.add(attr.slug);
+                                  addPlayAttribute(
+                                      slug: attributeData.slug!,
+                                      addSlug: attr.slug!);
                                 }
 
-                                setState(() {
-                                  // print(isSwitched);
-                                });
+                                setState(() {});
                               },
-                              activeTrackColor: Colors.lightGreenAccent,
+                              activeTrackColor: Colors.green[200],
                               activeColor: Colors.green,
                             ),
                           ),
@@ -210,45 +212,141 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.amber,
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Theme.of(context).primaryColor,
-        body: CustomScrollView(
-          slivers: [
-            buildNavbar(),
-            // emptyActivity(),
-            // buildSkillLevel(),
-            buildPreferPosition(),
-            // SliverToBoxAdapter(
-            //   child: Container(
-            //     color: Colors.amber,
-            //     width: double.infinity,
-            //     height: 400,
-            //   ),
-            // )
-          ],
+  Widget buildFriendPreferPosition() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+        child: ListView.builder(
+          shrinkWrap: true,
+          primary: false,
+          itemBuilder: (context, index) {
+            final attributeData = _favSport.sport.attribute!.elementAt(index);
+            List? fav;
+            if (_favSport.playAttribute != null &&
+                _favSport.playAttribute![attributeData.slug] != null) {
+              fav = _favSport.playAttribute![attributeData.slug];
+            }
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    attributeData.title!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  fav != null
+                      ? Column(
+                          children: List.from(
+                            attributeData.data!.map(
+                              (e) {
+                                if (fav!.indexOf(e.slug) > -1) {
+                                  return Container(
+                                    height: 44.0,
+                                    child: ListTile(
+                                      dense: true,
+                                      contentPadding: EdgeInsets.zero,
+                                      title: Text(
+                                        e.title!,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return Container();
+                              },
+                            ),
+                          ),
+                        )
+                      : Container(
+                          height: 44.0,
+                          child: ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              'Not set',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                          ),
+                        ),
+                ],
+              ),
+            );
+          },
+          itemCount: _favSport.sport.attribute!.length,
         ),
       ),
     );
   }
 
-  // Attribute? preferPosition;
-  // Attribute? preferFoot;
+  Widget removeSportButton() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+        child: SizedBox(
+          height: 48.0,
+          child: ElevatedButton(
+            onPressed: () {
+              showKSConfirmDialog(
+                context,
+                message:
+                    'Are you sure you want to remove ${_favSport.sport.name} from your favorite?',
+                onYesPressed: () => removeFavSport(),
+              );
+            },
+            style: ButtonStyle(
+              elevation: MaterialStateProperty.all(0),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: BorderSide(color: Colors.blueGrey),
+                ),
+              ),
+              backgroundColor: MaterialStateProperty.all(Colors.transparent),
+              foregroundColor: MaterialStateProperty.all(Colors.blueGrey),
+            ),
+            child: Text(
+              'Remove ${_favSport.sport.name} from my profile',
+              style: TextStyle(
+                fontSize: 14.0,
+                fontFamily: 'Metropolis',
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: _scaffoldKey,
+      backgroundColor: Theme.of(context).primaryColor,
+      body: CustomScrollView(
+        slivers: [
+          buildNavbar(),
+          // emptyActivity(),
+          // buildSkillLevel(),
+          _isMe ? buildPreferPosition() : buildFriendPreferPosition(),
+          _isMe ? removeSportButton() : SliverToBoxAdapter(),
+        ],
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
+    _isMe = widget.isMe ?? true;
     _favSport = widget.favSport;
     skillLevel = widget.favSport.playLevel!;
-
-    // preferPosition = widget.favSport.sport.attribute!
-    //     .firstWhere((element) => element.slug == 'positions');
-    // preferFoot = widget.favSport.sport.attribute!
-    //     .firstWhere((element) => element.slug == 'foot');
   }
 
   void showOptionActionBottomSheet() {
@@ -294,6 +392,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
     var data = await ksClient
         .postApi('/user/remove/favorite/sport/${widget.favSport.sport.id}');
     if (data != null) {
+      await Future.delayed(Duration(milliseconds: 300));
       dismissScreen(context);
       if (data is! HttpResult) {
         dismissScreen(context, true);
@@ -313,7 +412,9 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
       },
     );
     if (res != null) {
-      if (res is! HttpResult) {}
+      if (res is! HttpResult) {
+        print('_____addPlayAttribute success!');
+      }
     }
   }
 
@@ -325,11 +426,13 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
       '/user/remove/sport/play_attribute/${_favSport.sport.id}',
       body: {
         'slug': slug,
-        'add_slug': addSlug,
+        'remove_slug': addSlug,
       },
     );
     if (res != null) {
-      if (res is! HttpResult) {}
+      if (res is! HttpResult) {
+        print('_____removePlayAttribute success!');
+      }
     }
   }
 
@@ -343,21 +446,56 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
       },
     );
     if (res != null) {
-      if (res is! HttpResult) {}
+      if (res is! HttpResult) {
+        print('____update play level success!');
+      }
     }
   }
 }
 
 class FavSportFlexibleAppbar extends StatelessWidget {
-  const FavSportFlexibleAppbar({Key? key}) : super(key: key);
+  const FavSportFlexibleAppbar({
+    Key? key,
+    this.isMe = true,
+    required this.playLevel,
+    required this.onToggleChange,
+  }) : super(key: key);
+
+  final bool isMe;
+  final int playLevel;
+  final Function(int) onToggleChange;
 
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
+
+    String mapPlayLevel() {
+      switch (playLevel) {
+        case 0:
+          return 'Beginner';
+        case 1:
+          return 'Intermediate';
+        case 2:
+          return 'Beginner';
+        default:
+          return 'Advanced';
+      }
+    }
+
     return Container(
       padding: new EdgeInsets.only(top: statusBarHeight, bottom: 16.0),
       height: statusBarHeight + AppBar().preferredSize.height,
-      color: Colors.teal[200],
+      // color: Colors.green[200],
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFF1D976C),
+            Color(0xFF93F9B9),
+          ],
+          // begin: Alignment.topCenter,
+          // end: Alignment.bottomCenter,
+        ),
+      ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -376,22 +514,31 @@ class FavSportFlexibleAppbar extends StatelessWidget {
                   ?.copyWith(fontWeight: FontWeight.w600, color: whiteColor),
             ),
             8.height,
-            ToggleSwitch(
-              minHeight: 50,
-              minWidth: AppSize(context).appWidth(90 / 3),
-              fontSize: 16.0,
-              initialLabelIndex: 2,
-              activeBgColor: [mainColor],
-              activeFgColor: Colors.white,
-              cornerRadius: 8.0,
-              inactiveBgColor: Colors.grey[200]!.withOpacity(0.3),
-              inactiveFgColor: Colors.grey[800],
-              totalSwitches: 3,
-              labels: ['Begineer', 'Intermediate', 'Advanced'],
-              onToggle: (index) {
-                print('switched to: $index');
-              },
-            ),
+            isMe
+                ? ToggleSwitch(
+                    minHeight: 50,
+                    minWidth: AppSize(context).appWidth(90 / 3),
+                    fontSize: 16.0,
+                    initialLabelIndex: playLevel,
+                    activeBgColor: [Color(0xFF953553)],
+                    activeFgColor: Colors.white,
+                    cornerRadius: 8.0,
+                    inactiveBgColor: Colors.grey[200]!.withOpacity(0.3),
+                    inactiveFgColor: Colors.grey[800],
+                    totalSwitches: 3,
+                    labels: ['Beginner', 'Intermediate', 'Advanced'],
+                    radiusStyle: true,
+                    onToggle: (index) {
+                      onToggleChange(index);
+                    },
+                  )
+                : Text(
+                    mapPlayLevel(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(color: whiteColor),
+                  ),
           ],
         ),
       ),

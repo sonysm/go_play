@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:device_info/device_info.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -181,9 +185,12 @@ class _MainViewState extends State<MainView> {
     });
 
     FirebaseMessaging.instance.requestPermission();
-    FirebaseMessaging.instance.getToken().then((token) {
+    FirebaseMessaging.instance.getToken().then((token) async {
+      await getDeviceDetails();
+      // print('___device id: $identifier'); //af64cdb1c8f2f5d3
       // Todo update token
-      print('___fcm: $token');
+      // print('___fcm: $token');
+      setFCMToken(deviceToken: token!, deviceId: identifier);
     });
   }
 
@@ -265,6 +272,28 @@ class _MainViewState extends State<MainView> {
 
     await flutterLocalNotificationsPlugin.show(
         notification.hashCode, notification.title, notification.body, platform);
+  }
+
+  String identifier = '';
+
+  Future<void> getDeviceDetails() async {
+    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        setState(() {
+          identifier = build.androidId;
+        });
+        //UUID for Android
+      } else if (Platform.isIOS) {
+        var data = await deviceInfoPlugin.iosInfo;
+        setState(() {
+          identifier = data.identifierForVendor;
+        }); //UUID for iOS
+      }
+    } on PlatformException {
+      print('Failed to get platform version');
+    }
   }
 }
 

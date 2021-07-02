@@ -251,7 +251,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                               var value = await launchScreen(
                                 context,
                                 FavoriteSportDetailScreen.tag,
-                                arguments: favSport.sport,
+                                arguments: {'favSport': favSport, 'isMe': false},
                               );
                               if (value != null && value) {
                                 // getFavoriteSport();
@@ -425,7 +425,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
 
     animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
 
-    Future.delayed(Duration(milliseconds: 300)).then((_) {
+    Future.delayed(Duration.zero).then((_) {
       getUserDetail();
       getUserPostAndMeetupById();
     });

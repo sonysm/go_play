@@ -82,8 +82,13 @@ class RouteGenerator {
       case SportsScreen.tag:
         return KSPageRoute(builder: (_) => SportsScreen());
       case FavoriteSportDetailScreen.tag:
+        args as Map<String, dynamic>;
         return KSPageRoute(
-            builder: (_) => FavoriteSportDetailScreen(favSport: args as FavoriteSport));
+          builder: (_) => FavoriteSportDetailScreen(
+            favSport: args['favSport'],
+            isMe: args['isMe'],
+          ),
+        );
       case SportDetailScreen.tag:
         return MaterialPageRoute(
             builder: (_) => SportDetailScreen(sport: args as Sport));
@@ -189,15 +194,15 @@ class KSPageRoute<T> extends MaterialPageRoute<T> {
       : super(builder: builder, settings: settings);
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 500);
+  Duration get transitionDuration => const Duration(milliseconds: 350);
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    animation = CurvedAnimation(
-        parent: animation,
-        curve: Curves.fastLinearToSlowEaseIn,
-        reverseCurve: Curves.easeOut);
+    // animation = CurvedAnimation(
+    //     parent: animation,
+    //     curve: Curves.fastLinearToSlowEaseIn,
+    //     reverseCurve: Curves.easeOut);
 
     return SlideTransition(
       position: animation.drive(

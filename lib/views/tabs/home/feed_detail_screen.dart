@@ -105,6 +105,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                   Avatar(
                     radius: 18.0,
                     user: post.owner,
+                    onTap: (u) {},
                   ),
                   8.width,
                   Column(

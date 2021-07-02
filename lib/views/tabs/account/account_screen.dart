@@ -173,7 +173,7 @@ class _AccountScreenState extends State<AccountScreen>
                   var value = await launchScreen(
                     context,
                     FavoriteSportDetailScreen.tag,
-                    arguments: favSport,
+                    arguments: {'favSport': favSport},
                   );
                   if (value != null && value) {
                     getFavoriteSport();

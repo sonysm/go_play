@@ -39,7 +39,7 @@ class User {
   String? appVersion;
   int? buildNumber;
   String? os;
-  String? deviceToken;
+  List<dynamic>? deviceToken;
   DateTime? createdAt;
   DateTime? updatedAt;
   int followerCount;

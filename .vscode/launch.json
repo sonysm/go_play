@@ -16,7 +16,8 @@
         {
             "name": "kroma_sport",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            // "flutterMode": "profile"
         }
     ]
 }

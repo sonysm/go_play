@@ -16,6 +16,19 @@ class SportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String mapPlayLevel() {
+      switch (favSport.playLevel) {
+        case 1:
+          return 'Beginner';
+        case 2:
+          return 'Intermediate';
+        case 3:
+          return 'Advanced';
+        default:
+          return 'Beginner';
+      }
+    }
+
     return InkWell(
       onTap: onCardTap,
       child: Container(
@@ -46,7 +59,7 @@ class SportCard extends StatelessWidget {
                 ),
                 32.height,
                 Text(
-                  'Beginner',
+                  mapPlayLevel(),
                   style: TextStyle(
                     color: whiteColor,
                     fontSize: 24.0,
