@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_countdown_timer/index.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/user.dart' as KSUser;
 import 'package:kroma_sport/repositories/user_repository.dart';
@@ -563,6 +565,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
         userRepository.persistToken(data['refresh_token']);
         userRepository.persistHeaderToken(data['token']);
         KS.shared.user = KSUser.User.fromJson(data['user']);
+        BlocProvider.of<UserCubit>(context).emitUser(KS.shared.user);
         Navigator.pushNamedAndRemoveUntil(
             context, MainView.tag, (route) => false);
       } else {

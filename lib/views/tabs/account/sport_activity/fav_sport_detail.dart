@@ -143,8 +143,20 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
           itemBuilder: (context, index) {
             final attributeData = _favSport.sport.attribute!.elementAt(index);
             List? selectedList;
-            if (_favSport.playAttribute![attributeData.slug] != null) {
-              selectedList = _favSport.playAttribute![attributeData.slug];
+            if (_favSport.playAttribute != null) {
+              if (_favSport.playAttribute![attributeData.slug] != null) {
+                selectedList = _favSport.playAttribute![attributeData.slug];
+              } else {
+                // selectedList = [];
+                _favSport.playAttribute![attributeData.slug] = [];
+                selectedList = _favSport.playAttribute![attributeData.slug];
+              }
+            } else {
+              _favSport.playAttribute = Map();
+              _favSport.sport.attribute!.forEach((element) {
+                _favSport.playAttribute!.addAll({element.slug: []});
+              });
+              selectedList = [];
             }
 
             return Padding(
@@ -166,7 +178,9 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                         final attr = attributeData.data![index];
                         bool isSwitched = false;
 
-                        isSwitched = selectedList!.indexOf(attr.slug) > -1;
+                        if (_favSport.playAttribute != null) {
+                          isSwitched = selectedList!.indexOf(attr.slug) > -1;
+                        }
 
                         return Container(
                           height: 44.0,
@@ -181,12 +195,23 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                               value: isSwitched,
                               onChanged: (value) {
                                 if (isSwitched) {
-                                  selectedList!.remove(attr.slug);
+                                  if (selectedList != null) {
+                                    selectedList.remove(attr.slug);
+                                  }
+
                                   removePlayAttribute(
                                       slug: attributeData.slug!,
                                       addSlug: attr.slug!);
                                 } else {
+                                  // if (_favSport.playAttribute != null && _favSport.playAttribute![attributeData.slug] != null) {
+                                  //   selectedList!.add(attr.slug);
+                                  // } else {
+
+                                  //   _favSport.playAttribute = {attributeData.slug: [attr.slug]};
+                                  // }
+
                                   selectedList!.add(attr.slug);
+
                                   addPlayAttribute(
                                       slug: attributeData.slug!,
                                       addSlug: attr.slug!);
@@ -390,7 +415,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
   void removeFavSport() async {
     showKSLoading(context);
     var data = await ksClient
-        .postApi('/user/remove/favorite/sport/${widget.favSport.sport.id}');
+        .postApi('/user/remove/favorite/sport/${_favSport.sport.id}');
     if (data != null) {
       await Future.delayed(Duration(milliseconds: 300));
       dismissScreen(context);
