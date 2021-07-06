@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:http/http.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -101,6 +103,12 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
     );
   }
 
+  // final RegExp urlRegExp = RegExp(
+  //     r'^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})');
+
+  final RegExp urlRegExp = RegExp(
+      r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+
   Widget buildPostCaption() {
     return SliverToBoxAdapter(
       child: Container(
@@ -119,6 +127,27 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
             ),
           ),
           onChanged: (text) {
+            final urlMatches = urlRegExp.allMatches(text);
+
+            List<String> urls = urlMatches
+                .map((urlMatch) => text.substring(urlMatch.start, urlMatch.end))
+                .toList();
+
+            urls.forEach((x) => print(x));
+            if (urls.isNotEmpty) {
+              _url = urls.elementAt(0);
+              // final _lnkify = Linkify(text: urls.elementAt(0));
+              // _url = _lnkify.text;
+            }
+
+            
+
+            // Iterable<RegExpMatch> matches = urlRegExp.allMatches(text);
+
+            // matches.forEach((match) {
+            //   print(text.substring(match.start, match.end));
+            // });
+
             setState(() {});
           },
         ),
@@ -346,6 +375,7 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                     buildNavbar(),
                     buildPostHeader(),
                     buildPostCaption(),
+                    buildUrlWidget(),
                     //buildPhoto(),
                     buildPhotoList(),
                   ],
@@ -358,6 +388,37 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
         ),
       ),
     );
+  }
+
+  String? _url;
+
+  Widget buildUrlWidget() {
+    return images.isEmpty
+        ? _url != null
+            ? SliverToBoxAdapter(
+                child: AnyLinkPreview(
+                  link: _url!,
+                  borderRadius: 0,
+                  errorWidget: Container(
+                    color: Colors.grey[300],
+                    child: Text('Oops!'),
+                  ),
+                  placeholderWidget: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 24.0,
+                        height: 24.0,
+                        child: CircularProgressIndicator(),
+                      ),
+                      8.width,
+                      Text('Fetching data...'),
+                    ],
+                  ),
+                ),
+              )
+            : SliverToBoxAdapter()
+        : SliverToBoxAdapter();
   }
 
   @override
