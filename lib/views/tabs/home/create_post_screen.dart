@@ -23,6 +23,7 @@ import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
+import 'package:linkify/linkify.dart';
 
 class CreatPostScreen extends StatefulWidget {
   static const String tag = '/createPostScreen';
@@ -107,7 +108,20 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
   //     r'^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})');
 
   final RegExp urlRegExp = RegExp(
-      r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+    r"((https?:www\.)|(https?:\/\/)|(www\.))?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?",
+    caseSensitive: false,
+  );
+
+  // final urlRegExp = RegExp(
+  //   r'^(.*?)((https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))',
+  //   caseSensitive: false,
+  //   dotAll: true,
+  // );
+
+  final _protocolIdentifierRegex = RegExp(
+    r'^(https?:\/\/)',
+    caseSensitive: false,
+  );
 
   Widget buildPostCaption() {
     return SliverToBoxAdapter(
@@ -136,19 +150,19 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
             urls.forEach((x) => print(x));
             if (urls.isNotEmpty) {
               _url = urls.elementAt(0);
-              // final _lnkify = Linkify(text: urls.elementAt(0));
-              // _url = _lnkify.text;
+
+              if (!_url!.startsWith(_protocolIdentifierRegex)) {
+                _url =
+                    (LinkifyOptions().defaultToHttps ? "https://" : "http://") +
+                        _url!;
+              }
             }
 
-            
-
-            // Iterable<RegExpMatch> matches = urlRegExp.allMatches(text);
-
-            // matches.forEach((match) {
-            //   print(text.substring(match.start, match.end));
-            // });
-
-            setState(() {});
+            if (_url != null &&
+                _url!.startsWith(_protocolIdentifierRegex) &&
+                text.endsWith(' ')) {
+              setState(() {});
+            }
           },
         ),
       ),
@@ -399,6 +413,14 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                 child: AnyLinkPreview(
                   link: _url!,
                   borderRadius: 0,
+                  cache: Duration(days: 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: blackColor.withOpacity(0.3),
+                    ),
+                  ],
+                  backgroundColor: Colors.grey[50],
+                  errorTitle: '',
                   errorWidget: Container(
                     color: Colors.grey[300],
                     child: Text('Oops!'),
@@ -409,10 +431,16 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                       SizedBox(
                         width: 24.0,
                         height: 24.0,
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.0,
+                          valueColor: AlwaysStoppedAnimation(Colors.grey[400]),
+                        ),
                       ),
                       8.width,
-                      Text('Fetching data...'),
+                      Text(
+                        'Fetching data...',
+                        style: TextStyle(color: Colors.grey[400]),
+                      ),
                     ],
                   ),
                 ),
@@ -443,6 +471,7 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
 
     if (assetList != null) {
       images = assetList;
+      _url = null;
       setState(() {});
     }
 

@@ -1,3 +1,4 @@
+import 'package:any_link_preview/any_link_preview.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,6 +52,47 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
           ? Text(total > 1 ? '$total comments' : '$total comment')
           : SizedBox();
     }
+
+    Widget buildUrlWidget() {
+    return widget.post.image == null
+        ? _url != null
+            ? AnyLinkPreview(
+                link: _url!,
+                borderRadius: 0,
+                cache: Duration(days: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: blackColor.withOpacity(0.3),
+                  ),
+                ],
+                backgroundColor: Colors.grey[50],
+                errorTitle: '',
+                errorWidget: Container(
+                  color: Colors.grey[300],
+                  child: Text('Oops!'),
+                ),
+                placeholderWidget: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 24.0,
+                      height: 24.0,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.0,
+                        valueColor: AlwaysStoppedAnimation(Colors.grey[400]),
+                      ),
+                    ),
+                    8.width,
+                    Text(
+                      'Fetching data...',
+                      style: TextStyle(color: Colors.grey[400]),
+                    ),
+                  ],
+                ),
+              )
+            : SizedBox()
+        : SizedBox();
+  }
 
     return InkWell(
       onTap: () => launchFeedDetailScreen(widget.post),
@@ -165,6 +207,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                     ),
                   )
                 : SizedBox(),
+            buildUrlWidget(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Column(
@@ -340,5 +383,46 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
     if (result != null) {
       if (result is! HttpResult) {}
     }
+  }
+
+  final RegExp urlRegExp = RegExp(
+    r"((https?:www\.)|(https?:\/\/)|(www\.))?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?",
+    caseSensitive: false,
+  );
+
+  final _protocolIdentifierRegex = RegExp(
+    r'^(https?:\/\/)',
+    caseSensitive: false,
+  );
+
+  String description = '';
+  String? _url;
+
+  void checkLinkPreview() {
+    if (widget.post.description == null) {
+      return;
+    }
+    final urlMatches = urlRegExp.allMatches(widget.post.description!);
+
+    List<String> urls = urlMatches
+        .map((urlMatch) =>
+            widget.post.description!.substring(urlMatch.start, urlMatch.end))
+        .toList();
+
+    urls.forEach((x) => print(x));
+    if (urls.isNotEmpty) {
+      _url = urls.elementAt(0);
+
+      if (!_url!.startsWith(_protocolIdentifierRegex)) {
+        _url =
+            (LinkifyOptions().defaultToHttps ? "https://" : "http://") + _url!;
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLinkPreview();
   }
 }
