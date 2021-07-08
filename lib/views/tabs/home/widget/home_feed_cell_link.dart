@@ -21,26 +21,23 @@ import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_web_browser/flutter_web_browser.dart';
 
-class HomeFeedCell extends StatefulWidget {
+class HomeFeedCellLink extends StatefulWidget {
   final Post post;
   final bool isAvatarSelectable;
-
-  const HomeFeedCell({
+  final String? urlInfo;
+  const HomeFeedCellLink({
     Key? key,
     required this.post,
+    this.urlInfo,
     this.isAvatarSelectable = true,
   }) : super(key: key);
 
   @override
-  _HomeFeedCellState createState() => _HomeFeedCellState();
+  _HomeFeedCellLinkState createState() => _HomeFeedCellLinkState();
 }
 
-class _HomeFeedCellState extends State<HomeFeedCell> {
-  String? _url;
-
+class _HomeFeedCellLinkState extends State<HomeFeedCellLink> {
   @override
   Widget build(BuildContext context) {
     Widget buildTotalReaction(int total) {
@@ -52,47 +49,6 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
     Widget buildTotalComment(int total) {
       return total > 0
           ? Text(total > 1 ? '$total comments' : '$total comment')
-          : SizedBox();
-    }
-
-    Widget buildUrlWidget() {
-      return widget.post.image == null
-          ? _url != null
-              ? AnyLinkPreview(
-                  link: _url!,
-                  borderRadius: 0,
-                  cache: Duration(seconds: 0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: blackColor.withOpacity(0.3),
-                    ),
-                  ],
-                  backgroundColor: Colors.grey[50],
-                  errorTitle: '',
-                  errorWidget: Container(
-                    color: Colors.grey[300],
-                    child: Text('Oops!'),
-                  ),
-                  placeholderWidget: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 24.0,
-                        height: 24.0,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.0,
-                          valueColor: AlwaysStoppedAnimation(Colors.grey[400]),
-                        ),
-                      ),
-                      8.width,
-                      Text(
-                        'Fetching data...',
-                        style: TextStyle(color: Colors.grey[400]),
-                      ),
-                    ],
-                  ),
-                )
-              : SizedBox()
           : SizedBox();
     }
 
@@ -129,11 +85,14 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'Metropolis')),
                       Text(
-                        widget.post.createdAt.toString().timeAgoString,
+                        widget.post.createdAt.toString().timeAgoString +
+                            widget.post.id.toString() +
+                            '\n${widget.urlInfo}',
                         style: Theme.of(context).textTheme.caption!.copyWith(
                             color: isLight(context)
                                 ? Colors.blueGrey[400]
                                 : Colors.blueGrey[100]),
+                        maxLines: 2,
                       ),
                     ],
                   ),
@@ -146,70 +105,43 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                 ],
               ),
             ),
-            widget.post.description != null
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: 16.0,
-                    ),
-                    child: SelectableLinkify(
-                      text: widget.post.description!,
-                      style: Theme.of(context).textTheme.bodyText1,
-                      onOpen: (link) async {
-                        if (await canLaunch(link.url)) {
-                          // await launch(link.url);
-                          FlutterWebBrowser.openWebPage(url: link.url);
-                        } else {
-                          throw 'Could not launch $link';
-                        }
-                      },
-                    ),
-                    // SelectableText(
-                    //   widget.post.description!,
-                    //   style: Theme.of(context).textTheme.bodyText1,
-                    //   onTap: () => launchFeedDetailScreen(widget.post),
-                    // ),
-                  )
-                : SizedBox(height: 8.0),
-            widget.post.photo != null
-                ? InkWell(
-                    onTap: () => launchFeedDetailScreen(widget.post),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: CachedNetworkImage(
-                        imageUrl: widget.post.photo!,
-                        fit: BoxFit.cover,
+            widget.urlInfo != null
+                ? AnyLinkPreview(
+                    link: widget.urlInfo!,
+                    borderRadius: 0,
+                    cache: Duration(seconds: 0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: blackColor.withOpacity(0.3),
                       ),
+                    ],
+                    backgroundColor: Colors.grey[50],
+                    errorTitle: '',
+                    errorWidget: Container(
+                      color: Colors.grey[300],
+                      child: Text('Oops!'),
                     ),
-                  )
-                : SizedBox(),
-            widget.post.image != null && widget.post.image!.length > 1
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    placeholderWidget: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'See more images',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                        SizedBox(
+                          width: 24.0,
+                          height: 24.0,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.0,
+                            valueColor:
+                                AlwaysStoppedAnimation(Colors.grey[400]),
+                          ),
                         ),
-                        Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 18.0,
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? Colors.blueGrey
-                                  : whiteColor,
+                        8.width,
+                        Text(
+                          'Fetching data...',
+                          style: TextStyle(color: Colors.grey[400]),
                         ),
                       ],
                     ),
                   )
                 : SizedBox(),
-            // buildUrlWidget(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Column(
@@ -397,34 +329,42 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
     caseSensitive: false,
   );
 
-  void checkLinkPreview() {
-    if (widget.post.description == null) {
-      return;
-    }
-    final urlMatches = urlRegExp.allMatches(widget.post.description!);
+  // void checkLinkPreview() {
+  //   if (widget.post.description == null) {
+  //     return;
+  //   }
+  //   final urlMatches = urlRegExp.allMatches(widget.post.description!);
 
-    List<String> urls = urlMatches
-        .map((urlMatch) =>
-            widget.post.description!.substring(urlMatch.start, urlMatch.end))
-        .toList();
+  //   List<String> urls = urlMatches
+  //       .map((urlMatch) =>
+  //           widget.post.description!.substring(urlMatch.start, urlMatch.end))
+  //       .toList();
 
-    // urls.forEach((x) => print(x));
-    if (urls.isNotEmpty) {
-      _url = urls.elementAt(0);
+  //   // urls.forEach((x) => print(x));
+  //   if (urls.isNotEmpty) {
+  //     _urlInfo = urls.elementAt(0);
 
-      if (!_url!.startsWith(_protocolIdentifierRegex)) {
-        _url =
-            (LinkifyOptions().defaultToHttps ? "https://" : "http://") + _url!;
+  //     if (!_urlInfo!.startsWith(_protocolIdentifierRegex)) {
+  //       _urlInfo =
+  //           (LinkifyOptions().defaultToHttps ? "https://" : "http://") + _urlInfo!;
+  //     }
+  //   }
 
-        print('________link-home-cell: $_url');
-      }
-    }
-    setState(() {});
-  }
+  //   print("link ${widget.post.id}, $_urlInfo");
+  //   setState(() {});
+  // }
 
   @override
   void initState() {
     super.initState();
-    checkLinkPreview();
+    // checkLinkPreview();
+  }
+
+  @override
+  void didUpdateWidget(HomeFeedCellLink oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.post != oldWidget.post) {
+      setState(() {});
+    }
   }
 }

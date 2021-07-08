@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/user.dart';
@@ -17,6 +18,7 @@ import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
+import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell_link.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
@@ -167,12 +169,39 @@ class _HomeScreenState extends State<HomeScreen> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 var post = feedData.data.elementAt(index);
+
                 if (post.type == PostType.feed) {
+                  String? _urlInfo;
+                  if (post.description != null) {
+                    final urlMatches = urlRegExp.allMatches(post.description!);
+
+                    List<String> urls = urlMatches
+                        .map((urlMatch) => post.description!
+                            .substring(urlMatch.start, urlMatch.end))
+                        .toList();
+                    // urls.forEach((x) => print(x));
+                    if (urls.isNotEmpty) {
+                      _urlInfo = urls.elementAt(0);
+
+                      if (!_urlInfo.startsWith(_protocolIdentifierRegex)) {
+                        _urlInfo = (LinkifyOptions().defaultToHttps
+                                ? "https://"
+                                : "http://") +
+                            _urlInfo;
+                      }
+                    }
+                  }
+
                   return Column(
                     children: [
-                      HomeFeedCell(
-                        post: post,
-                      ),
+                      post.image != null
+                          ? HomeFeedCell(
+                              post: post,
+                            )
+                          : HomeFeedCellLink(
+                              post: post,
+                              urlInfo: _urlInfo,
+                            ),
                       Container(
                         height: 8.0,
                       )
@@ -218,6 +247,16 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     });
   }
+
+  final RegExp urlRegExp = RegExp(
+    r"((https?:www\.)|(https?:\/\/)|(www\.))?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?",
+    caseSensitive: false,
+  );
+
+  final _protocolIdentifierRegex = RegExp(
+    r'^(https?:\/\/)',
+    caseSensitive: false,
+  );
 
   @override
   Widget build(BuildContext context) {
