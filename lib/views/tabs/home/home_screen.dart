@@ -194,14 +194,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   return Column(
                     children: [
-                      post.image != null
-                          ? HomeFeedCell(
-                              post: post,
-                            )
-                          : HomeFeedCellLink(
-                              post: post,
-                              urlInfo: _urlInfo,
-                            ),
+                      // post.image != null
+                      //     ? HomeFeedCell(
+                      //         post: post,
+                      //       )
+                      //     : HomeFeedCellLink(
+                      //         post: post,
+                      //         urlInfo: _urlInfo,
+                      //       ),
+                      HomeFeedCell(post: post),
                       Container(
                         height: 8.0,
                       )

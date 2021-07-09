@@ -12,10 +12,13 @@ import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
+import 'package:kroma_sport/views/tabs/home/widget/ks_link_preview.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
+import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
@@ -71,7 +74,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                   errorTitle: '',
                   errorWidget: Container(
                     color: Colors.grey[300],
-                    child: Text('Oops!'),
+                    child: Text('Oops! unavailable to fetch data.'),
                   ),
                   placeholderWidget: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -91,6 +94,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                       ),
                     ],
                   ),
+                  webInfoCallback: (_) {},
                 )
               : SizedBox()
           : SizedBox();
@@ -163,15 +167,19 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                           throw 'Could not launch $link';
                         }
                       },
+                      linkifiers: [UrlLinkifier()],
+                      options: LinkifyOptions(looseUrl: true),
+                      linkStyle:
+                          Theme.of(context).textTheme.bodyText1?.copyWith(
+                                color: isLight(context)
+                                    ? Colors.blue
+                                    : Colors.grey[100],
+                                decoration: TextDecoration.underline,
+                              ),
                     ),
-                    // SelectableText(
-                    //   widget.post.description!,
-                    //   style: Theme.of(context).textTheme.bodyText1,
-                    //   onTap: () => launchFeedDetailScreen(widget.post),
-                    // ),
                   )
                 : SizedBox(height: 8.0),
-            widget.post.photo != null
+            widget.post.photo != null && !widget.post.isExternal
                 ? InkWell(
                     onTap: () => launchFeedDetailScreen(widget.post),
                     child: SizedBox(
@@ -210,6 +218,9 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                   )
                 : SizedBox(),
             // buildUrlWidget(),
+            widget.post.isExternal
+                ? KSLinkPreview(post: widget.post)
+                : SizedBox(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Column(

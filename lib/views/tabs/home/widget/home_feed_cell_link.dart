@@ -140,6 +140,7 @@ class _HomeFeedCellLinkState extends State<HomeFeedCellLink> {
                         ),
                       ],
                     ),
+                    webInfoCallback: (_) {},
                   )
                 : SizedBox(),
             Padding(

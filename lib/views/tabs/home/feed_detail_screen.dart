@@ -18,6 +18,7 @@ import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/comment_cell.dart';
+import 'package:kroma_sport/views/tabs/home/widget/ks_link_preview.dart';
 import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/cache_image.dart';
@@ -144,6 +145,13 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     child: SelectableLinkify(
                       text: widget.post.description!,
                       style: Theme.of(context).textTheme.bodyText1,
+                      linkStyle:
+                          Theme.of(context).textTheme.bodyText1?.copyWith(
+                                color: isLight(context)
+                                    ? Colors.blue
+                                    : Colors.grey[100],
+                                decoration: TextDecoration.underline,
+                              ),
                       onOpen: (link) async {
                         if (await canLaunch(link.url)) {
                           // await launch(link.url);
@@ -152,41 +160,42 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                           throw 'Could not launch $link';
                         }
                       },
+                      linkifiers: [UrlLinkifier()],
+                      options: LinkifyOptions(looseUrl: true),
                     ),
-                    // SelectableText(
-                    //   widget.post.description ?? '',
-                    //   style: Theme.of(context).textTheme.bodyText1,
-                    // ),
                   )
                 : SizedBox(height: 8.0),
             if (widget.post.type == PostType.feed) ...[
-              widget.post.photo != null && imageSize != null
-                  ? SizedBox(
-                      height: (MediaQuery.of(context).size.width *
-                              imageSize!.height) /
-                          imageSize!.width,
-                      child: PageView(
-                        controller: pageController,
-                        children: List.generate(
-                          widget.post.image!.length,
-                          (index) {
-                            return InkWell(
-                              onTap: () {
-                                launchScreen(context, ViewPhotoScreen.tag,
-                                    arguments: {
-                                      'post': widget.post,
-                                      'index': index
-                                    });
+              widget.post.isExternal
+                  ? KSLinkPreview(post: post)
+                  : widget.post.photo != null && imageSize != null
+                      ? SizedBox(
+                          height: (MediaQuery.of(context).size.width *
+                                  imageSize!.height) /
+                              imageSize!.width,
+                          child: PageView(
+                            controller: pageController,
+                            children: List.generate(
+                              widget.post.image!.length,
+                              (index) {
+                                return InkWell(
+                                  onTap: () {
+                                    launchScreen(context, ViewPhotoScreen.tag,
+                                        arguments: {
+                                          'post': widget.post,
+                                          'index': index
+                                        });
+                                  },
+                                  child: CachedNetworkImage(
+                                      imageUrl: widget.post.image!
+                                          .elementAt(index)
+                                          .name),
+                                );
                               },
-                              child: CachedNetworkImage(
-                                  imageUrl:
-                                      widget.post.image!.elementAt(index).name),
-                            );
-                          },
-                        ),
-                      ),
-                    )
-                  : SizedBox(),
+                            ),
+                          ),
+                        )
+                      : SizedBox(),
             ] else ...[
               Stack(
                 children: [

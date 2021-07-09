@@ -35,6 +35,9 @@ class Post {
     required this.totalComment,
     this.meetupMember,
     this.book,
+    required this.isExternal,
+    this.externalDesc,
+    this.externalLink,
   });
 
   int id;
@@ -61,6 +64,9 @@ class Post {
   int totalComment;
   List<Member>? meetupMember;
   int? book;
+  bool isExternal;
+  String? externalDesc;
+  String? externalLink;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
         id: json["id"],
@@ -94,6 +100,9 @@ class Post {
                 json["meetup_member"]?.map((x) => Member.fromJson(x)))
             : null,
         book: json['book'],
+        isExternal: json['is_external'],
+        externalDesc: json['external_desc'],
+        externalLink: json['external_link'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -119,6 +128,9 @@ class Post {
         "updated_at": updatedAt?.toIso8601String(),
         "total_reaction": totalReaction,
         "total_comment": totalComment,
+        "is_external": isExternal,
+        "external_desc": externalDesc,
+        "external_link": externalLink,
       };
 }
 

@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:any_link_preview/any_link_preview.dart';
+import 'package:any_link_preview/web_analyzer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -162,7 +162,9 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                 _url!.startsWith(_protocolIdentifierRegex) &&
                 text.endsWith(' ')) {
               setState(() {});
+              // fetchLinkPreview(_url!);
             }
+            // fetchLinkPreview(_url!);
           },
         ),
       ),
@@ -405,6 +407,7 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
   }
 
   String? _url;
+  WebInfo? linkInfo;
 
   Widget buildUrlWidget() {
     return images.isEmpty
@@ -414,6 +417,7 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                   link: _url!,
                   borderRadius: 0,
                   cache: Duration(days: 1),
+                  bodyMaxLines: 2,
                   boxShadow: [
                     BoxShadow(
                       color: blackColor.withOpacity(0.3),
@@ -422,8 +426,9 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                   backgroundColor: Colors.grey[50],
                   errorTitle: '',
                   errorWidget: Container(
+                    padding: const EdgeInsets.all(16.0),
                     color: Colors.grey[300],
-                    child: Text('Oops!'),
+                    child: Text('Oops!, unavailable to fetch data.'),
                   ),
                   placeholderWidget: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -443,6 +448,14 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                       ),
                     ],
                   ),
+                  webInfoCallback: (webInfo) {
+                    if (webInfo != null) {
+                      // print('____create___ ${webInfo.title}');
+                      // print('____create___ ${webInfo.description}');
+                      // print('____create___ ${webInfo.image}');
+                      linkInfo = webInfo;
+                    }
+                  },
                 ),
               )
             : SliverToBoxAdapter()
@@ -532,6 +545,16 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
       }
     });
 
+    if (linkInfo != null) {
+      if (files.isEmpty) {
+        fields['is_external'] = '1';
+        fields['ex_photo'] = linkInfo!.image!;
+      }
+      fields['ex_desc'] = linkInfo!.description!;
+      fields['ex_title'] = linkInfo!.title!;
+      fields['ex_link'] = _url!;
+    }
+
     showKSLoading(context);
     var data = await _client.postUploads('/create/feed', files, fields: fields);
     if (data != null) {
@@ -554,4 +577,36 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
       }
     }
   }
+
+  // InfoBase? _info;
+
+  // void fetchLinkPreview(String link) {
+  //   _info = WebAnalyzer.getInfoFromCache(link);
+  //   if (_info == null) {
+  //     _getInfo();
+  //   } else {
+  //     if (_info is WebInfo) {
+  //       String img = (_info as WebInfo).image!;
+  //       print('_____cache img: $img');
+  //     }
+  //   }
+  // }
+
+  // Future<void> _getInfo() async {
+  //   if (_url!.startsWith("http") || _url!.startsWith("https")) {
+  //     _info = await WebAnalyzer.getInfo(_url,
+  //         cache: Duration(days: 1), multimedia: true);
+
+  //     if (_info is WebInfo) {
+  //       String img = (_info as WebInfo).image!;
+  //       print('_____img: $img');
+  //     }
+
+  //     if (this.mounted) {
+  //       setState(() {});
+  //     }
+  //   } else {
+  //     print("$_url is not starting with either http or https");
+  //   }
+  // }
 }
