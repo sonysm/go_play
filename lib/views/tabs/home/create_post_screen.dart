@@ -678,7 +678,9 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
     if (linkInfo != null) {
       if (files.isEmpty) {
         fields['is_external'] = '1';
-        fields['ex_photo'] = linkInfo!.image!;
+        if (linkInfo!.image != null) {
+          fields['ex_photo'] = linkInfo!.image!;
+        }
       }
       fields['ex_desc'] = linkInfo!.description!;
       fields['ex_title'] = linkInfo!.title!;
