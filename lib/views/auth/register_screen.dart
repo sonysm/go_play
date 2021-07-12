@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/ks.dart';
@@ -36,6 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController _genderTextController = TextEditingController();
   TextEditingController _heightTextController = TextEditingController();
   TextEditingController _weightTextController = TextEditingController();
+  TextEditingController _dobController = TextEditingController();
 
   final userRepository = UserRepository();
   KSHttpClient ksClient = KSHttpClient();
@@ -274,8 +277,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               style: Theme.of(context).textTheme.bodyText1,
             ),
             TextField(
-              controller: _lnTextController,
               style: Theme.of(context).textTheme.bodyText1,
+              controller: _dobController,
               readOnly: true,
               decoration: InputDecoration(
                 isDense: true,
@@ -291,6 +294,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
                 ),
               ),
+              onTap: selectDateOfBirth,
             ),
           ],
         ),
@@ -329,10 +333,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         .bodyText1
                         ?.copyWith(color: Colors.grey),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
+                      borderSide:
+                          BorderSide(width: 0.5, color: Colors.grey[300]!),
                     ),
                     enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
+                      borderSide:
+                          BorderSide(width: 0.5, color: Colors.grey[300]!),
                     ),
                   ),
                 ),
@@ -375,10 +381,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         .bodyText1
                         ?.copyWith(color: Colors.grey),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
+                      borderSide:
+                          BorderSide(width: 0.5, color: Colors.grey[300]!),
                     ),
                     enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
+                      borderSide:
+                          BorderSide(width: 0.5, color: Colors.grey[300]!),
                     ),
                   ),
                 ),
@@ -491,12 +499,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  String selectedGender = 'male';
+  String? selectedGender;
 
   void selectGender() {
-    showKSBottomSheet(context,
-    title: 'Choose Gender',
-    children: [
+    showKSBottomSheet(context, title: 'Choose Gender', children: [
       RadioListTile<String>(
         value: 'male',
         groupValue: selectedGender,
@@ -550,7 +556,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               setState(() => selectedHeight = value!);
               dismissScreen(context);
             },
-            title: Text('${130+index}\cm',
+            title: Text('${130 + index}\cm',
                 style:
                     TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
           );
@@ -576,12 +582,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
               setState(() => selectedWeight = value!);
               dismissScreen(context);
             },
-            title: Text('${30+index}\kg',
+            title: Text('${30 + index}\kg',
                 style:
                     TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
           );
         },
       ),
+    );
+  }
+
+  String birthDateText = '';
+  DateTime? birthDate;
+
+  void selectDateOfBirth() async {
+    DatePicker.showPicker(
+      context,
+      // locale: LocaleType.km,
+      theme: DatePickerTheme(
+        doneStyle: TextStyle(
+          color: mainColor,
+          fontSize: 16.0,
+          fontWeight: FontWeight.w600,
+          fontFamily: "OpenSans",
+        ),
+        itemStyle: TextStyle(
+          color: blackColor,
+          fontSize: 16.0,
+          fontWeight: FontWeight.w600,
+          fontFamily: "OpenSans",
+        ),
+      ),
+      // pickerModel: CustomPicker(
+      //     // locale: LocaleType.km,
+      //     currentTime: birthDate != null ? birthDate : DateTime.now()),
+      onConfirm: (dateTime) {
+        var formatter = DateFormat('dd-MMMM-yyyy');
+        birthDateText = formatter.format(dateTime);
+        birthDate = dateTime;
+        _dobController.text = birthDateText;
+        setState(() {});
+      },
     );
   }
 }

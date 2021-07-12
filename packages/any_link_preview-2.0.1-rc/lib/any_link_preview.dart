@@ -243,7 +243,7 @@ class _AnyLinkPreviewState extends State<AnyLinkPreview> {
         (widget.displayDirection == UIDirection.UIDirectionHorizontal ||
                 !widget.showMultimedia)
             ? ((MediaQuery.of(context).size.height) * 0.15)
-            : ((MediaQuery.of(context).size.height) * 0.35);
+            : ((MediaQuery.of(context).size.height) * 0.32);
 
     if (_loading)
       return widget.placeholderWidget ??

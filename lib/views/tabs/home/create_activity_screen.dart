@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
@@ -138,7 +140,10 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
           ),
         ),
       ),
-      child: Text(sport.name, style: TextStyle(fontFamily: 'Metropolis'),),
+      child: Text(
+        sport.name,
+        style: TextStyle(fontFamily: 'Metropolis'),
+      ),
     );
   }
 
@@ -508,9 +513,11 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     //  }
     //});
 
-    var permission = await checkAndRequestPhotoPermissions();
-    if (!permission) {
-      _showPhotoAlert();
+    if (Platform.isAndroid) {
+      var permission = await checkAndRequestPhotoPermissions();
+      if (!permission) {
+        _showPhotoAlert();
+      }
     }
 
     List<Asset>? assetList;

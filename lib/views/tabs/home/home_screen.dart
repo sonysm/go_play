@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -329,11 +331,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void addPhoto() async {
-    var permission = await checkAndRequestPhotoPermissions();
-    if (permission) {
+    if (Platform.isIOS) {
       launchScreen(context, CreatPostScreen.tag);
     } else {
-      _showPhotoAlert();
+      var permission = await checkAndRequestPhotoPermissions();
+      if (permission) {
+        launchScreen(context, CreatPostScreen.tag);
+      } else {
+        _showPhotoAlert();
+      }
     }
   }
 

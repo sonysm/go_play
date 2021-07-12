@@ -75,6 +75,7 @@ dependencies:
   any_link_preview:
     path: packages/any_link_preview-2.0.1-rc
   flutter_link_previewer: ^2.1.0
+  flutter_datetime_picker: ^1.5.1
   
   # Firebase
   firebase_auth: ^1.1.2

@@ -43,6 +43,8 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
   List<Asset> images = <Asset>[];
   List<MultipartFile> files = [];
 
+  var exUrl;
+
   Widget buildNavbar() {
     return SliverAppBar(
       title: Text('Create Post'),
@@ -126,7 +128,7 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
   Widget buildPostCaption() {
     return SliverToBoxAdapter(
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        margin: EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0),
         child: TextField(
           controller: descController,
           maxLines: null,
@@ -159,12 +161,11 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
             }
 
             if (_url != null &&
-                _url!.startsWith(_protocolIdentifierRegex) &&
-                text.endsWith(' ')) {
+                    _url!.startsWith(_protocolIdentifierRegex) &&
+                    text.endsWith(' ') ||
+                text.endsWith('\n')) {
               setState(() {});
-              // fetchLinkPreview(_url!);
             }
-            // fetchLinkPreview(_url!);
           },
         ),
       ),
@@ -410,9 +411,14 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
   WebInfo? linkInfo;
 
   Widget buildUrlWidget() {
-    return images.isEmpty
-        ? _url != null
-            ? SliverToBoxAdapter(
+    if (images.isEmpty) {
+      if (_url != null) {
+        return SliverToBoxAdapter(
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 16.0, right: 16.0, bottom: 16.0, top: 12.0),
                 child: AnyLinkPreview(
                   link: _url!,
                   borderRadius: 0,
@@ -449,6 +455,7 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                     ],
                   ),
                   webInfoCallback: (webInfo) {
+                    exUrl = _url;
                     if (webInfo != null) {
                       // print('____create___ ${webInfo.title}');
                       // print('____create___ ${webInfo.description}');
@@ -457,9 +464,128 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                     }
                   },
                 ),
-              )
-            : SliverToBoxAdapter()
-        : SliverToBoxAdapter();
+              ),
+              Positioned(
+                right: 24.0,
+                top: 0,
+                child: SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _url = null;
+                      exUrl = null;
+                      linkInfo = null;
+                      setState(() {});
+                    },
+                    style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        backgroundColor: MaterialStateProperty.all(Colors.grey),
+                        shape: MaterialStateProperty.all(CircleBorder()),
+                        alignment: Alignment.center),
+                    child: Icon(
+                      FeatherIcons.x,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      } else {
+        return SliverToBoxAdapter();
+      }
+    }
+
+    return SliverToBoxAdapter();
+
+    // return images.isEmpty
+    //     ? _url != null
+    //         ? SliverToBoxAdapter(
+    //             child: Stack(
+    //               children: [
+    //                 Padding(
+    //                   padding: const EdgeInsets.all(16.0),
+    //                   child: AnyLinkPreview(
+    //                     link: _url!,
+    //                     borderRadius: 0,
+    //                     cache: Duration(days: 1),
+    //                     bodyMaxLines: 2,
+    //                     boxShadow: [
+    //                       BoxShadow(
+    //                         color: blackColor.withOpacity(0.3),
+    //                       ),
+    //                     ],
+    //                     backgroundColor: Colors.grey[50],
+    //                     errorTitle: '',
+    //                     errorWidget: Container(
+    //                       padding: const EdgeInsets.all(16.0),
+    //                       color: Colors.grey[300],
+    //                       child: Text('Oops!, unavailable to fetch data.'),
+    //                     ),
+    //                     placeholderWidget: Row(
+    //                       mainAxisAlignment: MainAxisAlignment.center,
+    //                       children: [
+    //                         SizedBox(
+    //                           width: 24.0,
+    //                           height: 24.0,
+    //                           child: CircularProgressIndicator(
+    //                             strokeWidth: 2.0,
+    //                             valueColor:
+    //                                 AlwaysStoppedAnimation(Colors.grey[400]),
+    //                           ),
+    //                         ),
+    //                         8.width,
+    //                         Text(
+    //                           'Fetching data...',
+    //                           style: TextStyle(color: Colors.grey[400]),
+    //                         ),
+    //                       ],
+    //                     ),
+    //                     webInfoCallback: (webInfo) {
+    //                       initUrl = _url;
+    //                       if (webInfo != null) {
+    //                         // print('____create___ ${webInfo.title}');
+    //                         // print('____create___ ${webInfo.description}');
+    //                         // print('____create___ ${webInfo.image}');
+    //                         linkInfo = webInfo;
+    //                       }
+    //                     },
+    //                   ),
+    //                 ),
+    //                 Positioned(
+    //                   right: 24.0,
+    //                   top: 2,
+    //                   child: SizedBox(
+    //                     width: 28,
+    //                     height: 28,
+    //                     child: ElevatedButton(
+    //                       onPressed: () {
+    //                         _url = null;
+    //                         setState(() {});
+    //                       },
+    //                       style: ButtonStyle(
+    //                           padding:
+    //                               MaterialStateProperty.all(EdgeInsets.zero),
+    //                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    //                           backgroundColor:
+    //                               MaterialStateProperty.all(Colors.grey),
+    //                           shape: MaterialStateProperty.all(CircleBorder()),
+    //                           alignment: Alignment.center),
+    //                       child: Icon(
+    //                         FeatherIcons.x,
+    //                         size: 20,
+    //                       ),
+    //                     ),
+    //                   ),
+    //                 )
+    //               ],
+    //             ),
+    //           )
+    //         : SliverToBoxAdapter()
+    //     : SliverToBoxAdapter();
   }
 
   @override
@@ -519,11 +645,15 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
   bool availablePost() {
     if (descController.text.trim().length > 0 || images.isNotEmpty) {
       return true;
+    } else if (exUrl != null) {
+      return true;
     }
     return false;
   }
 
   onPost() async {
+    // if (exUrl != null) print('______url: $exUrl');
+
     FocusScope.of(context).unfocus();
     KSHttpClient _client = KSHttpClient();
     Map<String, String> fields = Map<String, String>();
@@ -552,7 +682,7 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
       }
       fields['ex_desc'] = linkInfo!.description!;
       fields['ex_title'] = linkInfo!.title!;
-      fields['ex_link'] = _url!;
+      fields['ex_link'] = exUrl!;
     }
 
     showKSLoading(context);
@@ -577,36 +707,4 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
       }
     }
   }
-
-  // InfoBase? _info;
-
-  // void fetchLinkPreview(String link) {
-  //   _info = WebAnalyzer.getInfoFromCache(link);
-  //   if (_info == null) {
-  //     _getInfo();
-  //   } else {
-  //     if (_info is WebInfo) {
-  //       String img = (_info as WebInfo).image!;
-  //       print('_____cache img: $img');
-  //     }
-  //   }
-  // }
-
-  // Future<void> _getInfo() async {
-  //   if (_url!.startsWith("http") || _url!.startsWith("https")) {
-  //     _info = await WebAnalyzer.getInfo(_url,
-  //         cache: Duration(days: 1), multimedia: true);
-
-  //     if (_info is WebInfo) {
-  //       String img = (_info as WebInfo).image!;
-  //       print('_____img: $img');
-  //     }
-
-  //     if (this.mounted) {
-  //       setState(() {});
-  //     }
-  //   } else {
-  //     print("$_url is not starting with either http or https");
-  //   }
-  // }
 }

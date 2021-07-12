@@ -73,7 +73,7 @@ class LinkViewVertical extends StatelessWidget {
             children: <Widget>[
               showMultiMedia!
                   ? Expanded(
-                      flex: 5,
+                      flex: 4,
                       child: imageUri == ""
                           ? Container(color: bgColor ?? Colors.grey)
                           : Container(
@@ -86,6 +86,7 @@ class LinkViewVertical extends StatelessWidget {
                                         topRight: Radius.circular(12),
                                       ),
                                 image: DecorationImage(
+                                  alignment: Alignment.topCenter,
                                   image: NetworkImage(imageUri),
                                   fit:
                                       isIcon ? BoxFit.contain : BoxFit.fitWidth,
