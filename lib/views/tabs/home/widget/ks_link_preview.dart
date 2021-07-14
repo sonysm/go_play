@@ -39,13 +39,22 @@ class KSLinkPreview extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: double.infinity,
-              child: CachedNetworkImage(
-                imageUrl: post.photo!,
-                fit: BoxFit.cover,
+            if (post.photo != null)
+              SizedBox(
+                width: double.infinity,
+                child: CachedNetworkImage(
+                  imageUrl: post.photo!,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
+            if (post.photo == null)
+              Container(
+                padding: EdgeInsets.all(16.0),
+                height: 100.0,
+                child: Center(
+                  child: Text('No image view', style: TextStyle(color: Colors.grey),),
+                ),
+              ),
             4.height,
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),

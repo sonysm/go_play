@@ -436,6 +436,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
+    mapGender();
     _fnTextController.text = KS.shared.user.firstName;
     _lnTextController.text = KS.shared.user.lastName;
   }
@@ -497,8 +498,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           setState(() => selectedGender = value!);
           dismissScreen(context);
         },
-        title: Text('Male',
-            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+        title: Text('Male', style: Theme.of(context).textTheme.bodyText1),
       ),
       RadioListTile<String>(
         value: 'female',
@@ -509,8 +509,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           setState(() => selectedGender = value!);
           dismissScreen(context);
         },
-        title: Text('Female',
-            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+        title: Text('Female', style: Theme.of(context).textTheme.bodyText1),
       ),
       RadioListTile<String>(
         value: 'other',
@@ -521,9 +520,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           setState(() => selectedGender = value!);
           dismissScreen(context);
         },
-        title: Text('Other',
-            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+        title: Text('Other', style: Theme.of(context).textTheme.bodyText1),
       ),
     ]);
+  }
+
+  void mapGender() {
+    switch (selectedGender) {
+      case 'male':
+        _genderTextController.text = 'Male';
+        break;
+      case 'female':
+        _genderTextController.text = 'Female';
+        break;
+      default:
+        _genderTextController.text = 'Other';
+    }
   }
 }

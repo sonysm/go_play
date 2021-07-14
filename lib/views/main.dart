@@ -206,9 +206,7 @@ class _MainViewState extends State<MainView> {
       },
     );
     if (res != null) {
-      if (res is! HttpResult) {
-        print('______update token success!');
-      }
+      if (res is! HttpResult) {}
     }
   }
 

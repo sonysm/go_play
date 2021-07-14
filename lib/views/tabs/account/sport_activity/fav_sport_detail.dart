@@ -330,11 +330,11 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
-                  side: BorderSide(color: Colors.blueGrey),
+                  side: BorderSide(color: isLight(context) ? Colors.blueGrey : Colors.grey[300]!),
                 ),
               ),
               backgroundColor: MaterialStateProperty.all(Colors.transparent),
-              foregroundColor: MaterialStateProperty.all(Colors.blueGrey),
+              foregroundColor: MaterialStateProperty.all(isLight(context) ? Colors.blueGrey : Colors.grey[300]),
             ),
             child: Text(
               'Remove ${_favSport.sport.name} from my profile',
@@ -437,9 +437,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
       },
     );
     if (res != null) {
-      if (res is! HttpResult) {
-        print('_____addPlayAttribute success!');
-      }
+      if (res is! HttpResult) {}
     }
   }
 
@@ -455,9 +453,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
       },
     );
     if (res != null) {
-      if (res is! HttpResult) {
-        print('_____removePlayAttribute success!');
-      }
+      if (res is! HttpResult) {}
     }
   }
 
@@ -471,9 +467,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
       },
     );
     if (res != null) {
-      if (res is! HttpResult) {
-        print('____update play level success!');
-      }
+      if (res is! HttpResult) {}
     }
   }
 }
@@ -501,16 +495,15 @@ class FavSportFlexibleAppbar extends StatelessWidget {
         case 1:
           return 'Intermediate';
         case 2:
-          return 'Beginner';
-        default:
           return 'Advanced';
+        default:
+          return 'Beginner';
       }
     }
 
     return Container(
       padding: new EdgeInsets.only(top: statusBarHeight, bottom: 16.0),
       height: statusBarHeight + AppBar().preferredSize.height,
-      // color: Colors.green[200],
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -566,31 +559,6 @@ class FavSportFlexibleAppbar extends StatelessWidget {
                   ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class MyAppBar extends StatelessWidget {
-  final double barHeight = 66.0;
-
-  const MyAppBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              child: Text(
-                'Football Lover',
-                style: TextStyle(color: mainColor, fontSize: 20.0),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

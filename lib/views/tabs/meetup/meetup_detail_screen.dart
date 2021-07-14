@@ -256,6 +256,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                               isSelectable:
                                   joinMember.elementAt(index).user.id !=
                                       KS.shared.user.id,
+                              onTap: (_) {},
                             ),
                           ),
                           4.height,
@@ -374,13 +375,10 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                     height: 64.0,
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
-                      boxShadow: [
-                        BoxShadow(
-                          offset: Offset(0, -1),
-                          blurRadius: 4.0,
-                          color: Colors.black.withOpacity(0.1),
-                        ),
-                      ],
+                      border: Border(
+                          top: BorderSide(
+                              width: 0.5,
+                              color: Colors.black.withOpacity(0.1))),
                     ),
                     padding:
                         EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),

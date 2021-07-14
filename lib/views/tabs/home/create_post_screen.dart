@@ -591,7 +591,6 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
   @override
   void initState() {
     super.initState();
-    getImage();
     descController = TextEditingController();
   }
 

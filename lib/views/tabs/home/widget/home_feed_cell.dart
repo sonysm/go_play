@@ -426,8 +426,6 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
       if (!_url!.startsWith(_protocolIdentifierRegex)) {
         _url =
             (LinkifyOptions().defaultToHttps ? "https://" : "http://") + _url!;
-
-        print('________link-home-cell: $_url');
       }
     }
     setState(() {});

@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icon(FeatherIcons.camera),
                         8.width,
                         Text(
-                          'Photo',
+                          'Post',
                           style:
                               Theme.of(context).textTheme.bodyText1?.copyWith(
                                     fontWeight: FontWeight.w600,

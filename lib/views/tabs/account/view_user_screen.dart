@@ -190,19 +190,19 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                                 ),
                         )
                       : Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
+                          baseColor: isLight(context) ? Colors.grey[300]! : Colors.blueGrey[600]!,
+                          highlightColor: isLight(context) ? Colors.grey[100]! : Colors.blueGrey,
                           child: Container(
                             height: 32.0,
                             decoration: BoxDecoration(
-                              color: Colors.grey[300],
+                              color: isLight(context) ? Colors.grey[300] : Colors.blueGrey[600],
                               borderRadius: BorderRadius.circular(4.0),
                             ),
                           ),
                         ),
                 )
               ],
-            )
+            ),
           ],
         ),
       ),
