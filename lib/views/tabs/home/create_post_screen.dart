@@ -457,9 +457,6 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                   webInfoCallback: (webInfo) {
                     exUrl = _url;
                     if (webInfo != null) {
-                      // print('____create___ ${webInfo.title}');
-                      // print('____create___ ${webInfo.description}');
-                      // print('____create___ ${webInfo.image}');
                       linkInfo = webInfo;
                     }
                   },

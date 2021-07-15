@@ -274,69 +274,6 @@ class _SetAddressScreenState extends State<SetAddressScreen>
     );
   }
 
-  // _checkGps() async {
-  //   Location location = Location();
-
-  //   bool serviceEnabled = await location.serviceEnabled();
-  //   if (!serviceEnabled) {
-  //     serviceEnabled = await location.requestService();
-  //     if (!serviceEnabled) {
-  //       print('____LOCATION___ERVICE__DISABLE_________');
-  //     }
-  //   }
-
-  //   try {
-  //     PermissionStatus permissionStatus = await location.hasPermission();
-  //     if (permissionStatus == PermissionStatus.denied) {
-  //       permissionStatus = await location.requestPermission();
-  //       if (permissionStatus != PermissionStatus.granted) {
-  //         _showLocationAlert();
-  //         return;
-  //       }
-  //     }
-
-  //     LocationData data = await location.getLocation();
-  //     if (data.latitude != null && data.longitude != null) {
-  //       _currentPosition = LatLng(data.latitude!, data.longitude!);
-  //       gotoCurrentLocation();
-  //       // KFood.shared.currentPosition = LatLng(data.latitude, data.longitude);
-  //       // KFood.shared.locationService = location;
-  //       // KFood.shared.setupLocationMintor();
-
-  //       // if (widget.oldAddress == null) {
-  //       //   gotoCurrentLocation();
-  //       // }
-  //     }
-  //   } catch (e) {
-  //     _showLocationAlert();
-  //     print('____ERROR____GET___LOCATION_________$e');
-  //   }
-  // }
-
-  // _showLocationAlert() {
-  //   showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           title: Text('Alert'),
-  //           content: Text('Location disable message'),
-  //           actions: <Widget>[
-  //             TextButton(
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                   // openAppSettings();
-  //                 },
-  //                 child: Text('Open setting')),
-  //             TextButton(
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                 },
-  //                 child: Text('Not now'))
-  //           ],
-  //         );
-  //       });
-  // }
-
   gotoCurrentLocation() {
     _mapController
         .animateCamera(CameraUpdate.newLatLngZoom(_currentPosition, 16));
@@ -351,43 +288,4 @@ class _SetAddressScreenState extends State<SetAddressScreen>
 
     Navigator.pop(context, location);
   }
-
-  // addAddress() {
-  //   // showLoading(context);
-  //   Address newAddress = Address(
-  //     phone: _phoneController.text,
-  //     name: _titleAs,
-  //     latitude: _latLng.latitude.toString(),
-  //     longitude: _latLng.longitude.toString(),
-  //     address: _addressController.text,
-  //     note: '',
-  //   );
-
-  //   Navigator.pop(context, newAddress);
-
-  //   // TmsService().addAddress(newAddress).then((value) {
-  //   //   Navigator.pop(context);
-  //   //   if (value != null) {
-  //   //     Navigator.pop(context);
-  //   //   }
-  //   // });
-  // }
-
-  // saveChangedAddress() {
-  //   showLoading(context);
-  //   Address editAddress = Address(
-  //     id: widget.oldAddress.id,
-  //     phone: _phoneController.text,
-  //     name: _titleAs,
-  //     latitude: '',
-  //     longitude: '',
-  //     address: _addressController.text,
-  //     note: '',
-  //   );
-
-  //   // ApiService.editShippingAddress(editAddress).then((addresses) {
-  //   //   Navigator.pop(context);
-  //   //   Navigator.pop(context, addresses);
-  //   // });
-  // }
 }

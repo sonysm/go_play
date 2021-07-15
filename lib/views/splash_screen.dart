@@ -22,11 +22,10 @@ class _SplashScreenState extends State<SplashScreen> {
       'VPlay',
       textAlign: TextAlign.center,
       style: TextStyle(
-        fontSize: 28.0,
-        color: whiteColor,
-        fontWeight: FontWeight.w700,
-        fontFamily: 'ProximaNova'
-      ),
+          fontSize: 28.0,
+          color: whiteColor,
+          fontWeight: FontWeight.w700,
+          fontFamily: 'ProximaNova'),
     );
   }
 
@@ -72,7 +71,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _initPackageInfo();
-    // fetchLocation();
   }
 
   navigateToLoginScreen() {
@@ -84,18 +82,4 @@ class _SplashScreenState extends State<SplashScreen> {
     final PackageInfo info = await PackageInfo.fromPlatform();
     KS.shared.packageInfo = info;
   }
-
-  // fetchLocation() async {
-  //   if (KS.shared.currentPosition == null) {
-  //     var service = await KS.shared.locationService.serviceEnabled();
-  //     if (service) {
-  //       try {
-  //         var location = await KS.shared.locationService.getLocation();
-  //         if (location.latitude != null && location.longitude != null) {
-  //           KS.shared.setupLocationMintor();
-  //         } else {}
-  //       } catch (e) {}
-  //     } else {}
-  //   }
-  // }
 }

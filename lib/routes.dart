@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kroma_sport/models/booking.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';

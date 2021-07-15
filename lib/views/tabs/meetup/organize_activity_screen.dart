@@ -467,7 +467,8 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
                   elevation: MaterialStateProperty.all(0),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   backgroundColor: MaterialStateProperty.all(mainColor),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))),
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0))),
                 ),
                 child: Text(
                   'Organize ${sport.name}',
@@ -871,12 +872,27 @@ class GameType {
     GameType(title: '6 Aside', desc: '12++ players', id: 4, minPlayer: 12),
   ];
 
+  static List<GameType> basketball = <GameType>[
+    GameType(title: 'Pratice', desc: '2++ players', id: 1, minPlayer: 2),
+    GameType(title: '3 Aside', desc: '6++ players', id: 2, minPlayer: 6),
+    GameType(title: '5 Aside', desc: '10++ players', id: 3, minPlayer: 10),
+  ];
+
+  static List<GameType> tableTennis = <GameType>[
+    GameType(title: '1 vs 1', desc: '2++ players', id: 1, minPlayer: 2),
+    GameType(title: '2 Aside', desc: '4++ players', id: 2, minPlayer: 4),
+  ];
+
   static List<GameType> mapGameTypeToSport(int sportId) {
     switch (sportId) {
       case 1:
         return football;
       case 2:
         return volleyball;
+      case 3:
+        return basketball;
+      case 4:
+        return tableTennis;
       default:
         return football;
     }

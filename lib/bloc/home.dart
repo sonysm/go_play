@@ -134,7 +134,9 @@ class HomeCubit extends Cubit<HomeData> {
 
   Future<void> onPostFeed(Post newPost) async {
     if (state.status == DataState.Loaded) {
-      emit(state.copyWith(data: [newPost] + state.data));
+      emit(state.copyWith(
+          data: [newPost] + state.data,
+          ownerPost: [newPost] + state.ownerPost));
     }
   }
 
@@ -142,7 +144,10 @@ class HomeCubit extends Cubit<HomeData> {
     if (state.status == DataState.Loaded) {
       final updatedList =
           state.data.where((element) => element.id != postId).toList();
-      emit(state.copyWith(data: updatedList));
+      final updatedOwnerList =
+          state.ownerPost.where((element) => element.id != postId).toList();
+
+      emit(state.copyWith(data: updatedList, ownerPost: updatedOwnerList));
     }
   }
 
