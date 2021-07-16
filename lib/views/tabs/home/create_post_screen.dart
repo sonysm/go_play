@@ -27,7 +27,8 @@ import 'package:linkify/linkify.dart';
 
 class CreatPostScreen extends StatefulWidget {
   static const String tag = '/createPostScreen';
-  CreatPostScreen({Key? key}) : super(key: key);
+  final String? sharedInfo;
+  CreatPostScreen({Key? key, this.sharedInfo}) : super(key: key);
 
   @override
   _CreatPostScreenState createState() => _CreatPostScreenState();
@@ -48,9 +49,24 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
   Widget buildNavbar() {
     return SliverAppBar(
       title: Text('Create Post'),
+      centerTitle: true,
       elevation: 0.5,
       forceElevated: true,
       pinned: true,
+      leading: ElevatedButton(
+        onPressed: () {
+          widget.sharedInfo != null
+              ? SystemNavigator.pop()
+              : dismissScreen(context);
+        },
+        style: ButtonStyle(
+          elevation: MaterialStateProperty.all(0),
+          backgroundColor: MaterialStateProperty.all(Colors.transparent),
+          foregroundColor: MaterialStateProperty.all(
+              isLight(context) ? mainColor : whiteColor),
+        ),
+        child: Icon(Icons.arrow_back),
+      ),
       actions: [
         TextButton(
           onPressed: availablePost() ? onPost : null,
@@ -589,6 +605,12 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
   void initState() {
     super.initState();
     descController = TextEditingController();
+    if (widget.sharedInfo != null) {
+      descController.text = widget.sharedInfo!;
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        checkShareInfoString(widget.sharedInfo!);
+      });
+    }
   }
 
   String imageKey = 'images';
@@ -688,6 +710,10 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
     if (data != null) {
       dismissScreen(context);
       if (data is! HttpResult) {
+        if (widget.sharedInfo != null) {
+          SystemNavigator.pop();
+          return;
+        }
         dismissScreen(context);
         var newPost = Post.fromJson(data);
         BlocProvider.of<HomeCubit>(context).onPostFeed(newPost);
@@ -702,6 +728,28 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
             'Something went wrong with the content! Image size might be too large!',
             () {},
             buttonTitle: 'OK');
+      }
+    }
+  }
+
+  void checkShareInfoString(String text) {
+    final urlMatches = urlRegExp.allMatches(text);
+
+    List<String> urls = urlMatches
+        .map((urlMatch) => text.substring(urlMatch.start, urlMatch.end))
+        .toList();
+
+    urls.forEach((x) => print(x));
+    if (urls.isNotEmpty) {
+      _url = urls.elementAt(0);
+
+      if (!_url!.startsWith(_protocolIdentifierRegex)) {
+        _url =
+            (LinkifyOptions().defaultToHttps ? "https://" : "http://") + _url!;
+      }
+
+      if (_url != null) {
+        setState(() {});
       }
     }
   }

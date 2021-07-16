@@ -125,6 +125,12 @@ class _VenueScreenState extends State<VenueScreen> {
     getVenueList();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   void getVenueList() async {
     var res = await ksClient.getApi('/venue/list');
     if (res != null) {

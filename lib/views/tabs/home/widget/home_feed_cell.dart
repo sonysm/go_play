@@ -256,11 +256,11 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                         icon: FeatherIcons.messageSquare,
                         onTap: () => launchFeedDetailScreen(widget.post, true),
                       ),
-                      4.width,
-                      KSIconButton(
-                        icon: FeatherIcons.share2,
-                        onTap: () {},
-                      ),
+                      // 4.width,
+                      // KSIconButton(
+                      //   icon: FeatherIcons.share2,
+                      //   onTap: () {},
+                      // ),
                       Spacer(),
                       buildTotalReaction(widget.post.totalReaction),
                       8.width,

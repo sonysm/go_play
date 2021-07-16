@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
@@ -17,12 +18,14 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
+import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_screen.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 class MainView extends StatefulWidget {
   static const String tag = '/mainScreen';
@@ -56,6 +59,12 @@ class _MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
+    if (_sharedText != null) {
+      var info = _sharedText;
+      _sharedText = null;
+      return CreatPostScreen(sharedInfo: info,);
+    }
+
     return DefaultTabController(
       length: _icons.length,
       child: Scaffold(
@@ -114,8 +123,15 @@ class _MainViewState extends State<MainView> {
     setupFirebaseMessage();
     setupLocalNotification();
     fetchLocation();
+    initShareIntent();
     BlocProvider.of<HomeCubit>(context).onLoad();
     BlocProvider.of<MeetupCubit>(context).onLoad();
+  }
+
+  @override
+  void dispose() { 
+    _sharedText = null;
+    super.dispose();
   }
 
   fetchLocation() async {
@@ -293,6 +309,31 @@ class _MainViewState extends State<MainView> {
       print('Failed to get platform version');
     }
   }
+
+  late StreamSubscription _intentDataStreamSubscription;
+  List<SharedMediaFile>? _sharedFiles;
+  String? _sharedText;
+
+  void initShareIntent() {
+    // For sharing or opening urls/text coming from outside the app while the app is in the memory
+    _intentDataStreamSubscription =
+        ReceiveSharingIntent.getTextStream().listen((String value) {
+      setState(() {
+        _sharedText = value;
+        print("Shared: $_sharedText");
+      });
+    }, onError: (err) {
+      print("getLinkStream error: $err");
+    });
+
+    // For sharing or opening urls/text coming from outside the app while the app is closed
+    ReceiveSharingIntent.getInitialText().then((String? value) {
+      setState(() {
+        _sharedText = value;
+        print("Shared: $_sharedText");
+      });
+    });
+  }
 }
 
 class _CustomTabBar extends StatelessWidget {
@@ -366,6 +407,36 @@ class _CustomTabBar extends StatelessWidget {
             .values
             .toList(),
       ),
+    );
+  }
+}
+
+class ShareIntentTest extends StatelessWidget {
+  const ShareIntentTest({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Share'),
+        leading: TextButton(
+          onPressed: () {
+            SystemNavigator.pop();
+          },
+          child: Text(
+            'Cancel',
+          ),
+        ),
+      ),
+      body: Container(
+          child: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            SystemNavigator.pop();
+          },
+          child: Text('Done'),
+        ),
+      )),
     );
   }
 }
