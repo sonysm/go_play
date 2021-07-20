@@ -12,3 +12,5 @@ const svgSoccerBall2 = 'assets/images/svg_football-ball.svg';
 const imgUserPlaceholder = 'assets/images/user.jpg';
 
 const icNoConnection = 'assets/icons/ic_no_wifi.svg';
+
+const icVplay = 'assets/icons/ic_vplay.png';

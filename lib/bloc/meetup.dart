@@ -162,4 +162,18 @@ class MeetupCubit extends Cubit<MeetupData> {
   onReset() {
     emit(MeetupData(data: [], ownerMeetup: []));
   }
+
+  Future<void> update(Post newMeetup) async {
+    if (state.status == DataState.Loaded) {
+      final updatedList = state.data.map((element) {
+        return element.id == newMeetup.id ? newMeetup : element;
+      }).toList();
+
+      final updatedOwnerList = state.ownerMeetup.map((element) {
+        return element.id == newMeetup.id ? newMeetup : element;
+      }).toList();
+
+      emit(state.copyWith(data: updatedList, ownerMeetup: updatedOwnerList));
+    }
+  }
 }

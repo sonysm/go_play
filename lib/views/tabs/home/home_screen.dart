@@ -332,11 +332,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void addPhoto() async {
     if (Platform.isIOS) {
-      launchScreen(context, CreatPostScreen.tag);
+      launchScreen(context, CreatePostScreen.tag);
     } else {
       var permission = await checkAndRequestPhotoPermissions();
       if (permission) {
-        launchScreen(context, CreatPostScreen.tag);
+        launchScreen(context, CreatePostScreen.tag);
       } else {
         _showPhotoAlert();
       }

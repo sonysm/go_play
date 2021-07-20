@@ -11,6 +11,7 @@ import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
@@ -175,10 +176,10 @@ class _ActivityCellState extends State<ActivityCell> {
                       ),
                 Positioned(
                   left: 16.0,
+                  bottom: 16.0,
                   right: 16.0,
-                  top: 16.0,
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,51 +187,46 @@ class _ActivityCellState extends State<ActivityCell> {
                           Text(
                             widget.post.sport!.name.toUpperCase(),
                             style: TextStyle(
-                              fontSize: 16.0,
                               color: whiteColor,
-                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                          Text(
-                            widget.post.title,
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              color: whiteColor,
-                              fontWeight: FontWeight.w600,
+                          SizedBox(
+                            width: AppSize(context).appWidth(70),
+                            child: Text(
+                              widget.post.title,
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                color: whiteColor,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
+                          ),
+                          8.height,
+                          Row(
+                            children: [
+                              Icon(Feather.clock,
+                                  color: whiteColor, size: 18.0),
+                              4.width,
+                              Text(
+                                calcMinuteDuration(),
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                strutStyle: StrutStyle(
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                       Spacer(),
-                      Text(
-                        'Sport',
-                        style: TextStyle(
-                          fontSize: 24.0,
-                          color: whiteColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      SizedBox(width: 32, child: Image.asset(icVplay)),
                     ],
                   ),
                 ),
-                Positioned(
-                  left: 16.0,
-                  bottom: 16.0,
-                  child: Row(
-                    children: [
-                      Icon(Feather.clock, color: whiteColor),
-                      4.width,
-                      Text(
-                        calcMinuteDuration(),
-                        style: TextStyle(
-                          fontSize: 24.0,
-                          color: whiteColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
               ],
             ),
             Padding(
@@ -352,23 +348,21 @@ class _ActivityCellState extends State<ActivityCell> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 bottomSheetBar(context),
-                isMe(post.owner.id)
-                    ? KSTextButtonBottomSheet(
-                        title: 'Delete Post',
-                        icon: Feather.trash_2,
-                        onTab: () {
-                          dismissScreen(context);
-                          showKSConfirmDialog(
-                            context,
-                            message:
-                                'Are you sure you want to delete this post?',
-                            onYesPressed: () {
-                              deletePost(post.id);
-                            },
-                          );
+                if (isMe(post.owner.id))
+                  KSTextButtonBottomSheet(
+                    title: 'Delete Post',
+                    icon: Feather.trash_2,
+                    onTab: () {
+                      dismissScreen(context);
+                      showKSConfirmDialog(
+                        context,
+                        message: 'Are you sure you want to delete this post?',
+                        onYesPressed: () {
+                          deletePost(post.id);
                         },
-                      )
-                    : SizedBox(),
+                      );
+                    },
+                  ),
                 KSTextButtonBottomSheet(
                   title: 'Report Post',
                   icon: Feather.info,

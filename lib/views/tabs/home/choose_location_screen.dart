@@ -8,8 +8,8 @@ import 'package:kroma_sport/themes/colors.dart';
 
 class SetAddressScreen extends StatefulWidget {
   static const tag = '/setAddressScreen';
-
-  const SetAddressScreen({Key? key}) : super(key: key);
+  final Address? address;
+  const SetAddressScreen({Key? key, this.address}) : super(key: key);
 
   @override
   _SetAddressScreenState createState() => _SetAddressScreenState();
@@ -199,7 +199,17 @@ class _SetAddressScreenState extends State<SetAddressScreen>
 
     _latLng = LatLng(11.556384814188409, 104.92820877581835);
 
-    if (KS.shared.currentPosition != null) {
+    if (widget.address != null) {
+      _initialCameraPosition = CameraPosition(
+        target: LatLng(double.parse(widget.address!.latitude),
+            double.parse(widget.address!.longitude)),
+        zoom: 16.0,
+      );
+
+      _latLng = LatLng(double.parse(widget.address!.latitude),
+          double.parse(widget.address!.longitude));
+      _currentPosition = _latLng;
+    } else if (KS.shared.currentPosition != null) {
       _initialCameraPosition = CameraPosition(
         target: LatLng(KS.shared.currentPosition!.latitude,
             KS.shared.currentPosition!.longitude),
@@ -242,7 +252,7 @@ class _SetAddressScreenState extends State<SetAddressScreen>
           TextButton(
             onPressed: applyLocation,
             child: Text(
-              'Apply',
+              'Save',
               style: Theme.of(context)
                   .textTheme
                   .bodyText1

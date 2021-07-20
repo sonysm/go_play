@@ -22,8 +22,8 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class OragnizeActivityScreen extends StatefulWidget {
   static const tag = '/oragnizeActivityScreen';
-  final Sport sport;
-  OragnizeActivityScreen({Key? key, required this.sport}) : super(key: key);
+  final dynamic data;
+  OragnizeActivityScreen({Key? key, required this.data}) : super(key: key);
 
   @override
   _OragnizeActivityScreenState createState() => _OragnizeActivityScreenState();
@@ -39,6 +39,23 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController descController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+
+  late int minPlayer;
+  late int maxPlayer;
+
+  ExpandableController expandableController = ExpandableController();
+  ExpandableController expandableTimeController = ExpandableController();
+  DateTime selectedDate = DateTime.now();
+  String? selectedDateString;
+
+  DateTime startTime = DateTime.now();
+  DateTime endTime = DateTime.now().add(Duration(hours: 2));
+
+  late int dourationInMinutes;
+
+  KSHttpClient ksClient = KSHttpClient();
+
+  late String buttonTitle;
 
   Widget buildTimeAndLocation() {
     return SliverToBoxAdapter(
@@ -81,8 +98,8 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
             Divider(height: 0, indent: 32.0),
             InkWell(
               onTap: () async {
-                var _address =
-                    await launchScreen(context, SetAddressScreen.tag);
+                var _address = await launchScreen(context, SetAddressScreen.tag,
+                    arguments: address);
                 if (_address != null) {
                   address = _address;
                   setState(() {});
@@ -471,7 +488,7 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
                       borderRadius: BorderRadius.circular(8.0))),
                 ),
                 child: Text(
-                  'Organize ${sport.name}',
+                  buttonTitle,
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Colors.white,
@@ -489,26 +506,33 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
   @override
   void initState() {
     super.initState();
-    sport = widget.sport;
-    selectedGameType = GameType.mapGameTypeToSport(sport.id).elementAt(0);
-    minPlayer = selectedGameType.minPlayer;
-    maxPlayer = selectedGameType.minPlayer;
+    if (widget.data is Sport) {
+      sport = widget.data;
+      selectedGameType = GameType.mapGameTypeToSport(sport.id).elementAt(0);
+      minPlayer = selectedGameType.minPlayer;
+      maxPlayer = selectedGameType.minPlayer;
+      buttonTitle = 'Organize ${sport.name}';
+    } else if (widget.data is Post) {
+      var post = widget.data as Post;
+      nameController.text = post.title;
+      descController.text = post.description ?? '';
+      priceController.text = post.price?.toString() ?? '';
+      address = post.activityLocation;
+      minPlayer = post.minPeople!;
+      maxPlayer = post.maxPeople!;
+      sport = post.sport!;
+      buttonTitle = 'Save';
+
+      selectedGameType = GameType.mapGameTypeToSport(sport.id)
+          .firstWhere((element) => element.minPlayer == minPlayer);
+      selectedDate = DateFormat('yyyy-MM-dd').parse(post.activityDate!);
+      selectedDateString = dateString(selectedDate);
+      startTime =
+          DateTime.parse(post.activityDate! + ' ' + post.activityStartTime!);
+      endTime =
+          DateTime.parse(post.activityDate! + ' ' + post.activityEndTime!);
+    }
   }
-
-  late int minPlayer;
-  late int maxPlayer;
-
-  ExpandableController expandableController = ExpandableController();
-  ExpandableController expandableTimeController = ExpandableController();
-  DateTime selectedDate = DateTime.now();
-  String? selectedDateString;
-
-  DateTime startTime = DateTime.now();
-  DateTime endTime = DateTime.now().add(Duration(hours: 2));
-
-  late int dourationInMinutes;
-
-  KSHttpClient ksClient = KSHttpClient();
 
   void chooseDatetime() {
     var sDate = selectedDate;
@@ -831,13 +855,24 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
     fields['max_people'] = maxPlayer.toString();
 
     showKSLoading(context);
-    var data = await ksClient.postApi('/create/meetup', body: fields);
+    var data;
+    if (widget.data is Post) {
+      data = await ksClient.postApi('/edit/meetup/${widget.data.id}',
+          body: fields);
+    } else {
+      data = await ksClient.postApi('/create/meetup', body: fields);
+    }
     if (data != null) {
       dismissScreen(context);
       if (data is! HttpResult) {
         dismissScreen(context);
         var newMeetup = Post.fromJson(data);
-        BlocProvider.of<MeetupCubit>(context).onAddMeetup(newMeetup);
+        
+        if (widget.data is Post) {
+          BlocProvider.of<MeetupCubit>(context).update(newMeetup);
+        } else {
+          BlocProvider.of<MeetupCubit>(context).onAddMeetup(newMeetup);
+        }
         Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
       } else {
         showKSMessageDialog(

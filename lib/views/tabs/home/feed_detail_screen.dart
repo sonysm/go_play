@@ -15,8 +15,10 @@ import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
+import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/comment_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/ks_link_preview.dart';
 import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
@@ -54,10 +56,20 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   KSHttpClient ksClient = KSHttpClient();
 
   late Post post;
+
   List<Comment> commentList = [];
+
+  List<User> likeUsers = [];
+
+  Size? imageSize;
 
   var selectedIndex = 0;
   PageController pageController = PageController();
+
+  PhotoViewController photoViewController = PhotoViewController();
+  PhotoViewScaleStateController scaleStateController =
+      PhotoViewScaleStateController();
+  var state;
 
   Widget buildNavbar() {
     return SliverAppBar(
@@ -119,7 +131,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                             fontFamily: 'Metropolis'),
                       ),
                       Text(
-                        widget.post.createdAt.toString().timeAgoString,
+                        post.createdAt.toString().timeAgoString,
                         style: Theme.of(context)
                             .textTheme
                             .caption!
@@ -131,19 +143,19 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                   KSIconButton(
                     icon: FeatherIcons.moreHorizontal,
                     iconSize: 22.0,
-                    onTap: () => showOptionActionBottomSheet(widget.post),
+                    onTap: () => showOptionActionBottomSheet(post),
                   ),
                 ],
               ),
             ),
-            widget.post.description != null
+            post.description != null
                 ? Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 8.0,
                       horizontal: 16.0,
                     ),
                     child: SelectableLinkify(
-                      text: widget.post.description!,
+                      text: post.description!,
                       style: Theme.of(context).textTheme.bodyText1,
                       linkStyle:
                           Theme.of(context).textTheme.bodyText1?.copyWith(
@@ -165,10 +177,10 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     ),
                   )
                 : SizedBox(height: 8.0),
-            if (widget.post.type == PostType.feed) ...[
-              widget.post.isExternal
+            if (post.type == PostType.feed) ...[
+              post.isExternal
                   ? KSLinkPreview(post: post)
-                  : widget.post.photo != null && imageSize != null
+                  : post.photo != null && imageSize != null
                       ? SizedBox(
                           height: (MediaQuery.of(context).size.width *
                                   imageSize!.height) /
@@ -176,18 +188,18 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                           child: PageView(
                             controller: pageController,
                             children: List.generate(
-                              widget.post.image!.length,
+                              post.image!.length,
                               (index) {
                                 return InkWell(
                                   onTap: () {
                                     launchScreen(context, ViewPhotoScreen.tag,
                                         arguments: {
-                                          'post': widget.post,
+                                          'post': post,
                                           'index': index
                                         });
                                   },
                                   child: CachedNetworkImage(
-                                      imageUrl: widget.post.image!
+                                      imageUrl: post.image!
                                           .elementAt(index)
                                           .name),
                                 );
@@ -199,78 +211,73 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
             ] else ...[
               Stack(
                 children: [
-                  widget.post.photo != null
+                  post.photo != null
                       ? SizedBox(
                           width: AppSize(context).appWidth(100),
                           height: AppSize(context).appWidth(100),
-                          child: CacheImage(url: widget.post.photo!),
+                          child: CacheImage(url: post.photo!),
                         )
                       : SizedBox(
                           width: AppSize(context).appWidth(100),
                           height: AppSize(context).appWidth(100),
                           child: CacheImage(
-                              url: widget.post.sport!.id == 1
+                              url: post.sport!.id == 1
                                   ? 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1353&q=80'
                                   : 'https://images.unsplash.com/photo-1592656094267-764a45160876?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
                         ),
                   Positioned(
                     left: 16.0,
+                    bottom: 16.0,
                     right: 16.0,
-                    top: 16.0,
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.post.sport!.name.toUpperCase(),
+                              post.sport!.name.toUpperCase(),
                               style: TextStyle(
-                                fontSize: 16.0,
                                 color: whiteColor,
-                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                            Text(
-                              widget.post.title,
-                              style: TextStyle(
-                                fontSize: 22.0,
-                                color: whiteColor,
-                                fontWeight: FontWeight.w600,
+                            SizedBox(
+                              width: AppSize(context).appWidth(70),
+                              child: Text(
+                                post.title,
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
+                            ),
+                            8.height,
+                            Row(
+                              children: [
+                                Icon(Feather.clock,
+                                    color: whiteColor, size: 18.0),
+                                4.width,
+                                Text(
+                                  calcMinuteDuration(),
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: whiteColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  strutStyle: StrutStyle(
+                                    fontSize: 18.0,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                         Spacer(),
-                        Text(
-                          'Sport',
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            color: whiteColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        SizedBox(width: 32, child: Image.asset(icVplay)),
                       ],
                     ),
                   ),
-                  Positioned(
-                    left: 16.0,
-                    bottom: 16.0,
-                    child: Row(
-                      children: [
-                        Icon(Feather.clock, color: whiteColor),
-                        4.width,
-                        Text(
-                          calcMinuteDuration(),
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            color: whiteColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
                 ],
               )
             ],
@@ -282,25 +289,25 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                   Row(
                     children: [
                       KSIconButton(
-                        icon: widget.post.reacted!
+                        icon: post.reacted!
                             ? Icons.favorite
                             : FeatherIcons.heart,
                         iconColor:
                             Theme.of(context).brightness == Brightness.light
-                                ? widget.post.reacted!
+                                ? post.reacted!
                                     ? Colors.green
                                     : Colors.blueGrey
-                                : widget.post.reacted!
+                                : post.reacted!
                                     ? Colors.green
                                     : Colors.white,
                         onTap: () {
-                          if (widget.post.reacted!) {
-                            widget.post.totalReaction -= 1;
+                          if (post.reacted!) {
+                            post.totalReaction -= 1;
                           } else {
-                            widget.post.totalReaction += 1;
+                            post.totalReaction += 1;
                           }
                           setState(() {
-                            widget.post.reacted = !widget.post.reacted!;
+                            post.reacted = !post.reacted!;
                             reactPost();
                           });
                         },
@@ -319,16 +326,16 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                         onTap: () {},
                       ),
                       Spacer(),
-                      buildTotalReaction(widget.post.totalReaction),
+                      buildTotalReaction(post.totalReaction),
                       8.width,
-                      buildTotalComment(widget.post.totalComment),
+                      buildTotalComment(post.totalComment),
                     ],
                   ),
-                  widget.post.image != null && widget.post.image!.length > 1
+                  post.image != null && post.image!.length > 1
                       ? Center(
                           child: SmoothPageIndicator(
                             controller: pageController,
-                            count: widget.post.image!.length,
+                            count: post.image!.length,
                             effect: ScrollingDotsEffect(
                               dotHeight: 5.0,
                               dotWidth: 5.0,
@@ -411,7 +418,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pop(context, widget.post);
+        Navigator.pop(context, post);
         return true;
       },
       child: GestureDetector(
@@ -438,8 +445,6 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     );
   }
 
-  Size? imageSize;
-
   @override
   void initState() {
     super.initState();
@@ -463,8 +468,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   }
 
   void getImageSize() async {
-    if (widget.post.photo != null) {
-      imageSize = await calculateImageDimension(widget.post.photo!);
+    if (post.photo != null) {
+      imageSize = await calculateImageDimension(post.photo!);
       setState(() {});
     }
   }
@@ -487,23 +492,37 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 bottomSheetBar(context),
-                isMe(post.owner.id)
-                    ? KSTextButtonBottomSheet(
-                        title: 'Delete Post',
-                        icon: Feather.trash_2,
-                        onTab: () {
-                          dismissScreen(context);
-                          showKSConfirmDialog(
-                            context,
-                            message:
-                                'Are you sure you want to delete this post?',
-                            onYesPressed: () {
-                              deletePost();
-                            },
-                          );
+                if (isMe(post.owner.id))
+                  KSTextButtonBottomSheet(
+                    title: 'Edit Post',
+                    icon: Feather.edit,
+                    onTab: () async {
+                      dismissScreen(context);
+                      if (post.type == PostType.feed) {
+                        await launchScreen(context, CreatePostScreen.tag,
+                            arguments: post);
+                        getPostDetail();
+                      } else if (post.type == PostType.activity) {
+                        // launchScreen(context, CreatePostScreen.tag,
+                        //   arguments: post);
+                      }
+                    },
+                  ),
+                if (isMe(post.owner.id))
+                  KSTextButtonBottomSheet(
+                    title: 'Delete Post',
+                    icon: Feather.trash_2,
+                    onTab: () {
+                      dismissScreen(context);
+                      showKSConfirmDialog(
+                        context,
+                        message: 'Are you sure you want to delete this post?',
+                        onYesPressed: () {
+                          deletePost();
                         },
-                      )
-                    : SizedBox(),
+                      );
+                    },
+                  ),
                 KSTextButtonBottomSheet(
                   title: 'Report Post',
                   icon: Feather.info,
@@ -520,11 +539,11 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   }
 
   void getPostDetail() async {
-    var data = await ksClient.getApi('/view/post/${widget.post.id}');
+    var data = await ksClient.getApi('/view/post/${post.id}');
     if (data != null) {
       if (data is! HttpResult) {
         post = Post.fromJson(data['post']);
-        widget.post.owner = post.owner;
+        post.owner = post.owner;
         commentList = List.from(
             (data['comment'] as List).map((e) => Comment.fromJson(e)));
         setState(() {});
@@ -560,7 +579,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
       if (result is! HttpResult) {
         var newComment = Comment.fromJson(result);
         commentList.insert(commentList.length, newComment);
-        widget.post.totalComment += 1;
+        post.totalComment += 1;
         _commentController.clear();
         setState(() {});
         scrollToBottom();
@@ -580,18 +599,13 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
 
   void reactPost() async {
     var result =
-        await ksClient.postApi('/create/post/reaction/${widget.post.id}');
+        await ksClient.postApi('/create/post/reaction/${post.id}');
     if (result != null) {
       if (result is! HttpResult) {
         print('success!!!!');
       }
     }
   }
-
-  PhotoViewController photoViewController = PhotoViewController();
-  PhotoViewScaleStateController scaleStateController =
-      PhotoViewScaleStateController();
-  var state;
 
   void viewImage() {
     showMaterialModalBottomSheet(
@@ -628,14 +642,13 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                           minScale: PhotoViewComputedScale.contained,
                           maxScale: 1.5,
                           imageProvider:
-                              CachedNetworkImageProvider(widget.post.photo!),
+                              CachedNetworkImageProvider(post.photo!),
                           loadingBuilder: (context, event) {
                             return CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation(whiteColor),
                             );
                           },
                           scaleStateChangedCallback: (photoScaleState) {
-                            print('ssss: $photoScaleState');
                             state = photoScaleState;
                             setState(() {});
                           },
@@ -662,7 +675,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                         ),
                       ),
                     ),
-                    widget.post.description != null
+                    post.description != null
                         ? Positioned(
                             bottom: 0,
                             child: showDescription
@@ -677,7 +690,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                                       color: blackColor.withOpacity(0.5),
                                       child: SingleChildScrollView(
                                         child: Text(
-                                          widget.post.description!,
+                                          post.description!,
                                           style: TextStyle(color: whiteColor),
                                         ),
                                       ),
@@ -703,7 +716,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
             child: Container(
               child: PhotoView(
                 tightMode: true,
-                imageProvider: CachedNetworkImageProvider(widget.post.photo!),
+                imageProvider: CachedNetworkImageProvider(post.photo!),
                 heroAttributes: const PhotoViewHeroAttributes(tag: "someTag"),
               ),
             ),
@@ -722,7 +735,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
               backgroundDecoration: BoxDecoration(
                 color: Colors.black.withAlpha(240),
               ),
-              imageProvider: CachedNetworkImageProvider(widget.post.photo!),
+              imageProvider: CachedNetworkImageProvider(post.photo!),
               heroAttributes: const PhotoViewHeroAttributes(tag: "someTag"),
             ),
           );
@@ -740,7 +753,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 axis: Axis.vertical,
                 child: PhotoView(
                   tightMode: true,
-                  imageProvider: CachedNetworkImageProvider(widget.post.photo!),
+                  imageProvider: CachedNetworkImageProvider(post.photo!),
                   heroAttributes: const PhotoViewHeroAttributes(tag: "someTag"),
                 ),
               ),
@@ -751,9 +764,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
 
   String calcMinuteDuration() {
     var s = DateTime.parse(
-        widget.post.activityDate! + ' ' + widget.post.activityStartTime!);
+        post.activityDate! + ' ' + post.activityStartTime!);
     var e = DateTime.parse(
-        widget.post.activityDate! + ' ' + widget.post.activityEndTime!);
+        post.activityDate! + ' ' + post.activityEndTime!);
 
     if (e.difference(s).inMinutes == 0) {
       int dur = 24 * 60;
@@ -768,10 +781,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     return '$dur\mn';
   }
 
-  List<User> likeUsers = [];
-
   Future<void> getUserLike() async {
-    var res = await ksClient.getApi('/view/post/reaction/${widget.post.id}');
+    var res = await ksClient.getApi('/view/post/reaction/${post.id}');
     if (res != null) {
       if (res is! HttpResult) {
         likeUsers =

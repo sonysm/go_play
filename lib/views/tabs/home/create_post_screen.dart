@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:any_link_preview/web_analyzer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,27 +25,49 @@ import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:linkify/linkify.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
-class CreatPostScreen extends StatefulWidget {
+class CreatePostScreen extends StatefulWidget {
   static const String tag = '/createPostScreen';
-  final String? sharedInfo;
-  CreatPostScreen({Key? key, this.sharedInfo}) : super(key: key);
+  final dynamic data;
+  CreatePostScreen({Key? key, this.data}) : super(key: key);
 
   @override
-  _CreatPostScreenState createState() => _CreatPostScreenState();
+  _CreatePostScreenState createState() => _CreatePostScreenState();
 }
 
-class _CreatPostScreenState extends State<CreatPostScreen> {
+class _CreatePostScreenState extends State<CreatePostScreen> {
   File? imageFile;
   File? reuseImage;
 
   final picker = ImagePicker();
   late TextEditingController descController;
 
+  late String submitTitle;
+
+  String imageKey = 'images';
+
   List<Asset> images = <Asset>[];
   List<MultipartFile> files = [];
 
+  Post? _post;
+
+  String? _url;
+  WebInfo? linkInfo;
+
   var exUrl;
+
+  Size? imageSize;
+
+  final RegExp urlRegExp = RegExp(
+    r"((https?:www\.)|(https?:\/\/)|(www\.))?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?",
+    caseSensitive: false,
+  );
+
+  final _protocolIdentifierRegex = RegExp(
+    r'^(https?:\/\/)',
+    caseSensitive: false,
+  );
 
   Widget buildNavbar() {
     return SliverAppBar(
@@ -55,9 +78,15 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
       pinned: true,
       leading: ElevatedButton(
         onPressed: () {
-          widget.sharedInfo != null
-              ? SystemNavigator.pop()
-              : dismissScreen(context);
+          // widget.data != null
+          //     ? SystemNavigator.pop()
+          //     : dismissScreen(context);
+
+          if (widget.data != null && widget.data is! Post) {
+            SystemNavigator.pop();
+          } else {
+            dismissScreen(context);
+          }
         },
         style: ButtonStyle(
           elevation: MaterialStateProperty.all(0),
@@ -71,7 +100,7 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
         TextButton(
           onPressed: availablePost() ? onPost : null,
           child: Text(
-            'Post',
+            submitTitle,
             style: Theme.of(context).textTheme.bodyText1?.copyWith(
                 color: availablePost()
                     ? isLight(context)
@@ -121,25 +150,6 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
       ),
     );
   }
-
-  // final RegExp urlRegExp = RegExp(
-  //     r'^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})');
-
-  final RegExp urlRegExp = RegExp(
-    r"((https?:www\.)|(https?:\/\/)|(www\.))?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?",
-    caseSensitive: false,
-  );
-
-  // final urlRegExp = RegExp(
-  //   r'^(.*?)((https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))',
-  //   caseSensitive: false,
-  //   dotAll: true,
-  // );
-
-  final _protocolIdentifierRegex = RegExp(
-    r'^(https?:\/\/)',
-    caseSensitive: false,
-  );
 
   Widget buildPostCaption() {
     return SliverToBoxAdapter(
@@ -223,93 +233,6 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
         : SizedBox();
   }
 
-  Widget buildPhoto() {
-    return SliverToBoxAdapter(
-      child: imageFile != null
-          ? Container(
-              child: Stack(
-                children: [
-                  Image.file(imageFile!),
-                  Positioned(
-                    top: 8.0,
-                    right: 8.0,
-                    child: Container(
-                      padding: const EdgeInsets.all(4.0),
-                      child: CupertinoButton(
-                        borderRadius: BorderRadius.zero,
-                        padding: EdgeInsets.zero,
-                        minSize: 24.0,
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              //left: 1.0,
-                              //top: 1.0,
-                              child: Icon(
-                                FeatherIcons.x,
-                                size: 24.0,
-                                color: Colors.black54,
-                              ),
-                            ),
-                            Icon(
-                              FeatherIcons.x,
-                              size: 22.0,
-                              color: whiteColor,
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          imageFile = null;
-                          setState(() {});
-                        },
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 8.0,
-                    left: 8.0,
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: 32.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(2.0),
-                        color: blackColor.withOpacity(0.5),
-                      ),
-                      child: TextButton(
-                        onPressed: () async {
-                          File? croppedFile = await ImageCropper.cropImage(
-                              sourcePath: reuseImage!.path,
-                              androidUiSettings: AndroidUiSettings(
-                                toolbarWidgetColor: whiteColor,
-                                toolbarColor: mainColor,
-                                lockAspectRatio: false,
-                                activeControlsWidgetColor: mainColor,
-                              ));
-                          if (croppedFile != null) {
-                            imageFile = croppedFile;
-                            setState(() {});
-                          }
-                        },
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              EdgeInsets.symmetric(horizontal: 16.0)),
-                          minimumSize: MaterialStateProperty.all(Size(0, 0)),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(
-                          'Edit',
-                          style: TextStyle(
-                              color: whiteColor, fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            )
-          : SizedBox(),
-    );
-  }
-
   Widget buildPhotoList() {
     return images.isNotEmpty
         ? SliverPadding(
@@ -379,6 +302,31 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
         : SliverToBoxAdapter();
   }
 
+  Widget buildPageImage() {
+    return SliverToBoxAdapter(
+      child: imageSize != null
+          ? Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: SizedBox(
+                height:
+                    (MediaQuery.of(context).size.width * imageSize!.height) /
+                        imageSize!.width,
+                child: PageView(
+                  // controller: pageController,
+                  children: List.generate(
+                    widget.data.image!.length,
+                    (index) {
+                      return CachedNetworkImage(
+                          imageUrl: widget.data.image!.elementAt(index).name);
+                    },
+                  ),
+                ),
+              ),
+            )
+          : SizedBox(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -409,12 +357,12 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
                     buildPostHeader(),
                     buildPostCaption(),
                     buildUrlWidget(),
-                    //buildPhoto(),
                     buildPhotoList(),
                   ],
                 ),
-                Positioned(
-                    bottom: 0, left: 0, right: 0, child: addPhotoButton()),
+                if (widget.data is! Post)
+                  Positioned(
+                      bottom: 0, left: 0, right: 0, child: addPhotoButton()),
               ],
             ),
           ),
@@ -423,10 +371,11 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
     );
   }
 
-  String? _url;
-  WebInfo? linkInfo;
-
   Widget buildUrlWidget() {
+    if (_post != null && !_post!.isExternal) {
+      return buildPageImage();
+    }
+
     if (images.isEmpty) {
       if (_url != null) {
         return SliverToBoxAdapter(
@@ -513,107 +462,36 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
     }
 
     return SliverToBoxAdapter();
-
-    // return images.isEmpty
-    //     ? _url != null
-    //         ? SliverToBoxAdapter(
-    //             child: Stack(
-    //               children: [
-    //                 Padding(
-    //                   padding: const EdgeInsets.all(16.0),
-    //                   child: AnyLinkPreview(
-    //                     link: _url!,
-    //                     borderRadius: 0,
-    //                     cache: Duration(days: 1),
-    //                     bodyMaxLines: 2,
-    //                     boxShadow: [
-    //                       BoxShadow(
-    //                         color: blackColor.withOpacity(0.3),
-    //                       ),
-    //                     ],
-    //                     backgroundColor: Colors.grey[50],
-    //                     errorTitle: '',
-    //                     errorWidget: Container(
-    //                       padding: const EdgeInsets.all(16.0),
-    //                       color: Colors.grey[300],
-    //                       child: Text('Oops!, unavailable to fetch data.'),
-    //                     ),
-    //                     placeholderWidget: Row(
-    //                       mainAxisAlignment: MainAxisAlignment.center,
-    //                       children: [
-    //                         SizedBox(
-    //                           width: 24.0,
-    //                           height: 24.0,
-    //                           child: CircularProgressIndicator(
-    //                             strokeWidth: 2.0,
-    //                             valueColor:
-    //                                 AlwaysStoppedAnimation(Colors.grey[400]),
-    //                           ),
-    //                         ),
-    //                         8.width,
-    //                         Text(
-    //                           'Fetching data...',
-    //                           style: TextStyle(color: Colors.grey[400]),
-    //                         ),
-    //                       ],
-    //                     ),
-    //                     webInfoCallback: (webInfo) {
-    //                       initUrl = _url;
-    //                       if (webInfo != null) {
-    //                         // print('____create___ ${webInfo.title}');
-    //                         // print('____create___ ${webInfo.description}');
-    //                         // print('____create___ ${webInfo.image}');
-    //                         linkInfo = webInfo;
-    //                       }
-    //                     },
-    //                   ),
-    //                 ),
-    //                 Positioned(
-    //                   right: 24.0,
-    //                   top: 2,
-    //                   child: SizedBox(
-    //                     width: 28,
-    //                     height: 28,
-    //                     child: ElevatedButton(
-    //                       onPressed: () {
-    //                         _url = null;
-    //                         setState(() {});
-    //                       },
-    //                       style: ButtonStyle(
-    //                           padding:
-    //                               MaterialStateProperty.all(EdgeInsets.zero),
-    //                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    //                           backgroundColor:
-    //                               MaterialStateProperty.all(Colors.grey),
-    //                           shape: MaterialStateProperty.all(CircleBorder()),
-    //                           alignment: Alignment.center),
-    //                       child: Icon(
-    //                         FeatherIcons.x,
-    //                         size: 20,
-    //                       ),
-    //                     ),
-    //                   ),
-    //                 )
-    //               ],
-    //             ),
-    //           )
-    //         : SliverToBoxAdapter()
-    //     : SliverToBoxAdapter();
   }
 
   @override
   void initState() {
     super.initState();
     descController = TextEditingController();
-    if (widget.sharedInfo != null) {
-      descController.text = widget.sharedInfo!;
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
-        checkShareInfoString(widget.sharedInfo!);
-      });
+    submitTitle = 'Post';
+
+    if (widget.data != null) {
+      if (widget.data is String) {
+        descController.text = widget.data!;
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          checkShareInfoString(widget.data!);
+        });
+      } else if (widget.data is List<SharedMediaFile>) {
+        // var share = widget.data[0] as SharedMediaFile;
+        // var img = File(share.path);
+        // Asset shareAsset = Asset('','', int.parse(img.width.toString()), int.parse(img.height.toString()));
+        // images.add(shareAsset);
+      } else if (widget.data is Post) {
+        getImageSize();
+        submitTitle = 'Update';
+        _post = widget.data as Post;
+        descController.text = _post!.description ?? '';
+        if (_post!.isExternal) {
+          _url = _post!.externalLink;
+        } else {}
+      }
     }
   }
-
-  String imageKey = 'images';
 
   Future getImage() async {
     List<Asset>? assetList;
@@ -631,33 +509,6 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
       _url = null;
       setState(() {});
     }
-
-    // if (assetList != null) {
-    //   Future.forEach(assetList, (element) async {
-    //     {
-    //       ByteData byteData = await (element as Asset).getByteData();
-    //       List<int> imageData = byteData.buffer.asUint8List();
-
-    //       files.add(MultipartFile.fromBytes(
-    //         imageKey,
-    //         imageData,
-    //         filename: 'FD' +
-    //             DateTime.now().millisecondsSinceEpoch.toString() +
-    //             '.jpg',
-    //       ));
-    //     }
-    //   }).then((value) {
-    //     //showKSLoading(context);
-    //     //TmsService().uploadPhotoGallery(files: files).then((user) {
-    //     //  if (user != null) {
-    //     //    widget.userDetails.user = user;
-    //     //    TMS.shared.user = user;
-    //     //    Navigator.pop(context);
-    //     //    setState(() {});
-    //     //  }
-    //     //});
-    //   });
-    // }
   }
 
   bool availablePost() {
@@ -706,17 +557,29 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
     }
 
     showKSLoading(context);
-    var data = await _client.postUploads('/create/feed', files, fields: fields);
+
+    var data;
+    if (widget.data is Post) {
+      data = await _client.postUploads('/edit/feed/${_post!.id}', files,
+          fields: fields);
+    } else {
+      data = await _client.postUploads('/create/feed', files, fields: fields);
+    }
     if (data != null) {
       dismissScreen(context);
       if (data is! HttpResult) {
-        if (widget.sharedInfo != null) {
+        if (widget.data is String || widget.data is List<SharedMediaFile>) {
           SystemNavigator.pop();
           return;
         }
         dismissScreen(context);
         var newPost = Post.fromJson(data);
-        BlocProvider.of<HomeCubit>(context).onPostFeed(newPost);
+
+        if (widget.data is Post) {
+          BlocProvider.of<HomeCubit>(context).updatePost(newPost);
+        } else {
+          BlocProvider.of<HomeCubit>(context).onPostFeed(newPost);
+        }
       } else {
         if (data.code == -500) {
           showKSMessageDialog(context, 'No Internet Connnection', () {},
@@ -751,6 +614,13 @@ class _CreatPostScreenState extends State<CreatPostScreen> {
       if (_url != null) {
         setState(() {});
       }
+    }
+  }
+
+  void getImageSize() async {
+    if (widget.data.photo != null) {
+      imageSize = await calculateImageDimension(widget.data.photo!);
+      setState(() {});
     }
   }
 }

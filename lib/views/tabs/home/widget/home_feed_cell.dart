@@ -1,4 +1,3 @@
-import 'package:any_link_preview/any_link_preview.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,13 +11,12 @@ import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
-import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/ks_link_preview.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
-import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
@@ -44,6 +42,18 @@ class HomeFeedCell extends StatefulWidget {
 class _HomeFeedCellState extends State<HomeFeedCell> {
   String? _url;
 
+  KSHttpClient ksClient = KSHttpClient();
+
+  final RegExp urlRegExp = RegExp(
+    r"((https?:www\.)|(https?:\/\/)|(www\.))?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?",
+    caseSensitive: false,
+  );
+
+  final _protocolIdentifierRegex = RegExp(
+    r'^(https?:\/\/)',
+    caseSensitive: false,
+  );
+
   @override
   Widget build(BuildContext context) {
     Widget buildTotalReaction(int total) {
@@ -55,48 +65,6 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
     Widget buildTotalComment(int total) {
       return total > 0
           ? Text(total > 1 ? '$total comments' : '$total comment')
-          : SizedBox();
-    }
-
-    Widget buildUrlWidget() {
-      return widget.post.image == null
-          ? _url != null
-              ? AnyLinkPreview(
-                  link: _url!,
-                  borderRadius: 0,
-                  cache: Duration(seconds: 0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: blackColor.withOpacity(0.3),
-                    ),
-                  ],
-                  backgroundColor: Colors.grey[50],
-                  errorTitle: '',
-                  errorWidget: Container(
-                    color: Colors.grey[300],
-                    child: Text('Oops! unavailable to fetch data.'),
-                  ),
-                  placeholderWidget: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 24.0,
-                        height: 24.0,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.0,
-                          valueColor: AlwaysStoppedAnimation(Colors.grey[400]),
-                        ),
-                      ),
-                      8.width,
-                      Text(
-                        'Fetching data...',
-                        style: TextStyle(color: Colors.grey[400]),
-                      ),
-                    ],
-                  ),
-                  webInfoCallback: (_) {},
-                )
-              : SizedBox()
           : SizedBox();
     }
 
@@ -217,7 +185,6 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                     ),
                   )
                 : SizedBox(),
-            // buildUrlWidget(),
             widget.post.isExternal
                 ? KSLinkPreview(post: widget.post)
                 : SizedBox(),
@@ -344,23 +311,31 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 bottomSheetBar(context),
-                isMe(post.owner.id)
-                    ? KSTextButtonBottomSheet(
-                        title: 'Delete Post',
-                        icon: Feather.trash_2,
-                        onTab: () {
-                          dismissScreen(context);
-                          showKSConfirmDialog(
-                            context,
-                            message:
-                                'Are you sure you want to delete this post?',
-                            onYesPressed: () {
-                              deletePost(post.id);
-                            },
-                          );
+                if (isMe(post.owner.id))
+                  KSTextButtonBottomSheet(
+                    title: 'Edit Post',
+                    icon: Feather.edit,
+                    onTab: () {
+                      dismissScreen(context);
+                      launchScreen(context, CreatePostScreen.tag,
+                          arguments: post);
+                    },
+                  ),
+                if (isMe(post.owner.id))
+                  KSTextButtonBottomSheet(
+                    title: 'Delete Post',
+                    icon: Feather.trash_2,
+                    onTab: () {
+                      dismissScreen(context);
+                      showKSConfirmDialog(
+                        context,
+                        message: 'Are you sure you want to delete this post?',
+                        onYesPressed: () {
+                          deletePost(post.id);
                         },
-                      )
-                    : SizedBox(),
+                      );
+                    },
+                  ),
                 KSTextButtonBottomSheet(
                   title: 'Report Post',
                   icon: Feather.info,
@@ -375,8 +350,6 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
       },
     );
   }
-
-  KSHttpClient ksClient = KSHttpClient();
 
   void deletePost(int postId) async {
     showKSLoading(context);
@@ -398,16 +371,6 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
     }
   }
 
-  final RegExp urlRegExp = RegExp(
-    r"((https?:www\.)|(https?:\/\/)|(www\.))?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?",
-    caseSensitive: false,
-  );
-
-  final _protocolIdentifierRegex = RegExp(
-    r'^(https?:\/\/)',
-    caseSensitive: false,
-  );
-
   void checkLinkPreview() {
     if (widget.post.description == null) {
       return;
@@ -419,7 +382,6 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
             widget.post.description!.substring(urlMatch.start, urlMatch.end))
         .toList();
 
-    // urls.forEach((x) => print(x));
     if (urls.isNotEmpty) {
       _url = urls.elementAt(0);
 

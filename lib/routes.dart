@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/models/address.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -74,8 +75,8 @@ class RouteGenerator {
         return KSPageRoute(
             builder: (_) => FeedDetailScreen(
                 post: data['post'], isCommentTap: data['isCommentTap']));
-      case CreatPostScreen.tag:
-        return MaterialPageRoute(builder: (_) => CreatPostScreen());
+      case CreatePostScreen.tag:
+        return MaterialPageRoute(builder: (_) => CreatePostScreen(data: args));
       case SettingScreen.tag:
         return KSPageRoute(builder: (_) => SettingScreen());
       case SportsScreen.tag:
@@ -107,7 +108,7 @@ class RouteGenerator {
           ),
         );
       case SetAddressScreen.tag:
-        return MaterialPageRoute(builder: (_) => SetAddressScreen());
+        return MaterialPageRoute(builder: (_) => SetAddressScreen(address: args as Address));
       case ActivityPreviewScreen.tag:
         return MaterialPageRoute(
           builder: (_) => ActivityPreviewScreen(
@@ -125,7 +126,7 @@ class RouteGenerator {
       case OragnizeActivityScreen.tag:
         return MaterialPageRoute(
           builder: (_) => OragnizeActivityScreen(
-            sport: args as Sport,
+            data: args,
           ),
         );
       case EditProfileScreen.tag:

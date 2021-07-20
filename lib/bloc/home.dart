@@ -154,4 +154,18 @@ class HomeCubit extends Cubit<HomeData> {
   onReset() {
     emit(HomeData(data: [], ownerPost: []));
   }
+
+  Future<void> updatePost(Post newPost) async {
+    if (state.status == DataState.Loaded) {
+      final updatedList = state.data.map((element) {
+        return element.id == newPost.id ? newPost : element;
+      }).toList();
+
+      final updatedOwnerList = state.ownerPost.map((element) {
+        return element.id == newPost.id ? newPost : element;
+      }).toList();
+
+      emit(state.copyWith(data: updatedList, ownerPost: updatedOwnerList));
+    }
+  }
 }

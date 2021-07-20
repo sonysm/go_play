@@ -14,6 +14,7 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_detail_screen.dart';
+import 'package:kroma_sport/views/tabs/meetup/organize_activity_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
@@ -433,24 +434,32 @@ class _MeetupCellState extends State<MeetupCell> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 bottomSheetBar(context),
-                isMe(post.owner.id) && meetup.status == PostStatus.active
-                    ? KSTextButtonBottomSheet(
-                        title: 'Cancel Meetup',
-                        icon: Feather.x,
-                        onTab: () {
-                          dismissScreen(context);
-                          showKSConfirmDialog(
-                            context,
-                            message:
-                                'Are you sure you want to cancel this Meetup?',
-                            onYesPressed: () {
-                              // deleteMeetup();
-                              cancelMeetup();
-                            },
-                          );
+                if (isMe(meetup.owner.id) && isMeetupAvailable())
+                  KSTextButtonBottomSheet(
+                    title: 'Edit',
+                    icon: Feather.edit,
+                    onTab: () {
+                      dismissScreen(context);
+                      launchScreen(context, OragnizeActivityScreen.tag,
+                          arguments: meetup);
+                    },
+                  ),
+                if (isMe(post.owner.id) && meetup.status == PostStatus.active)
+                  KSTextButtonBottomSheet(
+                    title: 'Cancel Meetup',
+                    icon: Feather.x,
+                    onTab: () {
+                      dismissScreen(context);
+                      showKSConfirmDialog(
+                        context,
+                        message: 'Are you sure you want to cancel this Meetup?',
+                        onYesPressed: () {
+                          // deleteMeetup();
+                          cancelMeetup();
                         },
-                      )
-                    : SizedBox(),
+                      );
+                    },
+                  ),
                 KSTextButtonBottomSheet(
                   title: 'Report Meetup',
                   icon: Feather.info,
