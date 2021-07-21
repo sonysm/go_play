@@ -412,6 +412,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                   height: 48.0,
                   child: ElevatedButton(
                     onPressed: () {
+                      if (!availableNext()) return;
                       var activity = {
                         'photo': images.isNotEmpty ? images.elementAt(0) : null,
                         'date': DateFormat('yyyy-MM-dd').format(selectedDate),

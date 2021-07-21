@@ -204,8 +204,11 @@ class _ActivityCellState extends State<ActivityCell> {
                           8.height,
                           Row(
                             children: [
-                              Icon(Feather.clock,
-                                  color: whiteColor, size: 18.0),
+                              Icon(
+                                Feather.clock,
+                                color: whiteColor,
+                                size: 18.0,
+                              ),
                               4.width,
                               Text(
                                 calcMinuteDuration(),

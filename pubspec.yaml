@@ -79,6 +79,7 @@ dependencies:
       url: https://github.com/AlexHartford/flutter_datetime_picker.git
       ref: master
   receive_sharing_intent: ^1.4.5
+  marquee: ^2.2.0
   
   # Firebase
   firebase_auth: ^1.1.2

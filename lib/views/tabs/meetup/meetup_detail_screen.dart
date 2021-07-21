@@ -32,6 +32,7 @@ import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:kroma_sport/widgets/ks_reason_dialog.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:marquee/marquee.dart';
 import 'package:web_socket_channel/io.dart';
 
 class MeetupDetailScreen extends StatefulWidget {
@@ -513,7 +514,17 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
           length: 2,
           child: Scaffold(
             appBar: AppBar(
-              title: Text(meetup.title),
+              title: SizedBox(
+                height: 44.0,
+                child: Marquee(
+                  text: meetup.title,
+                  // startPadding: 50.0,
+                  blankSpace: 50.0,
+                  pauseAfterRound: Duration(seconds: 1),
+                  accelerationDuration: Duration(seconds: 2),
+                ),
+              ),
+              // Text(meetup.title),
               elevation: 0.5,
               actions: [
                 CupertinoButton(
@@ -619,7 +630,11 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
       if (value != null) {
         if (value is! HttpResult) {
           meetup = Post.fromJson(value['post']);
-          // widget.meetup.meetupMember = meetup.meetupMember;
+
+          joinMember = meetup.meetupMember!
+              .where((element) => element.status == 1)
+              .toList();
+
           isJoined =
               meetup.meetupMember!.any((e) => e.user.id == KS.shared.user.id);
           setState(() {});

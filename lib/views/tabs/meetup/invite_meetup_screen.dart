@@ -18,7 +18,8 @@ class InviteMeetupScreen extends StatefulWidget {
   final List<Member> joinMember;
   final Post meetup;
 
-  InviteMeetupScreen({Key? key, required this.joinMember, required this.meetup}) : super(key: key);
+  InviteMeetupScreen({Key? key, required this.joinMember, required this.meetup})
+      : super(key: key);
 
   @override
   _InviteMeetupScreenState createState() => _InviteMeetupScreenState();
@@ -149,8 +150,11 @@ class _InviteMeetupScreenState extends State<InviteMeetupScreen> {
   }
 
   void getFollower({String queryString = ''}) async {
-    var followerRes = await ksClient
-        .getApi('/user/invite/users', queryParameters: {'q': queryString, 'meetup_id': widget.meetup.id.toString()});
+    var followerRes = await ksClient.getApi('/user/invite/users',
+        queryParameters: {
+          'q': queryString,
+          'meetup_id': widget.meetup.id.toString()
+        });
     if (followerRes != null) {
       if (followerRes is! HttpResult) {
         followerList = List.from(followerRes.map((e) => User.fromJson(e)));
@@ -174,7 +178,15 @@ class _InviteMeetupScreenState extends State<InviteMeetupScreen> {
     showKSConfirmDialog(
       context,
       message: 'Invite\n${user.getFullname()}',
-      onYesPressed: () {},
+      onYesPressed: () async {
+        var res = await ksClient
+            .postApi('/invite/join/meetup/${widget.meetup.id}/${user.id}');
+        if (res != null) {
+          if (res is! HttpResult) {
+            print('object $res');
+          }
+        }
+      },
     );
   }
 }
