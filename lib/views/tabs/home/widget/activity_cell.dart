@@ -14,6 +14,7 @@ import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
+import 'package:kroma_sport/views/tabs/home/report_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
@@ -371,6 +372,7 @@ class _ActivityCellState extends State<ActivityCell> {
                   icon: Feather.info,
                   onTab: () {
                     dismissScreen(context);
+                    showReportScreen(context);
                   },
                 ),
               ],

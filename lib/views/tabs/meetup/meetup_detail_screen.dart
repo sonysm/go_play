@@ -38,7 +38,7 @@ import 'package:web_socket_channel/io.dart';
 class MeetupDetailScreen extends StatefulWidget {
   static const tag = '/meetUpDetailScreen';
 
-  final Post meetup;
+  final dynamic meetup;
 
   MeetupDetailScreen({Key? key, required this.meetup}) : super(key: key);
 
@@ -47,7 +47,7 @@ class MeetupDetailScreen extends StatefulWidget {
 }
 
 class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
-  late Post meetup;
+  Post? meetup;
   late List<Member> joinMember;
   late bool isJoined;
 
@@ -59,6 +59,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
 
   bool isShowMap = false;
 
+  bool isLoading = true;
+
   Widget buildMainInfo() {
     return SliverToBoxAdapter(
       child: Container(
@@ -69,9 +71,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               dense: true,
               horizontalTitleGap: 0,
               leading: Icon(Feather.align_left, size: 20.0),
-              title: Text(meetup.sport!.name,
+              title: Text(meetup!.sport!.name,
                   style: Theme.of(context).textTheme.bodyText2),
-              subtitle: Text(meetup.title,
+              subtitle: Text(meetup!.title,
                   style: Theme.of(context).textTheme.headline6),
             ),
             ListTile(
@@ -79,7 +81,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               horizontalTitleGap: 0,
               leading: Icon(Feather.calendar, size: 20.0),
               title: Text(
-                  '${DateFormat('EEE dd MMM').format(DateTime.parse(meetup.activityDate!))}, ${DateFormat('h:mm a').format(DateTime.parse(meetup.activityDate! + ' ' + meetup.activityStartTime!))} - ${DateFormat('h:mm a').format(DateTime.parse(meetup.activityDate! + ' ' + meetup.activityEndTime!))}',
+                  '${DateFormat('EEE dd MMM').format(DateTime.parse(meetup!.activityDate!))}, ${DateFormat('h:mm a').format(DateTime.parse(meetup!.activityDate! + ' ' + meetup!.activityStartTime!))} - ${DateFormat('h:mm a').format(DateTime.parse(meetup!.activityDate! + ' ' + meetup!.activityEndTime!))}',
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1
@@ -94,7 +96,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               dense: true,
               horizontalTitleGap: 0,
               leading: Icon(Feather.map_pin, size: 20.0),
-              title: Text(meetup.activityLocation!.name,
+              title: Text(meetup!.activityLocation!.name,
                   style: Theme.of(context).textTheme.bodyText1),
             ),
             ListTile(
@@ -105,7 +107,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: meetup.price.toString() + ' USD',
+                      text: meetup!.price.toString() + ' USD',
                       style: Theme.of(context)
                           .textTheme
                           .bodyText1
@@ -122,7 +124,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 ),
               ),
             ),
-            meetup.book != null
+            meetup!.book != null
                 ? ListTile(
                     dense: true,
                     horizontalTitleGap: 0,
@@ -134,7 +136,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                         launchScreen(
                           context,
                           BookingHistoryDetailScreen.tag,
-                          arguments: {'id': meetup.book},
+                          arguments: {'id': meetup!.book},
                         );
                       },
                       style: ButtonStyle(
@@ -153,7 +155,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               title: RichText(
                 text: TextSpan(
                   children: [
-                    meetup.status == PostStatus.active
+                    meetup!.status == PostStatus.active
                         ? TextSpan(
                             text: isMeetupAvailable()
                                 ? 'Meetup Available'
@@ -195,8 +197,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             ? GoogleMap(
                 initialCameraPosition: CameraPosition(
                   target: LatLng(
-                    double.parse(meetup.activityLocation!.latitude),
-                    double.parse(meetup.activityLocation!.longitude),
+                    double.parse(meetup!.activityLocation!.latitude),
+                    double.parse(meetup!.activityLocation!.longitude),
                   ),
                   zoom: 15.0,
                 ),
@@ -207,8 +209,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                   Marker(
                     markerId: MarkerId('venue'),
                     position: LatLng(
-                      double.parse(meetup.activityLocation!.latitude),
-                      double.parse(meetup.activityLocation!.longitude),
+                      double.parse(meetup!.activityLocation!.latitude),
+                      double.parse(meetup!.activityLocation!.longitude),
                     ),
                   ),
                 },
@@ -229,7 +231,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             Padding(
               padding: const EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
               child: Text(
-                'Going(${joinMember.length}/${meetup.maxPeople})',
+                'Going(${joinMember.length}/${meetup!.maxPeople})',
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1
@@ -268,7 +270,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                             maxLines: 1,
                             overflow: TextOverflow.clip,
                           ),
-                          joinMember.elementAt(index).user.id == meetup.owner.id
+                          joinMember.elementAt(index).user.id ==
+                                  meetup!.owner.id
                               ? Text(
                                   '(Host)',
                                   textAlign: TextAlign.center,
@@ -285,7 +288,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            if (KS.shared.user.id == meetup.owner.id) {
+                            if (KS.shared.user.id == meetup!.owner.id) {
                               if (isMeetupAvailable()) {
                                 launchScreen(
                                   context,
@@ -322,7 +325,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                                     : Colors.white60,
                                 shape: BoxShape.circle,
                               ),
-                              child: KS.shared.user.id == meetup.owner.id
+                              child: KS.shared.user.id == meetup!.owner.id
                                   ? Icon(
                                       Feather.plus,
                                       color: Colors.blueGrey,
@@ -338,7 +341,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 separatorBuilder: (context, index) {
                   return 16.width;
                 },
-                itemCount: meetup.maxPeople!,
+                itemCount: meetup!.maxPeople!,
               ),
             ),
           ],
@@ -366,9 +369,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
           },
         ),
         if (isMeetupAvailable()) ...[
-          (meetup.owner.id != KS.shared.user.id &&
-                      joinMember.length < meetup.maxPeople!) ||
-                  (meetup.owner.id != KS.shared.user.id && isJoined)
+          (meetup!.owner.id != KS.shared.user.id &&
+                      joinMember.length < meetup!.maxPeople!) ||
+                  (meetup!.owner.id != KS.shared.user.id && isJoined)
               ? Positioned(
                   bottom: 0,
                   left: 0,
@@ -501,6 +504,10 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Container();
+    }
+
     return WillPopScope(
       onWillPop: () async {
         dismissScreen(context, meetup);
@@ -517,7 +524,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               title: SizedBox(
                 height: 44.0,
                 child: Marquee(
-                  text: meetup.title,
+                  text: meetup!.title,
                   // startPadding: 50.0,
                   blankSpace: 50.0,
                   pauseAfterRound: Duration(seconds: 1),
@@ -530,7 +537,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 CupertinoButton(
                   child: Icon(FeatherIcons.moreVertical,
                       color: isLight(context) ? Colors.grey[600] : whiteColor),
-                  onPressed: () => showMeetupBottomSheet(meetup),
+                  onPressed: () => showMeetupBottomSheet(meetup!),
                 )
               ],
               bottom: PreferredSize(
@@ -559,34 +566,38 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               ),
             ),
             backgroundColor: Theme.of(context).primaryColor,
-            body: TabBarView(
-              // key: new PageStorageKey('myTabBarView'),
-              children: [
-                detailsTab(),
-                // discussionTab(),
-                isJoined
-                    ? Stack(
-                        children: [
-                          discussionList.isNotEmpty
-                              ? DiscussionTab(
-                                  discussionList: discussionList,
-                                  controller: _scrollController,
-                                )
-                              : Container(
-                                  child: Center(
-                                    child: Text('No any discussion yet!'),
-                                  ),
-                                ),
-                          Positioned(bottom: 0, child: bottomCommentAction()),
-                        ],
-                      )
-                    : Container(
-                        child: Center(
-                          child: Text('Only joined member can discuss here.'),
-                        ),
-                      ),
-              ],
-            ),
+            body: meetup != null
+                ? TabBarView(
+                    // key: new PageStorageKey('myTabBarView'),
+                    children: [
+                      detailsTab(),
+                      // discussionTab(),
+                      isJoined
+                          ? Stack(
+                              children: [
+                                discussionList.isNotEmpty
+                                    ? DiscussionTab(
+                                        discussionList: discussionList,
+                                        controller: _scrollController,
+                                      )
+                                    : Container(
+                                        child: Center(
+                                          child: Text('No any discussion yet!'),
+                                        ),
+                                      ),
+                                Positioned(
+                                    bottom: 0, child: bottomCommentAction()),
+                              ],
+                            )
+                          : Container(
+                              child: Center(
+                                child: Text(
+                                    'Only joined member can discuss here.'),
+                              ),
+                            ),
+                    ],
+                  )
+                : SizedBox(),
           ),
         ),
       ),
@@ -596,28 +607,35 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   @override
   void initState() {
     super.initState();
-    meetup = widget.meetup;
+    if (widget.meetup is Post) {
+      isLoading = false;
+      meetup = widget.meetup;
 
-    channel = IOWebSocketChannel.connect(
-        'ws://165.232.160.96:8080/ws/meetup/message/${meetup.id}/',
-        headers: {'x-key': ksClient.token()});
+      channel = IOWebSocketChannel.connect(
+          'ws://165.232.160.96:8080/ws/meetup/message/${meetup!.id}/',
+          headers: {'x-key': ksClient.token()});
 
-    channel.stream.listen((message) {
-      var data = jsonDecode(message.toString());
-      var newDiscussion = Discussion.fromJson(data['message']);
-      discussionList.add(newDiscussion);
-      setState(() {});
-    });
+      channel.stream.listen((message) {
+        var data = jsonDecode(message.toString());
+        var newDiscussion = Discussion.fromJson(data['message']);
+        discussionList.add(newDiscussion);
+        setState(() {});
+      });
 
-    getDiscussion();
+      getDiscussion();
 
-    joinMember =
-        meetup.meetupMember!.where((element) => element.status == 1).toList();
-    isJoined = joinMember.any((e) => e.user.id == KS.shared.user.id);
+      joinMember = meetup!.meetupMember!
+          .where((element) => element.status == 1)
+          .toList();
+      isJoined = joinMember.any((e) => e.user.id == KS.shared.user.id);
+    } else if (widget.meetup is int) {
+      isLoading = true;
+      fetchMeetup(id: widget.meetup);
+    }
   }
 
   bool isMeetupAvailable() {
-    var meetupDate = DateFormat('yyyy-MM-dd').parse(meetup.activityDate!);
+    var meetupDate = DateFormat('yyyy-MM-dd').parse(meetup!.activityDate!);
     if (DateTime.now().isAfter(meetupDate)) {
       return false;
     }
@@ -625,18 +643,22 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     return true;
   }
 
-  void fetchMeetup() {
-    ksClient.getApi('/view/meetup/post/${meetup.id}').then((value) {
+  void fetchMeetup({int? id}) {
+    var meetupId = id ?? meetup!.id;
+    ksClient.getApi('/view/meetup/post/$meetupId').then((value) {
       if (value != null) {
         if (value is! HttpResult) {
           meetup = Post.fromJson(value['post']);
 
-          joinMember = meetup.meetupMember!
+          joinMember = meetup!.meetupMember!
               .where((element) => element.status == 1)
               .toList();
 
           isJoined =
-              meetup.meetupMember!.any((e) => e.user.id == KS.shared.user.id);
+              meetup!.meetupMember!.any((e) => e.user.id == KS.shared.user.id);
+          isJoined = joinMember.any((e) => e.user.id == KS.shared.user.id);
+          isLoading = false;
+          isShowMap = true;
           setState(() {});
         }
       }
@@ -651,7 +673,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
 
   @override
   void dispose() {
-    channel.sink.close();
+    if (widget.meetup is Post) {
+      channel.sink.close();
+    }
     super.dispose();
   }
 
@@ -660,16 +684,16 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         message: 'Are you sure you want to join the game?',
         onYesPressed: () async {
       showKSLoading(context);
-      var result = await ksClient.postApi('/join/post/meetup/${meetup.id}');
+      var result = await ksClient.postApi('/join/post/meetup/${meetup!.id}');
       if (result != null) {
         if (result is! HttpResult) {
-          var res = await ksClient.getApi('/view/meetup/post/${meetup.id}');
+          var res = await ksClient.getApi('/view/meetup/post/${meetup!.id}');
           if (res != null) {
             dismissScreen(context);
             if (res is! HttpResult) {
               meetup = Post.fromJson(res['post']);
               // widget.meetup.meetupMember = meetup.meetupMember;
-              joinMember = meetup.meetupMember!
+              joinMember = meetup!.meetupMember!
                   .where((element) => element.status == 1)
                   .toList();
               isJoined = true;
@@ -693,17 +717,17 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
           onSubmit: () async {
             showKSLoading(context);
             var result =
-                await ksClient.postApi('/leave/post/meetup/${meetup.id}');
+                await ksClient.postApi('/leave/post/meetup/${meetup!.id}');
             if (result != null) {
               if (result is! HttpResult) {
                 var res =
-                    await ksClient.getApi('/view/meetup/post/${meetup.id}');
+                    await ksClient.getApi('/view/meetup/post/${meetup!.id}');
                 if (res != null) {
                   dismissScreen(context);
                   if (res is! HttpResult) {
                     meetup = Post.fromJson(res['post']);
                     // widget.meetup.meetupMember = meetup.meetupMember;
-                    joinMember = meetup.meetupMember!
+                    joinMember = meetup!.meetupMember!
                         .where((element) => element.status == 1)
                         .toList();
                     isJoined = false;
@@ -795,7 +819,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
 
   void deleteMeetup() async {
     showKSLoading(context);
-    var result = await ksClient.postApi('/delete/post/${meetup.id}');
+    var result = await ksClient.postApi('/delete/post/${meetup!.id}');
     if (result != null) {
       await Future.delayed(Duration(milliseconds: 500));
       dismissScreen(context);
@@ -812,7 +836,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
       return;
     }
 
-    if (meetup.book != null) {
+    if (meetup!.book != null) {
       showKSMessageDialog(
         context,
         'Please disconnect booking from Meetup before cancel!',
@@ -823,7 +847,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     }
 
     showKSLoading(context);
-    var result = await ksClient.postApi('/cancel/post/meetup/${meetup.id}');
+    var result = await ksClient.postApi('/cancel/post/meetup/${meetup!.id}');
     if (result != null) {
       await Future.delayed(Duration(milliseconds: 300));
       dismissScreen(context);

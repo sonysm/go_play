@@ -8,13 +8,16 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/user.dart';
+import 'package:kroma_sport/main.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
+import 'package:kroma_sport/views/tabs/home/report_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/ks_link_preview.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
@@ -22,6 +25,7 @@ import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 
@@ -341,6 +345,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                   icon: Feather.info,
                   onTab: () {
                     dismissScreen(context);
+                    showReportScreen(context);
                   },
                 ),
               ],

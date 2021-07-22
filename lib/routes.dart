@@ -118,7 +118,7 @@ class RouteGenerator {
       case MeetupDetailScreen.tag:
         return KSPageRoute(
           builder: (_) => MeetupDetailScreen(
-            meetup: args as Post,
+            meetup: args,
           ),
         );
       case OrganizeListScreen.tag:

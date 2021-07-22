@@ -200,7 +200,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                     initialCameraPosition: CameraPosition(
                       target: LatLng(
                         double.parse(_venue.latitude),
-                        double.parse(_venue.latitude),
+                        double.parse(_venue.longitude),
                       ),
                       zoom: 15.0,
                     ),
@@ -212,7 +212,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                         markerId: MarkerId('venue'),
                         position: LatLng(
                           double.parse(_venue.latitude),
-                          double.parse(_venue.latitude),
+                          double.parse(_venue.longitude),
                         ),
                       ),
                     },

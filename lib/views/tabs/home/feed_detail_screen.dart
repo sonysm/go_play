@@ -19,6 +19,7 @@ import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
+import 'package:kroma_sport/views/tabs/home/report_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/comment_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/ks_link_preview.dart';
 import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
@@ -199,9 +200,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                                         });
                                   },
                                   child: CachedNetworkImage(
-                                      imageUrl: post.image!
-                                          .elementAt(index)
-                                          .name),
+                                      imageUrl:
+                                          post.image!.elementAt(index).name),
                                 );
                               },
                             ),
@@ -289,9 +289,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                   Row(
                     children: [
                       KSIconButton(
-                        icon: post.reacted!
-                            ? Icons.favorite
-                            : FeatherIcons.heart,
+                        icon:
+                            post.reacted! ? Icons.favorite : FeatherIcons.heart,
                         iconColor:
                             Theme.of(context).brightness == Brightness.light
                                 ? post.reacted!
@@ -528,6 +527,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                   icon: Feather.info,
                   onTab: () {
                     dismissScreen(context);
+                    showReportScreen(context);
                   },
                 ),
               ],
@@ -598,12 +598,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   }
 
   void reactPost() async {
-    var result =
-        await ksClient.postApi('/create/post/reaction/${post.id}');
+    var result = await ksClient.postApi('/create/post/reaction/${post.id}');
     if (result != null) {
-      if (result is! HttpResult) {
-        print('success!!!!');
-      }
+      if (result is! HttpResult) {}
     }
   }
 
@@ -763,10 +760,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
       );
 
   String calcMinuteDuration() {
-    var s = DateTime.parse(
-        post.activityDate! + ' ' + post.activityStartTime!);
-    var e = DateTime.parse(
-        post.activityDate! + ' ' + post.activityEndTime!);
+    var s = DateTime.parse(post.activityDate! + ' ' + post.activityStartTime!);
+    var e = DateTime.parse(post.activityDate! + ' ' + post.activityEndTime!);
 
     if (e.difference(s).inMinutes == 0) {
       int dur = 24 * 60;

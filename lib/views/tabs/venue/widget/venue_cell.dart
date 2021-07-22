@@ -67,8 +67,8 @@ class VenueCell extends StatelessWidget {
                     style: TextStyle(
                       color: whiteColor,
                       fontSize: 14.0,
-                      // fontWeight: FontWeight.w600,
                     ),
+                    strutStyle: StrutStyle(fontSize: 14.0),
                   ),
                 ],
               ),

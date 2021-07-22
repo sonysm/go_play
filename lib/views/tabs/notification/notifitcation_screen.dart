@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/models/notification.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/views/tabs/notification/widget/notification_cell.dart';
 
@@ -17,7 +18,7 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   KSHttpClient ksClient = KSHttpClient();
 
-  List<String> noticationList = [];
+  List<KSNotification> noticationList = [];
 
   bool isLoading = true;
 
@@ -29,7 +30,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   List.generate(
                     noticationList.length,
                     (index) {
-                      return NotificationCell();
+                      final notification = noticationList[index];
+                      switch (notification.type) {
+                        case KSNotificationType.invite:
+                          return InviteNoticationCell(
+                              notification: notification);
+                        default:
+                          return NotificationCell();
+                      }
                     },
                   ),
                 ),
@@ -87,6 +95,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
     var res = await ksClient.getApi('/user/my_notification');
     if (res != null) {
       if (res is! HttpResult) {
+        noticationList =
+            List.from((res as List).map((e) => KSNotification.fromJson(e)));
+
         Future.delayed(Duration(milliseconds: 300)).then((_) {
           isLoading = false;
           setState(() {});
