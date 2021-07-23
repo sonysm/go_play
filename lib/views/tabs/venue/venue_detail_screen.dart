@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/venue.dart';
 import 'package:kroma_sport/models/venue_detail.dart';
 import 'package:kroma_sport/themes/colors.dart';
@@ -296,77 +298,81 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     return SliverToBoxAdapter(
       child: Container(
         padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 32.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Select sport type',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            8.height,
-            ElevatedButton(
-              onPressed: showSportTypeOption,
-              style: ButtonStyle(
-                elevation: MaterialStateProperty.all(0),
-                backgroundColor: MaterialStateProperty.all(
-                    isLight(context) ? Colors.grey[100] : Colors.blueGrey[400]),
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  side: BorderSide(color: Colors.grey[200]!),
-                )),
-                padding: MaterialStateProperty.all(
-                  EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                ),
-              ),
-              child: Row(
+        child: sportType.isNotEmpty
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Futsal / Football',
+                    'Select sport type',
                     style: Theme.of(context)
                         .textTheme
                         .bodyText1
                         ?.copyWith(fontWeight: FontWeight.w600),
                   ),
-                  Spacer(),
-                  Icon(FeatherIcons.chevronDown,
-                      color: isLight(context) ? blackColor : whiteColor),
+                  8.height,
+                  ElevatedButton(
+                    onPressed: showSportTypeOption,
+                    style: ButtonStyle(
+                      elevation: MaterialStateProperty.all(0),
+                      backgroundColor: MaterialStateProperty.all(
+                          isLight(context)
+                              ? Colors.grey[100]
+                              : Colors.blueGrey[400]),
+                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        side: BorderSide(color: Colors.grey[200]!),
+                      )),
+                      padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Futsal / Football',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        Spacer(),
+                        Icon(FeatherIcons.chevronDown,
+                            color: isLight(context) ? blackColor : whiteColor),
+                      ],
+                    ),
+                  ),
+                  16.height,
+                  Text(
+                    'Available pitches:',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  8.height,
+                  venueServiceList.isNotEmpty
+                      ? ListView.separated(
+                          padding: EdgeInsets.only(bottom: 16.0),
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final service = venueServiceList[index];
+                            return buildPitchCell(
+                              pitchName: service.name +
+                                  ' (${service.serviceData.people! ~/ 2}x${service.serviceData.people! ~/ 2})',
+                              pitchPrice:
+                                  '\$${service.hourPrice.toStringAsFixed(2)}/h',
+                              venueService: service,
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return 8.height;
+                          },
+                          itemCount: venueServiceList.length)
+                      : SizedBox()
                 ],
-              ),
-            ),
-            16.height,
-            Text(
-              'Available pitches:',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            8.height,
-            venueServiceList.isNotEmpty
-                ? ListView.separated(
-                    padding: EdgeInsets.only(bottom: 16.0),
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final service = venueServiceList[index];
-                      return buildPitchCell(
-                        pitchName: service.name +
-                            ' (${service.serviceData.people! ~/ 2}x${service.serviceData.people! ~/ 2})',
-                        pitchPrice:
-                            '\$${service.hourPrice.toStringAsFixed(2)}/h',
-                        venueService: service,
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return 8.height;
-                    },
-                    itemCount: venueServiceList.length)
-                : SizedBox()
-          ],
-        ),
+              )
+            : SizedBox(),
       ),
     );
   }
@@ -421,44 +427,15 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
-                TextButton(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(horizontal: 0.0)),
+                Column(
+                  children: List.generate(
+                    sportType.length,
+                    (index) {
+                      VenueService s = sportType[sportType.keys.first][0];
+                      return sportTypeButton(s.sport);
+                    },
                   ),
-                  onPressed: () {
-                    dismissScreen(context);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 12.0),
-                    decoration: BoxDecoration(
-                      color: isLight(context)
-                          ? Colors.grey[200]
-                          : Colors.blueGrey[400],
-                      // border: Border.all(color: isLight(context) ? Colors.grey[300]! : Colors.grey[200]!),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          '⚽️  Futsal / Football',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              ?.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                        Spacer(),
-                        Icon(
-                          Feather.check,
-                          color:
-                              isLight(context) ? mainColor : Colors.greenAccent,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                )
               ],
             ),
           ),
@@ -467,13 +444,63 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     );
   }
 
+  Widget sportTypeButton(Sport s) {
+    return TextButton(
+      style: ButtonStyle(
+        padding:
+            MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 0.0)),
+      ),
+      onPressed: () {
+        sportTypeSelected = s;
+        setState(() {});
+        dismissScreen(context);
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        decoration: BoxDecoration(
+          color: isLight(context) ? Colors.grey[200] : Colors.blueGrey[400],
+          // border: Border.all(color: isLight(context) ? Colors.grey[300]! : Colors.grey[200]!),
+          borderRadius: BorderRadius.circular(4.0),
+        ),
+        child: Row(
+          children: <Widget>[
+            Text(
+              s.name,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            Spacer(),
+            if (sportTypeSelected!.id == s.id)
+              Icon(
+                Feather.check,
+                color: isLight(context) ? mainColor : Colors.greenAccent,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Map sportType = {};
+  Sport? sportTypeSelected;
+
   void getVenueDetail() async {
     var res = await ksClient.getApi('/venue/detail/${_venue.id}');
     if (res != null) {
       if (res is! HttpResult) {
-        var detail = VenueDetail.fromJson(res);
+        VenueDetail detail = VenueDetail.fromJson(res);
         _venue = detail.venue;
         venueServiceList = detail.service;
+        sportType =
+            groupBy(venueServiceList, (VenueService obj) => obj.sport.id);
+
+        if (sportType.isNotEmpty) {
+          VenueService v = sportType[sportType.keys.first][0];
+          sportTypeSelected = v.sport;
+        }
 
         Future.delayed(Duration(milliseconds: 300)).then((_) {
           isMaploaded = true;

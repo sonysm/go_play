@@ -241,71 +241,78 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-        child: ListView.builder(
-          shrinkWrap: true,
-          primary: false,
-          itemBuilder: (context, index) {
-            final attributeData = _favSport.sport.attribute!.elementAt(index);
-            List? fav;
-            if (_favSport.playAttribute != null &&
-                _favSport.playAttribute![attributeData.slug] != null) {
-              fav = _favSport.playAttribute![attributeData.slug];
-            }
+        child: _favSport.sport.attribute!.isNotEmpty
+            ? ListView.builder(
+                shrinkWrap: true,
+                primary: false,
+                itemBuilder: (context, index) {
+                  final attributeData =
+                      _favSport.sport.attribute!.elementAt(index);
+                  List? fav;
+                  if (_favSport.playAttribute != null &&
+                      _favSport.playAttribute![attributeData.slug] != null) {
+                    fav = _favSport.playAttribute![attributeData.slug];
+                  }
 
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    attributeData.title!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  fav != null
-                      ? Column(
-                          children: List.from(
-                            attributeData.data!.map(
-                              (e) {
-                                if (fav!.indexOf(e.slug) > -1) {
-                                  return Container(
-                                    height: 44.0,
-                                    child: ListTile(
-                                      dense: true,
-                                      contentPadding: EdgeInsets.zero,
-                                      title: Text(
-                                        e.title!,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1,
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return Container();
-                              },
-                            ),
-                          ),
-                        )
-                      : Container(
-                          height: 44.0,
-                          child: ListTile(
-                            dense: true,
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              'Not set',
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                          ),
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          attributeData.title!,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
-                ],
+                        fav != null
+                            ? Column(
+                                children: List.from(
+                                  attributeData.data!.map(
+                                    (e) {
+                                      if (fav!.indexOf(e.slug) > -1) {
+                                        return Container(
+                                          height: 44.0,
+                                          child: ListTile(
+                                            dense: true,
+                                            contentPadding: EdgeInsets.zero,
+                                            title: Text(
+                                              e.title!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return Container();
+                                    },
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                height: 44.0,
+                                child: ListTile(
+                                  dense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  title: Text(
+                                    'Not set',
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                ),
+                              ),
+                      ],
+                    ),
+                  );
+                },
+                itemCount: _favSport.sport.attribute!.length,
+              )
+            : Padding(
+                padding: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 16.0),
+                child: Text('No information', textAlign: TextAlign.center),
               ),
-            );
-          },
-          itemCount: _favSport.sport.attribute!.length,
-        ),
       ),
     );
   }
@@ -330,11 +337,15 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
-                  side: BorderSide(color: isLight(context) ? Colors.blueGrey : Colors.grey[300]!),
+                  side: BorderSide(
+                      color: isLight(context)
+                          ? Colors.blueGrey
+                          : Colors.grey[300]!),
                 ),
               ),
               backgroundColor: MaterialStateProperty.all(Colors.transparent),
-              foregroundColor: MaterialStateProperty.all(isLight(context) ? Colors.blueGrey : Colors.grey[300]),
+              foregroundColor: MaterialStateProperty.all(
+                  isLight(context) ? Colors.blueGrey : Colors.grey[300]),
             ),
             child: Text(
               'Remove ${_favSport.sport.name} from my profile',
