@@ -8,7 +8,7 @@ import 'package:kroma_sport/themes/colors.dart';
 
 class SetAddressScreen extends StatefulWidget {
   static const tag = '/setAddressScreen';
-  final Address? address;
+  final dynamic address;
   const SetAddressScreen({Key? key, this.address}) : super(key: key);
 
   @override

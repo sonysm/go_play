@@ -108,7 +108,7 @@ class RouteGenerator {
           ),
         );
       case SetAddressScreen.tag:
-        return MaterialPageRoute(builder: (_) => SetAddressScreen(address: args as Address));
+        return MaterialPageRoute(builder: (_) => SetAddressScreen(address: args));
       case ActivityPreviewScreen.tag:
         return MaterialPageRoute(
           builder: (_) => ActivityPreviewScreen(
