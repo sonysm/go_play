@@ -35,6 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   TextEditingController _fnTextController = TextEditingController();
   TextEditingController _lnTextController = TextEditingController();
+  TextEditingController _emailTextController = TextEditingController();
   TextEditingController _genderTextController = TextEditingController();
   TextEditingController _heightTextController = TextEditingController();
   TextEditingController _weightTextController = TextEditingController();
@@ -117,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
         child: Text(
-          'Please input your first name and last name here!',
+          'Please input your basic information here!',
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
@@ -189,6 +190,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
               decoration: InputDecoration(
                 isDense: true,
                 hintText: 'last name',
+                hintStyle: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(color: Colors.grey),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: mainColor),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: mainColor),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(width: 0.5, color: Colors.grey[300]!),
+                ),
+              ),
+              onChanged: (text) {
+                setState(() {});
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _emailTextField() {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(top: 16.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24.0,
+          vertical: 4.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Email',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            TextField(
+              controller: _emailTextController,
+              style: Theme.of(context).textTheme.bodyText1,
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: 'Email',
                 hintStyle: Theme.of(context)
                     .textTheme
                     .bodyText1
@@ -445,6 +491,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _infoTextWidget(),
               _firstnameTextField(),
               _lastnameTextField(),
+              _emailTextField(),
               _genderField(),
               _birthdateField(),
               _heightField(),
@@ -454,21 +501,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: hasName() ? onStart : null,
-      //   backgroundColor: hasName() ? mainColor : Colors.grey[400],
-      //   child: Icon(
-      //     Feather.chevron_right,
-      //     size: 32.0,
-      //     color: whiteColor,
-      //   ),
-      // ),
     );
   }
 
   bool hasName() {
     return _fnTextController.text.trim().length > 2 &&
-            _lnTextController.text.trim().length > 2
+            _lnTextController.text.trim().length > 2 &&
+            _genderTextController.text.isNotEmpty &&
+            _dobController.text.isNotEmpty && selectedGender != null
         ? true
         : false;
   }
@@ -483,6 +523,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_lnTextController.text.trim().length > 0) {
       fields['last_name'] = _lnTextController.text;
     }
+    if (_emailTextController.text.isNotEmpty) {
+      fields['email'] = _emailTextController.text;
+    }
+    if (selectedHeight != null) {
+      fields['height'] = selectedHeight.toString();
+    }
+    if (selectedWeight != null) {
+      fields['weight'] = selectedWeight.toString();
+    }
+
+    fields['gender'] = selectedGender!;
+
+    fields['birth_date'] = DateFormat('yyyy-MM-dd').format(birthDate!);
+
     var data = await ksClient.postFileNoAuth('/user/register', _imageFile,
         fields: fields);
     if (data != null) {
@@ -539,7 +593,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     ]);
   }
 
-  int selectedHeight = 0;
+  int? selectedHeight;
 
   void selectHeight() {
     showKSBottomSheet(
@@ -565,7 +619,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  int selectedWeight = 0;
+  int? selectedWeight;
 
   void selectWeight() {
     showKSBottomSheet(

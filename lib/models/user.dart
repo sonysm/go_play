@@ -10,6 +10,10 @@ class User {
     this.lastLogin,
     required this.firstName,
     required this.lastName,
+    this.gender,
+    this.birthDate,
+    this.weight,
+    this.height,
     this.password,
     this.phone,
     this.email,
@@ -30,6 +34,10 @@ class User {
   dynamic lastLogin;
   String firstName;
   String lastName;
+  String? gender;
+  String? birthDate;
+  double? weight;
+  double? height;
   String? password;
   String? phone;
   String? email;
@@ -50,6 +58,10 @@ class User {
         lastLogin: json["last_login"],
         firstName: json["first_name"],
         lastName: json["last_name"],
+        gender: json["gender"],
+        birthDate: json["birth_date"],
+        weight: json["weight"],
+        height: json["height"],
         password: json["password"],
         phone: json["phone"],
         email: json["email"],
@@ -71,6 +83,10 @@ class User {
         "last_login": lastLogin,
         "first_name": firstName,
         "last_name": lastName,
+        "gender": gender,
+        "birth_date": birthDate,
+        "weight": weight,
+        "height": height,
         "password": password,
         "phone": phone,
         "email": email,

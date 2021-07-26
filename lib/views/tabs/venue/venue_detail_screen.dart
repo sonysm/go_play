@@ -155,22 +155,24 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
             Divider(
               height: 32.0,
             ),
-            Text(
-              'Description',
-              style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                  color:
-                      isLight(context) ? Colors.grey[600] : Colors.grey[100]),
-            ),
-            8.height,
-            Text(
-              'Town class venue where you can meet many qualified team in town and have match to become a champion futsal leage.',
-              style: Theme.of(context).textTheme.bodyText2,
-            ),
-            Divider(
-              height: 32.0,
-            ),
+            if (_venue.description != null) ...[
+              Text(
+                'Description',
+                style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                    color:
+                        isLight(context) ? Colors.grey[600] : Colors.grey[100]),
+              ),
+              8.height,
+              Text(
+                _venue.description!,
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+              Divider(
+                height: 32.0,
+              ),
+            ]
           ],
         ),
       ),

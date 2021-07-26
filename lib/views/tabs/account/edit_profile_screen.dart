@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/user.dart';
@@ -36,15 +38,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   TextEditingController _fnTextController = TextEditingController();
   TextEditingController _lnTextController = TextEditingController();
+  TextEditingController _emailTextController = TextEditingController();
   TextEditingController _genderTextController = TextEditingController();
+  TextEditingController _heightTextController = TextEditingController();
+  TextEditingController _weightTextController = TextEditingController();
+  TextEditingController _dobController = TextEditingController();
 
   KSHttpClient ksClient = KSHttpClient();
 
   String gender = 'Male';
-  String selectedGender = 'male';
+  String selectedGender = '';
 
   Widget _buildNavbar() {
     return SliverAppBar(
+      pinned: true,
       elevation: 0.5,
       forceElevated: true,
       centerTitle: true,
@@ -231,61 +238,59 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget genderWidget() {
+  Widget _emailTextField() {
     return SliverToBoxAdapter(
       child: Container(
-        margin: const EdgeInsets.only(top: 16.0),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+        margin: EdgeInsets.only(top: 8.0),
         child: Column(
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(bottom: 4.0),
-              alignment: Alignment.centerLeft,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4.0),
               child: Text(
-                'Gender',
+                'Email',
                 style: Theme.of(context).textTheme.bodyText1,
-                textAlign: TextAlign.center,
               ),
             ),
-            Container(
-              height: 48.0,
-              child: ToggleSwitch(
-                minWidth: AppSize(context).appWidth(50),
-                cornerRadius: 8,
-                activeBgColor: [mainColor],
-                activeFgColor: Colors.white,
-                inactiveBgColor: Colors.grey[400],
-                inactiveFgColor: Colors.white,
-                fontSize: 16.0,
-                labels: ['Male', 'Female'],
-                totalSwitches: 2,
-                initialLabelIndex: 0,
-                icons: [LineIcons.mars, LineIcons.venus],
-                onToggle: (index) {
-                  switch (index) {
-                    case 0:
-                      gender = 'Male';
-                      break;
-                    case 1:
-                      gender = 'Female';
-                      break;
-                    default:
-                      gender = 'Female';
-                  }
-                },
+            TextField(
+              controller: _emailTextController,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(fontWeight: FontWeight.w500),
+              decoration: InputDecoration(
+                hintText: 'Email',
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: Colors.grey[400]!)),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: mainColor)),
+                fillColor: Colors.white,
+                labelStyle: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(fontWeight: FontWeight.w500),
+                counterStyle: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(fontWeight: FontWeight.w500),
               ),
             ),
-            16.height,
           ],
         ),
+        // controller: _firstnameController,
       ),
     );
   }
 
-  Widget _phoneWidget() {
+  Widget _contactWidget() {
     return SliverToBoxAdapter(
       child: Container(
-        margin: const EdgeInsets.only(top: 16.0),
+        margin: const EdgeInsets.only(top: 16.0, bottom: 32.0),
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,21 +317,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ],
             ),
-            8.height,
-            Row(
-              children: <Widget>[
-                Icon(Feather.mail, size: 18.0),
-                8.width,
-                Text(
-                  KS.shared.user.lastName.toLowerCase() + '@example.com',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1
-                      ?.copyWith(fontSize: 18),
-                  strutStyle: StrutStyle(fontSize: 18.0),
-                ),
-              ],
-            ),
+            if (KS.shared.user.email != null) ...[
+              8.height,
+              Row(
+                children: <Widget>[
+                  Icon(Feather.mail, size: 18.0),
+                  8.width,
+                  Text(
+                    KS.shared.user.email!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontSize: 18),
+                    strutStyle: StrutStyle(fontSize: 18.0),
+                  ),
+                ],
+              ),
+            ],
             8.height,
             Row(
               children: <Widget>[
@@ -351,8 +358,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget _genderField() {
     return SliverToBoxAdapter(
       child: Container(
-        margin: EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
-        padding: const EdgeInsets.only(bottom: 16.0),
+        padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+        margin: EdgeInsets.only(top: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -370,15 +377,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   controller: _genderTextController,
                   style: Theme.of(context).textTheme.bodyText1,
                   readOnly: true,
-                  // decoration: InputDecoration(
-                  //   isDense: true,
-                  //   hintText: 'Select gender',
-                  //   hintStyle: Theme.of(context)
-                  //       .textTheme
-                  //       .bodyText1
-                  //       ?.copyWith(color: Colors.grey),
-                  //   border: InputBorder.none
-                  // ),
                   decoration: InputDecoration(
                     suffixIcon: Icon(Icons.keyboard_arrow_down_rounded),
                     hintText: 'Select gender',
@@ -409,6 +407,157 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
+  Widget _birthdateField() {
+    return SliverToBoxAdapter(
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+        margin: EdgeInsets.only(top: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4.0),
+              child: Text(
+                'Date of Birth',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+            TextField(
+              style: Theme.of(context).textTheme.bodyText1,
+              controller: _dobController,
+              readOnly: true,
+              decoration: InputDecoration(
+                hintText: 'Choose date of birth',
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: Colors.grey[400]!)),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide(color: Colors.grey[400]!)),
+                fillColor: Colors.white,
+                labelStyle: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(fontWeight: FontWeight.w500),
+                counterStyle: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(fontWeight: FontWeight.w500),
+              ),
+              onTap: selectDateOfBirth,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _heightField() {
+    return SliverToBoxAdapter(
+      child: InkWell(
+        onTap: selectHeight,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+          margin: EdgeInsets.only(top: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  'Height',
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ),
+              IgnorePointer(
+                ignoring: true,
+                child: TextField(
+                  controller: _heightTextController,
+                  style: Theme.of(context).textTheme.bodyText1,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    hintText: 'Choose Height',
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[400]!)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[400]!)),
+                    fillColor: Colors.white,
+                    labelStyle: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontWeight: FontWeight.w500),
+                    counterStyle: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _weightField() {
+    return SliverToBoxAdapter(
+      child: InkWell(
+        onTap: selectWeight,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+          margin: EdgeInsets.only(top: 8.0, bottom: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4.0),
+                child: Text(
+                  'Weight',
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ),
+              IgnorePointer(
+                ignoring: true,
+                child: TextField(
+                  controller: _weightTextController,
+                  style: Theme.of(context).textTheme.bodyText1,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    hintText: 'Choose weight',
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[400]!)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey[400]!)),
+                    fillColor: Colors.white,
+                    labelStyle: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontWeight: FontWeight.w500),
+                    counterStyle: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        ?.copyWith(fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -422,10 +571,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               _buildProfileImage(),
               _firstnameTextField(),
               _lastnameTextField(),
-              // _genderWidget(),
+              _emailTextField(),
               _genderField(),
+              _birthdateField(),
+              _heightField(),
+              _weightField(),
               sliverDivider(context, height: 4.0),
-              _phoneWidget(),
+              _contactWidget(),
             ],
           ),
         ),
@@ -436,9 +588,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    mapGender();
     _fnTextController.text = KS.shared.user.firstName;
     _lnTextController.text = KS.shared.user.lastName;
+    if (KS.shared.user.email != null) {
+      _emailTextController.text = KS.shared.user.email!;
+    }
+    if (KS.shared.user.gender!.isNotEmpty) {
+      selectedGender = KS.shared.user.gender!;
+    }
+    if (KS.shared.user.birthDate != null) {
+      _dobController.text = DateFormat('dd-MMMM-yyyy')
+          .format(DateTime.parse(KS.shared.user.birthDate!));
+    }
+    if (KS.shared.user.weight != null) {
+      _weightTextController.text = KS.shared.user.weight!.toStringAsFixed(0) + 'kg';
+    }
+    if (KS.shared.user.height != null) {
+      _heightTextController.text = KS.shared.user.height!.toStringAsFixed(0) + 'cm';
+    }
+    mapGender();
   }
 
   void saveProfile() async {
@@ -457,6 +625,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return;
     }
     fields['last_name'] = _lnTextController.text;
+
+    if (_emailTextController.text.isNotEmpty) {
+      fields['email'] = _emailTextController.text;
+    }
+    if (selectedHeight != null) {
+      fields['height'] = selectedHeight.toString();
+    }
+    if (selectedWeight != null) {
+      fields['weight'] = selectedWeight.toString();
+    }
+
+    if (selectedGender.isNotEmpty) {
+      fields['gender'] = selectedGender;
+    }
+    if (birthDate != null) {
+      fields['birth_date'] = DateFormat('yyyy-MM-dd').format(birthDate!);
+    }
 
     if (_imageFile != null) {
       List<int> imageData = _imageFile!.readAsBytesSync();
@@ -533,8 +718,97 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       case 'female':
         _genderTextController.text = 'Female';
         break;
-      default:
+      case 'other':
         _genderTextController.text = 'Other';
+        break;
+      default:
+        _genderTextController.text = '';
     }
+  }
+
+  int? selectedHeight;
+
+  void selectHeight() {
+    showKSBottomSheet(
+      context,
+      title: 'Choose Height',
+      children: List.generate(
+        71,
+        (index) {
+          return RadioListTile<int>(
+            value: 130 + index,
+            groupValue: selectedHeight,
+            onChanged: (value) {
+              _heightTextController.text = '$value\cm';
+              setState(() => selectedHeight = value!);
+              dismissScreen(context);
+            },
+            title: Text('${130 + index}\cm',
+                style:
+                    TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+          );
+        },
+      ),
+    );
+  }
+
+  int? selectedWeight;
+
+  void selectWeight() {
+    showKSBottomSheet(
+      context,
+      title: 'Choose Weight',
+      children: List.generate(
+        71,
+        (index) {
+          return RadioListTile<int>(
+            value: 30 + index,
+            groupValue: selectedWeight,
+            onChanged: (value) {
+              _weightTextController.text = '$value\kg';
+              setState(() => selectedWeight = value!);
+              dismissScreen(context);
+            },
+            title: Text('${30 + index}\kg',
+                style:
+                    TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+          );
+        },
+      ),
+    );
+  }
+
+  String birthDateText = '';
+  DateTime? birthDate;
+
+  void selectDateOfBirth() async {
+    DatePicker.showPicker(
+      context,
+      // locale: LocaleType.km,
+      theme: DatePickerTheme(
+        doneStyle: TextStyle(
+          color: mainColor,
+          fontSize: 16.0,
+          fontWeight: FontWeight.w600,
+          fontFamily: "OpenSans",
+        ),
+        itemStyle: TextStyle(
+          color: blackColor,
+          fontSize: 16.0,
+          fontWeight: FontWeight.w600,
+          fontFamily: "OpenSans",
+        ),
+      ),
+      // pickerModel: CustomPicker(
+      //     // locale: LocaleType.km,
+      //     currentTime: birthDate != null ? birthDate : DateTime.now()),
+      onConfirm: (dateTime) {
+        var formatter = DateFormat('dd-MMMM-yyyy');
+        birthDateText = formatter.format(dateTime);
+        birthDate = dateTime;
+        _dobController.text = birthDateText;
+        setState(() {});
+      },
+    );
   }
 }

@@ -20,6 +20,7 @@ class Venue {
     required this.address,
     required this.latitude,
     required this.longitude,
+    this.description,
   });
 
   int id;
@@ -32,11 +33,15 @@ class Venue {
   String address;
   String latitude;
   String longitude;
+  String? description;
 
   factory Venue.fromJson(Map<String, dynamic> json) => Venue(
         id: json["id"],
         owner: (json["owner"] is Map) ? Owner.fromJson(json["owner"]) : null,
-        schedule: json["schedule"] != null ? List<Schedule>.from(json["schedule"].map((x) => Schedule.fromJson(x))) : null,
+        schedule: json["schedule"] != null
+            ? List<Schedule>.from(
+                json["schedule"].map((x) => Schedule.fromJson(x)))
+            : null,
         isActive: json["is_active"],
         name: json["name"],
         profilePhoto: json["profile_photo"],
@@ -44,6 +49,7 @@ class Venue {
         address: json["address"],
         latitude: json["latitude"],
         longitude: json["longitude"],
+        description: json["description"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -57,6 +63,7 @@ class Venue {
         "address": address,
         "latitude": latitude,
         "longitude": longitude,
+        "description": description,
       };
 }
 

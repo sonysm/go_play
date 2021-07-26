@@ -3,6 +3,7 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/auth/register_screen.dart';
 import 'package:kroma_sport/views/auth/verify_code_screen.dart';
@@ -25,15 +26,16 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'VPlay',
-          style: TextStyle(
-            color: whiteColor,
-            fontSize: 36.0,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'ProximaNova',
-          ),
-        ),
+        // Text(
+        //   'VPlay',
+        //   style: TextStyle(
+        //     color: whiteColor,
+        //     fontSize: 36.0,
+        //     fontWeight: FontWeight.w700,
+        //     fontFamily: 'ProximaNova',
+        //   ),
+        // ),
+        SizedBox(height: 42.0, child: Image.asset(imgVplayText)),
         8.height,
         Text(
           'Welcome to sport community!',

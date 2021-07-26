@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -164,8 +165,7 @@ class _ActivityCellState extends State<ActivityCell> {
                 widget.post.photo != null
                     ? SizedBox(
                         width: AppSize(context).appWidth(100),
-                        height: AppSize(context).appWidth(100),
-                        child: CacheImage(url: widget.post.photo!),
+                        child: CachedNetworkImage(imageUrl: widget.post.photo!, fit: BoxFit.contain,),
                       )
                     : SizedBox(
                         width: AppSize(context).appWidth(100),
@@ -176,59 +176,72 @@ class _ActivityCellState extends State<ActivityCell> {
                                 : 'https://images.unsplash.com/photo-1592656094267-764a45160876?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
                       ),
                 Positioned(
-                  left: 16.0,
-                  bottom: 16.0,
-                  right: 16.0,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.post.sport!.name.toUpperCase(),
-                            style: TextStyle(
-                              color: whiteColor,
-                            ),
-                          ),
-                          SizedBox(
-                            width: AppSize(context).appWidth(70),
-                            child: Text(
-                              widget.post.title,
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                color: whiteColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          8.height,
-                          Row(
-                            children: [
-                              Icon(
-                                Feather.clock,
-                                color: whiteColor,
-                                size: 18.0,
-                              ),
-                              4.width,
-                              Text(
-                                calcMinuteDuration(),
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: whiteColor,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                strutStyle: StrutStyle(
-                                  fontSize: 18.0,
-                                ),
-                              ),
-                            ],
-                          ),
+                  left: 0,
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.only(
+                        left: 16.0, right: 16.0, bottom: 8.0, top: 26.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black87,
+                          Color(0x00000000),
                         ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
                       ),
-                      Spacer(),
-                      SizedBox(width: 32, child: Image.asset(icVplay)),
-                    ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: AppSize(context).appWidth(70),
+                          child: Text(
+                            widget.post.title,
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: whiteColor,
+                              // fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              widget.post.sport!.name.toUpperCase(),
+                              style: TextStyle(
+                                color: whiteColor,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Feather.clock,
+                                  color: whiteColor,
+                                  size: 18.0,
+                                ),
+                                4.width,
+                                Text(
+                                  calcMinuteDuration(),
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: whiteColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  strutStyle: StrutStyle(
+                                    fontSize: 18.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                                height: 24, child: Image.asset(imgVplayText)),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -268,11 +281,11 @@ class _ActivityCellState extends State<ActivityCell> {
                         icon: FeatherIcons.messageSquare,
                         onTap: () => launchFeedDetailScreen(widget.post, true),
                       ),
-                      4.width,
-                      KSIconButton(
-                        icon: FeatherIcons.share2,
-                        onTap: () {},
-                      ),
+                      // 4.width,
+                      // KSIconButton(
+                      //   icon: FeatherIcons.share2,
+                      //   onTap: () {},
+                      // ),
                       Spacer(),
                       buildTotalReaction(widget.post.totalReaction),
                       8.width,

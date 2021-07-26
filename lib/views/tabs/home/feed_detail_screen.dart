@@ -213,9 +213,12 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 children: [
                   post.photo != null
                       ? SizedBox(
-                          width: AppSize(context).appWidth(100),
-                          height: AppSize(context).appWidth(100),
-                          child: CacheImage(url: post.photo!),
+                          // width: AppSize(context).appWidth(100),
+                          // height: AppSize(context).appWidth(100),
+                          // child: CacheImage(url: post.photo!),
+                          child: CachedNetworkImage(
+                                      imageUrl:
+                                          post.photo!),
                         )
                       : SizedBox(
                           width: AppSize(context).appWidth(100),
@@ -226,56 +229,72 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                                   : 'https://images.unsplash.com/photo-1592656094267-764a45160876?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
                         ),
                   Positioned(
-                    left: 16.0,
-                    bottom: 16.0,
-                    right: 16.0,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              post.sport!.name.toUpperCase(),
-                              style: TextStyle(
-                                color: whiteColor,
-                              ),
-                            ),
-                            SizedBox(
-                              width: AppSize(context).appWidth(70),
-                              child: Text(
-                                post.title,
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: whiteColor,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            8.height,
-                            Row(
-                              children: [
-                                Icon(Feather.clock,
-                                    color: whiteColor, size: 18.0),
-                                4.width,
-                                Text(
-                                  calcMinuteDuration(),
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    color: whiteColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  strutStyle: StrutStyle(
-                                    fontSize: 18.0,
-                                  ),
-                                ),
-                              ],
-                            ),
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16.0, bottom: 8.0, top: 26.0),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.black87,
+                            Color(0x00000000),
                           ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
                         ),
-                        Spacer(),
-                        SizedBox(width: 32, child: Image.asset(icVplay)),
-                      ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: AppSize(context).appWidth(70),
+                            child: Text(
+                              widget.post.title,
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                color: whiteColor,
+                                // fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                widget.post.sport!.name.toUpperCase(),
+                                style: TextStyle(
+                                  color: whiteColor,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Feather.clock,
+                                    color: whiteColor,
+                                    size: 18.0,
+                                  ),
+                                  4.width,
+                                  Text(
+                                    calcMinuteDuration(),
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: whiteColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    strutStyle: StrutStyle(
+                                      fontSize: 18.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                  height: 24, child: Image.asset(imgVplayText)),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -319,11 +338,11 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                           scrollToBottom();
                         },
                       ),
-                      4.width,
-                      KSIconButton(
-                        icon: FeatherIcons.share2,
-                        onTap: () {},
-                      ),
+                      // 4.width,
+                      // KSIconButton(
+                      //   icon: FeatherIcons.share2,
+                      //   onTap: () {},
+                      // ),
                       Spacer(),
                       buildTotalReaction(post.totalReaction),
                       8.width,

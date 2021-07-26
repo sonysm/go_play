@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kroma_sport/bloc/splash.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:package_info/package_info.dart';
@@ -18,15 +19,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   Widget splashText() {
-    return Text(
-      'VPlay',
-      textAlign: TextAlign.center,
-      style: TextStyle(
-          fontSize: 28.0,
-          color: whiteColor,
-          fontWeight: FontWeight.w700,
-          fontFamily: 'ProximaNova'),
-    );
+    return SizedBox(height: 42.0, child: Image.asset(imgVplayText));
   }
 
   @override
