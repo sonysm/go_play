@@ -9,6 +9,7 @@ import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/comment.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -17,6 +18,7 @@ import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/report_screen.dart';
@@ -216,9 +218,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                           // width: AppSize(context).appWidth(100),
                           // height: AppSize(context).appWidth(100),
                           // child: CacheImage(url: post.photo!),
-                          child: CachedNetworkImage(
-                                      imageUrl:
-                                          post.photo!),
+                          child: CachedNetworkImage(imageUrl: post.photo!),
                         )
                       : SizedBox(
                           width: AppSize(context).appWidth(100),
@@ -818,8 +818,12 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 final user = likeUsers[index];
                 return InkWell(
                   onTap: () {
-                    launchScreen(context, ViewUserProfileScreen.tag,
-                        arguments: user);
+                    if (user.id != KS.shared.user.id) {
+                      launchScreen(context, ViewUserProfileScreen.tag,
+                          arguments: user);
+                    } else {
+                      launchScreen(context, AccountScreen.tag);
+                    }
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(

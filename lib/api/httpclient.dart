@@ -260,6 +260,47 @@ class KSHttpClient {
       } else if (response.statusCode == 401) {
         result = HttpResult(401, "Unauthorized");
       }
+
+      // request.send().asStream().listen((event) async {
+      //   print('_____sending: ${event.stream}');
+      //   final response = await http.Response.fromStream(event);
+      //   if (response.statusCode == 200 || response.statusCode == 201) {
+      //     final json = jsonDecode(utf8.decode(response.bodyBytes));
+      //     if (json != null) {
+      //       int code = int.parse(json['code'].toString());
+      //       if (code == 1) {
+      //         result = json['data'];
+      //       } else {
+      //         result = HttpResult(code, json['message']);
+      //       }
+      //     } else {
+      //       result = HttpResult(0, "Something went wrong!");
+      //     }
+      //   } else if (response.statusCode == 401) {
+      //     result = HttpResult(401, "Unauthorized");
+      //   }
+      // });
+
+      /*http.Response.fromStream(stream).asStream().listen((event) {
+        print('_____steam content len: ${event.contentLength}');
+        print('_____steam body byte: ${event.bodyBytes}');
+        // print('__gggg: ${event.}')
+        if (event.statusCode == 200 || event.statusCode == 201) {
+          final json = jsonDecode(utf8.decode(event.bodyBytes));
+          if (json != null) {
+            int code = int.parse(json['code'].toString());
+            if (code == 1) {
+              result = json['data'];
+            } else {
+              result = HttpResult(code, json['message']);
+            }
+          } else {
+            result = HttpResult(0, "Something went wrong!");
+          }
+        } else if (event.statusCode == 401) {
+          result = HttpResult(401, "Unauthorized");
+        }
+      });*/
     } on SocketException catch (e) {
       result = HttpResult(-500, "Internet connection");
       print("SocketException = $e");

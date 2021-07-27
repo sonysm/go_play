@@ -91,6 +91,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
     getNotification();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   void getNotification() async {
     var res = await ksClient.getApi('/user/my_notification');
     if (res != null) {

@@ -39,8 +39,17 @@ class ActivityPreviewScreen extends StatefulWidget {
 class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
   KSHttpClient ksClient = KSHttpClient();
 
+  var originalHeight;
+  var originalWidth;
+
+  double? imgHeight;
+
   @override
   Widget build(BuildContext context) {
+    imgHeight = AppSize(context).appWidth(100) *
+        double.parse(originalHeight.toString()) /
+        double.parse(originalWidth.toString());
+
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
@@ -144,12 +153,16 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
                   widget.activityData['photo'] != null
                       ? SizedBox(
                           width: double.infinity,
+                          height: imgHeight,
                           child: AssetThumb(
                             asset: widget.activityData['photo'],
-                            width: (widget.activityData['photo'] as Asset)
-                                .originalWidth!,
-                            height: (widget.activityData['photo'] as Asset)
-                                .originalWidth!,
+                            width: originalWidth,
+                            height: originalHeight,
+                            // spinner: Container(
+                            //   // color: Colors.grey[200],
+                            //   width: AppSize(context).appWidth(100),
+                            //   height: AppSize(context).appWidth(100),
+                            // ),
                           ),
                         )
                       : SizedBox(
@@ -161,59 +174,39 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
                                   ? 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1353&q=80'
                                   : 'https://images.unsplash.com/photo-1592656094267-764a45160876?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
                         ),
-                  // Positioned(
-                  //   left: 16.0,
-                  //   right: 16.0,
-                  //   top: 16.0,
-                  //   child: Row(
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Text(
-                  //             (widget.activityData['sport'] as Sport)
-                  //                 .name
-                  //                 .toUpperCase(),
-                  //             style: TextStyle(
-                  //               fontSize: 16.0,
-                  //               color: whiteColor,
-                  //               fontWeight: FontWeight.w600,
-                  //             ),
-                  //           ),
-                  //           Text(
-                  //             widget.activityData['name'],
-                  //             style: TextStyle(
-                  //               fontSize: 22.0,
-                  //               color: whiteColor,
-                  //               fontWeight: FontWeight.w600,
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //       Spacer(),
-                  //       Text(
-                  //         'Sport',
-                  //         style: TextStyle(
-                  //           fontSize: 24.0,
-                  //           color: whiteColor,
-                  //           fontWeight: FontWeight.w600,
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   Positioned(
-                    left: 16.0,
-                    bottom: 16.0,
-                    right: 16.0,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        SizedBox(
-                          width: AppSize(context).appWidth(70),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16.0, bottom: 8.0, top: 26.0),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.black87,
+                            Color(0x00000000),
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: AppSize(context).appWidth(70),
+                            child: Text(
+                              widget.activityData['name'],
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                color: whiteColor,
+                                // fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 (widget.activityData['sport'] as Sport)
@@ -223,15 +216,6 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
                                   color: whiteColor,
                                 ),
                               ),
-                              Text(
-                                widget.activityData['name'],
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: whiteColor,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              8.height,
                               Row(
                                 children: [
                                   Icon(
@@ -253,14 +237,14 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
                                   ),
                                 ],
                               ),
+                              SizedBox(
+                                  height: 24, child: Image.asset(imgVplayText)),
                             ],
                           ),
-                        ),
-                        Spacer(),
-                        SizedBox(width: 32, child: Image.asset(icVplay)),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+                  )
                 ],
               ),
               Padding(
@@ -289,6 +273,15 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    originalHeight =
+        (widget.activityData['photo'] as Asset).originalHeight!;
+    originalWidth =
+        (widget.activityData['photo'] as Asset).originalWidth!;
   }
 
   void createActivity() async {
