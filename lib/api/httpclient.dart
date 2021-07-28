@@ -174,9 +174,9 @@ class KSHttpClient {
         HttpHeaders.contentTypeHeader: 'multipart/form-data',
       });
 
-      request.send().then((stream) async {
+      return request.send().then((stream) async {
         final response = await http.Response.fromStream(stream);
-        if (response.statusCode == 200) {
+        if (response.statusCode == 200 || response.statusCode == 201) {
           var json = jsonDecode(utf8.decode(response.bodyBytes));
           if (json != null) {
             int code = int.parse(json['code'].toString());
@@ -189,6 +189,7 @@ class KSHttpClient {
             result = HttpResult(0, "Something went wrong!");
           }
         }
+        return result;
       });
     } on SocketException catch (e) {
       result = HttpResult(-500, "Internet connection");

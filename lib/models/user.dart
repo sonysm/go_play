@@ -28,6 +28,7 @@ class User {
     this.updatedAt,
     required this.followerCount,
     required this.followingCount,
+    required this.isPublic,
   });
 
   int id;
@@ -52,6 +53,7 @@ class User {
   DateTime? updatedAt;
   int followerCount;
   int followingCount;
+  bool isPublic;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],
@@ -76,6 +78,7 @@ class User {
         updatedAt: DateTime.parse(json["updated_at"]),
         followerCount: json['follower_count'],
         followingCount: json['following_count'],
+        isPublic: json['is_public']
       );
 
   Map<String, dynamic> toJson() => {
@@ -101,6 +104,7 @@ class User {
         "updated_at": updatedAt?.toIso8601String(),
         "follower_count": followerCount,
         "following_count": followingCount,
+        "is_public": isPublic,
       };
 
   String getFullname() {

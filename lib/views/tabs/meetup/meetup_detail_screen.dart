@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
+import 'package:kroma_sport/config/env.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/discussion.dart';
 import 'package:kroma_sport/models/member.dart';
@@ -612,7 +613,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
       meetup = widget.meetup;
 
       channel = IOWebSocketChannel.connect(
-          'ws://165.232.160.96:8080/ws/meetup/message/${meetup!.id}/',
+          DEBUG ? DEV_WS : PRO_WS + '/ws/meetup/message/${meetup!.id}/',
           headers: {'x-key': ksClient.token()});
 
       channel.stream.listen((message) {

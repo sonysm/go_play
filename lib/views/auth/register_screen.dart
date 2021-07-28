@@ -544,7 +544,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ksClient.setToken(data['token']);
         userRepository.persistHeaderToken(data['token']);
         userRepository.persistToken(data['refresh_token']);
-        KS.shared.user = userFromJson(data['user']);
+        KS.shared.user = User.fromJson(data['user']);
         Navigator.pushNamedAndRemoveUntil(
             context, MainView.tag, (route) => false);
       } else {
@@ -560,9 +560,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       RadioListTile<String>(
         value: 'male',
         groupValue: selectedGender,
+        toggleable: true,
         onChanged: (value) {
-          _genderTextController.text = 'Male';
-          setState(() => selectedGender = value!);
+          _genderTextController.text = value != null ? 'Male' : '';
+          setState(() => selectedGender = value);
           dismissScreen(context);
         },
         title: Text('Male',
@@ -571,9 +572,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       RadioListTile<String>(
         value: 'female',
         groupValue: selectedGender,
+        toggleable: true,
         onChanged: (value) {
-          _genderTextController.text = 'Female';
-          setState(() => selectedGender = value!);
+          _genderTextController.text = value != null ? 'Female' : '';
+          setState(() => selectedGender = value);
           dismissScreen(context);
         },
         title: Text('Female',
@@ -582,9 +584,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       RadioListTile<String>(
         value: 'other',
         groupValue: selectedGender,
+        toggleable: true,
         onChanged: (value) {
-          _genderTextController.text = 'Other';
-          setState(() => selectedGender = value!);
+          _genderTextController.text = value != null ? 'Other' : '';
+          setState(() => selectedGender = value);
           dismissScreen(context);
         },
         title: Text('Other',
@@ -605,9 +608,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           return RadioListTile<int>(
             value: 130 + index,
             groupValue: selectedHeight,
+            toggleable: true,
             onChanged: (value) {
-              _heightTextController.text = '$value\cm';
-              setState(() => selectedHeight = value!);
+              _heightTextController.text = value != null ? '$value\cm' : '';
+              setState(() => selectedHeight = value);
               dismissScreen(context);
             },
             title: Text('${130 + index}\cm',
@@ -631,9 +635,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           return RadioListTile<int>(
             value: 30 + index,
             groupValue: selectedWeight,
+            toggleable: true,
             onChanged: (value) {
-              _weightTextController.text = '$value\kg';
-              setState(() => selectedWeight = value!);
+              _weightTextController.text = value != null ? '$value\kg' : '';
+              setState(() => selectedWeight = value);
               dismissScreen(context);
             },
             title: Text('${30 + index}\kg',

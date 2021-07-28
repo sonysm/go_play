@@ -55,6 +55,7 @@ class VenueCell extends StatelessWidget {
                 ),
               ),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Feather.map_pin,
@@ -62,17 +63,19 @@ class VenueCell extends StatelessWidget {
                     size: 14.0,
                   ),
                   4.width,
-                  Text(
-                    venue.address,
-                    style: TextStyle(
-                      color: whiteColor,
-                      fontSize: 14.0,
+                  Flexible(
+                    child: Text(
+                      venue.address,
+                      style: TextStyle(
+                        color: whiteColor,
+                        fontSize: 14.0,
+                      ),
+                      strutStyle: StrutStyle(fontSize: 14.0),
                     ),
-                    strutStyle: StrutStyle(fontSize: 14.0),
                   ),
                 ],
               ),
-              8.height,
+              // 8.height,
               /*Row(
                 children: [
                   Icon(
