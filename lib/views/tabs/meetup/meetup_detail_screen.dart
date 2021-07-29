@@ -612,8 +612,12 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
       isLoading = false;
       meetup = widget.meetup;
 
+      // channel = IOWebSocketChannel.connect(
+      //     DEBUG ? DEV_WS : PRO_WS + '/ws/meetup/message/${meetup!.id}/',
+      //     headers: {'x-key': ksClient.token()});
+
       channel = IOWebSocketChannel.connect(
-          DEBUG ? DEV_WS : PRO_WS + '/ws/meetup/message/${meetup!.id}/',
+          DEBUG ? 'ws://165.232.160.96:8080/ws/meetup/message/${meetup!.id}/' : 'ws://mb.v-play.cc/ws/meetup/message/${meetup!.id}/',
           headers: {'x-key': ksClient.token()});
 
       channel.stream.listen((message) {

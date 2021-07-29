@@ -15,6 +15,7 @@ import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
@@ -39,9 +40,28 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Widget buildNavbar() {
     return SliverAppBar(
-      title: Text('Home'),
-      elevation: 0,
-      pinned: true,
+      title: InkWell(
+        onTap: scrollToBottom,
+        overlayColor: MaterialStateProperty.all(Colors.transparent),
+        child: SizedBox(
+          height: 24.0,
+          child: Image.asset(
+            imgVplayText,
+            color: mainColor,
+          ),
+        ),
+      ),
+      elevation: 0.0,
+      actions: [
+        CupertinoButton(
+          child: Icon(FeatherIcons.bell,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.grey[600]
+                  : whiteColor),
+          onPressed: () => launchScreen(context, NotificationScreen.tag),
+        ),
+      ],
+      floating: true,
     );
   }
 
@@ -257,54 +277,64 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocBuilder<HomeCubit, HomeData>(
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(
-            title: InkWell(
-              onTap: scrollToBottom,
-              child: Text('Home'),
-            ),
-            elevation: 0.0,
-            actions: [
-              CupertinoButton(
-                child: Icon(FeatherIcons.bell,
-                    color: Theme.of(context).brightness == Brightness.light
-                        ? Colors.grey[600]
-                        : whiteColor),
-                onPressed: () => launchScreen(context, NotificationScreen.tag),
+          // appBar: AppBar(
+          //   title: InkWell(
+          //     onTap: scrollToBottom,
+          //     child: SizedBox(
+          //       height: 24.0,
+          //       child: Image.asset(
+          //         imgVplayText,
+          //         color: mainColor,
+          //       ),
+          //     ),
+          //   ),
+          //   elevation: 0.0,
+          //   actions: [
+          //     CupertinoButton(
+          //       child: Icon(FeatherIcons.bell,
+          //           color: Theme.of(context).brightness == Brightness.light
+          //               ? Colors.grey[600]
+          //               : whiteColor),
+          //       onPressed: () => launchScreen(context, NotificationScreen.tag),
+          //     ),
+          //   ],
+          // ),
+          backgroundColor: Theme.of(context).primaryColor,
+          body: SafeArea(
+            child: EasyRefresh.custom(
+              scrollController: _homeScrollController,
+              header: MaterialHeader(
+                valueColor: AlwaysStoppedAnimation<Color>(mainColor),
               ),
-            ],
-          ),
-          body: EasyRefresh.custom(
-            scrollController: _homeScrollController,
-            header: MaterialHeader(
-              valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+              footer: ClassicalFooter(
+                enableInfiniteLoad: false,
+                completeDuration: Duration(milliseconds: 1200),
+              ),
+              slivers: [
+                buildNavbar(),
+                createFeedWidget(),
+                buildHomeFeedList(state),
+                //BottomRefresher(onRefresh: () {
+                //    return Future<void>.delayed(const Duration(seconds: 10))
+                //        ..then((re) {
+                //          // setState(() {
+                //          //   changeRandomList();
+                //          //   _scrollController.animateTo(0.0,
+                //          //       duration: new Duration(milliseconds: 100),
+                //          //       curve: Curves.bounceOut);
+                //          // });
+                //          print("==============");
+                //        });
+                //}),
+              ],
+              onRefresh: () async {
+                BlocProvider.of<HomeCubit>(context).onRefresh();
+              },
+              onLoad: () async {
+                await Future.delayed(Duration(seconds: 2));
+                BlocProvider.of<HomeCubit>(context).onLoadMore();
+              },
             ),
-            footer: ClassicalFooter(
-              enableInfiniteLoad: false,
-              completeDuration: Duration(milliseconds: 1200),
-            ),
-            slivers: [
-              createFeedWidget(),
-              buildHomeFeedList(state),
-              //BottomRefresher(onRefresh: () {
-              //    return Future<void>.delayed(const Duration(seconds: 10))
-              //        ..then((re) {
-              //          // setState(() {
-              //          //   changeRandomList();
-              //          //   _scrollController.animateTo(0.0,
-              //          //       duration: new Duration(milliseconds: 100),
-              //          //       curve: Curves.bounceOut);
-              //          // });
-              //          print("==============");
-              //        });
-              //}),
-            ],
-            onRefresh: () async {
-              BlocProvider.of<HomeCubit>(context).onRefresh();
-            },
-            onLoad: () async {
-              await Future.delayed(Duration(seconds: 2));
-              BlocProvider.of<HomeCubit>(context).onLoadMore();
-            },
           ),
         );
       },
