@@ -39,11 +39,12 @@ class ActivityCell extends StatefulWidget {
 }
 
 class _ActivityCellState extends State<ActivityCell> {
+  late Post _post;
+
   String calcMinuteDuration() {
-    var s = DateTime.parse(
-        widget.post.activityDate! + ' ' + widget.post.activityStartTime!);
-    var e = DateTime.parse(
-        widget.post.activityDate! + ' ' + widget.post.activityEndTime!);
+    var s =
+        DateTime.parse(_post.activityDate! + ' ' + _post.activityStartTime!);
+    var e = DateTime.parse(_post.activityDate! + ' ' + _post.activityEndTime!);
 
     if (e.difference(s).inMinutes == 0) {
       int dur = 24 * 60;
@@ -73,7 +74,7 @@ class _ActivityCellState extends State<ActivityCell> {
     }
 
     return InkWell(
-      onTap: () => launchFeedDetailScreen(widget.post),
+      onTap: () => launchFeedDetailScreen(_post),
       child: Container(
         color: Theme.of(context).primaryColor,
         padding: EdgeInsets.only(top: 16.0, bottom: 8.0),
@@ -87,10 +88,10 @@ class _ActivityCellState extends State<ActivityCell> {
                 children: [
                   Avatar(
                     radius: 18.0,
-                    user: widget.post.owner,
+                    user: _post.owner,
                     isSelectable: widget.isAvatarSelectable,
                     onTap: (user) {
-                      widget.post.owner = user;
+                      _post.owner = user;
                       setState(() {});
                     },
                   ),
@@ -106,7 +107,7 @@ class _ActivityCellState extends State<ActivityCell> {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: widget.post.owner.getFullname(),
+                                      text: _post.owner.getFullname(),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -114,10 +115,10 @@ class _ActivityCellState extends State<ActivityCell> {
                                               fontWeight: FontWeight.w600,
                                               fontFamily: 'Metropolis'),
                                     ),
-                                    widget.post.activityLocation != null
+                                    _post.activityLocation != null
                                         ? TextSpan(
                                             text:
-                                                ' added an activity at ${widget.post.activityLocation!.name}.',
+                                                ' added an activity at ${_post.activityLocation!.name}.',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodyText1,
@@ -130,7 +131,7 @@ class _ActivityCellState extends State<ActivityCell> {
                           ],
                         ),
                         Text(
-                          widget.post.createdAt.toString().timeAgoString,
+                          _post.createdAt.toString().timeAgoString,
                           style: Theme.of(context).textTheme.caption!.copyWith(
                               color: isLight(context)
                                   ? Colors.blueGrey[400]
@@ -142,36 +143,39 @@ class _ActivityCellState extends State<ActivityCell> {
                   KSIconButton(
                     icon: FeatherIcons.moreHorizontal,
                     iconSize: 24.0,
-                    onTap: () => showOptionActionBottomSheet(widget.post),
+                    onTap: () => showOptionActionBottomSheet(_post),
                   ),
                 ],
               ),
             ),
-            widget.post.description != null
+            _post.description != null
                 ? Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 8.0,
                       horizontal: 16.0,
                     ),
                     child: SelectableText(
-                      widget.post.description!,
+                      _post.description!,
                       style: Theme.of(context).textTheme.bodyText1,
-                      onTap: () => launchFeedDetailScreen(widget.post),
+                      onTap: () => launchFeedDetailScreen(_post),
                     ),
                   )
                 : SizedBox(height: 8.0),
             Stack(
               children: [
-                widget.post.photo != null
+                _post.photo != null
                     ? SizedBox(
                         width: AppSize(context).appWidth(100),
-                        child: CachedNetworkImage(imageUrl: widget.post.photo!, fit: BoxFit.contain,),
+                        child: CachedNetworkImage(
+                          imageUrl: _post.photo!,
+                          fit: BoxFit.contain,
+                        ),
                       )
                     : SizedBox(
                         width: AppSize(context).appWidth(100),
                         height: AppSize(context).appWidth(100),
                         child: CacheImage(
-                            url: widget.post.sport!.id == 1
+                            url: _post.sport!.id == 1
                                 ? 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1353&q=80'
                                 : 'https://images.unsplash.com/photo-1592656094267-764a45160876?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
                       ),
@@ -198,7 +202,7 @@ class _ActivityCellState extends State<ActivityCell> {
                         SizedBox(
                           width: AppSize(context).appWidth(70),
                           child: Text(
-                            widget.post.title,
+                            _post.title,
                             style: TextStyle(
                               fontSize: 14.0,
                               color: whiteColor,
@@ -210,7 +214,7 @@ class _ActivityCellState extends State<ActivityCell> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.post.sport!.name.toUpperCase(),
+                              _post.sport!.name.toUpperCase(),
                               style: TextStyle(
                                 color: whiteColor,
                               ),
@@ -253,25 +257,25 @@ class _ActivityCellState extends State<ActivityCell> {
                   Row(
                     children: [
                       KSIconButton(
-                        icon: widget.post.reacted!
+                        icon: _post.reacted!
                             ? Icons.favorite
                             : FeatherIcons.heart,
                         iconColor:
                             Theme.of(context).brightness == Brightness.light
-                                ? widget.post.reacted!
+                                ? _post.reacted!
                                     ? Colors.green
                                     : Colors.blueGrey
-                                : widget.post.reacted!
+                                : _post.reacted!
                                     ? Colors.green
                                     : Colors.white,
                         onTap: () {
-                          if (widget.post.reacted!) {
-                            widget.post.totalReaction -= 1;
+                          if (_post.reacted!) {
+                            _post.totalReaction -= 1;
                           } else {
-                            widget.post.totalReaction += 1;
+                            _post.totalReaction += 1;
                           }
                           setState(() {
-                            widget.post.reacted = !widget.post.reacted!;
+                            _post.reacted = !_post.reacted!;
                             reactPost();
                           });
                         },
@@ -279,7 +283,7 @@ class _ActivityCellState extends State<ActivityCell> {
                       4.width,
                       KSIconButton(
                         icon: FeatherIcons.messageSquare,
-                        onTap: () => launchFeedDetailScreen(widget.post, true),
+                        onTap: () => launchFeedDetailScreen(_post, true),
                       ),
                       // 4.width,
                       // KSIconButton(
@@ -287,9 +291,9 @@ class _ActivityCellState extends State<ActivityCell> {
                       //   onTap: () {},
                       // ),
                       Spacer(),
-                      buildTotalReaction(widget.post.totalReaction),
+                      buildTotalReaction(_post.totalReaction),
                       8.width,
-                      buildTotalComment(widget.post.totalComment),
+                      buildTotalComment(_post.totalComment),
                     ],
                   ),
                   Padding(
@@ -310,8 +314,7 @@ class _ActivityCellState extends State<ActivityCell> {
                         8.width,
                         Expanded(
                           child: InkWell(
-                            onTap: () =>
-                                launchFeedDetailScreen(widget.post, true),
+                            onTap: () => launchFeedDetailScreen(_post, true),
                             child: Container(
                               height: 32.0,
                               padding:
@@ -343,10 +346,20 @@ class _ActivityCellState extends State<ActivityCell> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _post = widget.post;
+  }
+
   void launchFeedDetailScreen(Post post, [bool isCommentTap = false]) async {
-    var p = await launchScreen(context, FeedDetailScreen.tag,
-        arguments: {'post': post, 'isCommentTap': isCommentTap}) as Post;
-    setState(() => widget.post.reacted = p.reacted);
+    launchScreen(context, FeedDetailScreen.tag, arguments: {
+      'post': post,
+      'isCommentTap': isCommentTap,
+      'postCallback': (Post p) {
+        setState(() => _post = p);
+      }
+    });
   }
 
   void showOptionActionBottomSheet(Post post) {
@@ -411,8 +424,7 @@ class _ActivityCellState extends State<ActivityCell> {
   }
 
   void reactPost() async {
-    var result =
-        await ksClient.postApi('/create/post/reaction/${widget.post.id}');
+    var result = await ksClient.postApi('/create/post/reaction/${_post.id}');
     if (result != null) {
       if (result is! HttpResult) {
         print('success!!!!');

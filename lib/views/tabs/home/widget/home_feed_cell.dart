@@ -42,6 +42,7 @@ class HomeFeedCell extends StatefulWidget {
 
 class _HomeFeedCellState extends State<HomeFeedCell> {
   String? _url;
+  late Post _post;
 
   KSHttpClient ksClient = KSHttpClient();
 
@@ -70,7 +71,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
     }
 
     return InkWell(
-      onTap: () => launchFeedDetailScreen(widget.post),
+      onTap: () => launchFeedDetailScreen(_post),
       child: Container(
         color: Theme.of(context).primaryColor,
         padding: EdgeInsets.only(top: 16.0, bottom: 8.0),
@@ -83,10 +84,10 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                 children: [
                   Avatar(
                     radius: 18.0,
-                    user: widget.post.owner,
+                    user: _post.owner,
                     isSelectable: widget.isAvatarSelectable,
                     onTap: (user) {
-                      widget.post.owner = user;
+                      _post.owner = user;
                       setState(() {});
                     },
                   ),
@@ -94,7 +95,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.post.owner.getFullname(),
+                      Text(_post.owner.getFullname(),
                           style: Theme.of(context)
                               .textTheme
                               .bodyText1
@@ -102,7 +103,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'Metropolis')),
                       Text(
-                        widget.post.createdAt.toString().timeAgoString,
+                        _post.createdAt.toString().timeAgoString,
                         style: Theme.of(context).textTheme.caption!.copyWith(
                             color: isLight(context)
                                 ? Colors.blueGrey[400]
@@ -114,19 +115,19 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                   KSIconButton(
                     icon: FeatherIcons.moreHorizontal,
                     iconSize: 24.0,
-                    onTap: () => showOptionActionBottomSheet(widget.post),
+                    onTap: () => showOptionActionBottomSheet(_post),
                   ),
                 ],
               ),
             ),
-            widget.post.description != null
+            _post.description != null
                 ? Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 8.0,
                       horizontal: 16.0,
                     ),
                     child: SelectableLinkify(
-                      text: widget.post.description!,
+                      text: _post.description!,
                       style: Theme.of(context).textTheme.bodyText1,
                       onOpen: (link) async {
                         if (await canLaunch(link.url)) {
@@ -148,19 +149,19 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                     ),
                   )
                 : SizedBox(height: 8.0),
-            widget.post.photo != null && !widget.post.isExternal
+            _post.photo != null && !_post.isExternal
                 ? InkWell(
-                    onTap: () => launchFeedDetailScreen(widget.post),
+                    onTap: () => launchFeedDetailScreen(_post),
                     child: SizedBox(
                       width: double.infinity,
                       child: CachedNetworkImage(
-                        imageUrl: widget.post.photo!,
+                        imageUrl: _post.photo!,
                         fit: BoxFit.cover,
                       ),
                     ),
                   )
                 : SizedBox(),
-            widget.post.image != null && widget.post.image!.length > 1
+            _post.image != null && _post.image!.length > 1
                 ? Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 8.0, horizontal: 8.0),
@@ -186,9 +187,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                     ),
                   )
                 : SizedBox(),
-            widget.post.isExternal
-                ? KSLinkPreview(post: widget.post)
-                : SizedBox(),
+            _post.isExternal ? KSLinkPreview(post: _post) : SizedBox(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Column(
@@ -196,25 +195,25 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                   Row(
                     children: [
                       KSIconButton(
-                        icon: widget.post.reacted!
+                        icon: _post.reacted!
                             ? Icons.favorite
                             : FeatherIcons.heart,
                         iconColor:
                             Theme.of(context).brightness == Brightness.light
-                                ? widget.post.reacted!
+                                ? _post.reacted!
                                     ? Colors.green
                                     : Colors.blueGrey
-                                : widget.post.reacted!
+                                : _post.reacted!
                                     ? Colors.green
                                     : Colors.white,
                         onTap: () {
-                          if (widget.post.reacted!) {
-                            widget.post.totalReaction -= 1;
+                          if (_post.reacted!) {
+                            _post.totalReaction -= 1;
                           } else {
-                            widget.post.totalReaction += 1;
+                            _post.totalReaction += 1;
                           }
                           setState(() {
-                            widget.post.reacted = !widget.post.reacted!;
+                            _post.reacted = !_post.reacted!;
                             reactPost();
                           });
                         },
@@ -222,7 +221,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                       4.width,
                       KSIconButton(
                         icon: FeatherIcons.messageSquare,
-                        onTap: () => launchFeedDetailScreen(widget.post, true),
+                        onTap: () => launchFeedDetailScreen(_post, true),
                       ),
                       // 4.width,
                       // KSIconButton(
@@ -230,9 +229,9 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                       //   onTap: () {},
                       // ),
                       Spacer(),
-                      buildTotalReaction(widget.post.totalReaction),
+                      buildTotalReaction(_post.totalReaction),
                       8.width,
-                      buildTotalComment(widget.post.totalComment),
+                      buildTotalComment(_post.totalComment),
                     ],
                   ),
                   Padding(
@@ -253,8 +252,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                         8.width,
                         Expanded(
                           child: InkWell(
-                            onTap: () =>
-                                launchFeedDetailScreen(widget.post, true),
+                            onTap: () => launchFeedDetailScreen(_post, true),
                             child: Container(
                               height: 32.0,
                               padding:
@@ -287,11 +285,12 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
   }
 
   void launchFeedDetailScreen(Post post, [bool isCommentTap = false]) async {
-    var p = await launchScreen(context, FeedDetailScreen.tag,
-        arguments: {'post': post, 'isCommentTap': isCommentTap}) as Post;
-    setState(() {
-      widget.post.owner = p.owner;
-      widget.post.reacted = p.reacted;
+    launchScreen(context, FeedDetailScreen.tag, arguments: {
+      'post': post,
+      'isCommentTap': isCommentTap,
+      'postCallback': (Post p) {
+        setState(() => _post = p);
+      }
     });
   }
 
@@ -366,22 +365,21 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
   }
 
   void reactPost() async {
-    var result =
-        await ksClient.postApi('/create/post/reaction/${widget.post.id}');
+    var result = await ksClient.postApi('/create/post/reaction/${_post.id}');
     if (result != null) {
       if (result is! HttpResult) {}
     }
   }
 
   void checkLinkPreview() {
-    if (widget.post.description == null) {
+    if (_post.description == null) {
       return;
     }
-    final urlMatches = urlRegExp.allMatches(widget.post.description!);
+    final urlMatches = urlRegExp.allMatches(_post.description!);
 
     List<String> urls = urlMatches
         .map((urlMatch) =>
-            widget.post.description!.substring(urlMatch.start, urlMatch.end))
+            _post.description!.substring(urlMatch.start, urlMatch.end))
         .toList();
 
     if (urls.isNotEmpty) {
@@ -398,6 +396,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
   @override
   void initState() {
     super.initState();
+    _post = widget.post;
     checkLinkPreview();
   }
 }

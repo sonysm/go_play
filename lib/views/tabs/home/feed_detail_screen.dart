@@ -37,15 +37,19 @@ import 'package:photo_view/photo_view.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+typedef FeedCallback = void Function(Post);
+
 class FeedDetailScreen extends StatefulWidget {
   static const String tag = '/feedDetailScreen';
   final Post post;
   final bool isCommentTap;
+  final FeedCallback? postCallback;
 
   FeedDetailScreen({
     Key? key,
     required this.post,
     this.isCommentTap = false,
+    this.postCallback,
   }) : super(key: key);
 
   @override
@@ -215,10 +219,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 children: [
                   post.photo != null
                       ? SizedBox(
-                          // width: AppSize(context).appWidth(100),
-                          // height: AppSize(context).appWidth(100),
-                          // child: CacheImage(url: post.photo!),
-                          child: CachedNetworkImage(imageUrl: post.photo!),
+                        width: double.infinity,
+                          child: CachedNetworkImage(imageUrl: post.photo!, fit: BoxFit.cover,),
                         )
                       : SizedBox(
                           width: AppSize(context).appWidth(100),
@@ -326,8 +328,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                           }
                           setState(() {
                             post.reacted = !post.reacted!;
-                            reactPost();
                           });
+                          reactPost();
+                          widget.postCallback!(post);
                         },
                       ),
                       4.width,
@@ -434,29 +437,23 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pop(context, post);
-        return true;
-      },
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          backgroundColor: Theme.of(context).primaryColor,
-          body: SafeArea(
-            child: Stack(
-              children: [
-                CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    buildNavbar(),
-                    buildDetailBody(),
-                    SliverPadding(padding: EdgeInsets.only(bottom: 60.0)),
-                  ],
-                ),
-                Positioned(bottom: 0, child: _bottomCommentAction())
-              ],
-            ),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  buildNavbar(),
+                  buildDetailBody(),
+                  SliverPadding(padding: EdgeInsets.only(bottom: 60.0)),
+                ],
+              ),
+              Positioned(bottom: 0, child: _bottomCommentAction())
+            ],
           ),
         ),
       ),
@@ -565,6 +562,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
         post.owner = post.owner;
         commentList = List.from(
             (data['comment'] as List).map((e) => Comment.fromJson(e)));
+        widget.postCallback!(post);
         setState(() {});
       }
     }
@@ -602,6 +600,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
         _commentController.clear();
         setState(() {});
         scrollToBottom();
+        widget.postCallback!(post);
       }
     }
   }
@@ -619,7 +618,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   void reactPost() async {
     var result = await ksClient.postApi('/create/post/reaction/${post.id}');
     if (result != null) {
-      if (result is! HttpResult) {}
+      if (result is! HttpResult) {
+      }
     }
   }
 

@@ -134,10 +134,10 @@ class _AccountScreenState extends State<AccountScreen>
                   16.height,
                   Row(
                     children: [
-                      actionHeader(amt: '0', title: 'Coin'),
+                      // actionHeader(amt: '0', title: 'Coin'),
                       actionHeader(
                         amt: '${KS.shared.user.followerCount}',
-                        title: 'Followers',
+                        title: '${KS.shared.user.followerCount > 1 ? 'Followers' : 'Follower'}',
                         onTap: () => launchScreen(context, FollowScreen.tag),
                       ),
                       actionHeader(

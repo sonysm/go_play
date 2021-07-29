@@ -86,6 +86,10 @@ class SportCard extends StatelessWidget {
                               fontSize: 18.0,
                               fontWeight: FontWeight.w600,
                             ),
+                            strutStyle: StrutStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                         4.height,
@@ -114,6 +118,10 @@ class SportCard extends StatelessWidget {
                             '0',
                             style: TextStyle(
                               color: whiteColor,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            strutStyle: StrutStyle(
                               fontSize: 18.0,
                               fontWeight: FontWeight.w600,
                             ),

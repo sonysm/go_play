@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -50,9 +52,16 @@ class KSLinkPreview extends StatelessWidget {
             if (post.photo == null)
               Container(
                 padding: EdgeInsets.all(16.0),
-                height: 100.0,
+                height: 150.0,
                 child: Center(
-                  child: Text('No image view', style: TextStyle(color: Colors.grey),),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(svgError, width: 50.0, color: Colors.grey),
+                      16.height,
+                      Text('No image found', style: TextStyle(color: Colors.grey),),
+                    ],
+                  ),
                 ),
               ),
             4.height,

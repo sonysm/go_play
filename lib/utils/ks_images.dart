@@ -15,5 +15,7 @@ const icNoConnection = 'assets/icons/ic_no_wifi.svg';
 
 const icVplay = 'assets/icons/ic_vplay.png';
 
+const svgError = 'assets/images/svg_error.svg';
+
 /* Activity Screen */
 const imgVplayText = 'assets/images/img_vplay_text.png';

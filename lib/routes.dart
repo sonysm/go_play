@@ -74,7 +74,7 @@ class RouteGenerator {
 
         return KSPageRoute(
             builder: (_) => FeedDetailScreen(
-                post: data['post'], isCommentTap: data['isCommentTap']));
+                post: data['post'], isCommentTap: data['isCommentTap'], postCallback: data['postCallback'],));
       case CreatePostScreen.tag:
         return MaterialPageRoute(builder: (_) => CreatePostScreen(data: args));
       case SettingScreen.tag:

@@ -16,6 +16,7 @@ import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/activity_preview_screen.dart';
 import 'package:kroma_sport/views/tabs/home/choose_location_screen.dart';
+import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:location/location.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -411,34 +412,12 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                   width: double.infinity,
                   height: 48.0,
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (!availableNext()) return;
-                      var activity = {
-                        'photo': images.isNotEmpty ? images.elementAt(0) : null,
-                        'date': DateFormat('yyyy-MM-dd').format(selectedDate),
-                        'startTime': DateFormat('hh:mm:ss').format(startTime),
-                        'endTime': DateFormat('hh:mm:ss').format(endTime),
-                        'sport': selectedSport,
-                        'locationName': address?.name,
-                        'latitude': address?.latitude,
-                        'longitude': address?.longitude,
-                        'name': activityNameController.text,
-                        'description':
-                            descriptionController.text.trim().isNotEmpty
-                                ? descriptionController.text
-                                : null,
-                        'minute': dourationInMinutes,
-                      };
-                      FocusScope.of(context).unfocus();
-                      launchScreen(context, ActivityPreviewScreen.tag,
-                          arguments: activity);
-                    },
+                    onPressed: onNext,
                     style: ButtonStyle(
                       elevation: MaterialStateProperty.all(0),
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0))),
-                      backgroundColor: MaterialStateProperty.all(
-                          availableNext() ? mainColor : Colors.green[200]),
+                      backgroundColor: MaterialStateProperty.all(mainColor),
                     ),
                     child: Text(
                       'Next',
@@ -909,11 +888,44 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
         });
   }
 
-  bool availableNext() {
-    if (activityNameController.text.trim().length > 0) {
-      return true;
+  onNext() {
+    if (images.isEmpty) {
+      showKSMessageDialog(
+        context,
+        'Please add a photo!',
+        () {},
+        buttonTitle: 'OK',
+      );
+      return;
     }
-    return false;
+
+    if (activityNameController.text.trim().isEmpty) {
+      showKSMessageDialog(
+        context,
+        'Please add activity name!',
+        () {},
+        buttonTitle: 'OK',
+      );
+      return;
+    }
+
+    var activity = {
+      'photo': images.isNotEmpty ? images.elementAt(0) : null,
+      'date': DateFormat('yyyy-MM-dd').format(selectedDate),
+      'startTime': DateFormat('hh:mm:ss').format(startTime),
+      'endTime': DateFormat('hh:mm:ss').format(endTime),
+      'sport': selectedSport,
+      'locationName': address?.name,
+      'latitude': address?.latitude,
+      'longitude': address?.longitude,
+      'name': activityNameController.text,
+      'description': descriptionController.text.trim().isNotEmpty
+          ? descriptionController.text
+          : null,
+      'minute': dourationInMinutes,
+    };
+    FocusScope.of(context).unfocus();
+    launchScreen(context, ActivityPreviewScreen.tag, arguments: activity);
   }
 
   Future<bool> checkAndRequestPhotoPermissions() async {

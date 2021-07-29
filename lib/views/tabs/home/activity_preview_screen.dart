@@ -46,9 +46,12 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    imgHeight = AppSize(context).appWidth(100) *
-        double.parse(originalHeight.toString()) /
-        double.parse(originalWidth.toString());
+    
+    if (widget.activityData['photo'] != null) {
+      imgHeight = AppSize(context).appWidth(100) *
+          double.parse(originalHeight.toString()) /
+          double.parse(originalWidth.toString());
+    }
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -278,10 +281,11 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
   @override
   void initState() {
     super.initState();
-    originalHeight =
-        (widget.activityData['photo'] as Asset).originalHeight!;
-    originalWidth =
-        (widget.activityData['photo'] as Asset).originalWidth!;
+
+    if (widget.activityData['photo'] != null) {
+      originalHeight = (widget.activityData['photo'] as Asset).originalHeight!;
+      originalWidth = (widget.activityData['photo'] as Asset).originalWidth!;
+    }
   }
 
   void createActivity() async {

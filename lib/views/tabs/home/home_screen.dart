@@ -62,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
       floating: true,
+      automaticallyImplyLeading: false,
     );
   }
 
@@ -301,39 +302,42 @@ class _HomeScreenState extends State<HomeScreen> {
           // ),
           backgroundColor: Theme.of(context).primaryColor,
           body: SafeArea(
-            child: EasyRefresh.custom(
-              scrollController: _homeScrollController,
-              header: MaterialHeader(
-                valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+            child: Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: EasyRefresh.custom(
+                scrollController: _homeScrollController,
+                header: MaterialHeader(
+                  valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+                ),
+                footer: ClassicalFooter(
+                  enableInfiniteLoad: false,
+                  completeDuration: Duration(milliseconds: 1200),
+                ),
+                slivers: [
+                  buildNavbar(),
+                  createFeedWidget(),
+                  buildHomeFeedList(state),
+                  //BottomRefresher(onRefresh: () {
+                  //    return Future<void>.delayed(const Duration(seconds: 10))
+                  //        ..then((re) {
+                  //          // setState(() {
+                  //          //   changeRandomList();
+                  //          //   _scrollController.animateTo(0.0,
+                  //          //       duration: new Duration(milliseconds: 100),
+                  //          //       curve: Curves.bounceOut);
+                  //          // });
+                  //          print("==============");
+                  //        });
+                  //}),
+                ],
+                onRefresh: () async {
+                  BlocProvider.of<HomeCubit>(context).onRefresh();
+                },
+                onLoad: () async {
+                  await Future.delayed(Duration(milliseconds: 300));
+                  BlocProvider.of<HomeCubit>(context).onLoadMore();
+                },
               ),
-              footer: ClassicalFooter(
-                enableInfiniteLoad: false,
-                completeDuration: Duration(milliseconds: 1200),
-              ),
-              slivers: [
-                buildNavbar(),
-                createFeedWidget(),
-                buildHomeFeedList(state),
-                //BottomRefresher(onRefresh: () {
-                //    return Future<void>.delayed(const Duration(seconds: 10))
-                //        ..then((re) {
-                //          // setState(() {
-                //          //   changeRandomList();
-                //          //   _scrollController.animateTo(0.0,
-                //          //       duration: new Duration(milliseconds: 100),
-                //          //       curve: Curves.bounceOut);
-                //          // });
-                //          print("==============");
-                //        });
-                //}),
-              ],
-              onRefresh: () async {
-                BlocProvider.of<HomeCubit>(context).onRefresh();
-              },
-              onLoad: () async {
-                await Future.delayed(Duration(seconds: 2));
-                BlocProvider.of<HomeCubit>(context).onLoadMore();
-              },
             ),
           ),
         );
