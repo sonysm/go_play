@@ -40,10 +40,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Widget buildNavbar() {
     return SliverAppBar(
+      backgroundColor: Theme.of(context).primaryColor,
       title: InkWell(
         onTap: scrollToBottom,
         overlayColor: MaterialStateProperty.all(Colors.transparent),
-        child: SizedBox(
+        child: Container(
+          padding: const EdgeInsets.only(left: 16.0),
           height: 24.0,
           child: Image.asset(
             imgVplayText,
@@ -62,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
       floating: true,
+      titleSpacing: 0,
       automaticallyImplyLeading: false,
     );
   }
