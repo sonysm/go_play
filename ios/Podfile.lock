@@ -7,45 +7,45 @@ PODS:
     - Reachability
   - device_info (0.0.1):
     - Flutter
-  - Firebase/Auth (8.0.0):
+  - Firebase/Auth (8.3.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (~> 8.0.0)
-  - Firebase/CoreOnly (8.0.0):
-    - FirebaseCore (= 8.0.0)
-  - Firebase/Messaging (8.0.0):
+    - FirebaseAuth (~> 8.3.0)
+  - Firebase/CoreOnly (8.3.0):
+    - FirebaseCore (= 8.3.0)
+  - Firebase/Messaging (8.3.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 8.0.0)
+    - FirebaseMessaging (~> 8.3.0)
   - firebase_auth (1.4.1):
-    - Firebase/Auth (= 8.0.0)
+    - Firebase/Auth (= 8.3.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.3.0):
-    - Firebase/CoreOnly (= 8.0.0)
+  - firebase_core (1.4.0):
+    - Firebase/CoreOnly (= 8.3.0)
     - Flutter
-  - firebase_messaging (10.0.3):
-    - Firebase/Messaging (= 8.0.0)
+  - firebase_messaging (10.0.4):
+    - Firebase/Messaging (= 8.3.0)
     - firebase_core
     - Flutter
-  - FirebaseAuth (8.0.0):
+  - FirebaseAuth (8.3.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.4)
     - GoogleUtilities/Environment (~> 7.4)
     - GTMSessionFetcher/Core (~> 1.5)
-  - FirebaseCore (8.0.0):
+  - FirebaseCore (8.3.0):
     - FirebaseCoreDiagnostics (~> 8.0)
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/Logger (~> 7.4)
-  - FirebaseCoreDiagnostics (8.3.0):
+  - FirebaseCoreDiagnostics (8.4.0):
     - GoogleDataTransport (~> 9.0)
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/Logger (~> 7.4)
     - nanopb (~> 2.30908.0)
-  - FirebaseInstallations (8.3.0):
+  - FirebaseInstallations (8.4.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/UserDefaults (~> 7.4)
-    - PromisesObjC (~> 1.2)
-  - FirebaseMessaging (8.0.0):
+    - PromisesObjC (< 3.0, >= 1.2)
+  - FirebaseMessaging (8.3.0):
     - FirebaseCore (~> 8.0)
     - FirebaseInstallations (~> 8.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.4)
@@ -121,7 +121,7 @@ PODS:
     - Flutter
   - "permission_handler (5.1.0+2)":
     - Flutter
-  - PromisesObjC (1.2.12)
+  - PromisesObjC (2.0.0)
   - Reachability (3.2)
   - receive_sharing_intent (0.0.1):
     - Flutter
@@ -235,15 +235,15 @@ SPEC CHECKSUMS:
   BSImagePicker: 0fe04b574d4d6b81093785d2af6c26227efc8428
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
-  Firebase: 73c3e3b216ec1ecbc54d2ffdd4670c65c749edb1
-  firebase_auth: 6532658f5a4f76be32cd5e7518753ebedd4544d2
-  firebase_core: cda81ae37eda6df2bc2d16027fda527987c4bd33
-  firebase_messaging: 861664166bbdd527cb40396d4a381f0a1c39f61d
-  FirebaseAuth: b8cd992fca5b53dc6eec09e873a3f375f000c5a1
-  FirebaseCore: 3f09591d51292843e2a46f18358d60bf4e996255
-  FirebaseCoreDiagnostics: 7e873baabcfaa9512f538554ae4fa0817aaafbdb
-  FirebaseInstallations: b69db7680870dbac17bba7a51fc0b5c4b365baa7
-  FirebaseMessaging: 1a33b4af3c8042ed6ddacb6c031894af2064bfab
+  Firebase: 817b9171d0d51dccc458b94a5e8edff6b1dd323d
+  firebase_auth: 5d48a6c2c9de6d8f7946269ef904136298c6aa12
+  firebase_core: 72374607c8c6f5a0adc0559e5c5bf57deda975e3
+  firebase_messaging: 55c5b8184efd330b9d1f1765b55c4ae57e015c5e
+  FirebaseAuth: fd12c82de44e7ad3b821610c387b8251f03aa0f9
+  FirebaseCore: a6dba751680d7033b9d3831e1cfc95ead0605118
+  FirebaseCoreDiagnostics: cad03be1904b975f845e632f2720c3337da27faf
+  FirebaseInstallations: 1585729afc787877763208c2088ed84221161f77
+  FirebaseMessaging: 42252b79b860482021483748669ec32e22196462
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   flutter_web_browser: a719eca01d00bdc9a0e13e42194f86b90a5b8729
@@ -265,7 +265,7 @@ SPEC CHECKSUMS:
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
-  PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
+  PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   receive_sharing_intent: c0d87310754e74c0f9542947e7cbdf3a0335a3b1
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d

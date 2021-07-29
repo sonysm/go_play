@@ -20,7 +20,6 @@ import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
-import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell_link.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
@@ -196,14 +195,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   return Column(
                     children: [
-                      // post.image != null
-                      //     ? HomeFeedCell(
-                      //         post: post,
-                      //       )
-                      //     : HomeFeedCellLink(
-                      //         post: post,
-                      //         urlInfo: _urlInfo,
-                      //       ),
                       HomeFeedCell(post: post),
                       Container(
                         height: 8.0,
