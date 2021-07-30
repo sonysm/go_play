@@ -105,6 +105,7 @@ class _ActivityScreenState extends State<MeetupScreen> {
                         : whiteColor),
                 onPressed: () => launchScreen(context, NotificationScreen.tag),
               ),
+              SizedBox(),
             ],
           ),
           body: EasyRefresh.custom(

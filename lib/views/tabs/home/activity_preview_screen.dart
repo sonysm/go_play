@@ -161,11 +161,6 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
                             asset: widget.activityData['photo'],
                             width: originalWidth,
                             height: originalHeight,
-                            // spinner: Container(
-                            //   // color: Colors.grey[200],
-                            //   width: AppSize(context).appWidth(100),
-                            //   height: AppSize(context).appWidth(100),
-                            // ),
                           ),
                         )
                       : SizedBox(
@@ -264,7 +259,7 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
                         4.width,
                         KSIconButton(icon: FeatherIcons.messageSquare),
                         4.width,
-                        KSIconButton(icon: FeatherIcons.share2),
+                        //KSIconButton(icon: FeatherIcons.share2),
                         Spacer(),
                       ],
                     ),

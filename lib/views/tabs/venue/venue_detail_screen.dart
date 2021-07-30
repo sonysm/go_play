@@ -211,6 +211,9 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                     onMapCreated: (controller) {},
                     zoomGesturesEnabled: false,
                     scrollGesturesEnabled: false,
+                    zoomControlsEnabled: false,
+                    myLocationButtonEnabled: false,
+                    myLocationEnabled: false,
                     markers: <Marker>{
                       Marker(
                         markerId: MarkerId('venue'),

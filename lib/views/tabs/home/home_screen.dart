@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/user.dart';
@@ -40,79 +39,27 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Widget buildNavbar() {
-    // return SliverAppBar(
-    //   backgroundColor: Theme.of(context).primaryColor,
-    //   title: InkWell(
-    //     onTap: scrollToBottom,
-    //     overlayColor: MaterialStateProperty.all(Colors.transparent),
-    //     child: Container(
-    //       padding: const EdgeInsets.only(left: 16.0),
-    //       height: 24.0,
-    //       child: Image.asset(
-    //         imgVplayText,
-    //         color: mainColor,
-    //       ),
-    //     ),
-    //   ),
-    //   elevation: 0.0,
-    //   actions: [
-    //     CupertinoButton(
-    //       child: Icon(FeatherIcons.bell,
-    //           color: Theme.of(context).brightness == Brightness.light
-    //               ? Colors.grey[600]
-    //               : whiteColor),
-    //       onPressed: () => launchScreen(context, NotificationScreen.tag),
-    //     ),
-    //   ],
-    //   floating: true,
-    //   titleSpacing: 0,
-    //   automaticallyImplyLeading: false,
-    // );
-
     return SliverAppBar(
-      elevation: 0.5,
-      forceElevated: true,
-      backgroundColor: whiteColor,
+      elevation: 0.0,
       title: InkWell(
-        onTap: () {},
-        child: Container(
-          padding: const EdgeInsets.only(left: 20.0),
-          width: 54.0,
-          height: 54.0,
-          child: Image.asset(imgVplayText, color: mainColor),
+        onTap: scrollToBottom,
+        overlayColor: MaterialStateProperty.all(Colors.transparent),
+        child: SizedBox(
+          height: 28.0,
+          child: Image.asset(imgVplayText, color: isLight(context) ? mainColor : whiteColor),
         ),
       ),
-      actions: <Widget>[
-        // Showcase(
-        //   key: _fShowCaseKeyOne,
-        //   description: 'Create post',
-        //   overlayOpacity: 0.5,
-        //   child: CupertinoButton(
-        //     child: Icon(
-        //       Feather.plus,
-        //       // size: 28.0,
-        //     ),
-        //     padding: EdgeInsetsDirectional.only(bottom: 0),
-        //     onPressed: () {
-        //       Navigator.push(context,
-        //           MaterialPageRoute(builder: (ctx) => CreatePostScreen()));
-        //     },
-        //   ),
-        // ),
+      actions: [
         CupertinoButton(
-          child: Icon(
-            Feather.search,
-            // size: 28.0,
-          ),
-          padding: EdgeInsetsDirectional.only(bottom: 0),
-          onPressed: () {},
+          child: Icon(FeatherIcons.bell,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.grey[600]
+                  : whiteColor),
+          onPressed: () => launchScreen(context, NotificationScreen.tag),
         ),
-        8.width,
+        SizedBox(),
       ],
-      // centerTitle: true,
-      // snap: true,
       floating: true,
-      titleSpacing: 0,
       automaticallyImplyLeading: false,
     );
   }

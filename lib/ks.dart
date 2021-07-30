@@ -39,16 +39,15 @@ class KS {
     try {
       locationService.onLocationChanged.listen((LocationData result) async {
         var latlng = LatLng(result.latitude!, result.longitude!);
-        print('_____location change: ${latlng.latitude}, ${latlng.longitude}');
         if (onLocationChange != null) {
           onLocationChange!(latlng);
         }
         currentPosition = latlng;
       });
     } on PlatformException catch (e) {
-      print("Errr xxxxxx =  setupLocationMintor =$e");
+      //print("Errr xxxxxx =  setupLocationMintor =$e");
     } catch (e) {
-      print("Errr xxxxxx = setupLocationMintor = $e");
+      //print("Errr xxxxxx = setupLocationMintor = $e");
     }
 
     return currentPosition;

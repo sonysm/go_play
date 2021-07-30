@@ -9,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:http/http.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';

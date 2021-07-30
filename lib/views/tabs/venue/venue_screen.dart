@@ -9,7 +9,6 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
-import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/widget/venue_cell.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 
@@ -86,15 +85,15 @@ class _VenueScreenState extends State<VenueScreen> {
         title: Text('Venues'),
         elevation: 0.0,
         actions: [
-          CupertinoButton(
-            padding: EdgeInsets.zero,
-            alignment: Alignment.centerRight,
-            child: Icon(Icons.history,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? Colors.grey[600]
-                    : whiteColor),
-            onPressed: () => launchScreen(context, BookingHistoryScreen.tag),
-          ),
+          //CupertinoButton(
+          //  padding: EdgeInsets.zero,
+          //  alignment: Alignment.centerRight,
+          //  child: Icon(Icons.history,
+          //      color: Theme.of(context).brightness == Brightness.light
+          //          ? Colors.grey[600]
+          //          : whiteColor),
+          //  onPressed: () => launchScreen(context, BookingHistoryScreen.tag),
+          //),
           CupertinoButton(
             child: Icon(FeatherIcons.bell,
                 color: Theme.of(context).brightness == Brightness.light
@@ -102,6 +101,7 @@ class _VenueScreenState extends State<VenueScreen> {
                     : whiteColor),
             onPressed: () => launchScreen(context, NotificationScreen.tag),
           ),
+          SizedBox(),
         ],
       ),
       // backgroundColor: Theme.of(context).primaryColor,

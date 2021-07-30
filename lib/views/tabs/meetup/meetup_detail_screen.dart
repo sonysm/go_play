@@ -206,6 +206,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 onMapCreated: (controller) {},
                 zoomGesturesEnabled: false,
                 scrollGesturesEnabled: false,
+                zoomControlsEnabled: false,
+                myLocationButtonEnabled: false,
+                myLocationEnabled: false,
                 markers: <Marker>{
                   Marker(
                     markerId: MarkerId('venue'),
@@ -885,9 +888,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     scaffold.showSnackBar(
       SnackBar(
         elevation: 0,
-        backgroundColor: Color(0xFF696969),
+        backgroundColor: Colors.orange[400], //Color(0xFF696969),
         behavior: SnackBarBehavior.floating,
-        content: const Text('Meetup Expired'),
+        content: Text('Meetup Expired', style: Theme.of(context).textTheme.bodyText2),
         margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         // action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),

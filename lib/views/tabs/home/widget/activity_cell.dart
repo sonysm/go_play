@@ -393,14 +393,15 @@ class _ActivityCellState extends State<ActivityCell> {
                       );
                     },
                   ),
-                KSTextButtonBottomSheet(
-                  title: 'Report Post',
-                  icon: Feather.info,
-                  onTab: () {
-                    dismissScreen(context);
-                    showReportScreen(context);
-                  },
-                ),
+                if (!isMe(post.owner.id))
+                  KSTextButtonBottomSheet(
+                    title: 'Report Post',
+                    icon: Feather.info,
+                    onTab: () {
+                      dismissScreen(context);
+                      showReportScreen(context);
+                    },
+                  ),
               ],
             ),
           ),

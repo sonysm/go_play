@@ -127,10 +127,10 @@ class _AccountScreenState extends State<AccountScreen>
                       style: Theme.of(context).textTheme.headline6?.copyWith(
                           fontWeight: FontWeight.w600,
                           fontFamily: 'Metropolis')),
-                  Text(
-                    'Phnom Penh, Cambodia',
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
+                  //Text(
+                  //  'Phnom Penh, Cambodia',
+                  //  style: Theme.of(context).textTheme.bodyText2,
+                  //),
                   16.height,
                   Row(
                     children: [

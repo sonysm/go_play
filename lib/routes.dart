@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kroma_sport/models/address.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -72,7 +71,7 @@ class RouteGenerator {
         //     builder: (_) => FeedDetailScreen(
         //         post: data['post'], isCommentTap: data['isCommentTap']));
 
-        return KSPageRoute(
+        return MaterialPageRoute(
             builder: (_) => FeedDetailScreen(
                 post: data['post'], isCommentTap: data['isCommentTap'], postCallback: data['postCallback'],));
       case CreatePostScreen.tag:

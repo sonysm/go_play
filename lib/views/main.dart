@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
@@ -15,7 +14,6 @@ import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
@@ -23,8 +21,6 @@ import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_screen.dart';
-import 'package:kroma_sport/widgets/ks_text_button.dart';
-import 'package:kroma_sport/widgets/ks_widgets.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 class MainView extends StatefulWidget {
@@ -148,7 +144,8 @@ class _MainViewState extends State<MainView> {
   }
 
   void createActivityScreen() {
-    showModalBottomSheet(
+    launchScreen(context, OrganizeListScreen.tag);
+    /*showModalBottomSheet(
       context: context,
       backgroundColor: Theme.of(context).primaryColor,
       shape: RoundedRectangleBorder(
@@ -178,7 +175,7 @@ class _MainViewState extends State<MainView> {
           ),
         );
       },
-    );
+    );*/
   }
 
   setupFirebaseMessage() {
@@ -202,9 +199,6 @@ class _MainViewState extends State<MainView> {
     FirebaseMessaging.instance.requestPermission();
     FirebaseMessaging.instance.getToken().then((token) async {
       await getDeviceDetails();
-      // print('___device id: $identifier'); //af64cdb1c8f2f5d3
-      // Todo update token
-      // print('___fcm: $token');
       setFCMToken(deviceToken: token!, deviceId: identifier);
     });
   }
@@ -432,36 +426,6 @@ class _CustomTabBar extends StatelessWidget {
             .values
             .toList(),
       ),
-    );
-  }
-}
-
-class ShareIntentTest extends StatelessWidget {
-  const ShareIntentTest({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Share'),
-        leading: TextButton(
-          onPressed: () {
-            SystemNavigator.pop();
-          },
-          child: Text(
-            'Cancel',
-          ),
-        ),
-      ),
-      body: Container(
-          child: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            SystemNavigator.pop();
-          },
-          child: Text('Done'),
-        ),
-      )),
     );
   }
 }

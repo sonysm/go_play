@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -12,7 +11,6 @@ import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
-import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/image_helper.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
@@ -21,8 +19,6 @@ import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class EditProfileScreen extends StatefulWidget {
   static const tag = '/editProfileScreen';
@@ -282,7 +278,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ],
         ),
-        // controller: _firstnameController,
       ),
     );
   }
@@ -334,7 +329,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ],
               ),
             ],
-            8.height,
+            /*8.height,
             Row(
               children: <Widget>[
                 Icon(Feather.map_pin, size: 18.0),
@@ -348,7 +343,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   strutStyle: StrutStyle(fontSize: 18.0),
                 ),
               ],
-            ),
+            ),*/
           ],
         ),
       ),

@@ -84,7 +84,7 @@ class Owner {
   String? password;
   String? phone;
   String? email;
-  dynamic? profilePhoto;
+  dynamic profilePhoto;
 
   factory Owner.fromJson(Map<String, dynamic> json) => Owner(
         id: json["id"],
