@@ -75,7 +75,10 @@ class _ActivityScreenState extends State<MeetupScreen> {
 
                 return Padding(
                   padding: EdgeInsets.only(top: (index == 0 ? 8.0 : 0)),
-                  child: MeetupCell(post: meetup),
+                  child: MeetupCell(
+                    key: Key(meetup.id.toString()),
+                    post: meetup,
+                  ),
                 );
               },
               childCount: meetupData.data.length,
@@ -118,7 +121,8 @@ class _ActivityScreenState extends State<MeetupScreen> {
             ),
             slivers: [
               state.status != DataState.ErrorSocket
-                  ? buildMeetupList(state) : noInternet(),
+                  ? buildMeetupList(state)
+                  : noInternet(),
             ],
             onRefresh: () async {
               BlocProvider.of<MeetupCubit>(context).onRefresh();

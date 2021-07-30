@@ -31,10 +31,10 @@ class _VenueScreenState extends State<VenueScreen> {
   ];
 
   List<String> venueNameList = [
+    'XP Sport',
     'Downtown Sport Club',
     'Rooy7 Sport Club',
     'Emperial Sport Club',
-    'Rama Sport Club',
     'Champion Sport Club',
   ];
 

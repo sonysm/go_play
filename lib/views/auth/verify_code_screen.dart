@@ -497,7 +497,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
 
   _codeAutoRetrievalTimeout(String s) {
     //showMessageInfo(context, 'Retrieval Timeout $s');
-    print("================ codeAutoRetrievalTimeout____$s");
+    // print("================ codeAutoRetrievalTimeout____$s");
   }
 
   _verificationFailed(FirebaseAuthException f) {
@@ -508,8 +508,8 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
 
     //showMessageInfo(context, 'Verification Failed ${f.message}');
 
-    print(
-        "================ verificationFailed_______${f.code}________${f.message}");
+    // print(
+    //     "================ verificationFailed_______${f.code}________${f.message}");
   }
 
   _verifyCode() {
@@ -536,14 +536,14 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
       });
 
       redirectToScreen();
-      print(
-          "================ signInWithCredential___________success_________$result");
+      // print(
+      //     "================ signInWithCredential___________success_________$result");
     }).catchError((onError) {
       setState(() {
         _valideStatus = ValidateStatus.invalidOTP;
       });
-      print(
-          "================ signInWithCredential___________error_________$onError");
+      // print(
+      //     "================ signInWithCredential___________error_________$onError");
     });
   }
 

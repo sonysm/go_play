@@ -298,6 +298,7 @@ class _AccountScreenState extends State<AccountScreen>
                       return Padding(
                         padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                         child: MeetupCell(
+                          key: Key(meetup.id.toString()),
                           post: meetup,
                           isAvatarSelectable: false,
                         ),
@@ -343,6 +344,7 @@ class _AccountScreenState extends State<AccountScreen>
                         return Padding(
                           padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                           child: HomeFeedCell(
+                            key: Key(post.id.toString()),
                             post: post,
                             isAvatarSelectable: false,
                           ),

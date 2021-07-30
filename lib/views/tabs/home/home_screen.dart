@@ -46,7 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
         overlayColor: MaterialStateProperty.all(Colors.transparent),
         child: SizedBox(
           height: 28.0,
-          child: Image.asset(imgVplayText, color: isLight(context) ? mainColor : whiteColor),
+          child: Image.asset(imgVplayText,
+              color: isLight(context) ? mainColor : whiteColor),
         ),
       ),
       actions: [
@@ -212,20 +213,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                   }
 
-                  return Column(
-                    children: [
-                      HomeFeedCell(post: post),
-                      Container(
-                        height: 8.0,
-                      )
-                    ],
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child:
+                        HomeFeedCell(post: post, key: Key(post.id.toString())),
                   );
                 } else if (post.type == PostType.activity) {
-                  return Column(
-                    children: [
-                      ActivityCell(post: post),
-                      Container(height: 8.0),
-                    ],
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child:
+                        ActivityCell(post: post, key: Key(post.id.toString())),
                   );
                 }
                 return SizedBox();
@@ -276,28 +273,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocBuilder<HomeCubit, HomeData>(
       builder: (context, state) {
         return Scaffold(
-          // appBar: AppBar(
-          //   title: InkWell(
-          //     onTap: scrollToBottom,
-          //     child: SizedBox(
-          //       height: 24.0,
-          //       child: Image.asset(
-          //         imgVplayText,
-          //         color: mainColor,
-          //       ),
-          //     ),
-          //   ),
-          //   elevation: 0.0,
-          //   actions: [
-          //     CupertinoButton(
-          //       child: Icon(FeatherIcons.bell,
-          //           color: Theme.of(context).brightness == Brightness.light
-          //               ? Colors.grey[600]
-          //               : whiteColor),
-          //       onPressed: () => launchScreen(context, NotificationScreen.tag),
-          //     ),
-          //   ],
-          // ),
           backgroundColor: Theme.of(context).primaryColor,
           body: SafeArea(
             child: Container(

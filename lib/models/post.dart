@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
 import 'package:kroma_sport/models/address.dart';
 import 'package:kroma_sport/models/member.dart';
 import 'package:kroma_sport/models/sport.dart';
@@ -9,7 +10,7 @@ Post postFromJson(String str) => Post.fromJson(json.decode(str));
 
 String postToJson(Post data) => json.encode(data.toJson());
 
-class Post {
+class Post extends Equatable {
   Post({
     required this.id,
     required this.owner,
@@ -132,6 +133,9 @@ class Post {
         "external_desc": externalDesc,
         "external_link": externalLink,
       };
+
+  @override
+  List<Object?> get props => [id];
 }
 
 class KSImage {
