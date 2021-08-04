@@ -52,13 +52,17 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Access camera</string>
+	<string>VPlay would like to access camera.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>VPlay would like to access location service for internal usage. And this app won't share this information to other.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>VPlay would like to access location service for internal usage. And this app won't share this information to other.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>KSport like to access location</string>
+	<string>VPlay would like to access location service for internal usage. And this app won't share this information to other.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>KSport want to access to your Microphone.</string>
+	<string>VPlay would like to access to your Microphone.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Ksport want to access to your photos.</string>
+	<string>VPlay would like to access to your photos.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
