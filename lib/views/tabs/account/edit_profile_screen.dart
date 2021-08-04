@@ -596,10 +596,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           .format(DateTime.parse(KS.shared.user.birthDate!));
     }
     if (KS.shared.user.weight != null) {
-      _weightTextController.text = KS.shared.user.weight!.toStringAsFixed(0) + 'kg';
+      _weightTextController.text =
+          KS.shared.user.weight!.toStringAsFixed(0) + 'kg';
     }
     if (KS.shared.user.height != null) {
-      _heightTextController.text = KS.shared.user.height!.toStringAsFixed(0) + 'cm';
+      _heightTextController.text =
+          KS.shared.user.height!.toStringAsFixed(0) + 'cm';
     }
     mapGender();
   }
@@ -738,9 +740,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               setState(() => selectedHeight = value!);
               dismissScreen(context);
             },
-            title: Text('${130 + index}\cm',
-                style:
-                    TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+            title: Text(
+              '${130 + index}\cm',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
           );
         },
       ),
@@ -764,9 +767,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               setState(() => selectedWeight = value!);
               dismissScreen(context);
             },
-            title: Text('${30 + index}\kg',
-                style:
-                    TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+            title: Text(
+              '${30 + index}\kg',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
           );
         },
       ),

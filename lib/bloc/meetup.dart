@@ -132,7 +132,7 @@ class MeetupCubit extends Cubit<MeetupData> {
             emit(state.copyWith(
                 status: DataState.Loaded, data: state.data + newPosts));
           } else {
-            emit(state.copyWith(status: DataState.LoadedMore));
+            emit(state.copyWith(status: DataState.Loaded));
           }
         } else {
           print('error $data');

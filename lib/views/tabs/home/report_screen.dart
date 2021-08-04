@@ -47,8 +47,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 'You can report the post after selecting a problem',
                 style: Theme.of(context)
                     .textTheme
-                    .bodyText1
-                    ?.copyWith(color: Colors.grey[600]),
+                    .bodyText1,
               ),
               8.height,
               Wrap(
@@ -83,7 +82,7 @@ class _ReportScreenState extends State<ReportScreen> {
                               .bodyText1
                               ?.copyWith(
                                   color: problemSelected != e
-                                      ? blackColor
+                                      ? isLight(context) ? blackColor : whiteColor
                                       : whiteColor),
                         ),
                       ),

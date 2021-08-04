@@ -119,11 +119,11 @@ class HomeCubit extends Cubit<HomeData> {
       if (data != null) {
         if (data is! HttpResult) {
           var newPosts = (data as List).map((e) => Post.fromJson(e)).toList();
-          if (newPosts.length > 0) {
+          if (newPosts.isNotEmpty) {
             emit(state.copyWith(
                 status: DataState.Loaded, data: state.data + newPosts));
           } else {
-            emit(state.copyWith(status: DataState.LoadedMore));
+            emit(state.copyWith(status: DataState.Loaded));
           }
         } else {
           print('error $data');
@@ -166,6 +166,23 @@ class HomeCubit extends Cubit<HomeData> {
       }).toList();
 
       emit(state.copyWith(data: updatedList, ownerPost: updatedOwnerList));
+    }
+  }
+
+  Future<void> loadOwnerPost(int page) async {
+    if (state.status == DataState.Loaded) {
+      List<Post> morePosts = [];
+      await _client.getApi('/user/feed/by/${KS.shared.user.id}',
+          queryParameters: {'page': page.toString()}).then((data) {
+        if (data != null) {
+          if (data is! HttpResult) {
+            morePosts = (data as List).map((e) => Post.fromJson(e)).toList();
+            if (morePosts.isNotEmpty) {
+              emit(state.copyWith(ownerPost: state.ownerPost + morePosts));
+            }
+          }
+        }
+      });
     }
   }
 }

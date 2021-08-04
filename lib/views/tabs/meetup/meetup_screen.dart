@@ -128,7 +128,8 @@ class _ActivityScreenState extends State<MeetupScreen> {
               BlocProvider.of<MeetupCubit>(context).onRefresh();
             },
             onLoad: () async {
-              await Future.delayed(Duration(seconds: 2));
+              await Future.delayed(Duration(milliseconds: 300));
+              BlocProvider.of<MeetupCubit>(context).onLoadMore();
             },
           ),
         );

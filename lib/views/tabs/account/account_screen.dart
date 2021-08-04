@@ -137,7 +137,8 @@ class _AccountScreenState extends State<AccountScreen>
                       // actionHeader(amt: '0', title: 'Coin'),
                       actionHeader(
                         amt: '${KS.shared.user.followerCount}',
-                        title: '${KS.shared.user.followerCount > 1 ? 'Followers' : 'Follower'}',
+                        title:
+                            '${KS.shared.user.followerCount > 1 ? 'Followers' : 'Follower'}',
                         onTap: () => launchScreen(context, FollowScreen.tag),
                       ),
                       actionHeader(
@@ -401,6 +402,10 @@ class _AccountScreenState extends State<AccountScreen>
         header: MaterialHeader(
           valueColor: AlwaysStoppedAnimation<Color>(mainColor),
         ),
+        footer: ClassicalFooter(
+              enableInfiniteLoad: false,
+              completeDuration: Duration(milliseconds: 1200),
+            ),
         slivers: [
           // buildNavbar(),
           buildProfileHeader(),
@@ -410,6 +415,10 @@ class _AccountScreenState extends State<AccountScreen>
         onRefresh: () async {
           BlocProvider.of<HomeCubit>(context).onRefresh();
           BlocProvider.of<MeetupCubit>(context).onRefresh();
+        },
+        onLoad: () async {
+          await Future.delayed(Duration(milliseconds: 300));
+          loadMorePost();
         },
       ),
     );
@@ -456,5 +465,12 @@ class _AccountScreenState extends State<AccountScreen>
       }
       setState(() {});
     }
+  }
+
+  int page = 1;
+
+  void loadMorePost() {
+    BlocProvider.of<HomeCubit>(context).loadOwnerPost(page);
+    page += 1;
   }
 }
