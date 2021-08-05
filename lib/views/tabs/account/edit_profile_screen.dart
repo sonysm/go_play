@@ -315,16 +315,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             if (KS.shared.user.email != null) ...[
               8.height,
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Icon(Feather.mail, size: 18.0),
                   8.width,
-                  Text(
-                    KS.shared.user.email!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.copyWith(fontSize: 18),
-                    strutStyle: StrutStyle(fontSize: 18.0),
+                  Flexible(
+                    child: Text(
+                      KS.shared.user.email!,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          ?.copyWith(fontSize: 18),
+                    ),
                   ),
                 ],
               ),

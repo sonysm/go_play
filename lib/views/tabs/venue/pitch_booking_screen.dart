@@ -19,6 +19,7 @@ import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:collection/collection.dart';
 
 class PitchBookingScreen extends StatefulWidget {
   static const tag = '/pitchBookingScreen';
@@ -465,7 +466,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
     showKSBottomSheet(
       context,
       title: 'Choose Start Time',
-      children: List.generate(availableTimeList.length, (index) {
+      children: availableTimeList.isNotEmpty ? List.generate(availableTimeList.length, (index) {
         final time = availableTimeList[index];
         return KSTextButtonBottomSheet(
           title: DateFormat('hh:mm a').format(time),
@@ -478,6 +479,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
             selectedStartTime = time;
             timeAvailableString = DateFormat('hh:mm a').format(time);
 
+            duration = null;
             var dur = 60;
             durationList.clear();
 
@@ -499,7 +501,12 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
             dismissScreen(context);
           },
         );
-      }),
+      }) : [
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+          child: Text('No available time.', style: Theme.of(context).textTheme.bodyText1,)
+        )
+      ],
     ).then((value) {
       if (timeAvailableString != null) {
         dateTimeString =
@@ -585,27 +592,33 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
 
   void generateAvailableTime(List<DateTime> unAvailableTimes,
       {bool showLoading = false}) {
-    var day = DateFormat('EEE').format(selectedDate).toLowerCase();
+    if (widget.venue.schedule!.isNotEmpty) {
+      var day = DateFormat('EEE').format(selectedDate);
 
-    var oTime = DateFormat("yyyy-MM-dd hh:mm:ss").parse(
-        '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).openTime}');
-    var cTime = DateFormat("yyyy-MM-dd hh:mm:ss").parse(
-        '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).closeTime}');
+      var available = widget.venue.schedule!
+          .firstWhereOrNull((element) => element.day == day && element.isOpen);
+      if (available != null) {
+        var oTime = DateFormat("yyyy-MM-dd hh:mm:ss").parse(
+            '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).openTime}');
+        var cTime = DateFormat("yyyy-MM-dd hh:mm:ss").parse(
+            '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).closeTime}');
 
-    var amtHour = cTime.difference(oTime).inHours;
+        var amtHour = cTime.difference(oTime).inHours;
 
-    for (var i = 0; i < amtHour; i++) {
-      var date = oTime.add(Duration(hours: i));
-      availableTimeList.add(date);
+        for (var i = 0; i < amtHour; i++) {
+          var date = oTime.add(Duration(hours: i));
+          availableTimeList.add(date);
+        }
+
+        DateTime tempDate = DateTime(2021, 1, 1);
+        availableTimeList = List.from(availableTimeList.where((x) {
+          return x.hour !=
+              unAvailableTimes
+                  .firstWhere((e) => e.hour == x.hour, orElse: () => tempDate)
+                  .hour;
+        }));
+      }
     }
-
-    DateTime tempDate = DateTime(2021, 1, 1);
-    availableTimeList = List.from(availableTimeList.where((x) {
-      return x.hour !=
-          unAvailableTimes
-              .firstWhere((e) => e.hour == x.hour, orElse: () => tempDate)
-              .hour;
-    }));
 
     Future.delayed(Duration(milliseconds: 300)).then((_) {
       isLoaded = true;
