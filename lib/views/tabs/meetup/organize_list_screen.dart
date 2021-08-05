@@ -38,38 +38,41 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
   Widget buildSportList() {
     return !isLoading
         ? isConnection
-            ? SliverList(
-                delegate: SliverChildListDelegate(
-                  List.generate(
-                    sportList.length,
-                    (index) {
-                      final sport = sportList.elementAt(index);
-                      return Container(
-                        margin: const EdgeInsets.only(
-                            left: 16.0, top: 10.0, right: 16.0),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        child: ListTile(
-                          title: Text(
-                            sport.name,
-                            style: Theme.of(context).textTheme.bodyText1,
+            ? SliverPadding(
+              padding: const EdgeInsets.only(bottom: 32.0),
+              sliver: SliverList(
+                  delegate: SliverChildListDelegate(
+                    List.generate(
+                      sportList.length,
+                      (index) {
+                        final sport = sportList.elementAt(index);
+                        return Container(
+                          margin: const EdgeInsets.only(
+                              left: 16.0, top: 10.0, right: 16.0,),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(4.0),
                           ),
-                          contentPadding: EdgeInsets.only(left: 16.0, right: 8),
-                          onTap: () {
-                            launchScreen(
-                              context,
-                              OragnizeActivityScreen.tag,
-                              arguments: sport,
-                            );
-                          },
-                        ),
-                      );
-                    },
+                          child: ListTile(
+                            title: Text(
+                              sport.name,
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                            contentPadding: EdgeInsets.only(left: 16.0, right: 8),
+                            onTap: () {
+                              launchScreen(
+                                context,
+                                OragnizeActivityScreen.tag,
+                                arguments: sport,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
-              )
+            )
             : noInternet()
         : SliverToBoxAdapter();
   }

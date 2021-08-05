@@ -395,12 +395,9 @@ class _CustomTabBar extends StatelessWidget {
                       icon: key != 2
                           ? Icon(value,
                               color: key == selectedIndex
-                                  ? isLight(context)
-                                      ? mainColor
-                                      : Colors.greenAccent
-                                  : isLight(context)
-                                      ? darkColor
-                                      : whiteColor)
+                                  ? ColorResources.getPrimaryIconColor(context)
+                                  : ColorResources.getPrimaryIconColorDark(
+                                      context))
                           : Container(
                               height: 40,
                               width: 40,
@@ -409,9 +406,8 @@ class _CustomTabBar extends StatelessWidget {
                                     side: BorderSide(
                                         width: 0, color: Colors.transparent)),
                                 clipBehavior: Clip.hardEdge,
-                                color: isLight(context)
-                                    ? mainColor
-                                    : Colors.greenAccent,
+                                color:
+                                    ColorResources.getPrimaryIconColor(context),
                                 child: Icon(
                                   value,
                                   color: Colors.white,

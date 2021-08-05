@@ -9,6 +9,7 @@ import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/routes.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/connection_service.dart';
+import 'package:kroma_sport/utils/constant.dart';
 import 'package:kroma_sport/views/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -82,37 +83,22 @@ class App extends StatelessWidget {
             primaryTextTheme:
                 Theme.of(context).primaryTextTheme.apply(bodyColor: blackColor),
             textTheme: TextTheme(
-              headline1: TextStyle(
-                  fontSize: 14.0, color: blackColor, fontFamily: 'Avenir'),
-              headline2: TextStyle(
-                  fontSize: 14.0, color: blackColor, fontFamily: 'Avenir'),
-              headline3: TextStyle(
-                  fontSize: 14.0, color: blackColor, fontFamily: 'Avenir'),
-              headline4: TextStyle(
-                  fontSize: 14.0, color: blackColor, fontFamily: 'Avenir'),
-              headline5: TextStyle(
-                  fontSize: 24.0, color: blackColor, fontFamily: 'Avenir'),
-              headline6: TextStyle(
-                  fontSize: 20.0, color: blackColor, fontFamily: 'Avenir'),
-              bodyText1: TextStyle(
-                  fontSize: 16.0,
-                  color: blackColor,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Avenir'),
-              bodyText2: TextStyle(
-                  fontSize: 14.0, color: blackColor, fontFamily: 'Avenir'),
-              caption: TextStyle(
-                  fontSize: 12.0, color: blackColor, fontFamily: 'Avenir'),
+              headline1: avenirRegularBlack,
+              headline2: avenirRegularBlack,
+              headline3: avenirRegularBlack,
+              headline4: avenirRegularBlack,
+              headline5: avenirRegularBlack.copyWith(fontSize: 24.0),
+              headline6: avenirRegularBlack.copyWith(fontSize: 20.0),
+              bodyText1: avenirRegularBlack.copyWith(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w400,
+              ),
+              bodyText2: avenirRegularBlack,
+              caption: avenirRegularBlack.copyWith(fontSize: 12.0),
             ),
             appBarTheme: AppBarTheme(
               elevation: 1,
-              textTheme: TextTheme(
-                headline6: TextStyle(
-                    fontSize: 20.0,
-                    color: mainColor,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Metropolis'),
-              ),
+              textTheme: TextTheme(headline6: metropolisMainColor20),
             ),
             tabBarTheme: TabBarTheme(
               labelColor: mainColor,
@@ -123,7 +109,8 @@ class App extends StatelessWidget {
           darkTheme: ThemeData.dark().copyWith(
             primaryColor: primaryDarkColor,
             accentColor: mainDarkColor,
-            scaffoldBackgroundColor: backgroundDarkPrimary, // Color(0xFF485b63),
+            scaffoldBackgroundColor:
+                backgroundDarkPrimary, // Color(0xFF485b63),
             iconTheme: IconThemeData(color: mainDarkColor),
             accentIconTheme: IconThemeData(color: mainDarkColor),
             primaryIconTheme: IconThemeData(color: mainDarkColor),
@@ -131,34 +118,22 @@ class App extends StatelessWidget {
             primaryTextTheme:
                 Theme.of(context).primaryTextTheme.apply(bodyColor: whiteColor),
             textTheme: TextTheme(
-              headline1: TextStyle(
-                  fontSize: 14.0, color: whiteColor, fontFamily: 'Avenir'),
-              headline2: TextStyle(
-                  fontSize: 14.0, color: whiteColor, fontFamily: 'Avenir'),
-              headline3: TextStyle(
-                  fontSize: 14.0, color: whiteColor, fontFamily: 'Avenir'),
-              headline4: TextStyle(
-                  fontSize: 14.0, color: whiteColor, fontFamily: 'Avenir'),
-              headline5: TextStyle(
-                  fontSize: 24.0, color: whiteColor, fontFamily: 'Avenir'),
-              headline6: TextStyle(
-                  fontSize: 20.0, color: whiteColor, fontFamily: 'Avenir'),
-              bodyText1: TextStyle(
-                  fontSize: 16.0, color: whiteColor, fontFamily: 'Avenir'),
-              bodyText2: TextStyle(
-                  fontSize: 14.0, color: whiteColor, fontFamily: 'Avenir'),
-              caption: TextStyle(
-                  fontSize: 12.0, color: whiteColor, fontFamily: 'Avenir'),
+              headline1: avenirRegularWhite,
+              headline2: avenirRegularWhite,
+              headline3: avenirRegularWhite,
+              headline4: avenirRegularWhite,
+              headline5: avenirRegularWhite.copyWith(fontSize: 24.0),
+              headline6: avenirRegularWhite.copyWith(fontSize: 20.0),
+              bodyText1: avenirRegularWhite.copyWith(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w400,
+              ),
+              bodyText2: avenirRegularWhite,
+              caption: avenirRegularWhite.copyWith(fontSize: 12.0),
             ),
             appBarTheme: AppBarTheme(
               elevation: 1,
-              textTheme: TextTheme(
-                headline6: TextStyle(
-                    fontSize: 20.0,
-                    color: whiteColor,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Metropolis'),
-              ),
+              textTheme: TextTheme(headline6: metropolisWhite20),
             ),
             tabBarTheme: TabBarTheme(
               labelColor: mainDarkColor,

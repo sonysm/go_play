@@ -11,6 +11,7 @@ import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/dimensions.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
@@ -83,7 +84,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
               child: Row(
                 children: [
                   Avatar(
-                    radius: 18.0,
+                    radius: Dimensions.AVATAR_SIZE_DEFAULT,
                     user: _post.owner,
                     isSelectable: widget.isAvatarSelectable,
                     onTap: (user) {
@@ -105,9 +106,10 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                       Text(
                         _post.createdAt.toString().timeAgoString,
                         style: Theme.of(context).textTheme.caption!.copyWith(
-                            color: isLight(context)
-                                ? Colors.blueGrey[400]
-                                : Colors.blueGrey[100]),
+                              color: ColorResources.getSecondaryText(context),
+                            ),
+                        strutStyle:
+                            StrutStyle(fontSize: Dimensions.FONT_SIZE_SMALL),
                       ),
                     ],
                   ),
@@ -243,7 +245,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                         BlocBuilder<UserCubit, User>(
                           builder: (context, user) {
                             return Avatar(
-                              radius: 12.0,
+                              radius: Dimensions.AVATAR_SIZE_SMALL,
                               user: user,
                               isSelectable: widget.isAvatarSelectable,
                             );
@@ -265,9 +267,8 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                               child: Text(
                                 'Add a comment',
                                 style: TextStyle(
-                                    color: isLight(context)
-                                        ? Colors.blueGrey[300]
-                                        : Colors.blueGrey[100]),
+                                  color: ColorResources.getBlueGrey(context),
+                                ),
                               ),
                             ),
                           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/themes/colors.dart';
 
 class KSIconButton extends StatelessWidget {
   const KSIconButton({
@@ -27,9 +28,7 @@ class KSIconButton extends StatelessWidget {
             icon,
             color: iconColor != null
                 ? iconColor
-                : Theme.of(context).brightness == Brightness.light
-                    ? Colors.blueGrey
-                    : Colors.white,
+                : ColorResources.getSecondaryIconColor(context),
             size: iconSize,
           ),
         ),

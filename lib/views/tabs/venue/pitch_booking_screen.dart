@@ -466,47 +466,52 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
     showKSBottomSheet(
       context,
       title: 'Choose Start Time',
-      children: availableTimeList.isNotEmpty ? List.generate(availableTimeList.length, (index) {
-        final time = availableTimeList[index];
-        return KSTextButtonBottomSheet(
-          title: DateFormat('hh:mm a').format(time),
-          height: 40,
-          titleTextStyle: Theme.of(context)
-              .textTheme
-              .bodyText1
-              ?.copyWith(fontWeight: FontWeight.w600),
-          onTab: () {
-            selectedStartTime = time;
-            timeAvailableString = DateFormat('hh:mm a').format(time);
+      children: availableTimeList.isNotEmpty
+          ? List.generate(availableTimeList.length, (index) {
+              final time = availableTimeList[index];
+              return KSTextButtonBottomSheet(
+                title: DateFormat('hh:mm a').format(time),
+                height: 40,
+                titleTextStyle: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(fontWeight: FontWeight.w600),
+                onTab: () {
+                  selectedStartTime = time;
+                  timeAvailableString = DateFormat('hh:mm a').format(time);
 
-            duration = null;
-            var dur = 60;
-            durationList.clear();
+                  duration = null;
+                  var dur = 60;
+                  durationList.clear();
 
-            for (var i = index; i < availableTimeList.length; i++) {
-              if (i + 1 < availableTimeList.length) {
-                if (availableTimeList[i].add(Duration(hours: 1)) ==
-                    availableTimeList[i + 1]) {
-                  durationList.add(dur);
-                  dur += 60;
-                } else {
-                  durationList.add(dur);
-                  break;
-                }
-              } else if (i == availableTimeList.length - 1) {
-                durationList.add(dur);
-              }
-            }
+                  for (var i = index; i < availableTimeList.length; i++) {
+                    if (i + 1 < availableTimeList.length) {
+                      if (availableTimeList[i].add(Duration(hours: 1)) ==
+                          availableTimeList[i + 1]) {
+                        durationList.add(dur);
+                        dur += 60;
+                      } else {
+                        durationList.add(dur);
+                        break;
+                      }
+                    } else if (i == availableTimeList.length - 1) {
+                      durationList.add(dur);
+                    }
+                  }
 
-            dismissScreen(context);
-          },
-        );
-      }) : [
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-          child: Text('No available time.', style: Theme.of(context).textTheme.bodyText1,)
-        )
-      ],
+                  dismissScreen(context);
+                },
+              );
+            })
+          : [
+              Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  child: Text(
+                    'No available time.',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ))
+            ],
     ).then((value) {
       if (timeAvailableString != null) {
         dateTimeString =
@@ -599,9 +604,9 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
           .firstWhereOrNull((element) => element.day == day && element.isOpen);
       if (available != null) {
         var oTime = DateFormat("yyyy-MM-dd hh:mm:ss").parse(
-            '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).openTime}');
+            '${DateTime.now().year}-${DateTime.now().month}-${selectedDate.day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).openTime}');
         var cTime = DateFormat("yyyy-MM-dd hh:mm:ss").parse(
-            '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).closeTime}');
+            '${DateTime.now().year}-${DateTime.now().month}-${selectedDate.day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).closeTime}');
 
         var amtHour = cTime.difference(oTime).inHours;
 
@@ -613,9 +618,11 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
         DateTime tempDate = DateTime(2021, 1, 1);
         availableTimeList = List.from(availableTimeList.where((x) {
           return x.hour !=
-              unAvailableTimes
-                  .firstWhere((e) => e.hour == x.hour, orElse: () => tempDate)
-                  .hour;
+                  unAvailableTimes
+                      .firstWhere((e) => e.hour == x.hour,
+                          orElse: () => tempDate)
+                      .hour &&
+              x.isAfter(DateTime.now());
         }));
       }
     }
