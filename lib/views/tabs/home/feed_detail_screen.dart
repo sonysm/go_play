@@ -143,6 +143,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                             .textTheme
                             .caption!
                             .copyWith(color: Colors.blueGrey[200]),
+                        strutStyle: StrutStyle(fontSize: 12),
                       ),
                     ],
                   ),
@@ -219,8 +220,11 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 children: [
                   post.photo != null
                       ? SizedBox(
-                        width: double.infinity,
-                          child: CachedNetworkImage(imageUrl: post.photo!, fit: BoxFit.cover,),
+                          width: double.infinity,
+                          child: CachedNetworkImage(
+                            imageUrl: post.photo!,
+                            fit: BoxFit.cover,
+                          ),
                         )
                       : SizedBox(
                           width: AppSize(context).appWidth(100),
@@ -312,14 +316,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                       KSIconButton(
                         icon:
                             post.reacted! ? Icons.favorite : FeatherIcons.heart,
-                        iconColor:
-                            Theme.of(context).brightness == Brightness.light
-                                ? post.reacted!
-                                    ? Colors.green
-                                    : Colors.blueGrey
-                                : post.reacted!
-                                    ? Colors.green
-                                    : Colors.white,
+                        iconColor: post.reacted!
+                            ? ColorResources.getActiveIconColor(context)
+                            : ColorResources.getInactiveIconColor(context),
                         onTap: () {
                           if (post.reacted!) {
                             post.totalReaction -= 1;
@@ -371,13 +370,12 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 ],
               ),
             ),
-            commentList.isNotEmpty
-                ? Column(
-                    children: List.generate(commentList.length, (index) {
-                      return CommentCell(comment: commentList.elementAt(index));
-                    }),
-                  )
-                : SizedBox(),
+            if (commentList.isNotEmpty)
+              Column(
+                children: List.generate(commentList.length, (index) {
+                  return CommentCell(comment: commentList.elementAt(index));
+                }),
+              ),
           ],
         ),
       ),
@@ -406,14 +404,15 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 maxLines: 6,
                 minLines: 1,
                 decoration: InputDecoration(
-                    contentPadding: EdgeInsets.zero,
-                    isDense: true,
-                    border: InputBorder.none,
-                    hintText: 'Add a comment',
-                    hintStyle: Theme.of(context).textTheme.bodyText2?.copyWith(
-                        color: isLight(context)
-                            ? Colors.blueGrey
-                            : Colors.blueGrey[100])),
+                  contentPadding: EdgeInsets.zero,
+                  isDense: true,
+                  border: InputBorder.none,
+                  hintText: 'Add a comment',
+                  hintStyle: Theme.of(context)
+                      .textTheme
+                      .bodyText2
+                      ?.copyWith(color: ColorResources.getBlueGrey(context)),
+                ),
                 onChanged: (value) {
                   setState(() {});
                 },
@@ -618,8 +617,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   void reactPost() async {
     var result = await ksClient.postApi('/create/post/reaction/${post.id}');
     if (result != null) {
-      if (result is! HttpResult) {
-      }
+      if (result is! HttpResult) {}
     }
   }
 

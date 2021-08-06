@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kroma_sport/themes/colors.dart';
-import 'package:kroma_sport/utils/constant.dart';
 
 class KsRoundButton extends StatelessWidget {
   final double width;
@@ -14,7 +13,7 @@ class KsRoundButton extends StatelessWidget {
   const KsRoundButton({
     Key? key,
     this.width = double.infinity,
-    this.height = btnHeightNormal,
+    this.height = 44.0,
     required this.title,
     this.titleColor = whiteColor,
     this.backgroundColor = Colors.transparent,

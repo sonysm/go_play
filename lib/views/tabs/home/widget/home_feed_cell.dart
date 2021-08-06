@@ -200,14 +200,9 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                         icon: _post.reacted!
                             ? Icons.favorite
                             : FeatherIcons.heart,
-                        iconColor:
-                            Theme.of(context).brightness == Brightness.light
-                                ? _post.reacted!
-                                    ? Colors.green
-                                    : Colors.blueGrey
-                                : _post.reacted!
-                                    ? Colors.green
-                                    : Colors.white,
+                        iconColor: _post.reacted!
+                            ? ColorResources.getActiveIconColor(context)
+                            : ColorResources.getInactiveIconColor(context),
                         onTap: () {
                           if (_post.reacted!) {
                             _post.totalReaction -= 1;

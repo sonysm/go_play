@@ -51,4 +51,12 @@ class ColorResources {
   static Color getBlueGrey(BuildContext context) {
     return isLight(context) ? Color(0xFF90A4AE) : Color(0xFFCFD8DC);
   }
+
+  static Color getActiveIconColor(BuildContext context) {
+    return isLight(context) ? Colors.green : Colors.greenAccent;
+  }
+
+  static Color getInactiveIconColor(BuildContext context) {
+    return isLight(context) ? Colors.blueGrey : Colors.white;
+  }
 }

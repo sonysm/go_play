@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
 
 class KSTextButtonBottomSheet extends StatelessWidget {
@@ -33,15 +34,15 @@ class KSTextButtonBottomSheet extends StatelessWidget {
         child: Row(
           children: <Widget>[
             SizedBox(width: 16.0),
-            icon != null
-                ? Padding(
-                    padding: EdgeInsets.only(right: 16.0),
-                    child: Icon(
-                      icon,
-                      color: isLight(context) ? Colors.blueGrey : Colors.white,
-                    ),
-                  )
-                : SizedBox(),
+            if (icon != null)
+              Padding(
+                padding: EdgeInsets.only(right: 16.0),
+                child: Icon(
+                  icon,
+                  color: ColorResources.getSecondaryIconColor(context),
+                  size: 20.0,
+                ),
+              ),
             Text(
               title,
               style: titleTextStyle ?? Theme.of(context).textTheme.bodyText1,

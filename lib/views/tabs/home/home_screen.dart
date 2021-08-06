@@ -38,6 +38,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  ScrollController _homeScrollController = ScrollController();
+
+  final RegExp urlRegExp = RegExp(
+    r"((https?:www\.)|(https?:\/\/)|(www\.))?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?",
+    caseSensitive: false,
+  );
+
+  final _protocolIdentifierRegex = RegExp(
+    r'^(https?:\/\/)',
+    caseSensitive: false,
+  );
+
   Widget buildNavbar() {
     return SliverAppBar(
       elevation: 0.0,
@@ -112,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? Colors.grey[100]
                           : Colors.blueGrey[300]),
                       foregroundColor: MaterialStateProperty.all(
-                          isLight(context) ? mainColor : Colors.greenAccent),
+                          ColorResources.getMainColor(context)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -124,9 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           style:
                               Theme.of(context).textTheme.bodyText1?.copyWith(
                                     fontWeight: FontWeight.w600,
-                                    color: isLight(context)
-                                        ? mainColor
-                                        : Colors.greenAccent,
+                                    color: ColorResources.getMainColor(context),
                                     fontSize: 18.0,
                                     fontFamily: 'ProximaNova',
                                   ),
@@ -145,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? Colors.grey[100]
                           : Colors.blueGrey[300]),
                       foregroundColor: MaterialStateProperty.all(
-                          isLight(context) ? mainColor : Colors.greenAccent),
+                          ColorResources.getMainColor(context)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -158,9 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Theme.of(context).textTheme.bodyText1?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 18.0,
-                                    color: isLight(context)
-                                        ? mainColor
-                                        : Colors.greenAccent,
+                                    color: ColorResources.getMainColor(context),
                                     fontFamily: 'ProximaNova',
                                   ),
                           strutStyle: StrutStyle(fontSize: 18),
@@ -246,8 +254,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  ScrollController _homeScrollController = ScrollController();
-
   void scrollToBottom() {
     Future.delayed(Duration(milliseconds: 300)).then((value) {
       _homeScrollController.animateTo(
@@ -257,16 +263,6 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     });
   }
-
-  final RegExp urlRegExp = RegExp(
-    r"((https?:www\.)|(https?:\/\/)|(www\.))?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?",
-    caseSensitive: false,
-  );
-
-  final _protocolIdentifierRegex = RegExp(
-    r'^(https?:\/\/)',
-    caseSensitive: false,
-  );
 
   @override
   Widget build(BuildContext context) {

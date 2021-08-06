@@ -50,34 +50,6 @@ class _AccountScreenState extends State<AccountScreen>
 
   late ConnectionStatusSingleton connectionStatus;
 
-  Widget buildNavbar() {
-    return SliverAppBar(
-      pinned: true,
-      title: Text('Account'),
-      actions: [
-        CupertinoButton(
-          padding: EdgeInsets.zero,
-          minSize: 0,
-          child: Icon(
-            LineIcons.userEdit,
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.grey[600]
-                : whiteColor,
-            size: 28.0,
-          ),
-          onPressed: () => launchScreen(context, EditProfileScreen.tag),
-        ),
-        CupertinoButton(
-          child: Icon(FeatherIcons.settings,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.grey[600]
-                  : whiteColor),
-          onPressed: () => launchScreen(context, SettingScreen.tag),
-        ),
-      ],
-    );
-  }
-
   Widget actionHeader(
       {String? amt, required String title, VoidCallback? onTap}) {
     return Material(
@@ -378,22 +350,28 @@ class _AccountScreenState extends State<AccountScreen>
         title: Text('Account'),
         actions: [
           CupertinoButton(
+            onPressed: () {},
+            child: Icon(
+              LineIcons.bars,
+              size: 28.0,
+              color: ColorResources.getSecondaryIconColor(context),
+            ),
+          ),
+          CupertinoButton(
             padding: EdgeInsets.zero,
             minSize: 0,
             child: Icon(
               LineIcons.userEdit,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.grey[600]
-                  : whiteColor,
+              color: ColorResources.getSecondaryIconColor(context),
               size: 28.0,
             ),
             onPressed: () => launchScreen(context, EditProfileScreen.tag),
           ),
           CupertinoButton(
-            child: Icon(FeatherIcons.settings,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? Colors.grey[600]
-                    : whiteColor),
+            child: Icon(
+              FeatherIcons.settings,
+              color: ColorResources.getSecondaryIconColor(context),
+            ),
             onPressed: () => launchScreen(context, SettingScreen.tag),
           ),
         ],
@@ -403,11 +381,10 @@ class _AccountScreenState extends State<AccountScreen>
           valueColor: AlwaysStoppedAnimation<Color>(mainColor),
         ),
         footer: ClassicalFooter(
-              enableInfiniteLoad: false,
-              completeDuration: Duration(milliseconds: 1200),
-            ),
+          enableInfiniteLoad: false,
+          completeDuration: Duration(milliseconds: 1200),
+        ),
         slivers: [
-          // buildNavbar(),
           buildProfileHeader(),
           buildFavoriteSport(),
           isLoaded ? buildFeedTabbar() : SliverToBoxAdapter(),
