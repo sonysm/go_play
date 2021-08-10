@@ -115,7 +115,7 @@ class _MainViewState extends State<MainView> {
   void initState() {
     super.initState();
     setupFirebaseMessage();
-    setupLocalNotification();
+    // setupLocalNotification();
     fetchLocation();
     initShareIntent();
     BlocProvider.of<HomeCubit>(context).onLoad();
@@ -179,23 +179,6 @@ class _MainViewState extends State<MainView> {
   }
 
   setupFirebaseMessage() {
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
-      if (message != null) {
-        print('remote_message: ${message.category}');
-      }
-    });
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification notification = message.notification!;
-      showLocalNotification(notification, message.data);
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
-      print("____onMessageOpenedApp____: $message");
-      //serializeAndNavigate(message.data);
-    });
-
     FirebaseMessaging.instance.requestPermission();
     FirebaseMessaging.instance.getToken().then((token) async {
       await getDeviceDetails();
@@ -217,68 +200,6 @@ class _MainViewState extends State<MainView> {
     if (res != null) {
       if (res is! HttpResult) {}
     }
-  }
-
-  setupLocalNotification() async {
-    var android = new AndroidInitializationSettings('ic_notification');
-    var ios = new IOSInitializationSettings();
-    var platform = new InitializationSettings(android: android, iOS: ios);
-    flutterLocalNotificationsPlugin.initialize(platform);
-  }
-
-  Future<void> showLocalNotification(
-      RemoteNotification notification, Map<String, dynamic> data) async {
-    // AndroidNotification androidNotification = notification.android!;
-    // AppleNotification appleNotification = notification.apple!;
-
-    // const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    //   'high_importance_channel', // id
-    //   'High Importance Notifications', // title
-    //   'This channel is used for important notifications.', // description
-    //   importance: Importance.max,
-    // );
-
-    // await flutterLocalNotificationsPlugin
-    //     .resolvePlatformSpecificImplementation<
-    //         AndroidFlutterLocalNotificationsPlugin>()
-    //     ?.createNotificationChannel(channel);
-
-    // if (notification != null && androidNotification != null) {
-    //   flutterLocalNotificationsPlugin.show(
-    //       notification.hashCode,
-    //       notification.title,
-    //       notification.body,
-    //       NotificationDetails(
-    //         android: AndroidNotificationDetails(
-    //           channel.id,
-    //           channel.name,
-    //           channel.description,
-    //           icon: androidNotification.smallIcon,
-    //           // other properties...
-    //         ),
-    //       ));
-    // }
-
-    const AndroidNotificationDetails android = AndroidNotificationDetails(
-      'channel ID',
-      "CHANNLE NAME",
-      "channelDescription",
-      importance: Importance.max,
-      priority: Priority.high,
-      ongoing: false,
-      autoCancel: true,
-    );
-
-    const IOSNotificationDetails iOS = IOSNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-    const NotificationDetails platform =
-        NotificationDetails(android: android, iOS: iOS);
-
-    await flutterLocalNotificationsPlugin.show(
-        notification.hashCode, notification.title, notification.body, platform);
   }
 
   String identifier = '';

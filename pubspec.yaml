@@ -66,6 +66,7 @@ dependencies:
   receive_sharing_intent: ^1.4.5
   marquee: ^2.2.0
   collection: ^1.15.0
+  path_provider: ^2.0.2
   
   # Firebase
   firebase_auth: ^1.1.2

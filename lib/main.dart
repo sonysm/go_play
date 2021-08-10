@@ -2,10 +2,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/bloc/theme.dart';
 import 'package:kroma_sport/bloc/user.dart';
+import 'package:kroma_sport/notification/my_notification.dart';
 import 'package:kroma_sport/routes.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/connection_service.dart';
@@ -13,17 +15,24 @@ import 'package:kroma_sport/utils/constant.dart';
 import 'package:kroma_sport/views/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Set the background messaging handler early on, as a named top-level function
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await MyNotification.initialize(flutterLocalNotificationsPlugin);
+  FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
 
   /// Update the iOS foreground notification presentation options to allow
   /// heads up notifications.
   await FirebaseMessaging.instance
       .setForegroundNotificationPresentationOptions();
+
+  ConnectionStatusSingleton connectionStatus =
+      ConnectionStatusSingleton.getInstance();
+  connectionStatus.initialize();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
     (_) {
@@ -36,16 +45,6 @@ void main() async {
       runApp(App());
     },
   );
-
-  ConnectionStatusSingleton connectionStatus =
-      ConnectionStatusSingleton.getInstance();
-  connectionStatus.initialize();
-}
-
-/// To verify things are working, check out the native platform logs.
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print('Handling a background message ${message.messageId}');
 }
 
 class App extends StatelessWidget {
@@ -53,18 +52,10 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ThemeCubit>(
-          create: (BuildContext context) => ThemeCubit()..init(),
-        ),
-        BlocProvider<HomeCubit>(
-          create: (BuildContext context) => HomeCubit(),
-        ),
-        BlocProvider<MeetupCubit>(
-          create: (BuildContext context) => MeetupCubit(),
-        ),
-        BlocProvider<UserCubit>(
-          create: (BuildContext context) => UserCubit(),
-        )
+        BlocProvider<ThemeCubit>(create: (BuildContext context) => ThemeCubit()..init()),
+        BlocProvider<HomeCubit>(create: (BuildContext context) => HomeCubit()),
+        BlocProvider<MeetupCubit>(create: (BuildContext context) => MeetupCubit()),
+        BlocProvider<UserCubit>(create: (BuildContext context) => UserCubit())
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(builder: (_, mode) {
         return MaterialApp(

@@ -28,3 +28,5 @@ const metropolisMainColor20 = TextStyle(
   color: mainColor,
   fontSize: 20,
 );
+
+const String BASE_URL = 'http://165.232.160.96:8080';
