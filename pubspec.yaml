@@ -67,6 +67,10 @@ dependencies:
   marquee: ^2.2.0
   collection: ^1.15.0
   path_provider: ^2.0.2
+  extended_nested_scroll_view: ^4.0.0
+  pull_to_refresh_notification: ^2.2.0
+  loading_more_list: ^4.1.0
+  extended_image: ^4.1.0
   
   # Firebase
   firebase_auth: ^1.1.2

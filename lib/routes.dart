@@ -129,7 +129,7 @@ class RouteGenerator {
           ),
         );
       case EditProfileScreen.tag:
-        return KSPageRoute(builder: (_) => EditProfileScreen());
+        return MaterialPageRoute(builder: (_) => EditProfileScreen());
       case VenueScreen.tag:
         return MaterialPageRoute(builder: (_) => VenueScreen());
       case VenueDetailScreen.tag:

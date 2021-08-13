@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
@@ -13,6 +13,7 @@ import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/connection_service.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
@@ -27,28 +28,48 @@ import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:kroma_sport/widgets/pull_to_refresh_header.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:loading_more_list/loading_more_list.dart';
+import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 
-class AccountScreen extends StatefulWidget {
-  static const String tag = '/accountScreen';
-
-  AccountScreen({Key? key}) : super(key: key);
+class AccountScreen2 extends StatefulWidget {
+  AccountScreen2({Key? key}) : super(key: key);
 
   @override
-  _AccountScreenState createState() => _AccountScreenState();
+  _AccountScreen2State createState() => _AccountScreen2State();
 }
 
-class _AccountScreenState extends State<AccountScreen>
-    with SingleTickerProviderStateMixin {
+class _AccountScreen2State extends State<AccountScreen2>
+    with TickerProviderStateMixin {
+  late TabController _controller;
+
+  late ConnectionStatusSingleton connectionStatus;
+
   KSHttpClient ksClient = KSHttpClient();
   List<FavoriteSport> favSportList = [];
 
-  late TabController tabController;
-  int _currentIndex = 0;
-
   bool isLoaded = false;
 
-  late ConnectionStatusSingleton connectionStatus;
+  @override
+  void initState() {
+    _controller = TabController(length: 2, vsync: this);
+
+    connectionStatus = ConnectionStatusSingleton.getInstance();
+    connectionStatus.connectionChange.listen(connectionChanged);
+
+    Future.delayed(Duration(milliseconds: 300)).then((_) {
+      getFavoriteSport();
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   Widget actionHeader(
       {String? amt, required String title, VoidCallback? onTap}) {
@@ -201,55 +222,13 @@ class _AccountScreenState extends State<AccountScreen>
     );
   }
 
-  Widget buildFeedTabbar() {
-    return SliverPadding(
-      padding: const EdgeInsets.only(top: 8.0),
-      sliver: SliverToBoxAdapter(
-        child: Column(
-          children: [
-            Container(
-              alignment: Alignment.centerLeft,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                border: Border(
-                    bottom: BorderSide(
-                        width: 0.5,
-                        color: isLight(context)
-                            ? Colors.blueGrey[50]!
-                            : Colors.blueGrey)),
-              ),
-              child: TabBar(
-                controller: tabController,
-                labelStyle: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
-                indicatorColor:
-                    isLight(context) ? mainColor : Colors.greenAccent,
-                isScrollable: true,
-                onTap: (index) => setState(() => _currentIndex = index),
-                tabs: [
-                  Tab(text: 'Post'),
-                  Tab(text: 'Meetup'),
-                ],
-              ),
-            ),
-            _currentIndex == 0 ? buildPostFeedList() : buildMeetupList()
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget buildMeetupList() {
     return BlocBuilder<MeetupCubit, MeetupData>(
       builder: (context, data) {
         if (data.status == DataState.ErrorSocket) {
           return Padding(
             padding: const EdgeInsets.only(top: 50.0),
-            child: noConnection(
-              context,
-            ),
+            child: noConnection(context),
           );
         }
 
@@ -262,6 +241,7 @@ class _AccountScreenState extends State<AccountScreen>
               )
             : data.ownerMeetup.isNotEmpty
                 ? ListView.separated(
+                    key: PageStorageKey<String>('Tab1'),
                     padding: EdgeInsets.zero,
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -293,7 +273,9 @@ class _AccountScreenState extends State<AccountScreen>
         if (data.status == DataState.ErrorSocket && data.ownerPost.isEmpty) {
           return Padding(
             padding: const EdgeInsets.only(top: 50.0),
-            child: noConnection(context),
+            child: noConnection(
+              context,
+            ),
           );
         }
 
@@ -306,6 +288,7 @@ class _AccountScreenState extends State<AccountScreen>
               )
             : data.ownerPost.isNotEmpty
                 ? ListView.separated(
+                    key: PageStorageKey<String>('Tab0'),
                     padding: EdgeInsets.zero,
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -340,90 +323,179 @@ class _AccountScreenState extends State<AccountScreen>
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0.5,
-        title: Text('Account'),
-        actions: [
-          CupertinoButton(
-            onPressed: () {},
-            child: Icon(
-              LineIcons.bars,
-              size: 28.0,
-              color: ColorResources.getSecondaryIconColor(context),
-            ),
+  Widget _buildScaffoldBody() {
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    final double pinnedHeaderHeight = statusBarHeight + kToolbarHeight;
+
+    return PullToRefreshNotification(
+      color: Colors.blue,
+      onRefresh: () {
+        return Future<bool>.delayed(
+            const Duration(
+              seconds: 1,
+            ), () {
+          return true;
+        });
+      },
+      maxDragOffset: 100,
+      child: GlowNotificationWidget(
+        ExtendedNestedScrollView(
+          headerSliverBuilder: (BuildContext c, bool f) {
+            return <Widget>[
+              SliverAppBar(
+                elevation: 0.5,
+                pinned: true,
+                title: Text('Account'),
+                actions: [
+                  CupertinoButton(
+                    onPressed: () => accountOptionSheet(
+                      context,
+                      title: 'Option Title',
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: Avatar(
+                              radius: 22.0,
+                              user: KS.shared.user,
+                              isSelectable: false,
+                            ),
+                            title: Text(
+                              KS.shared.user.getFullname(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                            subtitle: Row(
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    dismissScreen(context);
+                                    launchScreen(
+                                        context, EditProfileScreen.tag);
+                                  },
+                                  style: ButtonStyle(
+                                      overlayColor: MaterialStateProperty.all(
+                                          Colors.grey[100]),
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                      minimumSize:
+                                          MaterialStateProperty.all(Size(0, 0)),
+                                      padding: MaterialStateProperty.all(
+                                          const EdgeInsets.symmetric(
+                                              vertical: 4.0, horizontal: 0.0))),
+                                  child: Text(
+                                    'Edit Profile',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        ?.copyWith(
+                                          color: ColorResources.getBlueGrey(
+                                              context),
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ListTile(
+                            onTap: () {
+                              dismissScreen(context);
+                              launchScreen(context, SettingScreen.tag);
+                            },
+                            leading: Icon(
+                              FeatherIcons.settings,
+                              color:
+                                  ColorResources.getSecondaryIconColor(context),
+                              size: 20.0,
+                            ),
+                            title: Text(
+                              'Setting',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  ?.copyWith(fontSize: 18),
+                            ),
+                            horizontalTitleGap: 0,
+                          )
+                        ],
+                      ),
+                    ),
+                    child: Icon(
+                      LineIcons.bars,
+                      size: 28.0,
+                      color: ColorResources.getSecondaryIconColor(context),
+                    ),
+                  ),
+                ],
+              ),
+              PullToRefreshContainer(
+                  (PullToRefreshScrollNotificationInfo? info) {
+                return SliverToBoxAdapter(
+                  child: PullToRefreshHeader(
+                    info,
+                    DateTime.now(),
+                    color: Colors.white,
+                  ),
+                );
+              }),
+              buildProfileHeader(),
+              buildFavoriteSport(),
+            ];
+          },
+          pinnedHeaderSliverHeightBuilder: () {
+            return pinnedHeaderHeight;
+          },
+          onlyOneScrollInBody: true,
+          body: Column(
+            children: <Widget>[
+              Container(
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  border: Border(
+                      bottom: BorderSide(
+                          width: 0.5,
+                          color: isLight(context)
+                              ? Colors.blueGrey[50]!
+                              : Colors.blueGrey)),
+                ),
+                child: TabBar(
+                  controller: _controller,
+                  labelStyle: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  indicatorColor:
+                      isLight(context) ? mainColor : Colors.greenAccent,
+                  isScrollable: true,
+                  tabs: const <Tab>[
+                    Tab(text: 'Post'),
+                    Tab(text: 'Meetup'),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _controller,
+                  children: <Widget>[
+                    buildPostFeedList(),
+                    buildMeetupList(),
+                  ],
+                ),
+              )
+            ],
           ),
-          CupertinoButton(
-            padding: EdgeInsets.zero,
-            minSize: 0,
-            child: Icon(
-              LineIcons.userEdit,
-              color: ColorResources.getSecondaryIconColor(context),
-              size: 28.0,
-            ),
-            onPressed: () => launchScreen(context, EditProfileScreen.tag),
-          ),
-          CupertinoButton(
-            child: Icon(
-              FeatherIcons.settings,
-              color: ColorResources.getSecondaryIconColor(context),
-            ),
-            onPressed: () => launchScreen(context, SettingScreen.tag),
-          ),
-        ],
-      ),
-      body: EasyRefresh.custom(
-        header: MaterialHeader(
-          valueColor: AlwaysStoppedAnimation<Color>(mainColor),
         ),
-        footer: ClassicalFooter(
-          enableInfiniteLoad: false,
-          completeDuration: Duration(milliseconds: 1200),
-        ),
-        slivers: [
-          buildProfileHeader(),
-          buildFavoriteSport(),
-          isLoaded ? buildFeedTabbar() : SliverToBoxAdapter(),
-        ],
-        onRefresh: () async {
-          BlocProvider.of<HomeCubit>(context).onRefresh();
-          BlocProvider.of<MeetupCubit>(context).onRefresh();
-        },
-        onLoad: () async {
-          await Future.delayed(Duration(milliseconds: 300));
-          loadMorePost();
-        },
       ),
     );
   }
 
   @override
-  void setState(fn) {
-    if (!mounted) return;
-    super.setState(fn);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    tabController = TabController(length: 2, vsync: this);
-
-    connectionStatus = ConnectionStatusSingleton.getInstance();
-    connectionStatus.connectionChange.listen(connectionChanged);
-
-    Future.delayed(Duration(milliseconds: 300)).then((_) {
-      getFavoriteSport();
-    });
-  }
-
-  void connectionChanged(dynamic hasConnection) {
-    if (hasConnection) {
-      getFavoriteSport();
-      BlocProvider.of<HomeCubit>(context).onLoad();
-      BlocProvider.of<MeetupCubit>(context).onLoad();
-    }
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _buildScaffoldBody(),
+    );
   }
 
   void getFavoriteSport() async {
@@ -442,10 +514,62 @@ class _AccountScreenState extends State<AccountScreen>
     }
   }
 
-  int page = 1;
-
-  void loadMorePost() {
-    BlocProvider.of<HomeCubit>(context).loadOwnerPost(page);
-    page += 1;
+  void connectionChanged(dynamic hasConnection) {
+    if (hasConnection) {
+      getFavoriteSport();
+      BlocProvider.of<HomeCubit>(context).onLoad();
+      BlocProvider.of<MeetupCubit>(context).onLoad();
+    }
   }
+
+  Future accountOptionSheet(BuildContext context,
+          {Widget? child, String? title}) async =>
+      await showModalBottomSheet(
+        useRootNavigator: true,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+        ),
+        elevation: 2,
+        context: context,
+        backgroundColor: ColorResources.getPrimary(context),
+        builder: (context) {
+          final statusHeight = MediaQuery.of(context).padding.top;
+          return SafeArea(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                  maxHeight:
+                      AppSize(context).appHeight(100) - statusHeight - 80),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: 4,
+                    width: 25,
+                    margin: EdgeInsets.only(top: 10.0, bottom: 2.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2.0),
+                      color: ColorResources.getBlueGrey(context),
+                    ),
+                  ),
+                  // Padding(
+                  //   padding: EdgeInsets.only(
+                  //       left: 50, right: 50, top: 6.0, bottom: 10),
+                  //   child: Text(
+                  //     title ?? '',
+                  //     style: Theme.of(context).textTheme.bodyText2,
+                  //     textAlign: TextAlign.center,
+                  //     maxLines: 1,
+                  //     overflow: TextOverflow.clip,
+                  //   ),
+                  // ),
+                  // Divider(height: 1),
+                  Flexible(child: SingleChildScrollView(child: child)),
+                ],
+              ),
+            ),
+          );
+        },
+      );
 }
