@@ -12,6 +12,7 @@ class HomeData extends Equatable {
   final String? search;
   final DataState status;
   final List<Post> ownerPost;
+  final bool ownertHasReachedMax;
 
   HomeData({
     required this.data,
@@ -19,6 +20,7 @@ class HomeData extends Equatable {
     this.page = 1,
     this.search,
     required this.ownerPost,
+    this.ownertHasReachedMax = false,
   });
 
   HomeData copyWith({
@@ -27,17 +29,19 @@ class HomeData extends Equatable {
     List<Post>? data,
     String? search,
     List<Post>? ownerPost,
+    bool? ownertHasReachedMax,
   }) {
     return HomeData(
         status: status ?? this.status,
         page: page ?? this.page,
         data: data ?? this.data,
         search: search ?? this.search,
-        ownerPost: ownerPost ?? this.ownerPost);
+        ownerPost: ownerPost ?? this.ownerPost,
+        ownertHasReachedMax: ownertHasReachedMax ?? this.ownertHasReachedMax);
   }
 
   @override
-  List<Object> get props => [status, data, page];
+  List<Object> get props => [status, data, page, ownertHasReachedMax];
 }
 
 class HomeCubit extends Cubit<HomeData> {
@@ -179,6 +183,8 @@ class HomeCubit extends Cubit<HomeData> {
             morePosts = (data as List).map((e) => Post.fromJson(e)).toList();
             if (morePosts.isNotEmpty) {
               emit(state.copyWith(ownerPost: state.ownerPost + morePosts));
+            } else {
+              emit(state.copyWith(ownertHasReachedMax: true));
             }
           }
         }

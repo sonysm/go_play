@@ -51,6 +51,8 @@ class _AccountScreen2State extends State<AccountScreen2>
 
   bool isLoaded = false;
 
+  final _scrollController = ScrollController();
+
   @override
   void initState() {
     _controller = TabController(length: 2, vsync: this);
@@ -63,11 +65,13 @@ class _AccountScreen2State extends State<AccountScreen2>
     });
 
     super.initState();
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -293,6 +297,9 @@ class _AccountScreen2State extends State<AccountScreen2>
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
+                      if (index >= data.ownerPost.length) {
+                        return BottomLoader();
+                      }
                       var post = data.ownerPost.elementAt(index);
                       if (post.type == PostType.feed) {
                         return Padding(
@@ -312,12 +319,16 @@ class _AccountScreen2State extends State<AccountScreen2>
                           ),
                         );
                       }
+
                       return SizedBox();
                     },
                     separatorBuilder: (context, index) {
                       return 8.height;
                     },
-                    itemCount: data.ownerPost.length)
+                    itemCount: data.ownertHasReachedMax
+                        ? data.ownerPost.length
+                        : data.ownerPost.length + 1,
+                  )
                 : SizedBox();
       },
     );
@@ -572,4 +583,34 @@ class _AccountScreen2State extends State<AccountScreen2>
           );
         },
       );
+
+  int page = 1;
+
+  void _onScroll() async {
+    if (_isBottom) {
+      await Future.delayed(Duration(seconds: 1));
+      BlocProvider.of<HomeCubit>(context).loadOwnerPost(page);
+      page += 1;
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9);
+  }
+}
+
+class BottomLoader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: SizedBox(
+        height: 24,
+        width: 24,
+        child: CircularProgressIndicator(strokeWidth: 1.5),
+      ),
+    );
+  }
 }

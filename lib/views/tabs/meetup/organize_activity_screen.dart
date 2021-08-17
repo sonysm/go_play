@@ -444,61 +444,57 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
       appBar: AppBar(
         title: Text('Organize ${sport.name}'),
       ),
-      body: Stack(
-        children: [
-          CustomScrollView(
-            slivers: [
-              buildTimeAndLocation(),
-              buildMeetupDetails(),
-              buildGameTypeList(),
-              buildMeetupBottom(),
-              SliverPadding(padding: EdgeInsets.only(bottom: 70.0)),
-            ],
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 64.0,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                boxShadow: [
-                  BoxShadow(
-                      offset: Offset(0, -1),
-                      blurRadius: 4.0,
-                      // spreadRadius: 2.0
-                      color: Colors.black.withOpacity(0.1)),
-                ],
-              ),
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // print('____min: $minPlayer');
-                  // print('____max: $maxPlayer');
-                  // print(
-                  //     '____price: ${double.parse(priceController.text.replaceAll(',', ''))}');
-                  createMeetup();
-                },
-                style: ButtonStyle(
-                  elevation: MaterialStateProperty.all(0),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  backgroundColor: MaterialStateProperty.all(mainColor),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0))),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                buildTimeAndLocation(),
+                buildMeetupDetails(),
+                buildGameTypeList(),
+                buildMeetupBottom(),
+                SliverPadding(padding: EdgeInsets.only(bottom: 70.0)),
+              ],
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 64.0,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  boxShadow: [
+                    BoxShadow(
+                        offset: Offset(0, -5),
+                        blurRadius: 4.0,
+                        // spreadRadius: 2.0
+                        color: Colors.black.withOpacity(0.05)),
+                  ],
                 ),
-                child: Text(
-                  buttonTitle,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: ElevatedButton(
+                  onPressed: createMeetup,
+                  style: ButtonStyle(
+                    elevation: MaterialStateProperty.all(0),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    backgroundColor: MaterialStateProperty.all(mainColor),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0))),
+                  ),
+                  child: Text(
+                    buttonTitle,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -867,7 +863,7 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
       if (data is! HttpResult) {
         dismissScreen(context);
         var newMeetup = Post.fromJson(data);
-        
+
         if (widget.data is Post) {
           BlocProvider.of<MeetupCubit>(context).update(newMeetup);
         } else {
