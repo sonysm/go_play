@@ -41,7 +41,7 @@ class HomeData extends Equatable {
   }
 
   @override
-  List<Object> get props => [status, data, page, ownertHasReachedMax];
+  List<Object> get props => [status, data, page, ownertHasReachedMax, ownerPost];
 }
 
 class HomeCubit extends Cubit<HomeData> {

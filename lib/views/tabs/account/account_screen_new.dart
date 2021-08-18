@@ -65,7 +65,7 @@ class _AccountScreen2State extends State<AccountScreen2>
     });
 
     super.initState();
-    _scrollController.addListener(_onScroll);
+    // _scrollController.addListener(_onScroll);
   }
 
   @override
@@ -291,44 +291,77 @@ class _AccountScreen2State extends State<AccountScreen2>
                 ),
               )
             : data.ownerPost.isNotEmpty
-                ? ListView.separated(
-                    key: PageStorageKey<String>('Tab0'),
-                    padding: EdgeInsets.zero,
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      if (index >= data.ownerPost.length) {
-                        return BottomLoader();
-                      }
-                      var post = data.ownerPost.elementAt(index);
-                      if (post.type == PostType.feed) {
-                        return Padding(
-                          padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
-                          child: HomeFeedCell(
-                            key: Key(post.id.toString()),
-                            post: post,
-                            isAvatarSelectable: false,
-                          ),
-                        );
-                      } else if (post.type == PostType.activity) {
-                        return Padding(
-                          padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
-                          child: ActivityCell(
-                            post: post,
-                            isAvatarSelectable: false,
-                          ),
-                        );
-                      }
+                ? LoadingMoreList<Post>(
+                    ListConfig<Post>(
+                      itemBuilder: (BuildContext c, dynamic item, int index) {
+                        var post = data.ownerPost.elementAt(index);
+                        if (post.type == PostType.feed) {
+                          return Padding(
+                            padding:
+                                EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
+                            child: HomeFeedCell(
+                              key: Key(post.id.toString()),
+                              post: post,
+                              isAvatarSelectable: false,
+                            ),
+                          );
+                        } else if (post.type == PostType.activity) {
+                          return Padding(
+                            padding:
+                                EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
+                            child: ActivityCell(
+                              post: post,
+                              isAvatarSelectable: false,
+                            ),
+                          );
+                        }
 
-                      return SizedBox();
-                    },
-                    separatorBuilder: (context, index) {
-                      return 8.height;
-                    },
-                    itemCount: data.ownertHasReachedMax
-                        ? data.ownerPost.length
-                        : data.ownerPost.length + 1,
+                        return SizedBox();
+                      },
+                      sourceList: LoadMoreListSource(context),
+                    ),
+                    key: PageStorageKey<String>('Tab0'),
                   )
+                // ListView.separated(
+                //   key: PageStorageKey<String>('Tab0'),
+                //   padding: EdgeInsets.zero,
+                //   physics: NeverScrollableScrollPhysics(),
+                //   shrinkWrap: true,
+                //   itemBuilder: (context, index) {
+                //     if (index >= data.ownerPost.length) {
+                //       return BottomLoader();
+                //     }
+                //     var post = data.ownerPost.elementAt(index);
+                //     if (post.type == PostType.feed) {
+                //       return Padding(
+                //         padding:
+                //             EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
+                //         child: HomeFeedCell(
+                //           key: Key(post.id.toString()),
+                //           post: post,
+                //           isAvatarSelectable: false,
+                //         ),
+                //       );
+                //     } else if (post.type == PostType.activity) {
+                //       return Padding(
+                //         padding:
+                //             EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
+                //         child: ActivityCell(
+                //           post: post,
+                //           isAvatarSelectable: false,
+                //         ),
+                //       );
+                //     }
+
+                //     return SizedBox();
+                //   },
+                //   separatorBuilder: (context, index) {
+                //     return 8.height;
+                //   },
+                //   itemCount: data.ownertHasReachedMax
+                //       ? data.ownerPost.length
+                //       : data.ownerPost.length + 1,
+                // )
                 : SizedBox();
       },
     );
@@ -612,5 +645,21 @@ class BottomLoader extends StatelessWidget {
         child: CircularProgressIndicator(strokeWidth: 1.5),
       ),
     );
+  }
+}
+
+class LoadMoreListSource extends LoadingMoreBase<Post> {
+  final BuildContext context;
+
+  LoadMoreListSource(this.context);
+
+  @override
+  Future<bool> loadData([bool isloadMoreAction = false]) {
+    return Future<bool>.delayed(Duration(seconds: 1), () {
+      var ownerPosts = BlocProvider.of<HomeCubit>(context).state.ownerPost;
+      addAll(ownerPosts);
+
+      return true;
+    });
   }
 }
