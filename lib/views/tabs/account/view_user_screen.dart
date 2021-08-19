@@ -1,3 +1,4 @@
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kroma_sport/api/httpclient.dart';
@@ -18,6 +19,9 @@ import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:kroma_sport/widgets/pull_to_refresh_header.dart';
+import 'package:loading_more_list/loading_more_list.dart';
+import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ViewUserProfileScreen extends StatefulWidget {
@@ -39,6 +43,9 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
   KSHttpClient ksClient = KSHttpClient();
   List<FavoriteSport> favSportList = [];
 
+  List<Post> userPostList = [];
+  List<Post> userMeetupList = [];
+
   late User _user;
 
   late TabController tabController;
@@ -51,20 +58,17 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
 
   late bool isFollow;
 
+  bool postHasReachedMax = false;
+  bool meetupHasReachedMax = false;
+
+  int postPage = 1;
+  int meetupPage = 1;
+
   Widget buildNavbar() {
     return SliverAppBar(
       title: Text(widget.user.getFullname()),
       elevation: 0.0,
       pinned: true,
-      //actions: [
-      //  CupertinoButton(
-      //    child: Icon(FeatherIcons.settings,
-      //        color: Theme.of(context).brightness == Brightness.light
-      //            ? Colors.grey[600]
-      //            : whiteColor),
-      //    onPressed: () => launchScreen(context, SettingScreen.tag),
-      //  )
-      //],
     );
   }
 
@@ -190,12 +194,18 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                                 ),
                         )
                       : Shimmer.fromColors(
-                          baseColor: isLight(context) ? Colors.grey[300]! : Colors.blueGrey[600]!,
-                          highlightColor: isLight(context) ? Colors.grey[100]! : Colors.blueGrey,
+                          baseColor: isLight(context)
+                              ? Colors.grey[300]!
+                              : Colors.blueGrey[600]!,
+                          highlightColor: isLight(context)
+                              ? Colors.grey[100]!
+                              : Colors.blueGrey,
                           child: Container(
                             height: 32.0,
                             decoration: BoxDecoration(
-                              color: isLight(context) ? Colors.grey[300] : Colors.blueGrey[600],
+                              color: isLight(context)
+                                  ? Colors.grey[300]
+                                  : Colors.blueGrey[600],
                               borderRadius: BorderRadius.circular(4.0),
                             ),
                           ),
@@ -251,7 +261,10 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                               var value = await launchScreen(
                                 context,
                                 FavoriteSportDetailScreen.tag,
-                                arguments: {'favSport': favSport, 'isMe': false},
+                                arguments: {
+                                  'favSport': favSport,
+                                  'isMe': false
+                                },
                               );
                               if (value != null && value) {
                                 // getFavoriteSport();
@@ -311,19 +324,31 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
     );
   }
 
-  List<Post> userPostList = [];
-  List<Post> userMeetupList = [];
-
   Widget buildPostFeedList() {
     return isLoaded
         ? userPostList.isNotEmpty
             ? FadeTransition(
                 opacity: animation,
-                child: ListView.separated(
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (ScrollNotification scrollInfo) {
+                    if (scrollInfo.metrics.atEdge &&
+                        scrollInfo.metrics.pixels > 0 &&
+                        scrollInfo.metrics.pixels ==
+                            scrollInfo.metrics.maxScrollExtent) {
+                      loadMorePost();
+                    }
+                    return false;
+                  },
+                  child: ListView.separated(
+                    key: PageStorageKey<String>('Tab0'),
                     padding: EdgeInsets.zero,
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
+                      if (index >= userPostList.length) {
+                        return BottomLoader();
+                      }
+
                       var post = userPostList.elementAt(index);
                       if (post.type == PostType.feed) {
                         return Padding(
@@ -347,7 +372,11 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                     separatorBuilder: (context, index) {
                       return 8.height;
                     },
-                    itemCount: userPostList.length),
+                    itemCount: postHasReachedMax
+                        ? userPostList.length
+                        : userPostList.length + 1,
+                  ),
+                ),
               )
             : Container(
                 margin: const EdgeInsets.only(top: 100),
@@ -360,25 +389,39 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
 
   Widget buildMeetupList() {
     return userMeetupList.isNotEmpty
-        ? ListView.separated(
-            padding: EdgeInsets.zero,
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              var meetup = userMeetupList.elementAt(index);
+        ? NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (scrollInfo.metrics.atEdge &&
+                  scrollInfo.metrics.pixels > 0 &&
+                  scrollInfo.metrics.pixels ==
+                      scrollInfo.metrics.maxScrollExtent) {
+                loadMoreMeetup();
+              }
+              return false;
+            },
+            child: ListView.builder(
+              key: PageStorageKey<String>('Tab1'),
+              padding: EdgeInsets.zero,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                if (index >= userMeetupList.length) {
+                  return BottomLoader();
+                }
+                var meetup = userMeetupList.elementAt(index);
 
-              return Padding(
-                padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
-                child: MeetupCell(
-                  post: meetup,
-                  isAvatarSelectable: false,
-                ),
-              );
-            },
-            separatorBuilder: (context, index) {
-              return 8.height;
-            },
-            itemCount: userMeetupList.length,
+                return Padding(
+                  padding: EdgeInsets.only(top: (index == 0 ? 8.0 : 0)),
+                  child: MeetupCell(
+                    post: meetup,
+                    isAvatarSelectable: false,
+                  ),
+                );
+              },
+              itemCount: meetupHasReachedMax
+                  ? userMeetupList.length
+                  : userMeetupList.length + 1,
+            ),
           )
         : Container(
             margin: const EdgeInsets.only(top: 100),
@@ -386,6 +429,89 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
               child: Text('No any meetup'),
             ),
           );
+  }
+
+  Widget _buildScaffoldBody() {
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    final double pinnedHeaderHeight = statusBarHeight + kToolbarHeight;
+
+    return PullToRefreshNotification(
+      color: Colors.blue,
+      onRefresh: () {
+        return Future<bool>.delayed(const Duration(seconds: 1), () {
+          getUserPostAndMeetupById();
+          return true;
+        });
+      },
+      maxDragOffset: maxDragOffset,
+      child: GlowNotificationWidget(
+        ExtendedNestedScrollView(
+          headerSliverBuilder: (BuildContext c, bool f) {
+            return <Widget>[
+              SliverAppBar(
+                elevation: 0.5,
+                pinned: true,
+                title: Text(widget.user.getFullname()),
+              ),
+              PullToRefreshContainer(
+                  (PullToRefreshScrollNotificationInfo? info) {
+                return SliverToBoxAdapter(
+                  child: PullToRefreshHeader(
+                    info,
+                    DateTime.now(),
+                    color: Colors.white,
+                  ),
+                );
+              }),
+              buildProfileHeader(),
+              buildFavoriteSport(),
+            ];
+          },
+          pinnedHeaderSliverHeightBuilder: () {
+            return pinnedHeaderHeight;
+          },
+          // onlyOneScrollInBody: true,
+          body: Column(
+            children: <Widget>[
+              Container(
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  border: Border(
+                      bottom: BorderSide(
+                          width: 0.5,
+                          color: isLight(context)
+                              ? Colors.blueGrey[50]!
+                              : Colors.blueGrey)),
+                ),
+                child: TabBar(
+                  controller: tabController,
+                  labelStyle: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  indicatorColor: ColorResources.getMainColor(context),
+                  isScrollable: true,
+                  tabs: const <Tab>[
+                    Tab(text: 'Post'),
+                    Tab(text: 'Meetup'),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: tabController,
+                  children: <Widget>[
+                    buildPostFeedList(),
+                    buildMeetupList(),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -396,14 +522,15 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
         return true;
       },
       child: Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            buildNavbar(),
-            buildProfileHeader(),
-            buildFavoriteSport(),
-            buildFeedTabbar(),
-          ],
-        ),
+        body: _buildScaffoldBody(),
+        // CustomScrollView(
+        //   slivers: [
+        //     buildNavbar(),
+        //     buildProfileHeader(),
+        //     buildFavoriteSport(),
+        //     buildFeedTabbar(),
+        //   ],
+        // ),
       ),
     );
   }
@@ -438,6 +565,10 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
   }
 
   void getUserPostAndMeetupById() async {
+    postPage = 1;
+    meetupPage = 1;
+    postHasReachedMax = false;
+    meetupHasReachedMax = false;
     var postData = await ksClient.getApi('/user/feed/by/${widget.user.id}');
     if (postData != null) {
       if (postData is! HttpResult) {
@@ -508,5 +639,68 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
         },
       )
     ]);
+  }
+
+  void loadMorePost() async {
+    postPage += 1;
+    List<Post> morePost = [];
+    await ksClient.getApi('/user/feed/by/${widget.user.id}',
+        queryParameters: {'page': postPage.toString()}).then((data) {
+      if (data != null) {
+        if (data is! HttpResult) {
+          morePost = List.from((data as List).map((e) => Post.fromJson(e)));
+          if (morePost.isNotEmpty) {
+            userPostList.addAll(morePost);
+          } else {
+            postHasReachedMax = true;
+          }
+        }
+      }
+    });
+
+    await Future.delayed(Duration(seconds: 1), () {
+      setState(() {});
+    });
+  }
+
+  void loadMoreMeetup() async {
+    meetupPage += 1;
+    List<Post> moreMeetup = [];
+    await ksClient.getApi('/user/meetup/by/${widget.user.id}',
+        queryParameters: {'page': meetupPage.toString()}).then((data) {
+      if (data != null) {
+        if (data is! HttpResult) {
+          moreMeetup = List.from((data as List).map((e) => Post.fromJson(e)));
+          if (moreMeetup.isNotEmpty) {
+            userMeetupList.addAll(moreMeetup);
+          } else {
+            meetupHasReachedMax = true;
+          }
+        }
+      }
+    });
+
+    await Future.delayed(Duration(seconds: 1), () {
+      setState(() {});
+    });
+  }
+}
+
+class BottomLoader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 8.0),
+        child: SizedBox(
+          height: 24,
+          width: 24,
+          child: CircularProgressIndicator(
+            strokeWidth: 1.5,
+            valueColor: AlwaysStoppedAnimation(mainColor),
+          ),
+        ),
+      ),
+    );
   }
 }

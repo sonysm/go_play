@@ -57,6 +57,8 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
     caseSensitive: false,
   );
 
+  late HomeCubit _homeCubit;
+
   @override
   Widget build(BuildContext context) {
     Widget buildTotalReaction(int total) {
@@ -204,15 +206,15 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                             ? ColorResources.getActiveIconColor(context)
                             : ColorResources.getInactiveIconColor(context),
                         onTap: () {
-                          if (_post.reacted!) {
-                            _post.totalReaction -= 1;
-                          } else {
-                            _post.totalReaction += 1;
-                          }
+                          // if (_post.reacted!) {
+                          //   _post.totalReaction -= 1;
+                          // } else {
+                          //   _post.totalReaction += 1;
+                          // }
                           setState(() {
                             _post.reacted = !_post.reacted!;
-                            reactPost();
                           });
+                          reactPost();
                         },
                       ),
                       4.width,
@@ -356,7 +358,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
       await Future.delayed(Duration(milliseconds: 500));
       dismissScreen(context);
       if (result is! HttpResult) {
-        BlocProvider.of<HomeCubit>(context).onDeletePostFeed(postId);
+        _homeCubit.onDeletePostFeed(postId);
       }
     }
   }
@@ -364,7 +366,9 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
   void reactPost() async {
     var result = await ksClient.postApi('/create/post/reaction/${_post.id}');
     if (result != null) {
-      if (result is! HttpResult) {}
+      if (result is! HttpResult) {
+        _homeCubit.reactPost(_post.id, _post.reacted!);
+      }
     }
   }
 
@@ -393,7 +397,17 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
   @override
   void initState() {
     super.initState();
+    _homeCubit = context.read<HomeCubit>();
     _post = widget.post;
     checkLinkPreview();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeFeedCell oldWidget) {
+    if (_post != widget.post) {
+      _post = widget.post;
+      setState(() {});
+    }
+    super.didUpdateWidget(oldWidget);
   }
 }

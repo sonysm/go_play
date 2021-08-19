@@ -12,16 +12,17 @@ class HomeData extends Equatable {
   final String? search;
   final DataState status;
   final List<Post> ownerPost;
-  final bool ownertHasReachedMax;
+  final bool ownerHasReachedMax;
+  final bool reload;
 
-  HomeData({
-    required this.data,
-    this.status = DataState.None,
-    this.page = 1,
-    this.search,
-    required this.ownerPost,
-    this.ownertHasReachedMax = false,
-  });
+  HomeData(
+      {required this.data,
+      this.status = DataState.None,
+      this.page = 1,
+      this.search,
+      required this.ownerPost,
+      this.ownerHasReachedMax = false,
+      this.reload = false});
 
   HomeData copyWith({
     DataState? status,
@@ -29,19 +30,23 @@ class HomeData extends Equatable {
     List<Post>? data,
     String? search,
     List<Post>? ownerPost,
-    bool? ownertHasReachedMax,
+    bool? ownerHasReachedMax,
+    bool? reload,
   }) {
     return HomeData(
-        status: status ?? this.status,
-        page: page ?? this.page,
-        data: data ?? this.data,
-        search: search ?? this.search,
-        ownerPost: ownerPost ?? this.ownerPost,
-        ownertHasReachedMax: ownertHasReachedMax ?? this.ownertHasReachedMax);
+      status: status ?? this.status,
+      page: page ?? this.page,
+      data: data ?? this.data,
+      search: search ?? this.search,
+      ownerPost: ownerPost ?? this.ownerPost,
+      ownerHasReachedMax: ownerHasReachedMax ?? this.ownerHasReachedMax,
+      reload: reload ?? this.reload,
+    );
   }
 
   @override
-  List<Object> get props => [status, data, page, ownertHasReachedMax, ownerPost];
+  List<Object> get props =>
+      [status, data, page, ownerHasReachedMax, ownerPost, reload];
 }
 
 class HomeCubit extends Cubit<HomeData> {
@@ -182,17 +187,47 @@ class HomeCubit extends Cubit<HomeData> {
           if (data is! HttpResult) {
             morePosts = (data as List).map((e) => Post.fromJson(e)).toList();
             if (page == 1) {
-              emit(state.copyWith(ownerPost: morePosts, ownertHasReachedMax: false));
+              emit(state.copyWith(
+                  ownerPost: morePosts, ownerHasReachedMax: false));
             } else {
               if (morePosts.isNotEmpty) {
-              emit(state.copyWith(ownerPost: state.ownerPost + morePosts));
-            } else {
-              emit(state.copyWith(ownertHasReachedMax: true));
-            }
+                emit(state.copyWith(ownerPost: state.ownerPost + morePosts));
+              } else {
+                emit(state.copyWith(ownerHasReachedMax: true));
+              }
             }
           }
         }
       });
+    }
+  }
+
+  Future<void> reactPost(int id, bool reacted) async {
+    if (state.status == DataState.Loaded) {
+      for (var element in state.data) {
+        if (element.id == id) {
+          element.reacted = reacted;
+          if (reacted) {
+            element.totalReaction += 1;
+          } else {
+            element.totalReaction -= 1;
+          }
+          break;
+        }
+      }
+
+      for (var element in state.ownerPost) {
+        if (element.id == id) {
+          element.reacted = reacted;
+          if (reacted) {
+            element.totalReaction += 1;
+          } else {
+            element.totalReaction -= 1;
+          }
+          break;
+        }
+      }
+      emit(state.copyWith(reload: !state.reload));
     }
   }
 }

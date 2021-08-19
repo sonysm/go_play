@@ -12,6 +12,7 @@ class MeetupData extends Equatable {
   final String? search;
   final DataState status;
   final List<Post> ownerMeetup;
+  final bool ownerHasReachedMax;
 
   MeetupData({
     required this.data,
@@ -19,6 +20,7 @@ class MeetupData extends Equatable {
     this.page = 1,
     this.search,
     required this.ownerMeetup,
+    this.ownerHasReachedMax = false,
   });
 
   MeetupData copyWith({
@@ -27,17 +29,20 @@ class MeetupData extends Equatable {
     List<Post>? data,
     String? search,
     List<Post>? ownerMeetup,
+    bool? ownerHasReachedMax,
   }) {
     return MeetupData(
-        status: status ?? this.status,
-        page: page ?? this.page,
-        data: data ?? this.data,
-        search: search ?? this.search,
-        ownerMeetup: ownerMeetup ?? this.ownerMeetup);
+      status: status ?? this.status,
+      page: page ?? this.page,
+      data: data ?? this.data,
+      search: search ?? this.search,
+      ownerMeetup: ownerMeetup ?? this.ownerMeetup,
+      ownerHasReachedMax: ownerHasReachedMax ?? this.ownerHasReachedMax,
+    );
   }
 
   @override
-  List<Object> get props => [status, data, page, ownerMeetup];
+  List<Object> get props => [status, data, page, ownerMeetup, ownerHasReachedMax];
 }
 
 class MeetupCubit extends Cubit<MeetupData> {
@@ -174,6 +179,31 @@ class MeetupCubit extends Cubit<MeetupData> {
       }).toList();
 
       emit(state.copyWith(data: updatedList, ownerMeetup: updatedOwnerList));
+    }
+  }
+
+  Future<void> loadOwnerMeetup(int page) async {
+    if (state.status == DataState.Loaded) {
+      List<Post> moreMeetups = [];
+      await _client.getApi('/user/meetup/by/${KS.shared.user.id}',
+          queryParameters: {'page': page.toString()}).then((data) {
+        if (data != null) {
+          if (data is! HttpResult) {
+            moreMeetups = (data as List).map((e) => Post.fromJson(e)).toList();
+            if (page == 1) {
+              emit(state.copyWith(
+                  ownerMeetup: moreMeetups, ownerHasReachedMax: false));
+            } else {
+              if (moreMeetups.isNotEmpty) {
+                emit(state.copyWith(
+                    ownerMeetup: state.ownerMeetup + moreMeetups));
+              } else {
+                emit(state.copyWith(ownerHasReachedMax: true));
+              }
+            }
+          }
+        }
+      });
     }
   }
 }

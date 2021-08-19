@@ -28,7 +28,9 @@ class Avatar extends StatelessWidget {
                 var data = await launchScreen(
                     context, ViewUserProfileScreen.tag,
                     arguments: user);
-                onTap!(data as User);
+                if (data != null) {
+                  onTap!(data as User);
+                }
               } else {
                 launchScreen(context, AccountScreen.tag);
               }

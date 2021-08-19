@@ -276,8 +276,8 @@ class _ActivityCellState extends State<ActivityCell> {
                           }
                           setState(() {
                             _post.reacted = !_post.reacted!;
-                            reactPost();
                           });
+                          reactPost();
                         },
                       ),
                       4.width,

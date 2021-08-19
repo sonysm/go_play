@@ -45,12 +45,14 @@ class _AccountScreen2State extends State<AccountScreen2>
   late TabController _controller;
   late ConnectionStatusSingleton connectionStatus;
   late HomeCubit _homeCubit;
+  late MeetupCubit _meetupCubit;
 
   KSHttpClient ksClient = KSHttpClient();
   List<FavoriteSport> favSportList = [];
 
   bool isLoaded = false;
-  int page = 1;
+  int postPage = 1;
+  int meetupPage = 1;
 
   Widget actionHeader(
       {String? amt, required String title, VoidCallback? onTap}) {
@@ -206,6 +208,7 @@ class _AccountScreen2State extends State<AccountScreen2>
   Widget buildMeetupList() {
     return BlocBuilder<MeetupCubit, MeetupData>(
       builder: (context, data) {
+        if (!data.ownerHasReachedMax) meetupPage = 1;
         if (data.status == DataState.ErrorSocket) {
           return Padding(
             padding: const EdgeInsets.only(top: 50.0),
@@ -221,27 +224,44 @@ class _AccountScreen2State extends State<AccountScreen2>
                 ),
               )
             : data.ownerMeetup.isNotEmpty
-                ? ListView.separated(
-                    key: PageStorageKey<String>('Tab1'),
-                    padding: EdgeInsets.zero,
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      var meetup = data.ownerMeetup.elementAt(index);
+                ? NotificationListener(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo.metrics.atEdge &&
+                          scrollInfo.metrics.pixels > 0 &&
+                          (scrollInfo.metrics.pixels ==
+                              scrollInfo.metrics.maxScrollExtent)) {
+                        loadMoreMeetup();
+                      }
+                      return false;
+                    },
+                    child: ListView.separated(
+                      key: PageStorageKey<String>('Tab1'),
+                      padding: EdgeInsets.zero,
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        if (index >= data.ownerMeetup.length) {
+                          return BottomLoader();
+                        }
 
-                      return Padding(
-                        padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
-                        child: MeetupCell(
-                          key: Key(meetup.id.toString()),
-                          post: meetup,
-                          isAvatarSelectable: false,
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return 8.height;
-                    },
-                    itemCount: data.ownerMeetup.length,
+                        var meetup = data.ownerMeetup.elementAt(index);
+
+                        return Padding(
+                          padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
+                          child: MeetupCell(
+                            key: Key(meetup.id.toString()),
+                            post: meetup,
+                            isAvatarSelectable: false,
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return 8.height;
+                      },
+                      itemCount: data.ownerHasReachedMax
+                          ? data.ownerMeetup.length
+                          : data.ownerMeetup.length + 1,
+                    ),
                   )
                 : SizedBox();
       },
@@ -251,7 +271,7 @@ class _AccountScreen2State extends State<AccountScreen2>
   Widget buildPostFeedList() {
     return BlocBuilder<HomeCubit, HomeData>(
       builder: (context, data) {
-        if (!data.ownertHasReachedMax) page = 1;
+        if (!data.ownerHasReachedMax) postPage = 1;
         if (data.status == DataState.ErrorSocket && data.ownerPost.isEmpty) {
           return Padding(
             padding: const EdgeInsets.only(top: 50.0),
@@ -272,9 +292,10 @@ class _AccountScreen2State extends State<AccountScreen2>
                 ? NotificationListener<ScrollNotification>(
                     onNotification: (ScrollNotification scrollInfo) {
                       if (scrollInfo.metrics.atEdge &&
+                          scrollInfo.metrics.pixels > 0 &&
                           (scrollInfo.metrics.pixels ==
                               scrollInfo.metrics.maxScrollExtent)) {
-                        loadMore();
+                        loadMorePost();
                       }
                       return false;
                     },
@@ -315,7 +336,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                       separatorBuilder: (context, index) {
                         return 8.height;
                       },
-                      itemCount: data.ownertHasReachedMax
+                      itemCount: data.ownerHasReachedMax
                           ? data.ownerPost.length
                           : data.ownerPost.length + 1,
                     ),
@@ -337,6 +358,7 @@ class _AccountScreen2State extends State<AccountScreen2>
               seconds: 1,
             ), () {
           _homeCubit.loadOwnerPost(1);
+          _meetupCubit.loadOwnerMeetup(1);
           return true;
         });
       },
@@ -431,6 +453,7 @@ class _AccountScreen2State extends State<AccountScreen2>
 
   @override
   void initState() {
+    super.initState();
     _controller = TabController(length: 2, vsync: this);
 
     connectionStatus = ConnectionStatusSingleton.getInstance();
@@ -440,8 +463,8 @@ class _AccountScreen2State extends State<AccountScreen2>
       getFavoriteSport();
     });
 
-    super.initState();
     _homeCubit = context.read<HomeCubit>();
+    _meetupCubit = context.read<MeetupCubit>();
   }
 
   @override
@@ -470,7 +493,7 @@ class _AccountScreen2State extends State<AccountScreen2>
     if (hasConnection) {
       getFavoriteSport();
       _homeCubit.onLoad();
-      BlocProvider.of<MeetupCubit>(context).onLoad();
+      _meetupCubit.onLoad();
     }
   }
 
@@ -576,10 +599,18 @@ class _AccountScreen2State extends State<AccountScreen2>
     );
   }
 
-  void loadMore() async {
-    page += 1;
-    await Future.delayed(Duration(seconds: 1));
-    _homeCubit.loadOwnerPost(page);
+  void loadMorePost() async {
+    postPage += 1;
+    await Future.delayed(Duration(seconds: 1), () {
+      _homeCubit.loadOwnerPost(postPage);
+    });
+  }
+
+  void loadMoreMeetup() async {
+    meetupPage += 1;
+    await Future.delayed(Duration(seconds: 1), () {
+      _meetupCubit.loadOwnerMeetup(meetupPage);
+    });
   }
 }
 
@@ -587,10 +618,16 @@ class BottomLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: SizedBox(
-        height: 24,
-        width: 24,
-        child: CircularProgressIndicator(strokeWidth: 1.5),
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 8.0),
+        child: SizedBox(
+          height: 24,
+          width: 24,
+          child: CircularProgressIndicator(
+            strokeWidth: 1.5,
+            valueColor: AlwaysStoppedAnimation(mainColor),
+          ),
+        ),
       ),
     );
   }
