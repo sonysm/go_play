@@ -29,7 +29,7 @@ class ThemeCubit extends Cubit<ThemeMode> {
     }
   }
 
-  static ThemeMode _themeMode = ThemeMode.light;
+  static ThemeMode _themeMode = ThemeMode.dark;
   static ThemeMode get themeMode => _themeMode;
 
   void emitTheme(ThemeMode mode) {

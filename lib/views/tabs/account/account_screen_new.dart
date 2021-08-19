@@ -43,37 +43,14 @@ class AccountScreen2 extends StatefulWidget {
 class _AccountScreen2State extends State<AccountScreen2>
     with TickerProviderStateMixin {
   late TabController _controller;
-
   late ConnectionStatusSingleton connectionStatus;
+  late HomeCubit _homeCubit;
 
   KSHttpClient ksClient = KSHttpClient();
   List<FavoriteSport> favSportList = [];
 
   bool isLoaded = false;
-
-  final _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    _controller = TabController(length: 2, vsync: this);
-
-    connectionStatus = ConnectionStatusSingleton.getInstance();
-    connectionStatus.connectionChange.listen(connectionChanged);
-
-    Future.delayed(Duration(milliseconds: 300)).then((_) {
-      getFavoriteSport();
-    });
-
-    super.initState();
-    // _scrollController.addListener(_onScroll);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
+  int page = 1;
 
   Widget actionHeader(
       {String? amt, required String title, VoidCallback? onTap}) {
@@ -274,6 +251,7 @@ class _AccountScreen2State extends State<AccountScreen2>
   Widget buildPostFeedList() {
     return BlocBuilder<HomeCubit, HomeData>(
       builder: (context, data) {
+        if (!data.ownertHasReachedMax) page = 1;
         if (data.status == DataState.ErrorSocket && data.ownerPost.isEmpty) {
           return Padding(
             padding: const EdgeInsets.only(top: 50.0),
@@ -291,9 +269,25 @@ class _AccountScreen2State extends State<AccountScreen2>
                 ),
               )
             : data.ownerPost.isNotEmpty
-                ? LoadingMoreList<Post>(
-                    ListConfig<Post>(
-                      itemBuilder: (BuildContext c, dynamic item, int index) {
+                ? NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo.metrics.atEdge &&
+                          (scrollInfo.metrics.pixels ==
+                              scrollInfo.metrics.maxScrollExtent)) {
+                        loadMore();
+                      }
+                      return false;
+                    },
+                    child: ListView.separated(
+                      key: PageStorageKey<String>('Tab0'),
+                      padding: EdgeInsets.zero,
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        if (index >= data.ownerPost.length) {
+                          return BottomLoader();
+                        }
+
                         var post = data.ownerPost.elementAt(index);
                         if (post.type == PostType.feed) {
                           return Padding(
@@ -318,50 +312,14 @@ class _AccountScreen2State extends State<AccountScreen2>
 
                         return SizedBox();
                       },
-                      sourceList: LoadMoreListSource(context),
+                      separatorBuilder: (context, index) {
+                        return 8.height;
+                      },
+                      itemCount: data.ownertHasReachedMax
+                          ? data.ownerPost.length
+                          : data.ownerPost.length + 1,
                     ),
-                    key: PageStorageKey<String>('Tab0'),
                   )
-                // ListView.separated(
-                //   key: PageStorageKey<String>('Tab0'),
-                //   padding: EdgeInsets.zero,
-                //   physics: NeverScrollableScrollPhysics(),
-                //   shrinkWrap: true,
-                //   itemBuilder: (context, index) {
-                //     if (index >= data.ownerPost.length) {
-                //       return BottomLoader();
-                //     }
-                //     var post = data.ownerPost.elementAt(index);
-                //     if (post.type == PostType.feed) {
-                //       return Padding(
-                //         padding:
-                //             EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
-                //         child: HomeFeedCell(
-                //           key: Key(post.id.toString()),
-                //           post: post,
-                //           isAvatarSelectable: false,
-                //         ),
-                //       );
-                //     } else if (post.type == PostType.activity) {
-                //       return Padding(
-                //         padding:
-                //             EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
-                //         child: ActivityCell(
-                //           post: post,
-                //           isAvatarSelectable: false,
-                //         ),
-                //       );
-                //     }
-
-                //     return SizedBox();
-                //   },
-                //   separatorBuilder: (context, index) {
-                //     return 8.height;
-                //   },
-                //   itemCount: data.ownertHasReachedMax
-                //       ? data.ownerPost.length
-                //       : data.ownerPost.length + 1,
-                // )
                 : SizedBox();
       },
     );
@@ -378,6 +336,7 @@ class _AccountScreen2State extends State<AccountScreen2>
             const Duration(
               seconds: 1,
             ), () {
+          _homeCubit.loadOwnerPost(1);
           return true;
         });
       },
@@ -392,79 +351,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                 title: Text('Account'),
                 actions: [
                   CupertinoButton(
-                    onPressed: () => accountOptionSheet(
-                      context,
-                      title: 'Option Title',
-                      child: Column(
-                        children: [
-                          ListTile(
-                            leading: Avatar(
-                              radius: 22.0,
-                              user: KS.shared.user,
-                              isSelectable: false,
-                            ),
-                            title: Text(
-                              KS.shared.user.getFullname(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  ?.copyWith(fontWeight: FontWeight.w600),
-                            ),
-                            subtitle: Row(
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                    dismissScreen(context);
-                                    launchScreen(
-                                        context, EditProfileScreen.tag);
-                                  },
-                                  style: ButtonStyle(
-                                      overlayColor: MaterialStateProperty.all(
-                                          Colors.grey[100]),
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      minimumSize:
-                                          MaterialStateProperty.all(Size(0, 0)),
-                                      padding: MaterialStateProperty.all(
-                                          const EdgeInsets.symmetric(
-                                              vertical: 4.0, horizontal: 0.0))),
-                                  child: Text(
-                                    'Edit Profile',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        ?.copyWith(
-                                          color: ColorResources.getBlueGrey(
-                                              context),
-                                        ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          ListTile(
-                            onTap: () {
-                              dismissScreen(context);
-                              launchScreen(context, SettingScreen.tag);
-                            },
-                            leading: Icon(
-                              FeatherIcons.settings,
-                              color:
-                                  ColorResources.getSecondaryIconColor(context),
-                              size: 20.0,
-                            ),
-                            title: Text(
-                              'Setting',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  ?.copyWith(fontSize: 18),
-                            ),
-                            horizontalTitleGap: 0,
-                          )
-                        ],
-                      ),
-                    ),
+                    onPressed: () => showAccountOptionSheet(),
                     child: Icon(
                       LineIcons.bars,
                       size: 28.0,
@@ -542,6 +429,27 @@ class _AccountScreen2State extends State<AccountScreen2>
     );
   }
 
+  @override
+  void initState() {
+    _controller = TabController(length: 2, vsync: this);
+
+    connectionStatus = ConnectionStatusSingleton.getInstance();
+    connectionStatus.connectionChange.listen(connectionChanged);
+
+    Future.delayed(Duration(milliseconds: 300)).then((_) {
+      getFavoriteSport();
+    });
+
+    super.initState();
+    _homeCubit = context.read<HomeCubit>();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void getFavoriteSport() async {
     var data = await ksClient.getApi('/user/favorite/sport');
     if (data != null) {
@@ -561,13 +469,12 @@ class _AccountScreen2State extends State<AccountScreen2>
   void connectionChanged(dynamic hasConnection) {
     if (hasConnection) {
       getFavoriteSport();
-      BlocProvider.of<HomeCubit>(context).onLoad();
+      _homeCubit.onLoad();
       BlocProvider.of<MeetupCubit>(context).onLoad();
     }
   }
 
-  Future accountOptionSheet(BuildContext context,
-          {Widget? child, String? title}) async =>
+  Future accountOptionSheet(BuildContext context, {Widget? child}) async =>
       await showModalBottomSheet(
         useRootNavigator: true,
         isScrollControlled: true,
@@ -597,18 +504,6 @@ class _AccountScreen2State extends State<AccountScreen2>
                       color: ColorResources.getBlueGrey(context),
                     ),
                   ),
-                  // Padding(
-                  //   padding: EdgeInsets.only(
-                  //       left: 50, right: 50, top: 6.0, bottom: 10),
-                  //   child: Text(
-                  //     title ?? '',
-                  //     style: Theme.of(context).textTheme.bodyText2,
-                  //     textAlign: TextAlign.center,
-                  //     maxLines: 1,
-                  //     overflow: TextOverflow.clip,
-                  //   ),
-                  // ),
-                  // Divider(height: 1),
                   Flexible(child: SingleChildScrollView(child: child)),
                 ],
               ),
@@ -617,21 +512,74 @@ class _AccountScreen2State extends State<AccountScreen2>
         },
       );
 
-  int page = 1;
-
-  void _onScroll() async {
-    if (_isBottom) {
-      await Future.delayed(Duration(seconds: 1));
-      BlocProvider.of<HomeCubit>(context).loadOwnerPost(page);
-      page += 1;
-    }
+  void showAccountOptionSheet() {
+    accountOptionSheet(
+      context,
+      child: Column(
+        children: [
+          ListTile(
+            leading: Avatar(
+              radius: 22.0,
+              user: KS.shared.user,
+              isSelectable: false,
+            ),
+            title: Text(
+              KS.shared.user.getFullname(),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            subtitle: Row(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    dismissScreen(context);
+                    launchScreen(context, EditProfileScreen.tag);
+                  },
+                  style: ButtonStyle(
+                      overlayColor: MaterialStateProperty.all(Colors.grey[100]),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      minimumSize: MaterialStateProperty.all(Size(0, 0)),
+                      padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 0.0))),
+                  child: Text(
+                    'Edit Profile',
+                    style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                          color: ColorResources.getBlueGrey(context),
+                        ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              dismissScreen(context);
+              launchScreen(context, SettingScreen.tag);
+            },
+            leading: Icon(
+              FeatherIcons.settings,
+              color: ColorResources.getSecondaryIconColor(context),
+              size: 20.0,
+            ),
+            title: Text(
+              'Setting',
+              style:
+                  Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 18),
+            ),
+            horizontalTitleGap: 0,
+          )
+        ],
+      ),
+    );
   }
 
-  bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9);
+  void loadMore() async {
+    page += 1;
+    await Future.delayed(Duration(seconds: 1));
+    _homeCubit.loadOwnerPost(page);
   }
 }
 
@@ -645,21 +593,5 @@ class BottomLoader extends StatelessWidget {
         child: CircularProgressIndicator(strokeWidth: 1.5),
       ),
     );
-  }
-}
-
-class LoadMoreListSource extends LoadingMoreBase<Post> {
-  final BuildContext context;
-
-  LoadMoreListSource(this.context);
-
-  @override
-  Future<bool> loadData([bool isloadMoreAction = false]) {
-    return Future<bool>.delayed(Duration(seconds: 1), () {
-      var ownerPosts = BlocProvider.of<HomeCubit>(context).state.ownerPost;
-      addAll(ownerPosts);
-
-      return true;
-    });
   }
 }

@@ -181,10 +181,14 @@ class HomeCubit extends Cubit<HomeData> {
         if (data != null) {
           if (data is! HttpResult) {
             morePosts = (data as List).map((e) => Post.fromJson(e)).toList();
-            if (morePosts.isNotEmpty) {
+            if (page == 1) {
+              emit(state.copyWith(ownerPost: morePosts, ownertHasReachedMax: false));
+            } else {
+              if (morePosts.isNotEmpty) {
               emit(state.copyWith(ownerPost: state.ownerPost + morePosts));
             } else {
               emit(state.copyWith(ownertHasReachedMax: true));
+            }
             }
           }
         }

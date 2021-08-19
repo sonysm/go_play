@@ -121,10 +121,10 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Metropolis'),
                       ),
-                      Text(
-                        'Phnom Penh, Cambodia',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
+                      //Text(
+                      //  'Phnom Penh, Cambodia',
+                      //  style: Theme.of(context).textTheme.bodyText2,
+                      //),
                       16.height,
                       Row(
                         children: [
