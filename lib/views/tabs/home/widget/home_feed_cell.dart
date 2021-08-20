@@ -8,7 +8,6 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/user.dart';
-import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
@@ -404,12 +403,12 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
     checkLinkPreview();
   }
 
-  @override
-  void didUpdateWidget(covariant HomeFeedCell oldWidget) {
-    if (oldWidget.post != widget.post) {
-      _post = widget.post;
-      setState(() {});
-    }
-    super.didUpdateWidget(oldWidget);
-  }
+  // @override
+  // void didUpdateWidget(covariant HomeFeedCell oldWidget) {
+  //   if (oldWidget.post != widget.post) {
+  //     _post = widget.post;
+  //     setState(() {});
+  //   }
+  //   super.didUpdateWidget(oldWidget);
+  // }
 }

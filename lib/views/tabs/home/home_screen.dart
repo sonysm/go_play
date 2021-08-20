@@ -223,8 +223,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
-                    child:
-                        HomeFeedCell(post: post, key: Key("home${post.id}"),isHomeFeed: true,),
+                    child: HomeFeedCell(
+                      post: post,
+                      key: Key("home${post.id}"),
+                      isHomeFeed: true,
+                    ),
                   );
                 } else if (post.type == PostType.activity) {
                   return Padding(
