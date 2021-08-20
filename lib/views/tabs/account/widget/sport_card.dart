@@ -4,6 +4,7 @@ import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
+import 'package:kroma_sport/widgets/cache_image.dart';
 
 class SportCard extends StatelessWidget {
   final FavoriteSport favSport;
@@ -145,11 +146,17 @@ class SportCard extends StatelessWidget {
             Positioned(
               top: -32.0,
               right: 0,
-              child: SvgPicture.asset(
-                svgSoccerBall2,
-                width: 60,
-                height: 60,
-              ),
+              child: favSport.sport.icon != null
+                  ? SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: CacheImage(url: favSport.sport.icon!),
+                    )
+                  : SvgPicture.asset(
+                      svgSoccerBall2,
+                      width: 60,
+                      height: 60,
+                    ),
             ),
           ],
         ),

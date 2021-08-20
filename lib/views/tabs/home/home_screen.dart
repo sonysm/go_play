@@ -23,7 +23,7 @@ import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
-import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:kroma_sport/widgets/ks_screen_state.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'widget/home_feed_cell.dart';
@@ -188,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget buildHomeFeedList(HomeData feedData) {
     if (feedData.status == DataState.ErrorSocket && feedData.data.isEmpty) {
       return SliverFillRemaining(
-        child: noConnection(context),
+        child: KSNoInternet(),
       );
     }
 
@@ -224,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child:
-                        HomeFeedCell(post: post, key: Key(post.id.toString())),
+                        HomeFeedCell(post: post, key: Key("home${post.id}"),isHomeFeed: true,),
                   );
                 } else if (post.type == PostType.activity) {
                   return Padding(
@@ -245,12 +245,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Center(
         child: CircularProgressIndicator(),
       ),
-    );
-  }
-
-  Widget noInternet() {
-    return SliverFillRemaining(
-      child: noConnection(context),
     );
   }
 

@@ -8,6 +8,7 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/user.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
@@ -30,12 +31,14 @@ import 'package:flutter_web_browser/flutter_web_browser.dart';
 class HomeFeedCell extends StatefulWidget {
   final Post post;
   final bool isAvatarSelectable;
+  final bool isHomeFeed;
 
-  const HomeFeedCell({
-    Key? key,
-    required this.post,
-    this.isAvatarSelectable = true,
-  }) : super(key: key);
+  const HomeFeedCell(
+      {Key? key,
+      required this.post,
+      this.isAvatarSelectable = true,
+      this.isHomeFeed = true})
+      : super(key: key);
 
   @override
   _HomeFeedCellState createState() => _HomeFeedCellState();
@@ -206,15 +209,14 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                             ? ColorResources.getActiveIconColor(context)
                             : ColorResources.getInactiveIconColor(context),
                         onTap: () {
-                          // if (_post.reacted!) {
-                          //   _post.totalReaction -= 1;
-                          // } else {
-                          //   _post.totalReaction += 1;
-                          // }
-                          setState(() {
-                            _post.reacted = !_post.reacted!;
-                          });
-                          reactPost();
+                          _post.reacted = !_post.reacted!;
+                          if (_post.reacted!) {
+                            _post.totalReaction += 1;
+                          } else {
+                            _post.totalReaction -= 1;
+                          }
+                          setState(() {});
+                          reactPost(widget.isHomeFeed);
                         },
                       ),
                       4.width,
@@ -363,11 +365,11 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
     }
   }
 
-  void reactPost() async {
+  void reactPost(bool home) async {
     var result = await ksClient.postApi('/create/post/reaction/${_post.id}');
     if (result != null) {
       if (result is! HttpResult) {
-        _homeCubit.reactPost(_post.id, _post.reacted!);
+        _homeCubit.reactPost(_post.id, _post.reacted!, home: home);
       }
     }
   }
@@ -404,7 +406,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
 
   @override
   void didUpdateWidget(covariant HomeFeedCell oldWidget) {
-    if (_post != widget.post) {
+    if (oldWidget.post != widget.post) {
       _post = widget.post;
       setState(() {});
     }

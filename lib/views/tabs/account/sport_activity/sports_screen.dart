@@ -7,7 +7,7 @@ import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
-import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
 class SportsScreen extends StatefulWidget {
   static const String tag = '/sportsScreen';
@@ -59,15 +59,14 @@ class _SportsScreenState extends State<SportsScreen> {
                     margin: const EdgeInsets.only(
                         left: 16.0, top: 10.0, right: 16.0),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(4.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: blackColor.withOpacity(0.1),
-                          blurRadius: 8,
-                        )
-                      ]
-                    ),
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(4.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: blackColor.withOpacity(0.1),
+                            blurRadius: 8,
+                          )
+                        ]),
                     child: ListTile(
                       title: Text(
                         sport.name,
@@ -85,9 +84,12 @@ class _SportsScreenState extends State<SportsScreen> {
                               },
                             )
                           : Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Icon(FeatherIcons.check, color: mainColor,),
-                          ),
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Icon(
+                                FeatherIcons.check,
+                                color: mainColor,
+                              ),
+                            ),
                       onTap: () async {
                         // var value = await launchScreen(
                         //   context,
@@ -111,12 +113,6 @@ class _SportsScreenState extends State<SportsScreen> {
             : emptySportList();
   }
 
-  Widget noInternet() {
-    return SliverFillRemaining(
-      child: noConnection(context),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -131,7 +127,11 @@ class _SportsScreenState extends State<SportsScreen> {
         body: CustomScrollView(
           slivers: [
             buildNavbar(),
-            isConnection ? buildSportList() : noInternet()
+            isConnection
+                ? buildSportList()
+                : SliverFillRemaining(
+                    child: KSNoInternet(),
+                  )
           ],
         ),
       ),
@@ -147,7 +147,7 @@ class _SportsScreenState extends State<SportsScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     Future.delayed(Duration(milliseconds: 300)).then((_) => getSportList());
   }
 

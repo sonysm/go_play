@@ -5,6 +5,7 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/notification.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/views/tabs/notification/widget/notification_cell.dart';
+import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
 class NotificationScreen extends StatefulWidget {
   static const String tag = '/notificationScreen';
@@ -42,7 +43,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ),
                 ),
               )
-            : emptyNotification()
+            : SliverFillRemaining(
+                child: KSScreenState(
+                  icon: SizedBox(
+                    height: 100,
+                    child: Image.asset(
+                      'assets/images/img_emptybox.png',
+                      color: Colors.grey,
+                    ),
+                  ),
+                  title: 'No notification',
+                  bottomPadding: AppBar().preferredSize.height + kToolbarHeight,
+                ),
+              )
         : SliverToBoxAdapter(
             child: Container(
               margin: const EdgeInsets.only(top: 200),
@@ -54,17 +67,28 @@ class _NotificationScreenState extends State<NotificationScreen> {
           );
   }
 
-  Widget emptyNotification() {
-    return SliverToBoxAdapter(
-      child: Container(
-        alignment: Alignment.center,
-        margin: EdgeInsets.only(
-            top: (MediaQuery.of(context).size.height / 2) -
-                AppBar().preferredSize.height),
-        child: Text('No notification'),
-      ),
-    );
-  }
+  // Widget emptyNotification() {
+  //   return SliverToBoxAdapter(
+  //     child: Container(
+  //       alignment: Alignment.center,
+  //       margin: EdgeInsets.only(
+  //           top: (MediaQuery.of(context).size.height / 2) -
+  //               AppBar().preferredSize.height -
+  //               200),
+  //       child: Column(
+  //         children: [
+  //           SizedBox(
+  //               height: 200,
+  //               child: Image.asset(
+  //                 'assets/images/img_emptybox.png',
+  //                 color: Colors.grey,
+  //               )),
+  //           Text('No notification'),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +97,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         title: Text('Notification'),
         elevation: 0.5,
       ),
+      backgroundColor: ColorResources.getPrimary(context),
       body: EasyRefresh.custom(
         header: MaterialHeader(
           valueColor: AlwaysStoppedAnimation<Color>(mainColor),

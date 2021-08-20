@@ -96,6 +96,9 @@ class App extends StatelessWidget {
               unselectedLabelColor: Colors.grey,
               labelStyle: Theme.of(context).textTheme.bodyText1,
             ),
+            radioTheme: RadioThemeData(
+              fillColor: MaterialStateProperty.all(mainColor)
+            )
           ),
           darkTheme: ThemeData.dark().copyWith(
             primaryColor: primaryDarkColor,

@@ -11,7 +11,7 @@ import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
-import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
 class MeetupScreen extends StatefulWidget {
   static const String tag = '/meetUpScreen';
@@ -86,12 +86,6 @@ class _ActivityScreenState extends State<MeetupScreen> {
           );
   }
 
-  Widget noInternet() {
-    return SliverFillRemaining(
-      child: noConnection(context),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MeetupCubit, MeetupData>(
@@ -122,7 +116,9 @@ class _ActivityScreenState extends State<MeetupScreen> {
             slivers: [
               state.status != DataState.ErrorSocket
                   ? buildMeetupList(state)
-                  : noInternet(),
+                  : SliverFillRemaining(
+                      child: KSNoInternet(),
+                    ),
             ],
             onRefresh: () async {
               BlocProvider.of<MeetupCubit>(context).onRefresh();

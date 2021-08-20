@@ -18,6 +18,9 @@ class VenueCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var urlVenue =
+        'https://images.unsplash.com/photo-1487466365202-1afdb86c764e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1052&q=80';
+
     return InkWell(
       onTap: () {
         launchScreen(
@@ -29,29 +32,16 @@ class VenueCell extends StatelessWidget {
       child: Container(
         height: 220.0,
         margin: const EdgeInsets.only(left: 8.0, right: 8.0),
-        // decoration: BoxDecoration(
-        //   color: Theme.of(context).primaryColor,
-        //   borderRadius: BorderRadius.circular(8.0),
-        //   image: DecorationImage(
-        //     image: CachedNetworkImageProvider(
-        //       venue.coverPhoto ??
-        //           'https://images.unsplash.com/photo-1487466365202-1afdb86c764e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1052&q=80',
-        //     ),
-        //     fit: BoxFit.cover,
-        //     colorFilter: ColorFilter.mode(
-        //         Colors.black.withOpacity(0.3), BlendMode.colorBurn),
-        //   ),
-        // ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child: Stack(
             fit: StackFit.expand,
             children: [
               venue.profilePhoto != null
-                  ? CacheImage(url: venue.profilePhoto!)
+                  ? CacheImage(
+                      url: venue.profilePhoto!, type: ImageErrorType.venue)
                   : CachedNetworkImage(
-                      imageUrl:
-                          'https://images.unsplash.com/photo-1487466365202-1afdb86c764e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1052&q=80',
+                      imageUrl: urlVenue,
                       fit: BoxFit.cover,
                     ),
               Padding(

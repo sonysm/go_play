@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/venue.dart';
@@ -10,7 +11,7 @@ import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/widget/venue_cell.dart';
-import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
 class VenueScreen extends StatefulWidget {
   static const tag = '/venueScreen';
@@ -45,9 +46,9 @@ class _VenueScreenState extends State<VenueScreen> {
   bool isConnection = false;
 
   Widget buildVenueList() {
-    return SliverToBoxAdapter(
-      child: venueList.isNotEmpty
-          ? ListView.separated(
+    return venueList.isNotEmpty
+        ? SliverToBoxAdapter(
+            child: ListView.separated(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.only(bottom: 8.0),
@@ -62,20 +63,19 @@ class _VenueScreenState extends State<VenueScreen> {
                 return 8.height;
               },
               itemCount: venueList.length,
-            )
-          : Container(
-              margin: const EdgeInsets.only(top: 100.0),
-              child: Center(
-                child: Text('No any available venue.'),
-              ),
             ),
-    );
-  }
-
-  Widget noInternet() {
-    return SliverFillRemaining(
-      child: noConnection(context),
-    );
+          )
+        : SliverFillRemaining(
+            child: KSScreenState(
+              icon: RotatedBox(quarterTurns: 3, child: SvgPicture.asset(
+                'assets/images/svg_football_field.svg',
+                color: Colors.grey,
+                height: 100,
+              ),),
+              title: 'No any available venue',
+              bottomPadding: AppBar().preferredSize.height,
+            ),
+          );
   }
 
   @override
@@ -83,7 +83,7 @@ class _VenueScreenState extends State<VenueScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Venues'),
-        elevation: 0.0,
+        elevation: 0.5,
         actions: [
           //CupertinoButton(
           //  padding: EdgeInsets.zero,
@@ -104,13 +104,17 @@ class _VenueScreenState extends State<VenueScreen> {
           SizedBox(),
         ],
       ),
-      // backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).primaryColor,
       body: EasyRefresh.custom(
         header: MaterialHeader(
           valueColor: AlwaysStoppedAnimation<Color>(mainColor),
         ),
         slivers: [
-          isConnection ? buildVenueList() : noInternet(),
+          isConnection
+              ? buildVenueList()
+              : SliverFillRemaining(
+                  child: KSNoInternet(),
+                ),
         ],
         onRefresh: () async {
           getVenueList();

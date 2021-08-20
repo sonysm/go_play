@@ -26,7 +26,7 @@ import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
-import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:kroma_sport/widgets/ks_screen_state.dart';
 import 'package:line_icons/line_icons.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -247,9 +247,7 @@ class _AccountScreenState extends State<AccountScreen>
         if (data.status == DataState.ErrorSocket) {
           return Padding(
             padding: const EdgeInsets.only(top: 50.0),
-            child: noConnection(
-              context,
-            ),
+            child: KSNoInternet(),
           );
         }
 
@@ -293,7 +291,7 @@ class _AccountScreenState extends State<AccountScreen>
         if (data.status == DataState.ErrorSocket && data.ownerPost.isEmpty) {
           return Padding(
             padding: const EdgeInsets.only(top: 50.0),
-            child: noConnection(context),
+            child: KSNoInternet(),
           );
         }
 

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
@@ -27,7 +26,7 @@ import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
-import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:kroma_sport/widgets/ks_screen_state.dart';
 import 'package:kroma_sport/widgets/pull_to_refresh_header.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:loading_more_list/loading_more_list.dart';
@@ -212,7 +211,7 @@ class _AccountScreen2State extends State<AccountScreen2>
         if (data.status == DataState.ErrorSocket) {
           return Padding(
             padding: const EdgeInsets.only(top: 50.0),
-            child: noConnection(context),
+            child: KSNoInternet(),
           );
         }
 
@@ -275,9 +274,7 @@ class _AccountScreen2State extends State<AccountScreen2>
         if (data.status == DataState.ErrorSocket && data.ownerPost.isEmpty) {
           return Padding(
             padding: const EdgeInsets.only(top: 50.0),
-            child: noConnection(
-              context,
-            ),
+            child: KSNoInternet(),
           );
         }
 
@@ -318,6 +315,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                               key: Key(post.id.toString()),
                               post: post,
                               isAvatarSelectable: false,
+                              isHomeFeed: false,
                             ),
                           );
                         } else if (post.type == PostType.activity) {
@@ -583,9 +581,9 @@ class _AccountScreen2State extends State<AccountScreen2>
               launchScreen(context, SettingScreen.tag);
             },
             leading: Icon(
-              FeatherIcons.settings,
+              LineIcons.cog,
               color: ColorResources.getSecondaryIconColor(context),
-              size: 20.0,
+              // size: 20.0,
             ),
             title: Text(
               'Setting',

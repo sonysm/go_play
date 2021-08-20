@@ -340,7 +340,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                     return false;
                   },
                   child: ListView.separated(
-                    key: PageStorageKey<String>('Tab0'),
+                    key: PageStorageKey<String>('TabPost'),
                     padding: EdgeInsets.zero,
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -356,6 +356,8 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                           child: HomeFeedCell(
                             post: post,
                             isAvatarSelectable: false,
+                            isHomeFeed: false,
+                            key: Key("acc${post.id}"),
                           ),
                         );
                       } else if (post.type == PostType.activity) {
@@ -400,7 +402,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
               return false;
             },
             child: ListView.builder(
-              key: PageStorageKey<String>('Tab1'),
+              key: PageStorageKey<String>('TabMeetup'),
               padding: EdgeInsets.zero,
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,

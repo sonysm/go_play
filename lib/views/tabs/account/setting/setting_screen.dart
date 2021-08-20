@@ -9,6 +9,7 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
+import 'package:kroma_sport/views/tabs/account/setting/about_screen.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,8 +52,9 @@ class _SettingScreenState extends State<SettingScreen> {
             color: Theme.of(context).primaryColor,
             margin: EdgeInsets.only(top: 4.0),
             child: ListTile(
+              onTap: () => launchScreen(context, AboutScreen.tag),
               title: Text(
-                'version ${KS.shared.packageInfo.version}',
+                'About',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ),

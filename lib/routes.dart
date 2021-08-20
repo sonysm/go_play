@@ -10,6 +10,7 @@ import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/edit_profile_screen.dart';
 import 'package:kroma_sport/views/tabs/account/follow_screen.dart';
+import 'package:kroma_sport/views/tabs/account/setting/about_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sport_detail.dart';
@@ -73,7 +74,10 @@ class RouteGenerator {
 
         return MaterialPageRoute(
             builder: (_) => FeedDetailScreen(
-                post: data['post'], isCommentTap: data['isCommentTap'], postCallback: data['postCallback'],));
+                  post: data['post'],
+                  isCommentTap: data['isCommentTap'],
+                  postCallback: data['postCallback'],
+                ));
       case CreatePostScreen.tag:
         return MaterialPageRoute(builder: (_) => CreatePostScreen(data: args));
       case SettingScreen.tag:
@@ -107,7 +111,8 @@ class RouteGenerator {
           ),
         );
       case SetAddressScreen.tag:
-        return MaterialPageRoute(builder: (_) => SetAddressScreen(address: args));
+        return MaterialPageRoute(
+            builder: (_) => SetAddressScreen(address: args));
       case ActivityPreviewScreen.tag:
         return MaterialPageRoute(
           builder: (_) => ActivityPreviewScreen(
@@ -169,6 +174,8 @@ class RouteGenerator {
             builder: (_) => ConnectBookingScreen(
                   meetup: args as Post,
                 ));
+      case AboutScreen.tag:
+        return KSPageRoute(builder: (_) => AboutScreen());
       default:
         return _errorRoute();
     }

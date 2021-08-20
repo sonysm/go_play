@@ -106,7 +106,7 @@ class HomeCubit extends Cubit<HomeData> {
           List<Post> posts =
               (data as List).map((e) => Post.fromJson(e)).toList();
           await Future.delayed(Duration(milliseconds: 500));
-          emit(state.copyWith(status: DataState.Loaded, data: posts));
+          emit(state.copyWith(status: DataState.Loaded, data: posts, reload: !state.reload));
         } else {
           if (data.code == -500) {
             emit(state.copyWith(status: DataState.ErrorSocket));
@@ -135,6 +135,10 @@ class HomeCubit extends Cubit<HomeData> {
             emit(state.copyWith(status: DataState.Loaded));
           }
         } else {
+          if (data.code == -500) {
+            emit(state.copyWith(status: DataState.ErrorSocket));
+            return;
+          }
           print('error $data');
         }
       }
@@ -202,32 +206,39 @@ class HomeCubit extends Cubit<HomeData> {
     }
   }
 
-  Future<void> reactPost(int id, bool reacted) async {
+  Future<void> reactPost(int id, bool reacted, {bool home = false}) async {
     if (state.status == DataState.Loaded) {
-      for (var element in state.data) {
-        if (element.id == id) {
-          element.reacted = reacted;
-          if (reacted) {
-            element.totalReaction += 1;
-          } else {
-            element.totalReaction -= 1;
+      bool reEmit = false;
+      if(home ){
+          for (var element in state.ownerPost) {
+              if (element.id == id) {
+                element.reacted = reacted;
+                if (reacted) {
+                  element.totalReaction += 1;
+                } else {
+                  element.totalReaction -= 1;
+                }
+                reEmit = true;
+                break;
+              }
           }
-          break;
-        }
-      }
-
-      for (var element in state.ownerPost) {
-        if (element.id == id) {
-          element.reacted = reacted;
-          if (reacted) {
-            element.totalReaction += 1;
-          } else {
-            element.totalReaction -= 1;
+      }else{
+        for (var element in state.data) {
+            if (element.id == id) {
+              element.reacted = reacted;
+              if (reacted) {
+                element.totalReaction += 1;
+              } else {
+                element.totalReaction -= 1;
+              }
+              reEmit = true;
+              break;
+            }
           }
-          break;
-        }
       }
-      emit(state.copyWith(reload: !state.reload));
+      if(reEmit){
+        emit(state.copyWith(reload: !state.reload));
+      }
     }
   }
 }

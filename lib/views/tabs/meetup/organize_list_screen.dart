@@ -4,7 +4,7 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_activity_screen.dart';
-import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
 class OrganizeListScreen extends StatefulWidget {
   static const tag = '/organizeListScreen';
@@ -39,8 +39,8 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
     return !isLoading
         ? isConnection
             ? SliverPadding(
-              padding: const EdgeInsets.only(bottom: 32.0),
-              sliver: SliverList(
+                padding: const EdgeInsets.only(bottom: 32.0),
+                sliver: SliverList(
                   delegate: SliverChildListDelegate(
                     List.generate(
                       sportList.length,
@@ -48,7 +48,10 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
                         final sport = sportList.elementAt(index);
                         return Container(
                           margin: const EdgeInsets.only(
-                              left: 16.0, top: 10.0, right: 16.0,),
+                            left: 16.0,
+                            top: 10.0,
+                            right: 16.0,
+                          ),
                           decoration: BoxDecoration(
                             color: Theme.of(context).primaryColor,
                             borderRadius: BorderRadius.circular(4.0),
@@ -58,7 +61,8 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
                               sport.name,
                               style: Theme.of(context).textTheme.bodyText1,
                             ),
-                            contentPadding: EdgeInsets.only(left: 16.0, right: 8),
+                            contentPadding:
+                                EdgeInsets.only(left: 16.0, right: 8),
                             onTap: () {
                               launchScreen(
                                 context,
@@ -72,15 +76,11 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
                     ),
                   ),
                 ),
-            )
-            : noInternet()
+              )
+            : SliverFillRemaining(
+                child: KSNoInternet(),
+              )
         : SliverToBoxAdapter();
-  }
-
-  Widget noInternet() {
-    return SliverFillRemaining(
-      child: noConnection(context),
-    );
   }
 
   @override
