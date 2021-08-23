@@ -237,7 +237,7 @@ class HomeCubit extends Cubit<HomeData> {
           }
         }
       }
-      print('_______re-emit: $reEmit');
+
       if (reEmit) {
         emit(state.copyWith(
             data: state.data,

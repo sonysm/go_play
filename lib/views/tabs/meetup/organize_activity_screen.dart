@@ -32,7 +32,7 @@ class OragnizeActivityScreen extends StatefulWidget {
 class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
   late Sport sport;
 
-  late GameType selectedGameType;
+  GameType? selectedGameType;
 
   Address? address;
 
@@ -142,13 +142,13 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
         width: 100.0,
         height: 90.0,
         decoration: BoxDecoration(
-            color: selectedGameType.id == gameType.id
+            color: selectedGameType!.id == gameType.id
                 ? mainColor
                 : isLight(context)
                     ? whiteColor
                     : Colors.blueGrey[600],
             borderRadius: BorderRadius.circular(6.0),
-            border: selectedGameType.id == gameType.id
+            border: selectedGameType!.id == gameType.id
                 ? null
                 : Border.all(
                     color: isLight(context)
@@ -162,7 +162,7 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
-                color: selectedGameType.id == gameType.id
+                color: selectedGameType!.id == gameType.id
                     ? whiteColor
                     : isLight(context)
                         ? Colors.blueGrey
@@ -173,7 +173,7 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
               gameType.desc,
               style: TextStyle(
                 fontSize: 14.0,
-                color: selectedGameType.id == gameType.id
+                color: selectedGameType!.id == gameType.id
                     ? whiteColor
                     : isLight(context)
                         ? Colors.blueGrey
@@ -254,20 +254,23 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
               ],
             ),
             Divider(height: 18, indent: 32.0),
-            8.height,
-            Row(
-              children: [
-                Icon(Feather.users, size: 18.0),
-                16.width,
-                Text(
-                  'Game type',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2
-                      ?.copyWith(fontWeight: FontWeight.w600),
+            if (selectedGameType != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Row(
+                  children: [
+                    Icon(Feather.users, size: 18.0),
+                    16.width,
+                    Text(
+                      'Game type',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText2
+                          ?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
           ],
         ),
       ),
@@ -276,7 +279,7 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
 
   Widget buildGameTypeList() {
     return SliverToBoxAdapter(
-      child: Container(
+      child: selectedGameType != null ? Container(
         height: 90.0,
         color: Theme.of(context).primaryColor,
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -294,7 +297,7 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
           },
           itemCount: GameType.mapGameTypeToSport(sport.id).length,
         ),
-      ),
+      ) : SizedBox(),
     );
   }
 
@@ -504,9 +507,14 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
     super.initState();
     if (widget.data is Sport) {
       sport = widget.data;
-      selectedGameType = GameType.mapGameTypeToSport(sport.id).elementAt(0);
-      minPlayer = selectedGameType.minPlayer;
-      maxPlayer = selectedGameType.minPlayer;
+      if (sport.attribute != null && sport.attribute!.isNotEmpty) {
+        selectedGameType = GameType.mapGameTypeToSport(sport.id).elementAt(0);
+        minPlayer = selectedGameType!.minPlayer;
+        maxPlayer = selectedGameType!.minPlayer;
+      } else {
+        minPlayer = 1;
+        maxPlayer = 2;
+      }
       buttonTitle = 'Organize ${sport.name}';
     } else if (widget.data is Post) {
       var post = widget.data as Post;
@@ -518,9 +526,12 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
       maxPlayer = post.maxPeople!;
       sport = post.sport!;
       buttonTitle = 'Save';
-
-      selectedGameType = GameType.mapGameTypeToSport(sport.id)
+      
+      if (sport.attribute != null && sport.attribute!.isNotEmpty) {
+        selectedGameType = GameType.mapGameTypeToSport(sport.id)
           .firstWhere((element) => element.minPlayer == minPlayer);
+      }
+
       selectedDate = DateFormat('yyyy-MM-dd').parse(post.activityDate!);
       selectedDateString = dateString(selectedDate);
       startTime =

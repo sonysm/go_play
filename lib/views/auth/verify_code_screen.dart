@@ -392,7 +392,6 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   @override
   void initState() {
     super.initState();
-    print('phonenummmm ===== ${widget.phoneNumber}');
     controller = CountdownTimerController(endTime: endTime, onEnd: onEnd);
     Future.delayed(Duration(milliseconds: 500)).then((value) {
       // _toEditUserScreen();
@@ -449,7 +448,6 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
 
   _sendSMSCode() async {
     String phone = widget.phoneNumber;
-    print('phonenummmm ===== $phone');
     _auth.verifyPhoneNumber(
       phoneNumber: phone,
       timeout: Duration(minutes: 2),
@@ -472,11 +470,11 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
       });
     });
 
-    print("================ code_sent_completed");
+    // print("================ code_sent_completed");
   }
 
   _verificationCompleted(AuthCredential authCredential) {
-    print("================ veryfyCodeCompleted__$authCredential");
+    // print("================ veryfyCodeCompleted__$authCredential");
     setState(() {
       _valideStatus = ValidateStatus.smsSentCompleted;
     });
@@ -508,8 +506,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
 
     //showMessageInfo(context, 'Verification Failed ${f.message}');
 
-     print(
-         "================ verificationFailed_______${f.code}________${f.message}");
+    // print("================ verificationFailed_______${f.code}________${f.message}");
   }
 
   _verifyCode() {
@@ -536,14 +533,12 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
       });
 
       redirectToScreen();
-       print(
-           "================ signInWithCredential___________success_________$result");
+      // print("================ signInWithCredential___________success_________$result");
     }).catchError((onError) {
       setState(() {
         _valideStatus = ValidateStatus.invalidOTP;
       });
-       print(
-           "================ signInWithCredential___________error_________$onError");
+      // print("================ signInWithCredential___________error_________$onError");
     });
   }
 

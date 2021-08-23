@@ -46,6 +46,7 @@ class _VenueScreenState extends State<VenueScreen> {
   bool isConnection = false;
 
   Widget buildVenueList() {
+    // venueList = [];
     return venueList.isNotEmpty
         ? SliverToBoxAdapter(
             child: ListView.separated(

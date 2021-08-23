@@ -197,6 +197,11 @@ class _HomeScreenState extends State<HomeScreen> {
         : SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
+
+                // if (index == 0) {
+                //   return SuggestionCell();
+                // }
+
                 var post = feedData.data.elementAt(index);
 
                 if (post.type == PostType.feed) {

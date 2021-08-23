@@ -420,7 +420,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
     super.initState();
     _venueService = widget.venueService;
     picthTitle = _venueService.name +
-        ' (${_venueService.serviceData.people! ~/ 2}x${_venueService.serviceData.people! ~/ 2})';
+        ' (${_venueService.serviceData!.people! ~/ 2}x${_venueService.serviceData!.people! ~/ 2})';
 
     getUnavailableTime();
   }

@@ -21,7 +21,7 @@ class VenueService {
     required this.id,
     required this.sport,
     required this.name,
-    required this.serviceData,
+    this.serviceData,
     required this.hourPrice,
     required this.venue,
   });
@@ -29,7 +29,7 @@ class VenueService {
   int id;
   Sport sport;
   String name;
-  ServiceData serviceData;
+  ServiceData? serviceData;
   double hourPrice;
   int venue;
 
@@ -37,7 +37,7 @@ class VenueService {
         id: json["id"],
         sport: Sport.fromJson(json["sport"]),
         name: json["name"],
-        serviceData: ServiceData.fromJson(json["data"]),
+        serviceData: json["data"] != null ? ServiceData.fromJson(json["data"]) : null,
         hourPrice: json["hour_price"],
         venue: json["venue"],
       );
@@ -46,7 +46,7 @@ class VenueService {
         "id": id,
         "sport": sport.toJson(),
         "name": name,
-        "data": serviceData.toJson(),
+        "data": serviceData!.toJson(),
         "hour_price": hourPrice,
         "venue": venue,
       };

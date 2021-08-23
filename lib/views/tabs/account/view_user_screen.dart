@@ -17,6 +17,7 @@ import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
+import 'package:kroma_sport/widgets/ks_screen_state.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 import 'package:kroma_sport/widgets/pull_to_refresh_header.dart';
@@ -381,9 +382,22 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                 ),
               )
             : Container(
-                margin: const EdgeInsets.only(top: 100),
+                margin: const EdgeInsets.only(top: 50),
                 child: Center(
-                  child: Text('No any post'),
+                  child: SingleChildScrollView(
+                    child: KSScreenState(
+                      icon: SizedBox(
+                        height: 100,
+                        child: Image.asset(
+                          'assets/images/img_emptypost.png',
+                          color: Colors.grey,
+                        ),
+                      ),
+                      title: 'No Post',
+                      bottomPadding:
+                          AppBar().preferredSize.height + kToolbarHeight,
+                    ),
+                  ),
                 ),
               )
         : SizedBox();
@@ -426,9 +440,21 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
             ),
           )
         : Container(
-            margin: const EdgeInsets.only(top: 100),
+            margin: const EdgeInsets.only(top: 50),
             child: Center(
-              child: Text('No any meetup'),
+              child: SingleChildScrollView(
+                child: KSScreenState(
+                  icon: SizedBox(
+                    height: 100,
+                    child: Image.asset(
+                      'assets/images/img_emptypost.png',
+                      color: Colors.grey,
+                    ),
+                  ),
+                  title: 'No Meetup',
+                  bottomPadding: AppBar().preferredSize.height + kToolbarHeight,
+                ),
+              ),
             ),
           );
   }

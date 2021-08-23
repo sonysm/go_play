@@ -8,12 +8,15 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/user.dart';
+import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/dimensions.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/account/account_screen.dart';
+import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/report_screen.dart';
@@ -100,13 +103,28 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(_post.owner.getFullname(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              ?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Metropolis')),
+                      InkWell(
+                        onTap: () async {
+                          if (_post.owner.id != KS.shared.user.id) {
+                            var data = await launchScreen(
+                                context, ViewUserProfileScreen.tag,
+                                arguments: _post.owner);
+                            if (data != null) {
+                              _post.owner = data;
+                              setState(() {});
+                            }
+                          } else {
+                            launchScreen(context, AccountScreen.tag);
+                          }
+                        },
+                        child: Text(_post.owner.getFullname(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Metropolis')),
+                      ),
                       Text(
                         _post.createdAt.toString().timeAgoString,
                         style: Theme.of(context).textTheme.caption!.copyWith(

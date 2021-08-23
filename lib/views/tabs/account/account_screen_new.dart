@@ -262,7 +262,25 @@ class _AccountScreen2State extends State<AccountScreen2>
                           : data.ownerMeetup.length + 1,
                     ),
                   )
-                : SizedBox();
+                : Container(
+                    margin: const EdgeInsets.only(top: 50),
+                    child: Center(
+                      child: SingleChildScrollView(
+                        child: KSScreenState(
+                          icon: SizedBox(
+                            height: 100,
+                            child: Image.asset(
+                              'assets/images/img_emptypost.png',
+                              color: Colors.grey,
+                            ),
+                          ),
+                          title: 'No Meetup',
+                          bottomPadding:
+                              AppBar().preferredSize.height + kToolbarHeight,
+                        ),
+                      ),
+                    ),
+                  );
       },
     );
   }
@@ -339,7 +357,25 @@ class _AccountScreen2State extends State<AccountScreen2>
                           : data.ownerPost.length + 1,
                     ),
                   )
-                : SizedBox();
+                : Container(
+                    margin: const EdgeInsets.only(top: 50),
+                    child: Center(
+                      child: SingleChildScrollView(
+                        child: KSScreenState(
+                          icon: SizedBox(
+                            height: 100,
+                            child: Image.asset(
+                              'assets/images/img_emptypost.png',
+                              color: Colors.grey,
+                            ),
+                          ),
+                          title: 'No Post',
+                          bottomPadding:
+                              AppBar().preferredSize.height + kToolbarHeight,
+                        ),
+                      ),
+                    ),
+                  );
       },
     );
   }

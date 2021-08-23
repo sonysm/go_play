@@ -59,4 +59,12 @@ class ColorResources {
   static Color getInactiveIconColor(BuildContext context) {
     return isLight(context) ? Colors.blueGrey : Colors.white;
   }
+
+  static Color getSuggestionBorderColor(BuildContext context) {
+    return isLight(context) ? Color(0xFFD6D6D6) : Color(0xFF90A4AE);
+  }
+
+  static Color getOverlayIconColor(BuildContext context) {
+    return isLight(context) ? Color(0xFFEEEEEE) : Color(0xFF90A4AE);
+  }
 }

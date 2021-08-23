@@ -115,7 +115,7 @@ class _BookingHistoryDetailScreenState
                     style: Theme.of(context).textTheme.headline2),
               ),
             ),
-            SizedBox(
+            if (_booking.service.serviceData != null) SizedBox(
               height: 48.0,
               child: ListTile(
                 dense: true,
@@ -123,7 +123,7 @@ class _BookingHistoryDetailScreenState
                 horizontalTitleGap: 0,
                 title: Text(
                     _booking.service.name +
-                        ' (${_booking.service.serviceData.people! ~/ 2}x${_booking.service.serviceData.people! ~/ 2})',
+                        ' (${_booking.service.serviceData!.people! ~/ 2}x${_booking.service.serviceData!.people! ~/ 2})',
                     style: Theme.of(context).textTheme.bodyText1),
               ),
             ),

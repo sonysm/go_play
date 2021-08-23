@@ -362,13 +362,19 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             final service = venueServiceList[index];
-                            return buildPitchCell(
-                              pitchName: service.name +
-                                  ' (${service.serviceData.people! ~/ 2}x${service.serviceData.people! ~/ 2})',
-                              pitchPrice:
-                                  '\$${service.hourPrice.toStringAsFixed(2)}/h',
-                              venueService: service,
-                            );
+
+                            if (service.serviceData != null &&
+                                service.serviceData!.people != null) {
+                              return buildPitchCell(
+                                pitchName: service.name +
+                                    ' (${service.serviceData!.people! ~/ 2}x${service.serviceData!.people! ~/ 2})',
+                                pitchPrice:
+                                    '\$${service.hourPrice.toStringAsFixed(2)}/h',
+                                venueService: service,
+                              );
+                            }
+
+                            return SizedBox();
                           },
                           separatorBuilder: (context, index) {
                             return 8.height;

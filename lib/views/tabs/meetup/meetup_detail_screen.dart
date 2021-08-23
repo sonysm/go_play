@@ -255,9 +255,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                       child: Column(
                         children: [
                           CircleAvatar(
-                            radius: 33,
+                            radius: 34,
                             backgroundColor:
-                                isLight(context) ? Colors.blueGrey : whiteColor,
+                                isLight(context) ? Colors.amber : whiteColor,
                             child: Avatar(
                               radius: 32,
                               user: joinMember.elementAt(index).user,

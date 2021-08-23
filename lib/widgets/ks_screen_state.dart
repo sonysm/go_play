@@ -68,9 +68,11 @@ class KSNoInternet extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(icNoConnection,
-              width: 70,
-              color: isLight(context) ? Colors.grey[600] : Colors.white60),
+          SvgPicture.asset(
+            icNoConnection,
+            width: 70,
+            color: isLight(context) ? Colors.grey[600] : Colors.white60,
+          ),
           32.height,
           Text(
             'No Internet connection!',

@@ -216,9 +216,9 @@ class _MeetupCellState extends State<MeetupCell> {
                       children: List.generate(meetup.maxPeople!, (index) {
                         if (index <= joinMember.length - 1) {
                           return CircleAvatar(
-                            radius: 17,
+                            radius: 18,
                             backgroundColor:
-                                isLight(context) ? Colors.blueGrey : whiteColor,
+                                isLight(context) ? Colors.amber : whiteColor,
                             child: Avatar(
                               radius: 16,
                               user: joinMember.elementAt(index).user,
