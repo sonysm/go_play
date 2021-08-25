@@ -892,8 +892,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     if (images.isEmpty) {
       showKSMessageDialog(
         context,
-        'Please add a photo!',
-        () {},
+        message: 'Please add a photo!',
         buttonTitle: 'OK',
       );
       return;
@@ -902,8 +901,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     if (activityNameController.text.trim().isEmpty) {
       showKSMessageDialog(
         context,
-        'Please add activity name!',
-        () {},
+        message: 'Please add activity name!',
         buttonTitle: 'OK',
       );
       return;

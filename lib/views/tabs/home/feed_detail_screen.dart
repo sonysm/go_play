@@ -106,7 +106,10 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
 
   Widget buildTotalComment(int total) {
     return total > 0
-        ? Text(total > 1 ? '$total comments' : '$total comment')
+        ? Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(total > 1 ? '$total comments' : '$total comment'),
+        )
         : SizedBox();
   }
 
@@ -347,7 +350,6 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                       // ),
                       Spacer(),
                       buildTotalReaction(post.totalReaction),
-                      8.width,
                       buildTotalComment(post.totalComment),
                     ],
                   ),

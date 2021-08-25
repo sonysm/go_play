@@ -46,7 +46,6 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
     if (widget.activityData['photo'] != null) {
       imgHeight = AppSize(context).appWidth(100) *
           double.parse(originalHeight.toString()) /
@@ -335,9 +334,10 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
         Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
       } else {
         showKSMessageDialog(
-            context,
-            'Something went wrong with the content! Image size might be too large!',
-            () {});
+          context,
+          message:
+              'Something went wrong with the content! Image size might be too large!',
+        );
       }
     }
   }

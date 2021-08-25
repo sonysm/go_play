@@ -7,5 +7,6 @@ enum DataState {
   Error,
   ErrorTimeOut,
   ErrorSocket,
-  Authorized
+  Authorized,
+  UnAuthorized
 }

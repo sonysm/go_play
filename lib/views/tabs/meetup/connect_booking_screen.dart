@@ -102,7 +102,8 @@ class _ConnectBookingScreenState extends State<ConnectBookingScreen> {
       if (res is! HttpResult) {
         activeBookingList = List.from(
           (res as List).map((e) => Booking.fromJson(e)).where((e) =>
-              e.status == 'book' && e.service.sport.id == widget.meetup.sport!.id &&
+              e.status == 'book' &&
+              e.service.sport.id == widget.meetup.sport!.id &&
               DateTime.now()
                   .isBefore(yMMddFormat.parse(e.bookDate + ' ' + e.fromTime)) &&
               yMMddFormat
@@ -144,9 +145,8 @@ class _ConnectBookingScreenState extends State<ConnectBookingScreen> {
               dismissScreen(context);
               showKSMessageDialog(
                 context,
-                'Cannot disconnect from this booking!',
-                () {},
-                buttonTitle: 'OK'
+                message: 'Cannot disconnect from this booking!',
+                buttonTitle: 'OK',
               );
             }
           }
@@ -171,9 +171,8 @@ class _ConnectBookingScreenState extends State<ConnectBookingScreen> {
             dismissScreen(context);
             showKSMessageDialog(
               context,
-              'Cannot book!',
-              () {},
-              buttonTitle: 'OK'
+              message: 'Cannot book!',
+              buttonTitle: 'OK',
             );
           }
         }

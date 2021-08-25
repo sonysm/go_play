@@ -68,8 +68,6 @@ class HomeCubit extends Cubit<HomeData> {
           if (data != null) {
             if (data is! HttpResult) {
               ownerPosts = (data as List).map((e) => Post.fromJson(e)).toList();
-              // emit(state.copyWith(
-              //     status: DataState.Loaded, ownerPost: ownerPosts));
             }
           }
         });
@@ -80,6 +78,8 @@ class HomeCubit extends Cubit<HomeData> {
         if (data.code == -500) {
           emit(state.copyWith(status: DataState.ErrorSocket));
           return;
+        } else if (data.code == 401) {
+          emit(state.copyWith(status: DataState.UnAuthorized));
         }
         print("error");
       }
@@ -111,6 +111,8 @@ class HomeCubit extends Cubit<HomeData> {
           if (data.code == -500) {
             emit(state.copyWith(status: DataState.ErrorSocket));
             return;
+          } else if (data.code == 401) {
+            emit(state.copyWith(status: DataState.UnAuthorized));
           }
           print("error");
         }

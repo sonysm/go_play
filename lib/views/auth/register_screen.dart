@@ -505,8 +505,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   bool hasName() {
-    return _fnTextController.text.trim().length > 2 &&
-            _lnTextController.text.trim().length > 2 &&
+    return _fnTextController.text.trim().isNotEmpty &&
+            _lnTextController.text.trim().isNotEmpty &&
             _genderTextController.text.isNotEmpty &&
             _dobController.text.isNotEmpty && selectedGender != null
         ? true

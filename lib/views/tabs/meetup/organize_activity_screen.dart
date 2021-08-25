@@ -279,25 +279,27 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
 
   Widget buildGameTypeList() {
     return SliverToBoxAdapter(
-      child: selectedGameType != null ? Container(
-        height: 90.0,
-        color: Theme.of(context).primaryColor,
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.only(left: 50.0),
-          itemBuilder: (context, index) {
-            final gameType =
-                GameType.mapGameTypeToSport(sport.id).elementAt(index);
+      child: selectedGameType != null
+          ? Container(
+              height: 90.0,
+              color: Theme.of(context).primaryColor,
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(left: 50.0),
+                itemBuilder: (context, index) {
+                  final gameType =
+                      GameType.mapGameTypeToSport(sport.id).elementAt(index);
 
-            return builGameType(gameType);
-          },
-          separatorBuilder: (context, index) {
-            return 8.width;
-          },
-          itemCount: GameType.mapGameTypeToSport(sport.id).length,
-        ),
-      ) : SizedBox(),
+                  return builGameType(gameType);
+                },
+                separatorBuilder: (context, index) {
+                  return 8.width;
+                },
+                itemCount: GameType.mapGameTypeToSport(sport.id).length,
+              ),
+            )
+          : SizedBox(),
     );
   }
 
@@ -526,10 +528,10 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
       maxPlayer = post.maxPeople!;
       sport = post.sport!;
       buttonTitle = 'Save';
-      
+
       if (sport.attribute != null && sport.attribute!.isNotEmpty) {
         selectedGameType = GameType.mapGameTypeToSport(sport.id)
-          .firstWhere((element) => element.minPlayer == minPlayer);
+            .firstWhere((element) => element.minPlayer == minPlayer);
       }
 
       selectedDate = DateFormat('yyyy-MM-dd').parse(post.activityDate!);
@@ -827,15 +829,24 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
   void createMeetup() async {
     Map<String, String> fields = Map<String, String>();
     if (selectedDateString == null) {
-      showKSMessageDialog(context, 'Please set match time!', () {});
+      showKSMessageDialog(
+        context,
+        message: 'Please set match time!',
+      );
       return;
     }
     if (address == null) {
-      showKSMessageDialog(context, 'Please set match location!', () {});
+      showKSMessageDialog(
+        context,
+        message: 'Please set match location!',
+      );
       return;
     }
     if (nameController.text.trim().length < 4) {
-      showKSMessageDialog(context, 'Plese set match name properly!', () {});
+      showKSMessageDialog(
+        context,
+        message: 'Plese set match name properly!',
+      );
       return;
     }
 
@@ -883,7 +894,9 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
         Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
       } else {
         showKSMessageDialog(
-            context, 'Something went wrong! Please try again!', () {});
+          context,
+          message: 'Something went wrong! Please try again!',
+        );
       }
     }
   }

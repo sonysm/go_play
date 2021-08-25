@@ -581,14 +581,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         }
       } else {
         if (data.code == -500) {
-          showKSMessageDialog(context, 'No Internet Connnection', () {},
-              buttonTitle: 'OK');
+          showKSMessageDialog(
+            context,
+            message: 'No Internet Connnection',
+            buttonTitle: 'OK',
+          );
           return;
         }
-        showKSMessageDialog(
-            context,
-            'Something went wrong with the content! Image size might be too large!',
-            () {},
+        showKSMessageDialog(context,
+            message:
+                'Something went wrong with the content! Image size might be too large!',
             buttonTitle: 'OK');
       }
     }

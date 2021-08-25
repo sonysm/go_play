@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class KSMessageDialog extends StatefulWidget {
   final String msg;
   final String buttonTitle;
+  final bool barrierDismissible;
   final VoidCallback onYesPressed;
 
   KSMessageDialog({
     Key? key,
     required this.msg,
+    required this.barrierDismissible,
     required this.onYesPressed,
     required this.buttonTitle,
   }) : super(key: key);
@@ -64,9 +66,11 @@ class KSMessageDialogState extends State<KSMessageDialog>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        controller!.reverse().then((_) {
-          Navigator.pop(context);
-        });
+        if (!widget.barrierDismissible) {
+          controller!.reverse().then((_) {
+            Navigator.pop(context);
+          });
+        }
       },
       child: Container(
         // width: double.infinity,
@@ -195,16 +199,21 @@ class KSMessageDialogState extends State<KSMessageDialog>
 }
 
 void showKSMessageDialog(
-    BuildContext context, String message, VoidCallback onYesPressed,
-    {String? buttonTitle}) {
+  BuildContext context, {
+  required String message,
+  String? buttonTitle,
+  barrierDismissible: false,
+  VoidCallback? onYesPressed,
+}) {
   showDialog(
     context: context,
     barrierDismissible: false,
     barrierColor: Colors.black.withOpacity(.3),
     builder: (_) => KSMessageDialog(
       msg: message,
-      onYesPressed: onYesPressed,
       buttonTitle: buttonTitle ?? 'Yes',
+      barrierDismissible: barrierDismissible,
+      onYesPressed: onYesPressed ?? () {},
     ),
   );
 }

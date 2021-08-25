@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
+import 'package:kroma_sport/bloc/suggestion.dart';
 import 'package:kroma_sport/bloc/theme.dart';
 import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/notification/my_notification.dart';
@@ -54,6 +55,7 @@ class App extends StatelessWidget {
       providers: [
         BlocProvider<ThemeCubit>(create: (BuildContext context) => ThemeCubit()..init()),
         BlocProvider<HomeCubit>(create: (BuildContext context) => HomeCubit()),
+        BlocProvider<SuggestionCubit>(create: (BuildContext context) => SuggestionCubit()..onLoad()),
         BlocProvider<MeetupCubit>(create: (BuildContext context) => MeetupCubit()),
         BlocProvider<UserCubit>(create: (BuildContext context) => UserCubit())
       ],

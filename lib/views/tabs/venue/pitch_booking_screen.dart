@@ -550,7 +550,9 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
           } else {
             dismissScreen(context);
             showKSMessageDialog(
-                context, 'Booking failed. Please try again!', () {});
+              context,
+              message: 'Booking failed. Please try again!',
+            );
           }
         }
 

@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:kroma_sport/api/api_checker.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/user.dart';
@@ -21,6 +22,7 @@ import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
+import 'package:kroma_sport/views/tabs/home/widget/suggestion_cell.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
@@ -54,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return SliverAppBar(
       elevation: 0.0,
       title: InkWell(
-        onTap: scrollToBottom,
+        onTap: scrollToTop,
         overlayColor: MaterialStateProperty.all(Colors.transparent),
         child: SizedBox(
           height: 28.0,
@@ -185,67 +187,65 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildHomeFeedList(HomeData feedData) {
-    if (feedData.status == DataState.ErrorSocket && feedData.data.isEmpty) {
-      return SliverFillRemaining(
-        child: KSNoInternet(),
-      );
-    }
+  Widget buildHomeFeedList() {
+    return BlocBuilder<HomeCubit, HomeData>(builder: (context, state) {
+      if (state.status == DataState.ErrorSocket && state.data.isEmpty) {
+        return SliverFillRemaining(
+          child: KSNoInternet(),
+        );
+      }
 
-    return feedData.status == DataState.Loading
-        ? loadingSliver()
-        : SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
+      return state.status == DataState.Loading
+          ? loadingSliver()
+          : SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  var post = state.data.elementAt(index);
 
-                // if (index == 0) {
-                //   return SuggestionCell();
-                // }
+                  if (post.type == PostType.feed) {
+                    String? _urlInfo;
+                    if (post.description != null) {
+                      final urlMatches =
+                          urlRegExp.allMatches(post.description!);
 
-                var post = feedData.data.elementAt(index);
+                      List<String> urls = urlMatches
+                          .map((urlMatch) => post.description!
+                              .substring(urlMatch.start, urlMatch.end))
+                          .toList();
+                      // urls.forEach((x) => print(x));
+                      if (urls.isNotEmpty) {
+                        _urlInfo = urls.elementAt(0);
 
-                if (post.type == PostType.feed) {
-                  String? _urlInfo;
-                  if (post.description != null) {
-                    final urlMatches = urlRegExp.allMatches(post.description!);
-
-                    List<String> urls = urlMatches
-                        .map((urlMatch) => post.description!
-                            .substring(urlMatch.start, urlMatch.end))
-                        .toList();
-                    // urls.forEach((x) => print(x));
-                    if (urls.isNotEmpty) {
-                      _urlInfo = urls.elementAt(0);
-
-                      if (!_urlInfo.startsWith(_protocolIdentifierRegex)) {
-                        _urlInfo = (LinkifyOptions().defaultToHttps
-                                ? "https://"
-                                : "http://") +
-                            _urlInfo;
+                        if (!_urlInfo.startsWith(_protocolIdentifierRegex)) {
+                          _urlInfo = (LinkifyOptions().defaultToHttps
+                                  ? "https://"
+                                  : "http://") +
+                              _urlInfo;
+                        }
                       }
                     }
-                  }
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: HomeFeedCell(
-                      post: post,
-                      key: Key("home${post.id}"),
-                      isHomeFeed: true,
-                    ),
-                  );
-                } else if (post.type == PostType.activity) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child:
-                        ActivityCell(post: post, key: Key(post.id.toString())),
-                  );
-                }
-                return SizedBox();
-              },
-              childCount: feedData.data.length,
-            ),
-          );
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: HomeFeedCell(
+                        post: post,
+                        key: Key("home${post.id}"),
+                        isHomeFeed: true,
+                      ),
+                    );
+                  } else if (post.type == PostType.activity) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: ActivityCell(
+                          post: post, key: Key(post.id.toString())),
+                    );
+                  }
+                  return SizedBox();
+                },
+                childCount: state.data.length,
+              ),
+            );
+    });
   }
 
   Widget loadingSliver() {
@@ -256,63 +256,69 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void scrollToBottom() {
-    Future.delayed(Duration(milliseconds: 300)).then((value) {
+  void scrollToTop() {
+    Future.delayed(Duration.zero).then((value) {
       _homeScrollController.animateTo(
         _homeScrollController.position.minScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.fastLinearToSlowEaseIn,
       );
     });
   }
 
+  Widget buildSuggestionWidget() {
+    return SliverToBoxAdapter(child: SuggestionCell());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeData>(
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Theme.of(context).primaryColor,
-          body: SafeArea(
-            child: Container(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: EasyRefresh.custom(
-                scrollController: _homeScrollController,
-                header: MaterialHeader(
-                  valueColor: AlwaysStoppedAnimation<Color>(mainColor),
-                ),
-                footer: ClassicalFooter(
-                  enableInfiniteLoad: false,
-                  completeDuration: Duration(milliseconds: 1200),
-                ),
-                slivers: [
-                  buildNavbar(),
-                  createFeedWidget(),
-                  buildHomeFeedList(state),
-                  //BottomRefresher(onRefresh: () {
-                  //    return Future<void>.delayed(const Duration(seconds: 10))
-                  //        ..then((re) {
-                  //          // setState(() {
-                  //          //   changeRandomList();
-                  //          //   _scrollController.animateTo(0.0,
-                  //          //       duration: new Duration(milliseconds: 100),
-                  //          //       curve: Curves.bounceOut);
-                  //          // });
-                  //          print("==============");
-                  //        });
-                  //}),
-                ],
-                onRefresh: () async {
-                  BlocProvider.of<HomeCubit>(context).onRefresh();
-                },
-                onLoad: () async {
-                  await Future.delayed(Duration(milliseconds: 300));
-                  BlocProvider.of<HomeCubit>(context).onLoadMore();
-                },
+    return BlocListener<HomeCubit, HomeData>(
+      listener: (context, state) {
+        ApiChecker.checkApi(context, state.status);
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
+        body: SafeArea(
+          child: Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: EasyRefresh.custom(
+              scrollController: _homeScrollController,
+              header: MaterialHeader(
+                valueColor: AlwaysStoppedAnimation<Color>(mainColor),
               ),
+              footer: ClassicalFooter(
+                enableInfiniteLoad: false,
+                completeDuration: Duration(milliseconds: 1200),
+              ),
+              slivers: [
+                buildNavbar(),
+                createFeedWidget(),
+                buildSuggestionWidget(),
+                buildHomeFeedList(),
+                //BottomRefresher(onRefresh: () {
+                //    return Future<void>.delayed(const Duration(seconds: 10))
+                //        ..then((re) {
+                //          // setState(() {
+                //          //   changeRandomList();
+                //          //   _scrollController.animateTo(0.0,
+                //          //       duration: new Duration(milliseconds: 100),
+                //          //       curve: Curves.bounceOut);
+                //          // });
+                //          print("==============");
+                //        });
+                //}),
+              ],
+              onRefresh: () async {
+                BlocProvider.of<HomeCubit>(context).onRefresh();
+              },
+              onLoad: () async {
+                await Future.delayed(Duration(milliseconds: 300));
+                BlocProvider.of<HomeCubit>(context).onLoadMore();
+              },
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 

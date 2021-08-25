@@ -613,14 +613,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     var image;
     if (_fnTextController.text.trim().length < 3) {
       showKSMessageDialog(
-          context, 'Please set your first name properly!', () {});
+        context,
+        message: 'Please set your first name properly!',
+      );
       return;
     }
     fields['first_name'] = _fnTextController.text;
 
     if (_lnTextController.text.trim().length < 3) {
       showKSMessageDialog(
-          context, 'Please set your last name properly!', () {});
+        context,
+        message: 'Please set your last name properly!',
+      );
       return;
     }
     fields['last_name'] = _lnTextController.text;

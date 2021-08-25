@@ -304,10 +304,11 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                                 );
                               } else {
                                 showKSMessageDialog(
-                                    context,
-                                    'You cannot invite player.\nMeetup is expired.',
-                                    () {},
-                                    buttonTitle: 'OK');
+                                  context,
+                                  message:
+                                      'You cannot invite player.\nMeetup is expired.',
+                                  buttonTitle: 'OK',
+                                );
                               }
                             }
                           },
@@ -843,8 +844,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     if (meetup!.book != null) {
       showKSMessageDialog(
         context,
-        'Please disconnect booking from Meetup before cancel!',
-        () {},
+        message: 'Please disconnect booking from Meetup before cancel!',
         buttonTitle: 'OK',
       );
       return;
@@ -890,7 +890,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         elevation: 0,
         backgroundColor: Colors.orange[400], //Color(0xFF696969),
         behavior: SnackBarBehavior.floating,
-        content: Text('Meetup Expired', style: Theme.of(context).textTheme.bodyText2),
+        content: Text('Meetup Expired',
+            style: Theme.of(context).textTheme.bodyText2),
         margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         // action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
