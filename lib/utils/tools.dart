@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:kroma_sport/ks.dart';
 
 launchScreen(context, String tag, {Object? arguments}) {
+  FocusScope.of(context).unfocus();
   if (arguments == null) {
     return Navigator.pushNamed(context, tag);
   } else {

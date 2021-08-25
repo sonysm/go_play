@@ -4,6 +4,7 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/notification.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/notification/widget/notification_cell.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
@@ -49,7 +50,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     height: 100,
                     child: Image.asset(
                       'assets/images/img_emptybox.png',
-                      color: Colors.grey,
+                      color: isLight(context)
+                              ? Colors.grey[600]
+                              : Colors.white60,
                     ),
                   ),
                   title: 'No notification',

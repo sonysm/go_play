@@ -590,7 +590,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (KS.shared.user.email != null) {
       _emailTextController.text = KS.shared.user.email!;
     }
-    if (KS.shared.user.gender!.isNotEmpty) {
+    if (KS.shared.user.gender != null) {
       selectedGender = KS.shared.user.gender!;
     }
     if (KS.shared.user.birthDate != null) {

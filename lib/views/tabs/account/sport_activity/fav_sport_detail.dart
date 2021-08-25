@@ -10,6 +10,7 @@ import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
@@ -68,6 +69,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
       flexibleSpace: FlexibleSpaceBar(
         // collapseMode: CollapseMode.pin,
         background: FavSportFlexibleAppbar(
+          favSport: widget.favSport,
           isMe: widget.isMe ?? true,
           playLevel: _favSport.playLevel != null ? _favSport.playLevel! - 1 : 0,
           onToggleChange: (level) {
@@ -487,10 +489,12 @@ class FavSportFlexibleAppbar extends StatelessWidget {
   const FavSportFlexibleAppbar({
     Key? key,
     this.isMe = true,
+    required this.favSport,
     required this.playLevel,
     required this.onToggleChange,
   }) : super(key: key);
 
+  final FavoriteSport favSport;
   final bool isMe;
   final int playLevel;
   final Function(int) onToggleChange;
@@ -529,7 +533,12 @@ class FavSportFlexibleAppbar extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            SvgPicture.asset(
+            favSport.sport.icon != null
+                  ? SizedBox(
+                      width: 80,
+                      height: 80,
+                      child: CacheImage(url: favSport.sport.icon!),
+                    ) : SvgPicture.asset(
               svgSoccerBall2,
               width: 80,
               height: 80,
