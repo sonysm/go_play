@@ -422,7 +422,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                   child: PullToRefreshHeader(
                     info,
                     DateTime.now(),
-                    color: Colors.white,
+                    color: Theme.of(context).primaryColor,
                   ),
                 );
               }),

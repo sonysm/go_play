@@ -211,7 +211,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                                   },
                                   child: CachedNetworkImage(
                                       imageUrl:
-                                          post.image!.elementAt(index).name),
+                                          post.image!.elementAt(index).name, fit: BoxFit.cover,),
                                 );
                               },
                             ),

@@ -27,12 +27,11 @@ class SplashCubit extends Cubit<SplashState> {
         if (data is! HttpResult) {
           KS.shared.user = User.fromJson(data);
           userRepository.persistUserPrefs(jsonEncode(data));
+          emit(SplashState.Exist);
         } else {
-          var localUser = await userRepository.fetchUserPrefs();
-          KS.shared.user = localUser;
+          emit(SplashState.New);
         }
       }
-      emit(SplashState.Exist);
     } else {
       emit(SplashState.New);
     }
