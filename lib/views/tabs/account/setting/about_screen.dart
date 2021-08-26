@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/config/env.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -34,7 +35,7 @@ class _AboutScreenState extends State<AboutScreen> {
               ),
               4.height,
               Text(
-                'Version: ${KS.shared.packageInfo.version}',
+                'Version: ${KS.shared.packageInfo.version}${DEBUG ? " (Development)" : ''}',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
               24.height,

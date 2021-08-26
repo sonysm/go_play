@@ -10,6 +10,7 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:kroma_sport/api/api_checker.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/home.dart';
+import 'package:kroma_sport/bloc/suggestion.dart';
 import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
@@ -41,6 +42,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   ScrollController _homeScrollController = ScrollController();
+
+  late HomeCubit _homeCubit;
+  late SuggestionCubit _suggestionCubit;
 
   final RegExp urlRegExp = RegExp(
     r"((https?:www\.)|(https?:\/\/)|(www\.))?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?",
@@ -309,17 +313,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 //}),
               ],
               onRefresh: () async {
-                BlocProvider.of<HomeCubit>(context).onRefresh();
+                _homeCubit.onRefresh();
+                _suggestionCubit.onLoad();
               },
               onLoad: () async {
                 await Future.delayed(Duration(milliseconds: 300));
-                BlocProvider.of<HomeCubit>(context).onLoadMore();
+                _homeCubit.onLoadMore();
               },
             ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void initState() { 
+    super.initState();
+    _homeCubit = context.read<HomeCubit>();
+    _suggestionCubit = context.read<SuggestionCubit>();
   }
 
   Future<bool> checkAndRequestPhotoPermissions() async {
