@@ -40,13 +40,14 @@ class KSTextButtonBottomSheet extends StatelessWidget {
                 child: Icon(
                   icon,
                   color: ColorResources.getSecondaryIconColor(context),
-                  size: 20.0,
+                  size: 22.0,
                 ),
               ),
             Text(
               title,
               style: titleTextStyle ?? Theme.of(context).textTheme.bodyText1,
-            )
+              // strutStyle: StrutStyle(fontSize: 20.0),
+            ),
           ],
         ),
       ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/suggestion.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
@@ -105,6 +104,7 @@ class _FollowCellState extends State<FollowCell> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Avatar(
+                key: GlobalKey(debugLabel: 'avatar${widget.user.id}'),
                 radius: 32.0,
                 user: widget.user,
                 onTap: (_) {},

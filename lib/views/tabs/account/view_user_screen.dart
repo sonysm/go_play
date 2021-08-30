@@ -355,6 +355,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                         return Padding(
                           padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                           child: HomeFeedCell(
+                            index: index,
                             post: post,
                             isAvatarSelectable: false,
                             isHomeFeed: false,

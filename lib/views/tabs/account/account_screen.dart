@@ -313,7 +313,8 @@ class _AccountScreenState extends State<AccountScreen>
                         return Padding(
                           padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                           child: HomeFeedCell(
-                            key: Key(post.id.toString()),
+                            index: index,
+                            key: Key("home${post.id}"),
                             post: post,
                             isAvatarSelectable: false,
                           ),

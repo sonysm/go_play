@@ -248,4 +248,13 @@ class HomeCubit extends Cubit<HomeData> {
       }
     }
   }
+
+  Future<void> onHidePost(int postId) async {
+    if (state.status == DataState.Loaded) {
+      final updatedList =
+          state.data.where((element) => element.id != postId).toList();
+
+      emit(state.copyWith(data: updatedList));
+    }
+  }
 }

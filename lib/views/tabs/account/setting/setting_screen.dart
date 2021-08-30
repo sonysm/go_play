@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/theme.dart';
 import 'package:kroma_sport/repositories/user_repository.dart';
 import 'package:kroma_sport/themes/colors.dart';
@@ -24,6 +26,8 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   final userRepository = UserRepository();
+
+  KSHttpClient _ksClient = KSHttpClient();
 
   Widget buildNavbar() {
     return SliverAppBar(
@@ -68,14 +72,26 @@ class _SettingScreenState extends State<SettingScreen> {
                   message: 'Are you sure you want to logout?',
                   onYesPressed: () {
                     showKSLoading(context);
-                    userRepository.deleteToken();
-                    userRepository.deleteHeaderToken();
-                    Future.delayed(Duration(seconds: 1)).then(
-                      (value) {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, LoginScreen.tag, (route) => false);
-                      },
-                    );
+                    _ksClient.postApi('/user/logout').then((value) {
+                      if (value != null && value is! HttpResult) {
+                        userRepository.deleteToken();
+                        userRepository.deleteHeaderToken();
+                        Future.delayed(Duration(seconds: 1)).then(
+                          (value) {
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, LoginScreen.tag, (route) => false);
+                          },
+                        );
+                      }
+                    });
+                    // userRepository.deleteToken();
+                    // userRepository.deleteHeaderToken();
+                    // Future.delayed(Duration(seconds: 1)).then(
+                    //   (value) {
+                    //     Navigator.pushNamedAndRemoveUntil(
+                    //         context, LoginScreen.tag, (route) => false);
+                    //   },
+                    // );
                   },
                 );
               },

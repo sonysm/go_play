@@ -70,26 +70,31 @@ class ColorLetterProfile extends StatefulWidget {
   _ColorLetterProfileState createState() => _ColorLetterProfileState();
 }
 
-class _ColorLetterProfileState extends State<ColorLetterProfile> with AutomaticKeepAliveClientMixin {
+class _ColorLetterProfileState extends State<ColorLetterProfile>
+    with AutomaticKeepAliveClientMixin {
   late String _name;
 
   Random _random = Random();
+
+  late Color _color;
 
   @override
   void initState() {
     super.initState();
     _name = widget.user.getFullname().substring(0, 1).toUpperCase();
+    _color = Color.fromARGB(
+      _random.nextInt(256),
+      _random.nextInt(256),
+      _random.nextInt(256),
+      _random.nextInt(256),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
-      color: Color.fromARGB(
-        _random.nextInt(256),
-        _random.nextInt(256),
-        _random.nextInt(256),
-        _random.nextInt(256),
-      ),
+      color: _color,
       alignment: Alignment.center,
       child: Text(
         _name,

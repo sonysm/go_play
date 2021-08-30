@@ -93,13 +93,14 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                     color: isLight(context) ? Colors.blueGrey : Colors.white70),
               ),
             ),
-            ListTile(
-              dense: true,
-              horizontalTitleGap: 0,
-              leading: Icon(Feather.map_pin, size: 20.0),
-              title: Text(meetup!.activityLocation!.name,
-                  style: Theme.of(context).textTheme.bodyText1),
-            ),
+            if (meetup!.activityLocation != null)
+              ListTile(
+                dense: true,
+                horizontalTitleGap: 0,
+                leading: Icon(Feather.map_pin, size: 20.0),
+                title: Text(meetup!.activityLocation!.name,
+                    style: Theme.of(context).textTheme.bodyText1),
+              ),
             ListTile(
               dense: true,
               horizontalTitleGap: 0,
@@ -190,37 +191,39 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
 
   Widget buildMap() {
     return SliverToBoxAdapter(
-      child: Container(
-        height: 200.0,
-        color: Colors.grey[200],
-        width: AppSize(context).appWidth(100),
-        child: isShowMap
-            ? GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(
-                    double.parse(meetup!.activityLocation!.latitude),
-                    double.parse(meetup!.activityLocation!.longitude),
-                  ),
-                  zoom: 15.0,
-                ),
-                onMapCreated: (controller) {},
-                zoomGesturesEnabled: false,
-                scrollGesturesEnabled: false,
-                zoomControlsEnabled: false,
-                myLocationButtonEnabled: false,
-                myLocationEnabled: false,
-                markers: <Marker>{
-                  Marker(
-                    markerId: MarkerId('venue'),
-                    position: LatLng(
-                      double.parse(meetup!.activityLocation!.latitude),
-                      double.parse(meetup!.activityLocation!.longitude),
-                    ),
-                  ),
-                },
-              )
-            : SizedBox(),
-      ),
+      child: meetup!.activityLocation != null
+          ? Container(
+              height: 200.0,
+              color: Colors.grey[200],
+              width: AppSize(context).appWidth(100),
+              child: isShowMap
+                  ? GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(
+                          double.parse(meetup!.activityLocation!.latitude),
+                          double.parse(meetup!.activityLocation!.longitude),
+                        ),
+                        zoom: 15.0,
+                      ),
+                      onMapCreated: (controller) {},
+                      zoomGesturesEnabled: false,
+                      scrollGesturesEnabled: false,
+                      zoomControlsEnabled: false,
+                      myLocationButtonEnabled: false,
+                      myLocationEnabled: false,
+                      markers: <Marker>{
+                        Marker(
+                          markerId: MarkerId('venue'),
+                          position: LatLng(
+                            double.parse(meetup!.activityLocation!.latitude),
+                            double.parse(meetup!.activityLocation!.longitude),
+                          ),
+                        ),
+                      },
+                    )
+                  : SizedBox(),
+            )
+          : SizedBox(),
     );
   }
 

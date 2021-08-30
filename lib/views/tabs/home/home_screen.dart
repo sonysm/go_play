@@ -232,6 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: HomeFeedCell(
+                        index: index,
                         post: post,
                         key: Key("home${post.id}"),
                         isHomeFeed: true,
@@ -328,7 +329,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     _homeCubit = context.read<HomeCubit>();
     _suggestionCubit = context.read<SuggestionCubit>();

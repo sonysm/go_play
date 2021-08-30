@@ -321,27 +321,30 @@ class _MeetupCellState extends State<MeetupCell> {
                       ),
                     ],
                   ),
-                  8.height,
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Feather.map_pin,
-                        size: 16.0,
-                        color: isLight(context)
-                            ? Colors.grey[700]
-                            : Colors.grey[300]!,
+                  if (meetup.activityLocation != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Feather.map_pin,
+                            size: 16.0,
+                            color: isLight(context)
+                                ? Colors.grey[700]
+                                : Colors.grey[300]!,
+                          ),
+                          8.width,
+                          Flexible(
+                            child: Text(
+                              meetup.activityLocation!.name,
+                              style: Theme.of(context).textTheme.bodyText2,
+                              strutStyle: StrutStyle(fontSize: 14),
+                            ),
+                          ),
+                        ],
                       ),
-                      8.width,
-                      Flexible(
-                        child: Text(
-                          meetup.activityLocation!.name,
-                          style: Theme.of(context).textTheme.bodyText2,
-                          strutStyle: StrutStyle(fontSize: 14),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
                   meetup.book != null
                       ? Padding(
                           padding: const EdgeInsets.only(top: 8.0),
