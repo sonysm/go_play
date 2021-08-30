@@ -107,9 +107,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   Widget buildTotalComment(int total) {
     return total > 0
         ? Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Text(total > 1 ? '$total comments' : '$total comment'),
-        )
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Text(total > 1 ? '$total comments' : '$total comment'),
+          )
         : SizedBox();
   }
 
@@ -210,8 +210,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                                         });
                                   },
                                   child: CachedNetworkImage(
-                                      imageUrl:
-                                          post.image!.elementAt(index).name, fit: BoxFit.cover,),
+                                    imageUrl: post.image!.elementAt(index).name,
+                                    fit: BoxFit.cover,
+                                  ),
                                 );
                               },
                             ),
@@ -492,67 +493,47 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
 
   void showOptionActionBottomSheet(Post post) {
     FocusScope.of(context).unfocus();
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).primaryColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+    showKSBottomSheet(context, children: [
+      if (isMe(post.owner.id))
+        KSTextButtonBottomSheet(
+          title: 'Edit Post',
+          icon: Feather.edit,
+          onTab: () async {
+            dismissScreen(context);
+            if (post.type == PostType.feed) {
+              await launchScreen(context, CreatePostScreen.tag,
+                  arguments: post);
+              getPostDetail();
+            } else if (post.type == PostType.activity) {
+              // launchScreen(context, CreatePostScreen.tag,
+              //   arguments: post);
+            }
+          },
+        ),
+      if (isMe(post.owner.id))
+        KSTextButtonBottomSheet(
+          title: 'Delete Post',
+          icon: Feather.trash_2,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message: 'Are you sure you want to delete this post?',
+              onYesPressed: () {
+                deletePost();
+              },
+            );
+          },
+        ),
+      KSTextButtonBottomSheet(
+        title: 'Report Post',
+        icon: Feather.info,
+        onTab: () {
+          dismissScreen(context);
+          showReportScreen(context);
+        },
       ),
-      builder: (context) {
-        return SafeArea(
-          maintainBottomViewPadding: true,
-          child: Container(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                bottomSheetBar(context),
-                if (isMe(post.owner.id))
-                  KSTextButtonBottomSheet(
-                    title: 'Edit Post',
-                    icon: Feather.edit,
-                    onTab: () async {
-                      dismissScreen(context);
-                      if (post.type == PostType.feed) {
-                        await launchScreen(context, CreatePostScreen.tag,
-                            arguments: post);
-                        getPostDetail();
-                      } else if (post.type == PostType.activity) {
-                        // launchScreen(context, CreatePostScreen.tag,
-                        //   arguments: post);
-                      }
-                    },
-                  ),
-                if (isMe(post.owner.id))
-                  KSTextButtonBottomSheet(
-                    title: 'Delete Post',
-                    icon: Feather.trash_2,
-                    onTab: () {
-                      dismissScreen(context);
-                      showKSConfirmDialog(
-                        context,
-                        message: 'Are you sure you want to delete this post?',
-                        onYesPressed: () {
-                          deletePost();
-                        },
-                      );
-                    },
-                  ),
-                KSTextButtonBottomSheet(
-                  title: 'Report Post',
-                  icon: Feather.info,
-                  onTab: () {
-                    dismissScreen(context);
-                    showReportScreen(context);
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    ]);
   }
 
   void getPostDetail() async {

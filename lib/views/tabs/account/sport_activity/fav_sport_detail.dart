@@ -312,7 +312,8 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                 itemCount: _favSport.sport.attribute!.length,
               )
             : Padding(
-                padding: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 50.0, horizontal: 16.0),
                 child: Text('No information', textAlign: TextAlign.center),
               ),
       ),
@@ -388,41 +389,21 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
   }
 
   void showOptionActionBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).primaryColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+    showKSBottomSheet(context, children: [
+      KSTextButtonBottomSheet(
+        title: 'Remove from favorite sport',
+        icon: Feather.info,
+        onTab: () {
+          dismissScreen(context);
+          showKSConfirmDialog(
+            context,
+            message:
+                'Are you sure you want to remove this sport from your favorite?',
+            onYesPressed: () => removeFavSport(),
+          );
+        },
       ),
-      builder: (context) {
-        return SafeArea(
-          maintainBottomViewPadding: true,
-          child: Container(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                bottomSheetBar(context),
-                KSTextButtonBottomSheet(
-                  title: 'Remove from favorite sport',
-                  icon: Feather.info,
-                  onTab: () {
-                    dismissScreen(context);
-                    showKSConfirmDialog(
-                      context,
-                      message:
-                          'Are you sure you want to remove this sport from your favorite?',
-                      onYesPressed: () => removeFavSport(),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    ]);
   }
 
   void removeFavSport() async {
@@ -534,15 +515,16 @@ class FavSportFlexibleAppbar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             favSport.sport.icon != null
-                  ? SizedBox(
-                      width: 80,
-                      height: 80,
-                      child: CacheImage(url: favSport.sport.icon!),
-                    ) : SvgPicture.asset(
-              svgSoccerBall2,
-              width: 80,
-              height: 80,
-            ),
+                ? SizedBox(
+                    width: 80,
+                    height: 80,
+                    child: CacheImage(url: favSport.sport.icon!),
+                  )
+                : SvgPicture.asset(
+                    svgSoccerBall2,
+                    width: 80,
+                    height: 80,
+                  ),
             24.height,
             Text(
               'Skill Level',

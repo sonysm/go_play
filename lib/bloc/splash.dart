@@ -31,6 +31,8 @@ class SplashCubit extends Cubit<SplashState> {
         } else {
           emit(SplashState.New);
         }
+      } else {
+        emit(SplashState.New);
       }
     } else {
       emit(SplashState.New);

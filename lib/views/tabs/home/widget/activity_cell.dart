@@ -363,51 +363,32 @@ class _ActivityCellState extends State<ActivityCell> {
   }
 
   void showOptionActionBottomSheet(Post post) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).primaryColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          maintainBottomViewPadding: true,
-          child: Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                bottomSheetBar(context),
-                if (isMe(post.owner.id))
-                  KSTextButtonBottomSheet(
-                    title: 'Delete Post',
-                    icon: Feather.trash_2,
-                    onTab: () {
-                      dismissScreen(context);
-                      showKSConfirmDialog(
-                        context,
-                        message: 'Are you sure you want to delete this post?',
-                        onYesPressed: () {
-                          deletePost(post.id);
-                        },
-                      );
-                    },
-                  ),
-                if (!isMe(post.owner.id))
-                  KSTextButtonBottomSheet(
-                    title: 'Report Post',
-                    icon: Feather.info,
-                    onTab: () {
-                      dismissScreen(context);
-                      showReportScreen(context);
-                    },
-                  ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    showKSBottomSheet(context, children: [
+      if (isMe(post.owner.id))
+        KSTextButtonBottomSheet(
+          title: 'Delete Post',
+          icon: Feather.trash_2,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message: 'Are you sure you want to delete this post?',
+              onYesPressed: () {
+                deletePost(post.id);
+              },
+            );
+          },
+        ),
+      if (!isMe(post.owner.id))
+        KSTextButtonBottomSheet(
+          title: 'Report Post',
+          icon: Feather.info,
+          onTab: () {
+            dismissScreen(context);
+            showReportScreen(context);
+          },
+        ),
+    ]);
   }
 
   KSHttpClient ksClient = KSHttpClient();

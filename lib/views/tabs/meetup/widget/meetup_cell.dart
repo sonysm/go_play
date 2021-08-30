@@ -418,61 +418,41 @@ class _MeetupCellState extends State<MeetupCell> {
   }
 
   void showOptionActionBottomSheet(Post post) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).primaryColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+    showKSBottomSheet(context, children: [
+      if (isMe(meetup.owner.id) && isMeetupAvailable())
+        KSTextButtonBottomSheet(
+          title: 'Edit',
+          icon: Feather.edit,
+          onTab: () {
+            dismissScreen(context);
+            launchScreen(context, OragnizeActivityScreen.tag,
+                arguments: meetup);
+          },
+        ),
+      if (isMe(post.owner.id) && meetup.status == PostStatus.active)
+        KSTextButtonBottomSheet(
+          title: 'Cancel Meetup',
+          icon: Feather.x,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message: 'Are you sure you want to cancel this Meetup?',
+              onYesPressed: () {
+                // deleteMeetup();
+                cancelMeetup();
+              },
+            );
+          },
+        ),
+      KSTextButtonBottomSheet(
+        title: 'Report Meetup',
+        icon: Feather.info,
+        onTab: () {
+          dismissScreen(context);
+        },
       ),
-      builder: (context) {
-        return SafeArea(
-          maintainBottomViewPadding: true,
-          child: Container(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                bottomSheetBar(context),
-                if (isMe(meetup.owner.id) && isMeetupAvailable())
-                  KSTextButtonBottomSheet(
-                    title: 'Edit',
-                    icon: Feather.edit,
-                    onTab: () {
-                      dismissScreen(context);
-                      launchScreen(context, OragnizeActivityScreen.tag,
-                          arguments: meetup);
-                    },
-                  ),
-                if (isMe(post.owner.id) && meetup.status == PostStatus.active)
-                  KSTextButtonBottomSheet(
-                    title: 'Cancel Meetup',
-                    icon: Feather.x,
-                    onTab: () {
-                      dismissScreen(context);
-                      showKSConfirmDialog(
-                        context,
-                        message: 'Are you sure you want to cancel this Meetup?',
-                        onYesPressed: () {
-                          // deleteMeetup();
-                          cancelMeetup();
-                        },
-                      );
-                    },
-                  ),
-                KSTextButtonBottomSheet(
-                  title: 'Report Meetup',
-                  icon: Feather.info,
-                  onTab: () {
-                    dismissScreen(context);
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    ]);
   }
 
   void deleteMeetup() async {

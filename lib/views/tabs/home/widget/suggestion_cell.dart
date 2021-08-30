@@ -104,7 +104,11 @@ class _FollowCellState extends State<FollowCell> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Avatar(radius: 32.0, user: widget.user),
+              Avatar(
+                radius: 32.0,
+                user: widget.user,
+                onTap: (_) {},
+              ),
               SizedBox(height: 8.0),
               Text(
                 '${widget.user.getFullname()}',

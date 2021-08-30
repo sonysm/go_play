@@ -312,62 +312,61 @@ class _HomeFeedCellState extends State<HomeFeedCell> {
   }
 
   void showOptionActionBottomSheet(Post post) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).primaryColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          maintainBottomViewPadding: true,
-          child: Container(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                bottomSheetBar(context),
-                if (isMe(post.owner.id))
-                  KSTextButtonBottomSheet(
-                    title: 'Edit Post',
-                    icon: Feather.edit,
-                    onTab: () {
-                      dismissScreen(context);
-                      launchScreen(context, CreatePostScreen.tag,
-                          arguments: post);
-                    },
-                  ),
-                if (isMe(post.owner.id))
-                  KSTextButtonBottomSheet(
-                    title: 'Delete Post',
-                    icon: Feather.trash_2,
-                    onTab: () {
-                      dismissScreen(context);
-                      showKSConfirmDialog(
-                        context,
-                        message: 'Are you sure you want to delete this post?',
-                        onYesPressed: () {
-                          deletePost(post.id);
-                        },
-                      );
-                    },
-                  ),
-                if (!isMe(post.owner.id))
-                  KSTextButtonBottomSheet(
-                    title: 'Report Post',
-                    icon: Feather.info,
-                    onTab: () {
-                      dismissScreen(context);
-                      showReportScreen(context);
-                    },
-                  ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    showKSBottomSheet(context, children: [
+      if (isMe(post.owner.id))
+        KSTextButtonBottomSheet(
+          title: 'Edit Post',
+          icon: Feather.edit,
+          onTab: () {
+            dismissScreen(context);
+            launchScreen(context, CreatePostScreen.tag, arguments: post);
+          },
+        ),
+      if (isMe(post.owner.id))
+        KSTextButtonBottomSheet(
+          title: 'Delete Post',
+          icon: Feather.trash_2,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message: 'Are you sure you want to delete this post?',
+              onYesPressed: () {
+                deletePost(post.id);
+              },
+            );
+          },
+        ),
+      if (!isMe(post.owner.id)) ...[
+        KSTextButtonBottomSheet(
+          title: 'Unfollow',
+          icon: Feather.user_minus,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message:
+                  'Are you sure you want to unfollow ${post.owner.getFullname()}?',
+              onYesPressed: () async {
+                var res =
+                    await ksClient.postApi('/user/unfollow/${post.owner.id}');
+                if (res != null) {
+                  if (res is! HttpResult) {}
+                }
+              },
+            );
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: 'Report Post',
+          icon: Feather.info,
+          onTab: () {
+            dismissScreen(context);
+            showReportScreen(context);
+          },
+        ),
+      ]
+    ]);
   }
 
   void deletePost(int postId) async {

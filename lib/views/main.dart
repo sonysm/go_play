@@ -145,37 +145,6 @@ class _MainViewState extends State<MainView> {
 
   void createActivityScreen() {
     launchScreen(context, OrganizeListScreen.tag);
-    /*showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).primaryColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          maintainBottomViewPadding: true,
-          child: Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                bottomSheetBar(context),
-                KSTextButtonBottomSheet(
-                  title: 'Organize activity',
-                  icon: Feather.activity,
-                  onTab: () {
-                    dismissScreen(context);
-                    launchScreen(context, OrganizeListScreen.tag);
-                  },
-                ),
-                Divider(indent: 16.0, endIndent: 16.0, height: 0),
-                50.height,
-              ],
-            ),
-          ),
-        );
-      },
-    );*/
   }
 
   setupFirebaseMessage() {
