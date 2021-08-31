@@ -28,6 +28,7 @@ import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_round_button.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 
@@ -351,7 +352,7 @@ class _HomeFeedCellState extends State<HomeFeedCell>
     );
   }
 
-  void launchFeedDetailScreen(Post post, [bool isCommentTap = false]) async {
+  void launchFeedDetailScreen(Post post, [bool isCommentTap = false]) {
     launchScreen(context, FeedDetailScreen.tag, arguments: {
       'post': post,
       'isCommentTap': isCommentTap,
@@ -390,15 +391,17 @@ class _HomeFeedCellState extends State<HomeFeedCell>
       if (!isMe(post.owner.id)) ...[
         KSTextButtonBottomSheet(
           title: 'Hide Post',
-          icon: Feather.x_octagon,
+          icon: LineIcons.minusCircle,
+          iconSize: 24.0,
           onTab: () {
             dismissScreen(context);
             showKSConfirmDialog(
               context,
               message: 'Are you sure you want to hide this post?',
               onYesPressed: () {
-                isHide = true;
-                setState(() {});
+                _homeCubit.onHidePost(post.id);
+                // isHide = true;
+                // setState(() {});
                 // _homeCubit.onHidePost(post.id);
                 // var res =
                 //     await ksClient.postApi('/user/unfollow/${post.owner.id}');
@@ -407,13 +410,41 @@ class _HomeFeedCellState extends State<HomeFeedCell>
                 //     _homeCubit.onHidePost(post.owner.id);
                 //   }
                 // }
+
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //   SnackBar(
+                //     content: Text(
+                //       'This post is no longer show to you.',
+                //       style: TextStyle(color: Colors.white),
+                //     ),
+                //     backgroundColor: Colors.black87,
+                //     action: SnackBarAction(
+                //         label: 'Undo',
+                //         onPressed: () {
+                //           _homeCubit.onUndoHidingPost(
+                //               index: widget.index, post: post);
+                //         }),
+                //   ),
+                // );
+
+                showKSSnackBar(
+                  context,
+                  title: 'This post is no longer show to you.',
+                  action: true,
+                  actionTitle: 'Undo',
+                  onAction: () {
+                    _homeCubit.onUndoHidingPost(
+                        index: widget.index, post: post);
+                  },
+                );
               },
             );
           },
         ),
         KSTextButtonBottomSheet(
           title: 'Unfollow ${post.owner.getFullname()}',
-          icon: Feather.user_x,
+          icon: LineIcons.userMinus,
+          iconSize: 24.0,
           onTab: () {
             dismissScreen(context);
             showKSConfirmDialog(
@@ -431,8 +462,34 @@ class _HomeFeedCellState extends State<HomeFeedCell>
           },
         ),
         KSTextButtonBottomSheet(
+          title: 'Block ${post.owner.getFullname()}',
+          icon: LineIcons.ban,
+          iconSize: 24.0,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message:
+                  'That\'t person won\'t be able to follow or see any of your activity. Are you sure you want to block ${post.owner.getFullname()}?',
+              onYesPressed: () {
+                // var res =
+                //     await ksClient.postApi('/user/unfollow/${post.owner.id}');
+                // if (res != null) {
+                //   if (res is! HttpResult) {}
+                // }
+                showKSLoading(context);
+                Future.delayed(Duration(seconds: 1), () {
+                  _homeCubit.onBlockUser(post.owner.id);
+                  dismissScreen(context);
+                });
+              },
+            );
+          },
+        ),
+        KSTextButtonBottomSheet(
           title: 'Report Post',
-          icon: Feather.info,
+          icon: LineIcons.infoCircle,
+          iconSize: 24.0,
           onTab: () {
             dismissScreen(context);
             showReportScreen(context);

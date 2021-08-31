@@ -11,6 +11,7 @@ import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/about_screen.dart';
+import 'package:kroma_sport/views/tabs/account/setting/block_account_screen.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,7 +32,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Widget buildNavbar() {
     return SliverAppBar(
-      title: Text('Settings'),
+      title: Text('Settings & Privacy'),
       titleSpacing: 0,
     );
   }
@@ -47,6 +48,17 @@ class _SettingScreenState extends State<SettingScreen> {
               onTap: changeTheme,
               title: Text(
                 'Change Theme',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+          ),
+          Container(
+            color: Theme.of(context).primaryColor,
+            margin: EdgeInsets.only(top: 4.0),
+            child: ListTile(
+              onTap: () => launchScreen(context, BlockAccountScreen.tag),
+              title: Text(
+                'Blocked Accounts',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ),

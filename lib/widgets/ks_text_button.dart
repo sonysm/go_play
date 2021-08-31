@@ -7,6 +7,7 @@ class KSTextButtonBottomSheet extends StatelessWidget {
   final TextStyle? titleTextStyle;
   final double? height;
   final IconData? icon;
+  final double? iconSize;
   final VoidCallback? onTab;
 
   const KSTextButtonBottomSheet({
@@ -15,6 +16,7 @@ class KSTextButtonBottomSheet extends StatelessWidget {
     this.titleTextStyle,
     this.height = 54.0,
     this.icon,
+    this.iconSize = 22.0,
     this.onTab,
   }) : super(key: key);
 
@@ -39,14 +41,13 @@ class KSTextButtonBottomSheet extends StatelessWidget {
                 padding: EdgeInsets.only(right: 16.0),
                 child: Icon(
                   icon,
-                  color: ColorResources.getSecondaryIconColor(context),
-                  size: 22.0,
+                  color: Theme.of(context).textTheme.bodyText1!.color,
+                  size: iconSize,
                 ),
               ),
             Text(
               title,
               style: titleTextStyle ?? Theme.of(context).textTheme.bodyText1,
-              // strutStyle: StrutStyle(fontSize: 20.0),
             ),
           ],
         ),

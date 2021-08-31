@@ -11,6 +11,7 @@ import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/edit_profile_screen.dart';
 import 'package:kroma_sport/views/tabs/account/follow_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/about_screen.dart';
+import 'package:kroma_sport/views/tabs/account/setting/block_account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sport_detail.dart';
@@ -176,6 +177,8 @@ class RouteGenerator {
                 ));
       case AboutScreen.tag:
         return KSPageRoute(builder: (_) => AboutScreen());
+      case BlockAccountScreen.tag:
+        return MaterialPageRoute(builder: (_) => BlockAccountScreen());
       default:
         return _errorRoute();
     }

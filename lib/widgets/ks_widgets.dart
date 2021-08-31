@@ -155,3 +155,36 @@ Future generalDialog(BuildContext context,
             actions: actions),
       ),
     );
+
+/// Set action to true to show SnackBar action.
+void showKSSnackBar(
+  BuildContext context, {
+  required String title,
+  Color titleColor = Colors.white,
+  Color backgroundColor = Colors.black87,
+  bool action = false,
+  String actionTitle = '',
+  Color actionTitleColor = Colors.white,
+  VoidCallback? onAction,
+}) {
+  final scaffold = ScaffoldMessenger.of(context);
+  scaffold.showSnackBar(
+    SnackBar(
+      elevation: 0,
+      backgroundColor: backgroundColor, //Color(0xFF696969),
+      behavior: SnackBarBehavior.floating,
+      content: Text(title, style: Theme.of(context).textTheme.bodyText2?.copyWith(color: titleColor)),
+      margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      action: action
+          ? SnackBarAction(
+              label: action ? actionTitle : '',
+              textColor: actionTitleColor,
+              onPressed: () {
+                scaffold.hideCurrentSnackBar();
+                onAction!();
+              })
+          : null,
+    ),
+  );
+}

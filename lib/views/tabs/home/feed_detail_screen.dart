@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -441,21 +442,33 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  buildNavbar(),
-                  buildDetailBody(),
-                  SliverPadding(padding: EdgeInsets.only(bottom: 60.0)),
-                ],
-              ),
-              Positioned(bottom: 0, child: _bottomCommentAction())
-            ],
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle(
+          statusBarIconBrightness:
+              Theme.of(context).brightness == Brightness.light
+                  ? Brightness.dark
+                  : Brightness.light,
+          systemNavigationBarColor:
+              Theme.of(context).brightness == Brightness.light
+                  ? Color.fromRGBO(113, 113, 113, 1)
+                  : Color.fromRGBO(15, 15, 15, 1),
+        ),
+        child: Scaffold(
+          backgroundColor: Theme.of(context).primaryColor,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    buildNavbar(),
+                    buildDetailBody(),
+                    SliverPadding(padding: EdgeInsets.only(bottom: 60.0)),
+                  ],
+                ),
+                Positioned(bottom: 0, child: _bottomCommentAction())
+              ],
+            ),
           ),
         ),
       ),

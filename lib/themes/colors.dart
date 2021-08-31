@@ -45,7 +45,7 @@ class ColorResources {
   }
 
   static Color getSecondaryIconColor(BuildContext context) {
-    return isLight(context) ? Colors.blueGrey : Colors.white;
+    return isLight(context) ? Colors.black87 : Colors.white;
   }
 
   static Color getBlueGrey(BuildContext context) {

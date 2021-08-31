@@ -45,9 +45,7 @@ class _ReportScreenState extends State<ReportScreen> {
               4.height,
               Text(
                 'You can report the post after selecting a problem',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1,
+                style: Theme.of(context).textTheme.bodyText1,
               ),
               8.height,
               Wrap(
@@ -77,12 +75,12 @@ class _ReportScreenState extends State<ReportScreen> {
                         ),
                         child: Text(
                           e,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              ?.copyWith(
+                          style:
+                              Theme.of(context).textTheme.bodyText1?.copyWith(
                                   color: problemSelected != e
-                                      ? isLight(context) ? blackColor : whiteColor
+                                      ? isLight(context)
+                                          ? blackColor
+                                          : whiteColor
                                       : whiteColor),
                         ),
                       ),
@@ -104,7 +102,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       showKSLoading(context);
                       Future.delayed(Duration(milliseconds: 700)).then((_) {
                         dismissScreen(context);
-                        dismissScreen(context);
+                        dismissScreen(context, true);
                       });
                     }
                   : null,
@@ -132,8 +130,8 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 }
 
-void showReportScreen(BuildContext context) {
-  showMaterialModalBottomSheet(
+void showReportScreen(BuildContext context) async {
+  await showMaterialModalBottomSheet<bool>(
     context: context,
     builder: (context) => Container(
       child: Scaffold(
@@ -143,12 +141,24 @@ void showReportScreen(BuildContext context) {
           elevation: 0.5,
           leading: IconButton(
               onPressed: () {
-                dismissScreen(context);
+                dismissScreen(context, false);
               },
               icon: Icon(Icons.close)),
         ),
         body: ReportScreen(),
       ),
     ),
-  );
+  ).then((value) {
+    if (value != null && value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'You report a post.',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.black87,
+        ),
+      );
+    }
+  });
 }

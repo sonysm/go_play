@@ -251,10 +251,43 @@ class HomeCubit extends Cubit<HomeData> {
 
   Future<void> onHidePost(int postId) async {
     if (state.status == DataState.Loaded) {
+      _client.postApi('/user/activity/hide_post/$postId');
+
       final updatedList =
           state.data.where((element) => element.id != postId).toList();
 
       emit(state.copyWith(data: updatedList));
+    }
+  }
+
+  void onUndoHidingPost({required int index, required Post post}) {
+    if (state.status == DataState.Loaded) {
+      _client.postApi('/user/activity/show/hidden_post/${post.id}');
+
+      state.data.insert(index, post);
+      emit(state.copyWith(data: state.data, reload: !state.reload));
+    }
+  }
+
+  void onBlockUser(int userId) {
+    if (state.status == DataState.Loaded) {
+      _client.postApi('/user/activity/block/$userId');
+
+      final updatedList =
+          state.data.where((element) => element.owner.id != userId).toList();
+
+      emit(state.copyWith(data: updatedList));
+    }
+  }
+
+  void onUnblockUser(int userId) {
+    if (state.status == DataState.Loaded) {
+      // _client.postApi('/user/activity/block/$userId');
+
+      // final updatedList =
+      //     state.data.where((element) => element.owner.id != userId).toList();
+
+      // emit(state.copyWith(data: updatedList));
     }
   }
 }

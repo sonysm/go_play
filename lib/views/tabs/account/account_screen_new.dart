@@ -623,7 +623,7 @@ class _AccountScreen2State extends State<AccountScreen2>
               // size: 20.0,
             ),
             title: Text(
-              'Setting',
+              'Settings & Privacy',
               style:
                   Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 18),
             ),
