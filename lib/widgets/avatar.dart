@@ -9,30 +9,68 @@ import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 
-class Avatar extends StatelessWidget {
+class Avatar extends StatefulWidget {
   final double radius;
   final User user;
   final bool isSelectable;
+  final Color? backgroundcolor;
   final Function(User)? onTap;
+  final Function(Color)? backgroundColorCallback;
 
   const Avatar({
     Key? key,
     required this.radius,
     required this.user,
     this.isSelectable = true,
+    this.backgroundcolor,
     this.onTap,
+    this.backgroundColorCallback,
   }) : super(key: key);
+
+  @override
+  _AvatarState createState() => _AvatarState();
+}
+
+class _AvatarState extends State<Avatar> {
+  Random _random = Random();
+
+  late Color _color;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.backgroundcolor != null) {
+      _color = widget.backgroundcolor!;
+    } else {
+      _color = Color.fromARGB(
+        _random.nextInt(256),
+        _random.nextInt(256),
+        _random.nextInt(256),
+        _random.nextInt(256),
+      );
+    }
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (widget.backgroundColorCallback != null) {
+        widget.backgroundColorCallback!(_color);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: isSelectable
+      onTap: widget.isSelectable
           ? () async {
-              if (user.id != KS.shared.user.id) {
+              if (widget.user.id != KS.shared.user.id) {
                 var data = await launchScreen(
-                    context, ViewUserProfileScreen.tag,
-                    arguments: user);
+                    context, ViewUserProfileScreen.tag, arguments: {
+                  'user': widget.user,
+                  'backgroundColor': _color
+                });
                 if (data != null) {
-                  onTap!(data as User);
+                  if (widget.onTap != null) {
+                    widget.onTap!(data['user'] as User);
+                  }
                 }
               } else {
                 launchScreen(context, AccountScreen.tag);
@@ -40,21 +78,21 @@ class Avatar extends StatelessWidget {
             }
           : null,
       child: CircleAvatar(
-        radius: radius,
+        radius: widget.radius,
         backgroundColor: Colors.grey[200],
         // backgroundImage: AssetImage('assets/images/user.jpg'),
         child: ClipOval(
           child: SizedBox(
-            width: radius * 2,
-            height: radius * 2,
-            child: user.photo != null
+            width: widget.radius * 2,
+            height: widget.radius * 2,
+            child: widget.user.photo != null
                 ? CachedNetworkImage(
-                    imageUrl: user.photo ?? '',
+                    imageUrl: widget.user.photo ?? '',
                     errorWidget: (context, s, e) {
                       return Image.asset('assets/images/user.jpg');
                     },
                   )
-                : ColorLetterProfile(user: user),
+                : ColorLetterProfile(user: widget.user, color: _color),
           ),
         ),
       ),
@@ -63,8 +101,13 @@ class Avatar extends StatelessWidget {
 }
 
 class ColorLetterProfile extends StatefulWidget {
+  final Color? color;
   final User user;
-  const ColorLetterProfile({Key? key, required this.user}) : super(key: key);
+  const ColorLetterProfile({
+    Key? key,
+    required this.user,
+    this.color,
+  }) : super(key: key);
 
   @override
   _ColorLetterProfileState createState() => _ColorLetterProfileState();
@@ -74,27 +117,27 @@ class _ColorLetterProfileState extends State<ColorLetterProfile>
     with AutomaticKeepAliveClientMixin {
   late String _name;
 
-  Random _random = Random();
+  // Random _random = Random();
 
-  late Color _color;
+  // late Color _color;
 
   @override
   void initState() {
     super.initState();
     _name = widget.user.getFullname().substring(0, 1).toUpperCase();
-    _color = Color.fromARGB(
-      _random.nextInt(256),
-      _random.nextInt(256),
-      _random.nextInt(256),
-      _random.nextInt(256),
-    );
+    // _color =  Color.fromARGB(
+    //   _random.nextInt(256),
+    //   _random.nextInt(256),
+    //   _random.nextInt(256),
+    //   _random.nextInt(256),
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
-      color: _color,
+      color: widget.color,
       alignment: Alignment.center,
       child: Text(
         _name,

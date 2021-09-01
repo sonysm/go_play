@@ -242,7 +242,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: ActivityCell(
-                          post: post, key: Key(post.id.toString())),
+                        index: index,
+                        post: post,
+                        key: Key(
+                          post.id.toString(),
+                        ),
+                      ),
                     );
                   }
                   return SizedBox();

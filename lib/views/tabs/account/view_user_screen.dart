@@ -1,8 +1,11 @@
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/home.dart';
+import 'package:kroma_sport/bloc/suggestion.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -17,22 +20,27 @@ import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
+import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 import 'package:kroma_sport/widgets/pull_to_refresh_header.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ViewUserProfileScreen extends StatefulWidget {
   static const String tag = '/viewUserProfileScreen';
 
   final User user;
+  final Color? profileBackgroundColor;
 
   ViewUserProfileScreen({
     Key? key,
     required this.user,
+    this.profileBackgroundColor,
   }) : super(key: key);
 
   @override
@@ -64,6 +72,9 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
 
   int postPage = 1;
   int meetupPage = 1;
+
+  late HomeCubit _homeCubit;
+  late SuggestionCubit _suggestionCubit;
 
   Widget buildNavbar() {
     return SliverAppBar(
@@ -113,7 +124,8 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                 Avatar(
                   radius: 48.0,
                   user: widget.user,
-                  isSelectable: false,
+                  // isSelectable: false,
+                  backgroundcolor: widget.profileBackgroundColor,
                 ),
                 8.width,
                 Expanded(
@@ -331,6 +343,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
             ? FadeTransition(
                 opacity: animation,
                 child: NotificationListener<ScrollNotification>(
+                  key: Key('ownerPostFeedScroll'),
                   onNotification: (ScrollNotification scrollInfo) {
                     if (scrollInfo.metrics.atEdge &&
                         scrollInfo.metrics.pixels > 0 &&
@@ -366,6 +379,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                         return Padding(
                           padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                           child: ActivityCell(
+                            index: index,
                             post: post,
                             isAvatarSelectable: false,
                           ),
@@ -407,6 +421,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
   Widget buildMeetupList() {
     return userMeetupList.isNotEmpty
         ? NotificationListener<ScrollNotification>(
+            key: Key('ownerMeetupScroll'),
             onNotification: (ScrollNotification scrollInfo) {
               if (scrollInfo.metrics.atEdge &&
                   scrollInfo.metrics.pixels > 0 &&
@@ -414,13 +429,14 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                       scrollInfo.metrics.maxScrollExtent) {
                 loadMoreMeetup();
               }
+
               return false;
             },
             child: ListView.builder(
               key: PageStorageKey<String>('TabMeetup'),
               padding: EdgeInsets.zero,
               physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
+              // shrinkWrap: true,
               itemBuilder: (context, index) {
                 if (index >= userMeetupList.length) {
                   return BottomLoader();
@@ -431,7 +447,9 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                   padding: EdgeInsets.only(top: (index == 0 ? 8.0 : 0)),
                   child: MeetupCell(
                     post: meetup,
+                    index: index,
                     isAvatarSelectable: false,
+                    isMeetupFeed: false,
                   ),
                 );
               },
@@ -481,6 +499,15 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                 elevation: 0.5,
                 pinned: true,
                 title: Text(widget.user.getFullname()),
+                actions: [
+                  CupertinoButton(
+                    child: Icon(
+                      FeatherIcons.moreHorizontal,
+                      color: isLight(context) ? Colors.grey[600] : whiteColor,
+                    ),
+                    onPressed: showUserOption,
+                  )
+                ],
               ),
               PullToRefreshContainer(
                   (PullToRefreshScrollNotificationInfo? info) {
@@ -547,7 +574,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        dismissScreen(context, _user);
+        dismissScreen(context, {'user': _user, 'following': isFollow});
         return true;
       },
       child: Scaffold(
@@ -573,6 +600,10 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
   @override
   void initState() {
     super.initState();
+
+    _homeCubit = context.read<HomeCubit>();
+    _suggestionCubit = context.read<SuggestionCubit>();
+
     tabController = TabController(length: 2, vsync: this);
     _user = widget.user;
 
@@ -611,6 +642,10 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
       if (meetupData is! HttpResult) {
         userMeetupList =
             List.from((meetupData as List).map((e) => Post.fromJson(e)));
+
+        if (userMeetupList.length < 15) {
+          meetupHasReachedMax = true;
+        }
       }
     }
     setState(() {});
@@ -667,6 +702,33 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
           );
         },
       )
+    ]);
+  }
+
+  void showUserOption() {
+    showKSBottomSheet(context, children: [
+      KSTextButtonBottomSheet(
+        title: 'Block ${_user.getFullname()}',
+        icon: LineIcons.ban,
+        iconSize: 24.0,
+        onTab: () {
+          dismissScreen(context);
+          showKSConfirmDialog(
+            context,
+            message:
+                'That\'t person won\'t be able to follow or see any of your activity. Are you sure you want to block ${_user.getFullname()}?',
+            onYesPressed: () {
+              showKSLoading(context);
+              Future.delayed(Duration(seconds: 1), () {
+                _homeCubit.onBlockUser(_user.id);
+                _suggestionCubit.onBlockSuggestionUser(_user.id);
+                dismissScreen(context);
+                dismissScreen(context);
+              });
+            },
+          );
+        },
+      ),
     ]);
   }
 

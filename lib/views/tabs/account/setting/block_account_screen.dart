@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
-import 'package:kroma_sport/ks.dart';
+import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -25,6 +25,7 @@ class _BlockAccountScreenState extends State<BlockAccountScreen> {
   bool _isLoading = true;
 
   late HomeCubit _homeCubit;
+  late MeetupCubit _meetupCubit;
 
   Widget blockedAccountListWidget() {
     return _isLoading
@@ -36,9 +37,14 @@ class _BlockAccountScreenState extends State<BlockAccountScreen> {
                     final user = _blockedAccount[index];
                     return BlockedAccountCell(
                       user: user,
-                      onTap: () {
-                        _ksClient.postApi('/user/activity/unblock/${user.id}');
-                        _homeCubit.onRefresh();
+                      onTap: (isBlocked) {
+                        if (isBlocked) {
+                          _homeCubit.onBlockUser(user.id);
+                          _meetupCubit.onBlockUser(user.id);
+                        } else {
+                          _homeCubit.onUnblockUser(user.id);
+                          _meetupCubit.onUnblockUser(user.id);
+                        }
                       },
                     );
                   },
@@ -75,6 +81,7 @@ class _BlockAccountScreenState extends State<BlockAccountScreen> {
     });
 
     _homeCubit = context.read<HomeCubit>();
+    _meetupCubit = context.read<MeetupCubit>();
   }
 
   void fecthBlockedAccount() {
@@ -86,6 +93,12 @@ class _BlockAccountScreenState extends State<BlockAccountScreen> {
         setState(() {});
       }
     });
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
   }
 }
 
@@ -124,7 +137,7 @@ class EmptyBlockedAccount extends StatelessWidget {
 
 class BlockedAccountCell extends StatefulWidget {
   final User user;
-  final VoidCallback? onTap;
+  final Function(bool)? onTap;
   BlockedAccountCell({Key? key, required this.user, this.onTap})
       : super(key: key);
 
@@ -146,7 +159,11 @@ class _BlockedAccountCellState extends State<BlockedAccountCell> {
         ),
         child: Row(
           children: [
-            Avatar(radius: 24, user: widget.user),
+            Avatar(
+              radius: 24,
+              user: widget.user,
+              isSelectable: false,
+            ),
             8.width,
             Text(
               widget.user.getFullname(),
@@ -163,8 +180,8 @@ class _BlockedAccountCellState extends State<BlockedAccountCell> {
               ),
               onPressed: () {
                 isBlocked = !isBlocked;
+                widget.onTap!(isBlocked);
                 setState(() {});
-                widget.onTap!();
               },
               child: Text(isBlocked ? 'Unblock' : 'Block'),
             )

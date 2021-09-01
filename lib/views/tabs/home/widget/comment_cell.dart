@@ -46,7 +46,7 @@ class CommentCell extends StatelessWidget {
                           launchScreen(
                             context,
                             ViewUserProfileScreen.tag,
-                            arguments: comment.user,
+                            arguments: {'user': comment.user},
                           );
                         },
                         style: ButtonStyle(

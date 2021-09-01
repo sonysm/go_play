@@ -33,6 +33,7 @@ import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -44,11 +45,13 @@ class FeedDetailScreen extends StatefulWidget {
   static const String tag = '/feedDetailScreen';
   final Post post;
   final bool isCommentTap;
+  final int postIndex;
   final FeedCallback? postCallback;
 
   FeedDetailScreen({
     Key? key,
     required this.post,
+    required this.postIndex,
     this.isCommentTap = false,
     this.postCallback,
   }) : super(key: key);
@@ -64,6 +67,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   KSHttpClient ksClient = KSHttpClient();
 
   late Post post;
+  late HomeCubit _homeCubit;
 
   List<Comment> commentList = [];
 
@@ -479,6 +483,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   void initState() {
     super.initState();
     post = widget.post;
+    _homeCubit = context.read<HomeCubit>();
+
     getImageSize();
     getPostDetail();
 
@@ -504,23 +510,60 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     }
   }
 
+  // void showOptionActionBottomSheet(Post post) {
+  //   FocusScope.of(context).unfocus();
+  //   showKSBottomSheet(context, children: [
+  //     if (isMe(post.owner.id))
+  //       KSTextButtonBottomSheet(
+  //         title: 'Edit Post',
+  //         icon: Feather.edit,
+  //         onTab: () async {
+  //           dismissScreen(context);
+  //           if (post.type == PostType.feed) {
+  //             await launchScreen(context, CreatePostScreen.tag,
+  //                 arguments: post);
+  //             getPostDetail();
+  //           } else if (post.type == PostType.activity) {
+  //             // launchScreen(context, CreatePostScreen.tag,
+  //             //   arguments: post);
+  //           }
+  //         },
+  //       ),
+  //     if (isMe(post.owner.id))
+  //       KSTextButtonBottomSheet(
+  //         title: 'Delete Post',
+  //         icon: Feather.trash_2,
+  //         onTab: () {
+  //           dismissScreen(context);
+  //           showKSConfirmDialog(
+  //             context,
+  //             message: 'Are you sure you want to delete this post?',
+  //             onYesPressed: () {
+  //               deletePost();
+  //             },
+  //           );
+  //         },
+  //       ),
+  //     KSTextButtonBottomSheet(
+  //       title: 'Report Post',
+  //       icon: Feather.info,
+  //       onTab: () {
+  //         dismissScreen(context);
+  //         showReportScreen(context);
+  //       },
+  //     ),
+  //   ]);
+  // }
+
   void showOptionActionBottomSheet(Post post) {
-    FocusScope.of(context).unfocus();
     showKSBottomSheet(context, children: [
       if (isMe(post.owner.id))
         KSTextButtonBottomSheet(
           title: 'Edit Post',
           icon: Feather.edit,
-          onTab: () async {
+          onTab: () {
             dismissScreen(context);
-            if (post.type == PostType.feed) {
-              await launchScreen(context, CreatePostScreen.tag,
-                  arguments: post);
-              getPostDetail();
-            } else if (post.type == PostType.activity) {
-              // launchScreen(context, CreatePostScreen.tag,
-              //   arguments: post);
-            }
+            launchScreen(context, CreatePostScreen.tag, arguments: post);
           },
         ),
       if (isMe(post.owner.id))
@@ -538,14 +581,89 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
             );
           },
         ),
-      KSTextButtonBottomSheet(
-        title: 'Report Post',
-        icon: Feather.info,
-        onTab: () {
-          dismissScreen(context);
-          showReportScreen(context);
-        },
-      ),
+      if (!isMe(post.owner.id)) ...[
+        KSTextButtonBottomSheet(
+          title: 'Hide Post',
+          icon: LineIcons.minusCircle,
+          iconSize: 24.0,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message: 'Are you sure you want to hide this post?',
+              onYesPressed: () {
+                _homeCubit.onHidePost(post.id);
+                dismissScreen(context);
+                showKSSnackBar(
+                  context,
+                  title: 'This post is no longer show to you.',
+                  action: true,
+                  actionTitle: 'Undo',
+                  onAction: () {
+                    _homeCubit.onUndoHidingPost(
+                        index: widget.postIndex, post: post);
+                  },
+                );
+              },
+            );
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: 'Unfollow ${post.owner.getFullname()}',
+          icon: LineIcons.userMinus,
+          iconSize: 24.0,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message:
+                  'Are you sure you want to unfollow ${post.owner.getFullname()}?',
+              onYesPressed: () async {
+                var res =
+                    await ksClient.postApi('/user/unfollow/${post.owner.id}');
+                if (res != null) {
+                  if (res is! HttpResult) {}
+                }
+              },
+            );
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: 'Block ${post.owner.getFullname()}',
+          icon: LineIcons.ban,
+          iconSize: 24.0,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message:
+                  'That\'t person won\'t be able to follow or see any of your activity. Are you sure you want to block ${post.owner.getFullname()}?',
+              onYesPressed: () {
+                // var res =
+                //     await ksClient.postApi('/user/unfollow/${post.owner.id}');
+                // if (res != null) {
+                //   if (res is! HttpResult) {}
+                // }
+                showKSLoading(context);
+                Future.delayed(Duration(seconds: 1), () {
+                  _homeCubit.onBlockUser(post.owner.id);
+                  dismissScreen(context);
+                  dismissScreen(context);
+                });
+              },
+            );
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: 'Report Post',
+          icon: LineIcons.infoCircle,
+          iconSize: 24.0,
+          onTab: () {
+            dismissScreen(context);
+            showReportScreen(context);
+          },
+        ),
+      ]
     ]);
   }
 
@@ -814,7 +932,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                   onTap: () {
                     if (user.id != KS.shared.user.id) {
                       launchScreen(context, ViewUserProfileScreen.tag,
-                          arguments: user);
+                          arguments: {'user': user});
                     } else {
                       launchScreen(context, AccountScreen.tag);
                     }

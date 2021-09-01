@@ -250,6 +250,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                           child: MeetupCell(
                             key: Key(meetup.id.toString()),
                             post: meetup,
+                            index: index,
                             isAvatarSelectable: false,
                           ),
                         );
@@ -342,6 +343,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                             padding:
                                 EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                             child: ActivityCell(
+                              index: index,
                               post: post,
                               isAvatarSelectable: false,
                             ),

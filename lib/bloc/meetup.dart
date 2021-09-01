@@ -13,6 +13,7 @@ class MeetupData extends Equatable {
   final DataState status;
   final List<Post> ownerMeetup;
   final bool ownerHasReachedMax;
+  final bool reload;
 
   MeetupData({
     required this.data,
@@ -21,6 +22,7 @@ class MeetupData extends Equatable {
     this.search,
     required this.ownerMeetup,
     this.ownerHasReachedMax = false,
+    this.reload = false,
   });
 
   MeetupData copyWith({
@@ -30,6 +32,7 @@ class MeetupData extends Equatable {
     String? search,
     List<Post>? ownerMeetup,
     bool? ownerHasReachedMax,
+    bool? reload,
   }) {
     return MeetupData(
       status: status ?? this.status,
@@ -38,11 +41,13 @@ class MeetupData extends Equatable {
       search: search ?? this.search,
       ownerMeetup: ownerMeetup ?? this.ownerMeetup,
       ownerHasReachedMax: ownerHasReachedMax ?? this.ownerHasReachedMax,
+      reload: reload ?? this.reload,
     );
   }
 
   @override
-  List<Object> get props => [status, data, page, ownerMeetup, ownerHasReachedMax];
+  List<Object> get props =>
+      [status, data, page, ownerMeetup, ownerHasReachedMax, reload];
 }
 
 class MeetupCubit extends Cubit<MeetupData> {
@@ -110,6 +115,7 @@ class MeetupCubit extends Cubit<MeetupData> {
             status: DataState.Loaded,
             data: posts,
             ownerMeetup: ownerMeetups,
+            reload: !state.reload,
           ),
         );
       } else {
@@ -204,6 +210,44 @@ class MeetupCubit extends Cubit<MeetupData> {
           }
         }
       });
+    }
+  }
+
+  Future<void> onHideMeetup(int postId) async {
+    if (state.status == DataState.Loaded) {
+      _client.postApi('/user/activity/hide_post/$postId');
+
+      final updatedList =
+          state.data.where((element) => element.id != postId).toList();
+
+      emit(state.copyWith(data: updatedList));
+    }
+  }
+
+  void onUndoHidingMeetup({required int index, required Post post}) {
+    if (state.status == DataState.Loaded) {
+      _client.postApi('/user/activity/show/hidden_post/${post.id}');
+
+      state.data.insert(index, post);
+      emit(state.copyWith(data: state.data, reload: !state.reload));
+    }
+  }
+
+  void onBlockUser(int userId) {
+    if (state.status == DataState.Loaded) {
+      // _client.postApi('/user/activity/block/$userId');
+
+      final updatedList =
+          state.data.where((element) => element.owner.id != userId).toList();
+
+      emit(state.copyWith(data: updatedList));
+    }
+  }
+
+  void onUnblockUser(int userId) {
+    if (state.status == DataState.Loaded) {
+      // _client.postApi('/user/activity/unblock/$userId');
+      onRefresh();
     }
   }
 }

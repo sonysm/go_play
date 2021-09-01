@@ -6,6 +6,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/member.dart';
@@ -13,6 +14,7 @@ import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/home/report_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_activity_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
@@ -22,15 +24,20 @@ import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:line_icons/line_icons.dart';
 
 class MeetupCell extends StatefulWidget {
   final Post post;
+  final int index;
   final bool isAvatarSelectable;
+  final bool isMeetupFeed;
 
   MeetupCell({
     Key? key,
     required this.post,
+    required this.index,
     this.isAvatarSelectable = true,
+    this.isMeetupFeed = true,
   }) : super(key: key);
 
   @override
@@ -40,6 +47,9 @@ class MeetupCell extends StatefulWidget {
 class _MeetupCellState extends State<MeetupCell> {
   late Post meetup;
   late List<Member> joinMember;
+
+  late HomeCubit _homeCubit;
+  late MeetupCubit _meetupCubit;
 
   KSHttpClient ksClient = KSHttpClient();
 
@@ -416,6 +426,10 @@ class _MeetupCellState extends State<MeetupCell> {
   void initState() {
     super.initState();
     meetup = widget.post;
+
+    _homeCubit = context.read<HomeCubit>();
+    _meetupCubit = context.read<MeetupCubit>();
+
     joinMember =
         meetup.meetupMember!.where((element) => element.status == 1).toList();
   }
@@ -448,11 +462,85 @@ class _MeetupCellState extends State<MeetupCell> {
             );
           },
         ),
+      if (!isMe(post.owner.id) && widget.isMeetupFeed) ...[
+        KSTextButtonBottomSheet(
+          title: 'Hide Meetup',
+          icon: LineIcons.minusCircle,
+          iconSize: 24.0,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message: 'Are you sure you want to hide this post?',
+              onYesPressed: () {
+                _meetupCubit.onHideMeetup(post.id);
+                showKSSnackBar(
+                  context,
+                  title: 'This meetup is no longer show to you.',
+                  action: true,
+                  actionTitle: 'Undo',
+                  onAction: () {
+                    _meetupCubit.onUndoHidingMeetup(
+                        index: widget.index, post: post);
+                  },
+                );
+              },
+            );
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: 'Unfollow ${post.owner.getFullname()}',
+          icon: LineIcons.userMinus,
+          iconSize: 24.0,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message:
+                  'Are you sure you want to unfollow ${post.owner.getFullname()}?',
+              onYesPressed: () async {
+                var res =
+                    await ksClient.postApi('/user/unfollow/${post.owner.id}');
+                if (res != null) {
+                  if (res is! HttpResult) {}
+                }
+              },
+            );
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: 'Block ${post.owner.getFullname()}',
+          icon: LineIcons.ban,
+          iconSize: 24.0,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message:
+                  'That\'t person won\'t be able to follow or see any of your activity. Are you sure you want to block ${post.owner.getFullname()}?',
+              onYesPressed: () {
+                // var res =
+                //     await ksClient.postApi('/user/unfollow/${post.owner.id}');
+                // if (res != null) {
+                //   if (res is! HttpResult) {}
+                // }
+                showKSLoading(context);
+                Future.delayed(Duration(seconds: 1), () {
+                  _meetupCubit.onBlockUser(post.owner.id);
+                  _homeCubit.onBlockUser(post.owner.id);
+                  dismissScreen(context);
+                });
+              },
+            );
+          },
+        ),
+      ],
       KSTextButtonBottomSheet(
         title: 'Report Meetup',
         icon: Feather.info,
         onTab: () {
           dismissScreen(context);
+          showReportScreen(context, title: 'You reported a meetup.');
         },
       ),
     ]);

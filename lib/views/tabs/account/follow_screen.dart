@@ -177,7 +177,7 @@ class FollowCell extends StatelessWidget {
           if (user.id == KS.shared.user.id) {
             launchScreen(context, AccountScreen.tag);
           } else {
-            launchScreen(context, ViewUserProfileScreen.tag, arguments: user);
+            launchScreen(context, ViewUserProfileScreen.tag, arguments: {'user': user});
           }
         },
         child: Container(

@@ -21,6 +21,7 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/home/report_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/connect_booking_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/invite_meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_activity_screen.dart';
@@ -800,6 +801,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         icon: Feather.info,
         onTab: () {
           dismissScreen(context);
+          showReportScreen(context, title: 'You reported a meetup.');
         },
       ),
     ]);

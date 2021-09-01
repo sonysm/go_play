@@ -4,6 +4,7 @@ import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class ReportScreen extends StatefulWidget {
@@ -130,7 +131,7 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 }
 
-void showReportScreen(BuildContext context) async {
+void showReportScreen(BuildContext context, {String? title}) async {
   await showMaterialModalBottomSheet<bool>(
     context: context,
     builder: (context) => Container(
@@ -150,15 +151,7 @@ void showReportScreen(BuildContext context) async {
     ),
   ).then((value) {
     if (value != null && value) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'You report a post.',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.black87,
-        ),
-      );
+      showKSSnackBar(context, title: title ?? 'You reported a post.');
     }
   });
 }

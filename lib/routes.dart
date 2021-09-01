@@ -76,6 +76,7 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (_) => FeedDetailScreen(
                   post: data['post'],
+                  postIndex: data['postIndex'],
                   isCommentTap: data['isCommentTap'],
                   postCallback: data['postCallback'],
                 ));
@@ -99,8 +100,14 @@ class RouteGenerator {
       case ViewUserProfileScreen.tag:
         // return MaterialPageRoute(
         //     builder: (_) => ViewUserProfileScreen(user: args as User));
+
+        args as Map;
         return KSPageRoute(
-            builder: (_) => ViewUserProfileScreen(user: args as User));
+          builder: (_) => ViewUserProfileScreen(
+            user: args['user'],
+            profileBackgroundColor: args['backgroundColor'],
+          ),
+        );
       case CreateActivityScreen.tag:
         return KSPageRoute(builder: (_) => CreateActivityScreen());
       case ViewPhotoScreen.tag:

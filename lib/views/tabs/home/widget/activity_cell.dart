@@ -26,10 +26,12 @@ import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class ActivityCell extends StatefulWidget {
   final Post post;
+  final int index;
   final bool isAvatarSelectable;
 
   const ActivityCell({
     Key? key,
+    required this.index,
     required this.post,
     this.isAvatarSelectable = true,
   }) : super(key: key);
@@ -74,7 +76,7 @@ class _ActivityCellState extends State<ActivityCell> {
     }
 
     return InkWell(
-      onTap: () => launchFeedDetailScreen(_post),
+      onTap: () => launchFeedDetailScreen(),
       child: Container(
         color: Theme.of(context).primaryColor,
         padding: EdgeInsets.only(top: 16.0, bottom: 8.0),
@@ -157,7 +159,7 @@ class _ActivityCellState extends State<ActivityCell> {
                     child: SelectableText(
                       _post.description!,
                       style: Theme.of(context).textTheme.bodyText1,
-                      onTap: () => launchFeedDetailScreen(_post),
+                      onTap: () => launchFeedDetailScreen(),
                     ),
                   )
                 : SizedBox(height: 8.0),
@@ -283,7 +285,7 @@ class _ActivityCellState extends State<ActivityCell> {
                       4.width,
                       KSIconButton(
                         icon: FeatherIcons.messageSquare,
-                        onTap: () => launchFeedDetailScreen(_post, true),
+                        onTap: () => launchFeedDetailScreen(isCommentTap: true),
                       ),
                       // 4.width,
                       // KSIconButton(
@@ -314,7 +316,8 @@ class _ActivityCellState extends State<ActivityCell> {
                         8.width,
                         Expanded(
                           child: InkWell(
-                            onTap: () => launchFeedDetailScreen(_post, true),
+                            onTap: () =>
+                                launchFeedDetailScreen(isCommentTap: true),
                             child: Container(
                               height: 32.0,
                               padding:
@@ -352,9 +355,10 @@ class _ActivityCellState extends State<ActivityCell> {
     _post = widget.post;
   }
 
-  void launchFeedDetailScreen(Post post, [bool isCommentTap = false]) async {
+  void launchFeedDetailScreen({bool isCommentTap = false}) async {
     launchScreen(context, FeedDetailScreen.tag, arguments: {
-      'post': post,
+      'post': _post,
+      'postIndex': widget.index,
       'isCommentTap': isCommentTap,
       'postCallback': (Post p) {
         setState(() => _post = p);

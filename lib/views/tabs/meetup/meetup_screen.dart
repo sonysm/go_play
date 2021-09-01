@@ -78,6 +78,7 @@ class _ActivityScreenState extends State<MeetupScreen> {
                   child: MeetupCell(
                     key: Key(meetup.id.toString()),
                     post: meetup,
+                    index: index,
                   ),
                 );
               },

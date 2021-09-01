@@ -48,4 +48,14 @@ class SuggestionCubit extends Cubit<SuggestionData> {
       }
     });
   }
+
+  void onBlockSuggestionUser(int userId) {
+    if (state.status == DataState.Loaded) {
+      _ksClient.postApi('/user/activity/block/$userId');
+
+      final updatedList =
+          state.data.where((element) => element.id != userId).toList();
+      emit(state.copyWith(data: updatedList));
+    }
+  }
 }

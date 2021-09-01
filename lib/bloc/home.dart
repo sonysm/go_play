@@ -61,7 +61,6 @@ class HomeCubit extends Cubit<HomeData> {
     if (data != null) {
       if (data is! HttpResult) {
         List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
-        // await Future.delayed(Duration(milliseconds: 500));
 
         List<Post> ownerPosts = [];
         await _client.getApi('/user/feed/by/${KS.shared.user.id}').then((data) {
@@ -105,8 +104,8 @@ class HomeCubit extends Cubit<HomeData> {
         if (data is! HttpResult) {
           List<Post> posts =
               (data as List).map((e) => Post.fromJson(e)).toList();
-          await Future.delayed(Duration(milliseconds: 500));
-          emit(state.copyWith(status: DataState.Loaded, data: posts));
+          emit(state.copyWith(
+              status: DataState.Loaded, data: posts, reload: !state.reload));
         } else {
           if (data.code == -500) {
             emit(state.copyWith(status: DataState.ErrorSocket));
@@ -282,12 +281,8 @@ class HomeCubit extends Cubit<HomeData> {
 
   void onUnblockUser(int userId) {
     if (state.status == DataState.Loaded) {
-      // _client.postApi('/user/activity/block/$userId');
-
-      // final updatedList =
-      //     state.data.where((element) => element.owner.id != userId).toList();
-
-      // emit(state.copyWith(data: updatedList));
+      _client.postApi('/user/activity/unblock/$userId');
+      onRefresh();
     }
   }
 }
