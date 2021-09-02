@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_activity_screen.dart';
+import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
 class OrganizeListScreen extends StatefulWidget {
@@ -40,42 +42,73 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
         ? isConnection
             ? SliverPadding(
                 padding: const EdgeInsets.only(bottom: 32.0),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate(
-                    List.generate(
-                      sportList.length,
-                      (index) {
-                        final sport = sportList.elementAt(index);
-                        return Container(
-                          margin: const EdgeInsets.only(
-                            left: 16.0,
-                            top: 10.0,
-                            right: 16.0,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          child: ListTile(
-                            title: Text(
-                              sport.name,
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                            contentPadding:
-                                EdgeInsets.only(left: 16.0, right: 8),
-                            onTap: () {
-                              launchScreen(
-                                context,
-                                OragnizeActivityScreen.tag,
-                                arguments: sport,
+                sliver: sportList.isNotEmpty
+                    ? SliverList(
+                        delegate: SliverChildListDelegate(
+                          List.generate(
+                            sportList.length,
+                            (index) {
+                              //if (sportList.isEmpty) {
+                              //  return KSScreenState(
+                              //    icon: Icon(FeatherIcons.activity),
+                              //    title: 'No any activity',
+                              //  );
+                              //}
+
+                              final sport = sportList.elementAt(index);
+                              return Container(
+                                margin: const EdgeInsets.only(
+                                  left: 16.0,
+                                  top: 10.0,
+                                  right: 16.0,
+                                ),
+                                decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColor,
+                                    borderRadius: BorderRadius.circular(4.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          blurRadius: 8.0,
+                                          color: Colors.black.withOpacity(0.1))
+                                    ]),
+                                child: ListTile(
+                                  title: Text(
+                                    sport.name,
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                  contentPadding:
+                                      EdgeInsets.only(left: 16.0, right: 16),
+                                  onTap: () {
+                                    launchScreen(
+                                      context,
+                                      OragnizeActivityScreen.tag,
+                                      arguments: sport,
+                                    );
+                                  },
+                                  trailing: SizedBox(
+                                      width: 24.0,
+                                      height: 24.0,
+                                      child: sport.icon != null
+                                          ? CacheImage(url: sport.icon!)
+                                          : null),
+                                ),
                               );
                             },
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
+                        ),
+                      )
+                    : SliverFillRemaining(
+                        child: KSScreenState(
+                          icon: Icon(
+                            FeatherIcons.activity,
+                            size: 72.0,
+                            color: Colors.grey,
+                          ),
+                          title: 'No any activity',
+                          bottomPadding:
+                              AppBar().preferredSize.height + kToolbarHeight,
+                        ),
+                      ),
               )
             : SliverFillRemaining(
                 child: KSNoInternet(),
@@ -89,6 +122,7 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
       appBar: AppBar(
         title: Text('Organize Activity'),
       ),
+      backgroundColor: Theme.of(context).primaryColor,
       body: CustomScrollView(
         slivers: [
           buildSportList(),

@@ -6,6 +6,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
+import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -23,17 +24,20 @@ import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
+import 'package:line_icons/line_icons.dart';
 
 class ActivityCell extends StatefulWidget {
   final Post post;
   final int index;
   final bool isAvatarSelectable;
+  final bool isHomeFeed;
 
   const ActivityCell({
     Key? key,
     required this.index,
     required this.post,
     this.isAvatarSelectable = true,
+    this.isHomeFeed = true
   }) : super(key: key);
 
   @override
@@ -42,6 +46,9 @@ class ActivityCell extends StatefulWidget {
 
 class _ActivityCellState extends State<ActivityCell> {
   late Post _post;
+  
+  late HomeCubit _homeCubit;
+  late MeetupCubit _meetupCubit;
 
   String calcMinuteDuration() {
     var s =
@@ -352,6 +359,8 @@ class _ActivityCellState extends State<ActivityCell> {
   @override
   void initState() {
     super.initState();
+    _homeCubit = context.read<HomeCubit>();
+    _meetupCubit = context.read<MeetupCubit>();
     _post = widget.post;
   }
 
@@ -383,6 +392,76 @@ class _ActivityCellState extends State<ActivityCell> {
             );
           },
         ),
+      
+      if (!isMe(post.owner.id) && widget.isHomeFeed) ...[
+        KSTextButtonBottomSheet(
+          title: 'Hide Activity',
+          icon: LineIcons.minusCircle,
+          iconSize: 24.0,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message: 'Are you sure you want to hide this post?',
+              onYesPressed: () {
+                _homeCubit.onHidePost(post.id);
+                showKSSnackBar(
+                  context,
+                  title: 'This post is no longer show to you.',
+                  action: true,
+                  actionTitle: 'Undo',
+                  onAction: () {
+                    _homeCubit.onUndoHidingPost(
+                        index: widget.index, post: post);
+                  },
+                );
+              },
+            );
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: 'Unfollow ${post.owner.getFullname()}',
+          icon: LineIcons.userMinus,
+          iconSize: 24.0,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message:
+                  'Are you sure you want to unfollow ${post.owner.getFullname()}?',
+              onYesPressed: () async {
+                var res =
+                    await ksClient.postApi('/user/unfollow/${post.owner.id}');
+                if (res != null) {
+                  if (res is! HttpResult) {}
+                }
+              },
+            );
+          },
+        ),
+        KSTextButtonBottomSheet(
+          title: 'Block ${post.owner.getFullname()}',
+          icon: LineIcons.ban,
+          iconSize: 24.0,
+          onTab: () {
+            dismissScreen(context);
+            showKSConfirmDialog(
+              context,
+              message:
+                  'That\'t person won\'t be able to follow or see any of your activity. Are you sure you want to block ${post.owner.getFullname()}?',
+              onYesPressed: () {
+                showKSLoading(context);
+                Future.delayed(Duration(seconds: 1), () {
+                  _homeCubit.onBlockUser(post.owner.id);
+                  _meetupCubit.onBlockUser(post.owner.id);
+                  dismissScreen(context);
+                });
+              },
+            );
+          },
+        ),
+      ],
+      
       if (!isMe(post.owner.id))
         KSTextButtonBottomSheet(
           title: 'Report Post',
@@ -404,7 +483,7 @@ class _ActivityCellState extends State<ActivityCell> {
       await Future.delayed(Duration(milliseconds: 500));
       dismissScreen(context);
       if (result is! HttpResult) {
-        BlocProvider.of<HomeCubit>(context).onDeletePostFeed(postId);
+        _homeCubit.onDeletePostFeed(postId);
       }
     }
   }

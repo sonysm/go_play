@@ -261,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget loadingSliver() {
     return SliverFillRemaining(
       child: Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.greenAccent)),
       ),
     );
   }

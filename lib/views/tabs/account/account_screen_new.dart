@@ -8,9 +8,11 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
+import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
+import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/connection_service.dart';
@@ -80,56 +82,58 @@ class _AccountScreen2State extends State<AccountScreen2>
   }
 
   Widget buildProfileHeader() {
-    return SliverToBoxAdapter(
-      child: Container(
-        padding: const EdgeInsets.only(
-            left: 16.0, top: 16.0, right: 16.0, bottom: 16.0),
-        color: Theme.of(context).primaryColor,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Avatar(
-              radius: 48.0,
-              user: KS.shared.user,
-              isSelectable: false,
-            ),
-            8.width,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(KS.shared.user.getFullname(),
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Metropolis')),
-                  //Text(
-                  //  'Phnom Penh, Cambodia',
-                  //  style: Theme.of(context).textTheme.bodyText2,
-                  //),
-                  16.height,
-                  Row(
-                    children: [
-                      // actionHeader(amt: '0', title: 'Coin'),
-                      actionHeader(
-                        amt: '${KS.shared.user.followerCount}',
-                        title:
-                            '${KS.shared.user.followerCount > 1 ? 'Followers' : 'Follower'}',
-                        onTap: () => launchScreen(context, FollowScreen.tag),
-                      ),
-                      actionHeader(
-                        amt: '${KS.shared.user.followingCount}',
-                        title: 'Following',
-                        onTap: () => launchScreen(context, FollowScreen.tag),
-                      ),
-                    ],
-                  )
-                ],
+    return BlocBuilder<UserCubit, User>(builder: (context, user) {
+      return SliverToBoxAdapter(
+        child: Container(
+          padding: const EdgeInsets.only(
+              left: 16.0, top: 16.0, right: 16.0, bottom: 16.0),
+          color: Theme.of(context).primaryColor,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Avatar(
+                radius: 48.0,
+                user: user,
+                isSelectable: false,
               ),
-            ),
-          ],
+              8.width,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(user.getFullname(),
+                        style: Theme.of(context).textTheme.headline6?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Metropolis')),
+                    //Text(
+                    //  'Phnom Penh, Cambodia',
+                    //  style: Theme.of(context).textTheme.bodyText2,
+                    //),
+                    16.height,
+                    Row(
+                      children: [
+                        // actionHeader(amt: '0', title: 'Coin'),
+                        actionHeader(
+                          amt: '${user.followerCount}',
+                          title:
+                              '${user.followerCount > 1 ? 'Followers' : 'Follower'}',
+                          onTap: () => launchScreen(context, FollowScreen.tag),
+                        ),
+                        actionHeader(
+                          amt: '${user.followingCount}',
+                          title: 'Following',
+                          onTap: () => launchScreen(context, FollowScreen.tag),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget buildFavoriteSport() {

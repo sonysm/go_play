@@ -331,7 +331,8 @@ class _HomeFeedCellState extends State<HomeFeedCell>
       if (isMe(post.owner.id))
         KSTextButtonBottomSheet(
           title: 'Edit Post',
-          icon: Feather.edit,
+          icon: LineIcons.edit,
+          iconSize: 24.0,
           onTab: () {
             dismissScreen(context);
             launchScreen(context, CreatePostScreen.tag, arguments: post);
@@ -340,7 +341,8 @@ class _HomeFeedCellState extends State<HomeFeedCell>
       if (isMe(post.owner.id))
         KSTextButtonBottomSheet(
           title: 'Delete Post',
-          icon: Feather.trash_2,
+          icon: LineIcons.trash,
+          iconSize: 24.0,
           onTab: () {
             dismissScreen(context);
             showKSConfirmDialog(
@@ -409,11 +411,6 @@ class _HomeFeedCellState extends State<HomeFeedCell>
               message:
                   'That\'t person won\'t be able to follow or see any of your activity. Are you sure you want to block ${post.owner.getFullname()}?',
               onYesPressed: () {
-                // var res =
-                //     await ksClient.postApi('/user/unfollow/${post.owner.id}');
-                // if (res != null) {
-                //   if (res is! HttpResult) {}
-                // }
                 showKSLoading(context);
                 Future.delayed(Duration(seconds: 1), () {
                   _homeCubit.onBlockUser(post.owner.id);

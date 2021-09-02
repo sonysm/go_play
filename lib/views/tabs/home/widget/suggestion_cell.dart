@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/bloc/suggestion.dart';
+import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
@@ -91,6 +92,7 @@ class _FollowCellState extends State<FollowCell> {
   bool isFollowing = false;
 
   KSHttpClient _ksClient = KSHttpClient();
+  late UserCubit _userCubit;
 
   var _backgroundColor;
 
@@ -150,9 +152,17 @@ class _FollowCellState extends State<FollowCell> {
               child: ElevatedButton(
                 onPressed: () {
                   if (isFollowing) {
-                    _ksClient.postApi('/user/unfollow/${widget.user.id}');
+                    _ksClient
+                        .postApi('/user/unfollow/${widget.user.id}')
+                        .then((value) {
+                      _userCubit.onRefresh();
+                    });
                   } else {
-                    _ksClient.postApi('/user/follow/${widget.user.id}');
+                    _ksClient
+                        .postApi('/user/follow/${widget.user.id}')
+                        .then((value) {
+                      _userCubit.onRefresh();
+                    });
                   }
 
                   isFollowing = !isFollowing;
@@ -197,5 +207,11 @@ class _FollowCellState extends State<FollowCell> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _userCubit = context.read<UserCubit>();
   }
 }

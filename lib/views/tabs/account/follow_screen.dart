@@ -114,6 +114,7 @@ class _FollowScreenState extends State<FollowScreen> {
             ),
           ),
         ),
+        backgroundColor: Theme.of(context).primaryColor,
         body: TabBarView(
           children: [
             buildFollowerTab(),

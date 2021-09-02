@@ -6,6 +6,7 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/widgets/cache_image.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
@@ -31,6 +32,7 @@ class _SportsScreenState extends State<SportsScreen> {
     return SliverAppBar(
       elevation: 0.5,
       forceElevated: true,
+      pinned: true,
       title: Text('What sport do you play?'),
     );
   }
@@ -49,65 +51,76 @@ class _SportsScreenState extends State<SportsScreen> {
 
   Widget buildSportList() {
     return sportList.isNotEmpty
-        ? SliverList(
-            delegate: SliverChildListDelegate(
-              List.generate(
-                sportList.length,
-                (index) {
-                  final sport = sportList.elementAt(index);
-                  return Container(
-                    margin: const EdgeInsets.only(
-                        left: 16.0, top: 10.0, right: 16.0),
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(4.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: blackColor.withOpacity(0.1),
-                            blurRadius: 8,
-                          )
-                        ]),
-                    child: ListTile(
-                      title: Text(
-                        sport.name,
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      contentPadding: EdgeInsets.only(left: 16.0, right: 8),
-                      trailing: !sport.fav!
-                          ? KSIconButton(
-                              icon: Feather.plus_circle,
-                              iconSize: 24.0,
-                              onTap: () {
-                                addFavSport(sportList.elementAt(index).id);
-                                sportList.elementAt(index).fav = true;
-                                setState(() {});
-                              },
+        ? SliverPadding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          sliver: SliverList(
+              delegate: SliverChildListDelegate(
+                List.generate(
+                  sportList.length,
+                  (index) {
+                    final sport = sportList.elementAt(index);
+                    return Container(
+                      margin: const EdgeInsets.only(
+                          left: 16.0, top: 10.0, right: 16.0),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(4.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: blackColor.withOpacity(0.1),
+                              blurRadius: 8,
                             )
-                          : Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Icon(
-                                FeatherIcons.check,
-                                color: mainColor,
+                          ]),
+                      child: ListTile(
+                        leading: SizedBox(
+                            width: 24.0,
+                            height: 24.0,
+                            child: sport.icon != null
+                                ? CacheImage(url: sport.icon!)
+                                : null),
+                        title: Text(
+                          sport.name,
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                        horizontalTitleGap: 0,
+                        contentPadding: EdgeInsets.only(left: 16.0, right: 8),
+                        trailing: !sport.fav!
+                            ? KSIconButton(
+                                icon: Feather.plus_circle,
+                                iconSize: 24.0,
+                                iconColor: ColorResources.getBlueGrey(context),
+                                onTap: () {
+                                  addFavSport(sportList.elementAt(index).id);
+                                  sportList.elementAt(index).fav = true;
+                                  setState(() {});
+                                },
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Icon(
+                                  FeatherIcons.check,
+                                  color: mainColor,
+                                ),
                               ),
-                            ),
-                      onTap: () async {
-                        // var value = await launchScreen(
-                        //   context,
-                        //   SportDetailScreen.tag,
-                        //   arguments: sport,
-                        // );
-                        // if (value != null && value) {
-                        //   sportList.elementAt(index).fav = false;
-                        //   isChanged = true;
-                        //   setState(() {});
-                        // }
-                      },
-                    ),
-                  );
-                },
+                        onTap: () async {
+                          // var value = await launchScreen(
+                          //   context,
+                          //   SportDetailScreen.tag,
+                          //   arguments: sport,
+                          // );
+                          // if (value != null && value) {
+                          //   sportList.elementAt(index).fav = false;
+                          //   isChanged = true;
+                          //   setState(() {});
+                          // }
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-          )
+        )
         : isLoading
             ? SliverToBoxAdapter()
             : emptySportList();

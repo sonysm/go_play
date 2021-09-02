@@ -508,7 +508,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return _fnTextController.text.trim().isNotEmpty &&
             _lnTextController.text.trim().isNotEmpty &&
             _genderTextController.text.isNotEmpty &&
-            _dobController.text.isNotEmpty && selectedGender != null
+            _dobController.text.isNotEmpty &&
+            selectedGender != null
         ? true
         : false;
   }
@@ -566,8 +567,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           setState(() => selectedGender = value);
           dismissScreen(context);
         },
-        title: Text('Male',
-            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+        title: Text('Male', style: Theme.of(context).textTheme.bodyText1),
       ),
       RadioListTile<String>(
         value: 'female',
@@ -578,8 +578,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           setState(() => selectedGender = value);
           dismissScreen(context);
         },
-        title: Text('Female',
-            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+        title: Text('Female', style: Theme.of(context).textTheme.bodyText1),
       ),
       RadioListTile<String>(
         value: 'other',
@@ -590,8 +589,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           setState(() => selectedGender = value);
           dismissScreen(context);
         },
-        title: Text('Other',
-            style: TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+        title: Text('Other', style: Theme.of(context).textTheme.bodyText1),
       ),
     ]);
   }
@@ -615,8 +613,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               dismissScreen(context);
             },
             title: Text('${130 + index}\cm',
-                style:
-                    TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+                style: Theme.of(context).textTheme.bodyText1),
           );
         },
       ),
@@ -642,8 +639,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               dismissScreen(context);
             },
             title: Text('${30 + index}\kg',
-                style:
-                    TextStyle(color: blackColor, fontWeight: FontWeight.w600)),
+                style: Theme.of(context).textTheme.bodyText1),
           );
         },
       ),
@@ -658,18 +654,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
       context,
       // locale: LocaleType.km,
       theme: DatePickerTheme(
+        backgroundColor: Theme.of(context).primaryColor,
         doneStyle: TextStyle(
-          color: mainColor,
+          color: ColorResources.getMainColor(context),
           fontSize: 16.0,
           fontWeight: FontWeight.w600,
           fontFamily: "OpenSans",
         ),
-        itemStyle: TextStyle(
-          color: blackColor,
-          fontSize: 16.0,
-          fontWeight: FontWeight.w600,
-          fontFamily: "OpenSans",
-        ),
+        cancelStyle: Theme.of(context).textTheme.bodyText1!,
+        itemStyle: Theme.of(context).textTheme.bodyText1!,
       ),
       // pickerModel: CustomPicker(
       //     // locale: LocaleType.km,

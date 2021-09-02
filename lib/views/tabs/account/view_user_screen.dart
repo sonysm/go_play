@@ -6,6 +6,7 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/suggestion.dart';
+import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -74,6 +75,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
   int meetupPage = 1;
 
   late HomeCubit _homeCubit;
+  late UserCubit _userCubit;
   late SuggestionCubit _suggestionCubit;
 
   Widget buildNavbar() {
@@ -381,6 +383,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                           child: ActivityCell(
                             index: index,
                             post: post,
+                            isHomeFeed: false,
                             isAvatarSelectable: false,
                           ),
                         );
@@ -515,7 +518,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                   child: PullToRefreshHeader(
                     info,
                     DateTime.now(),
-                    color: Colors.white,
+                    color: Theme.of(context).primaryColor,
                   ),
                 );
               }),
@@ -602,6 +605,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
     super.initState();
 
     _homeCubit = context.read<HomeCubit>();
+    _userCubit = context.read<UserCubit>();
     _suggestionCubit = context.read<SuggestionCubit>();
 
     tabController = TabController(length: 2, vsync: this);
@@ -674,6 +678,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
         _user.followerCount += 1;
         isFollow = true;
         setState(() {});
+        _userCubit.onRefresh();
       }
     }
   }
@@ -696,6 +701,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                   _user.followerCount -= 1;
                   isFollow = false;
                   setState(() {});
+                  _userCubit.onRefresh();
                 }
               }
             },
