@@ -102,9 +102,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             submitTitle,
             style: Theme.of(context).textTheme.bodyText1?.copyWith(
                 color: availablePost()
-                    ? isLight(context)
-                        ? mainColor
-                        : mainDarkColor
+                    ? ColorResources.getMainColor(context)
                     : isLight(context)
                         ? Colors.green[200]
                         : Colors.green[100],
@@ -210,7 +208,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               style: ButtonStyle(
                 overlayColor: MaterialStateProperty.all(Colors.grey[200]),
                 foregroundColor: MaterialStateProperty.all(
-                    isLight(context) ? mainColor : mainDarkColor),
+                    ColorResources.getMainColor(context)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -222,7 +220,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     strutStyle: StrutStyle(fontSize: 20.0),
                     style: Theme.of(context).textTheme.bodyText1?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: isLight(context) ? mainColor : mainDarkColor,
+                          color: ColorResources.getMainColor(context),
                         ),
                   ),
                 ],

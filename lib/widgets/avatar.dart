@@ -81,19 +81,24 @@ class _AvatarState extends State<Avatar> {
         radius: widget.radius,
         backgroundColor: Colors.grey[200],
         // backgroundImage: AssetImage('assets/images/user.jpg'),
-        child: ClipOval(
-          child: SizedBox(
-            width: widget.radius * 2,
-            height: widget.radius * 2,
-            child: widget.user.photo != null
-                ? CachedNetworkImage(
+        child: Container(
+          width: widget.radius * 2,
+          height: widget.radius * 2,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.grey[100]!, width: 0.5),
+          ),
+          child: widget.user.photo != null
+              ? ClipOval(
+                  child: CachedNetworkImage(
                     imageUrl: widget.user.photo ?? '',
                     errorWidget: (context, s, e) {
                       return Image.asset('assets/images/user.jpg');
                     },
-                  )
-                : ColorLetterProfile(user: widget.user, color: _color),
-          ),
+                  ),
+                )
+              : ClipOval(
+                  child: ColorLetterProfile(user: widget.user, color: _color)),
         ),
       ),
     );

@@ -25,7 +25,7 @@ class ColorResources {
   }
 
   static Color getMainColor(BuildContext context) {
-    return isLight(context) ? Color(0xFF26a65b) : Colors.greenAccent;
+    return isLight(context) ? Color(0xFF26a65b) : mainDarkColor;
   }
 
   static Color getPrimaryText(BuildContext context) {

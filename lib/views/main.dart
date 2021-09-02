@@ -70,7 +70,6 @@ class _MainViewState extends State<MainView> {
           color: Theme.of(context).primaryColor,
           child: SafeArea(
             child: Container(
-              //color: Theme.of(context).primaryColor,
               height: 54.0,
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,

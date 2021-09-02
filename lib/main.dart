@@ -66,7 +66,7 @@ class App extends StatelessWidget {
           home: SplashScreen(),
           onGenerateRoute: RouteGenerator.generateRoute,
           theme: ThemeData.light().copyWith(
-            primaryColor: whiteColor,
+            primaryColor: primaryColor,
             accentColor: mainColor,
             scaffoldBackgroundColor: greyColor,
             iconTheme: IconThemeData(color: mainColor),

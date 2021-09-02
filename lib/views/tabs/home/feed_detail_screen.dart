@@ -344,6 +344,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                       4.width,
                       KSIconButton(
                         icon: FeatherIcons.messageSquare,
+                        iconColor: ColorResources.getInactiveIconColor(context),
                         onTap: () {
                           _commentTextNode.requestFocus();
                           scrollToBottom();
@@ -510,51 +511,6 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     }
   }
 
-  // void showOptionActionBottomSheet(Post post) {
-  //   FocusScope.of(context).unfocus();
-  //   showKSBottomSheet(context, children: [
-  //     if (isMe(post.owner.id))
-  //       KSTextButtonBottomSheet(
-  //         title: 'Edit Post',
-  //         icon: Feather.edit,
-  //         onTab: () async {
-  //           dismissScreen(context);
-  //           if (post.type == PostType.feed) {
-  //             await launchScreen(context, CreatePostScreen.tag,
-  //                 arguments: post);
-  //             getPostDetail();
-  //           } else if (post.type == PostType.activity) {
-  //             // launchScreen(context, CreatePostScreen.tag,
-  //             //   arguments: post);
-  //           }
-  //         },
-  //       ),
-  //     if (isMe(post.owner.id))
-  //       KSTextButtonBottomSheet(
-  //         title: 'Delete Post',
-  //         icon: Feather.trash_2,
-  //         onTab: () {
-  //           dismissScreen(context);
-  //           showKSConfirmDialog(
-  //             context,
-  //             message: 'Are you sure you want to delete this post?',
-  //             onYesPressed: () {
-  //               deletePost();
-  //             },
-  //           );
-  //         },
-  //       ),
-  //     KSTextButtonBottomSheet(
-  //       title: 'Report Post',
-  //       icon: Feather.info,
-  //       onTab: () {
-  //         dismissScreen(context);
-  //         showReportScreen(context);
-  //       },
-  //     ),
-  //   ]);
-  // }
-
   void showOptionActionBottomSheet(Post post) {
     showKSBottomSheet(context, children: [
       if (isMe(post.owner.id))
@@ -637,7 +593,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
             showKSConfirmDialog(
               context,
               message:
-                  'That\'t person won\'t be able to follow or see any of your activity. Are you sure you want to block ${post.owner.getFullname()}?',
+                  'Are you sure you want to block ${post.owner.getFullname()}?',
               onYesPressed: () {
                 // var res =
                 //     await ksClient.postApi('/user/unfollow/${post.owner.id}');
