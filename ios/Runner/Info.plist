@@ -57,9 +57,9 @@
 	<string>VPlay would like to access location service for filter sport venue nearby the user and share their current location with activity post.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>VPlay would like to access location service for filter sport venue nearby the user and share their current location with activity post.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>VPlay would like to access location service for filter sport venue nearby the user and share their current location with activity post.</string>
 	<key>NSLocationUsageDescription</key>
+	<string>VPlay would like to access location service for filter sport venue nearby the user and share their current location with activity post.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>VPlay would like to access location service for filter sport venue nearby the user and share their current location with activity post.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>VPlay would like to access to your Microphone for internal usage.</string>
