@@ -79,9 +79,10 @@ class KSConfirmDialogState extends State<KSConfirmDialog>
               opacity: animation!,
               child: Container(
                 padding: EdgeInsets.only(top: 16.0),
-                margin: EdgeInsets.symmetric(
-                  horizontal: 35.0,
-                ),
+                width: 320.0,
+                // margin: EdgeInsets.symmetric(
+                //   horizontal: 35.0,
+                // ),
                 decoration: ShapeDecoration(
                     color: Theme.of(context).primaryColor,
                     shape: RoundedRectangleBorder(

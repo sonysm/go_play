@@ -448,7 +448,7 @@ class _ActivityCellState extends State<ActivityCell> {
             showKSConfirmDialog(
               context,
               message:
-                  'That\'t person won\'t be able to follow or see any of your activity. Are you sure you want to block ${post.owner.getFullname()}?',
+                  'Are you sure you want to block ${post.owner.getFullname()}?',
               onYesPressed: () {
                 showKSLoading(context);
                 Future.delayed(Duration(seconds: 1), () {

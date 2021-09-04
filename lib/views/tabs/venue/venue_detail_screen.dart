@@ -46,6 +46,9 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
 
   KSHttpClient ksClient = KSHttpClient();
 
+  Map sportType = {};
+  Sport? sportTypeSelected;
+
   Widget buildVenueNavbar() {
     return SliverPersistentHeader(
       pinned: true,
@@ -54,6 +57,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
         toolbarHeight: MediaQuery.of(context).padding.top - 4,
         openHeight: AppSize(context).appWidth(70),
         closeHeight: kToolbarHeight,
+        venue: _venue,
       ),
     );
   }
@@ -67,34 +71,38 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
           children: [
             Row(
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _venue.name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6
-                          ?.copyWith(fontWeight: FontWeight.w600),
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: Colors.amber[700],
-                        ),
-                        4.width,
-                        Text(
-                          '4.5',
-                          style:
-                              Theme.of(context).textTheme.bodyText1?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18.0,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _venue.name,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      4.height,
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.star,
+                            color: Colors.amber[700],
+                          ),
+                          4.width,
+                          Text(
+                            '4.5',
+                            style:
+                                Theme.of(context).textTheme.bodyText1?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18.0,
+                                    ),
+                            strutStyle: StrutStyle(fontSize: 18.0, height: 1.3),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -347,40 +355,41 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                     ),
                   ),
                   16.height,
-                  Text(
-                    'Available pitches:',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  8.height,
-                  venueServiceList.isNotEmpty
-                      ? ListView.separated(
-                          padding: EdgeInsets.only(bottom: 16.0),
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final service = venueServiceList[index];
+                  if (venueServiceList.isNotEmpty) ...[
+                    Text(
+                      'Available pitches:',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          ?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    8.height,
+                    ListView.separated(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final service = venueServiceList[index];
 
-                            if (service.serviceData != null &&
-                                service.serviceData!.people != null) {
-                              return buildPitchCell(
-                                pitchName: service.name +
-                                    ' (${service.serviceData!.people! ~/ 2}x${service.serviceData!.people! ~/ 2})',
-                                pitchPrice:
-                                    '\$${service.hourPrice.toStringAsFixed(2)}/h',
-                                venueService: service,
-                              );
-                            }
+                        if (service.serviceData != null &&
+                            service.serviceData!.people != null) {
+                          return buildPitchCell(
+                            pitchName: service.name +
+                                ' (${service.serviceData!.people! ~/ 2}x${service.serviceData!.people! ~/ 2})',
+                            pitchPrice:
+                                '\$${service.hourPrice.toStringAsFixed(2)}/h',
+                            venueService: service,
+                          );
+                        }
 
-                            return SizedBox();
-                          },
-                          separatorBuilder: (context, index) {
-                            return 8.height;
-                          },
-                          itemCount: venueServiceList.length)
-                      : SizedBox()
+                        return SizedBox();
+                      },
+                      separatorBuilder: (context, index) {
+                        return 8.height;
+                      },
+                      itemCount: venueServiceList.length,
+                    )
+                  ],
                 ],
               )
             : SizedBox(),
@@ -495,9 +504,6 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     );
   }
 
-  Map sportType = {};
-  Sport? sportTypeSelected;
-
   void getVenueDetail() async {
     var res = await ksClient.getApi('/venue/detail/${_venue.id}');
     if (res != null) {
@@ -526,11 +532,13 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
   double toolbarHeight;
   double closeHeight;
   double openHeight;
+  Venue venue;
 
   VenueDetailHeader({
     required this.toolbarHeight,
     required this.closeHeight,
     required this.openHeight,
+    required this.venue,
   });
 
   List<String> venueImageList = [
@@ -611,7 +619,7 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
                 ),
               ),
               title: Text(
-                'Downtown Sport Club',
+                venue.name,
                 style: TextStyle(
                   color: shrinkOffset < openHeight - 100
                       ? Colors.transparent

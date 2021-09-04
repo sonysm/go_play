@@ -107,7 +107,11 @@ class _BookingHistoryDetailScreenState
               height: 54.0,
               child: ListTile(
                 dense: true,
-                leading: Icon(Feather.map_pin, size: 20.0),
+                leading: Icon(
+                  Feather.map_pin,
+                  size: 20.0,
+                  color: ColorResources.getSecondaryIconColor(context),
+                ),
                 horizontalTitleGap: 0,
                 title: Text(_booking.venue.name,
                     style: Theme.of(context).textTheme.bodyText1),
@@ -115,23 +119,28 @@ class _BookingHistoryDetailScreenState
                     style: Theme.of(context).textTheme.headline2),
               ),
             ),
-            if (_booking.service.serviceData != null) SizedBox(
-              height: 48.0,
-              child: ListTile(
-                dense: true,
-                leading: SizedBox(width: 20.0),
-                horizontalTitleGap: 0,
-                title: Text(
-                    _booking.service.name +
-                        ' (${_booking.service.serviceData!.people! ~/ 2}x${_booking.service.serviceData!.people! ~/ 2})',
-                    style: Theme.of(context).textTheme.bodyText1),
+            if (_booking.service.serviceData != null)
+              SizedBox(
+                height: 48.0,
+                child: ListTile(
+                  dense: true,
+                  leading: SizedBox(width: 20.0),
+                  horizontalTitleGap: 0,
+                  title: Text(
+                      _booking.service.name +
+                          ' (${_booking.service.serviceData!.people! ~/ 2}x${_booking.service.serviceData!.people! ~/ 2})',
+                      style: Theme.of(context).textTheme.bodyText1),
+                ),
               ),
-            ),
             SizedBox(
               height: 48.0,
               child: ListTile(
                 dense: true,
-                leading: Icon(Feather.calendar, size: 20.0),
+                leading: Icon(
+                  Feather.calendar,
+                  size: 20.0,
+                  color: ColorResources.getSecondaryIconColor(context),
+                ),
                 horizontalTitleGap: 0,
                 title: Text(
                     DateFormat('dd/MM/yyyy - hh:mm a').format(DateTime.parse(
@@ -143,7 +152,11 @@ class _BookingHistoryDetailScreenState
               height: 48.0,
               child: ListTile(
                 dense: true,
-                leading: Icon(Feather.clock, size: 20.0),
+                leading: Icon(
+                  Feather.clock,
+                  size: 20.0,
+                  color: ColorResources.getSecondaryIconColor(context),
+                ),
                 horizontalTitleGap: 0,
                 title: Text(duration,
                     style: Theme.of(context).textTheme.bodyText1),
@@ -153,7 +166,11 @@ class _BookingHistoryDetailScreenState
               height: 48.0,
               child: ListTile(
                 dense: true,
-                leading: Icon(Feather.dollar_sign, size: 20.0),
+                leading: Icon(
+                  Feather.dollar_sign,
+                  size: 20.0,
+                  color: ColorResources.getSecondaryIconColor(context),
+                ),
                 horizontalTitleGap: 0,
                 title: Text(_booking.price.toString(),
                     style: Theme.of(context).textTheme.bodyText1),
@@ -163,7 +180,11 @@ class _BookingHistoryDetailScreenState
               height: 48.0,
               child: ListTile(
                 dense: true,
-                leading: Icon(Feather.pocket, size: 20.0),
+                leading: Icon(
+                  Feather.pocket,
+                  size: 20.0,
+                  color: ColorResources.getSecondaryIconColor(context),
+                ),
                 horizontalTitleGap: 0,
                 title: Text(mapStatusTitle(),
                     style: Theme.of(context)
@@ -204,13 +225,16 @@ class _BookingHistoryDetailScreenState
       appBar: AppBar(
         title: Text('ID - KS$title'),
         actions: [
-          !isLoading ? isMeetupAvailable()
-              ? CupertinoButton(
-                  child: Icon(FeatherIcons.moreVertical,
-                      color: isLight(context) ? Colors.grey[600] : whiteColor),
-                  onPressed: cancelBooking,
-                )
-              : SizedBox() : SizedBox()
+          !isLoading
+              ? isMeetupAvailable()
+                  ? CupertinoButton(
+                      child: Icon(FeatherIcons.moreVertical,
+                          color:
+                              isLight(context) ? Colors.grey[600] : whiteColor),
+                      onPressed: cancelBooking,
+                    )
+                  : SizedBox()
+              : SizedBox()
         ],
       ),
       backgroundColor: Theme.of(context).primaryColor,

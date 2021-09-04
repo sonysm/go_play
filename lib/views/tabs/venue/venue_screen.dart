@@ -7,9 +7,9 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/venue.dart';
 import 'package:kroma_sport/themes/colors.dart';
-import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
+import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/widget/venue_cell.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
@@ -48,31 +48,58 @@ class _VenueScreenState extends State<VenueScreen> {
   Widget buildVenueList() {
     // venueList = [];
     return venueList.isNotEmpty
-        ? SliverToBoxAdapter(
-            child: ListView.separated(
+        ? SliverFillRemaining(
+            child: EasyRefresh(
+            header: MaterialHeader(
+              valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+            ),
+            child: GridView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 8.0),
-              itemBuilder: (context, index) {
-                final venue = venueList[index];
-                return Padding(
-                  padding: EdgeInsets.only(top: index == 0 ? 8.0 : 0),
-                  child: VenueCell(venue: venue),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return 8.height;
-              },
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                childAspectRatio: 1.3,
+                crossAxisCount: 2,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                // mainAxisExtent: 150
+              ),
+              padding: const EdgeInsets.all(8.0),
               itemCount: venueList.length,
+              itemBuilder: (_, index) {
+                final venue = venueList[index];
+                return VenueCell(venue: venue);
+              },
             ),
+            onRefresh: () async {},
           )
+
+            // ListView.separated(
+            //   shrinkWrap: true,
+            //   physics: NeverScrollableScrollPhysics(),
+            //   padding: const EdgeInsets.only(bottom: 8.0),
+            //   itemBuilder: (context, index) {
+            //     final venue = venueList[index];
+            //     return Padding(
+            //       padding: EdgeInsets.only(top: index == 0 ? 8.0 : 0),
+            //       child: VenueCell(venue: venue),
+            //     );
+            //   },
+            //   separatorBuilder: (context, index) {
+            //     return 8.height;
+            //   },
+            //   itemCount: venueList.length,
+            // ),
+            )
         : SliverFillRemaining(
             child: KSScreenState(
-              icon: RotatedBox(quarterTurns: 3, child: SvgPicture.asset(
-                'assets/images/svg_football_field.svg',
-                color: Colors.grey,
-                height: 100,
-              ),),
+              icon: RotatedBox(
+                quarterTurns: 3,
+                child: SvgPicture.asset(
+                  'assets/images/svg_football_field.svg',
+                  color: Colors.grey,
+                  height: 100,
+                ),
+              ),
               title: 'No any available venue',
               bottomPadding: AppBar().preferredSize.height,
             ),
@@ -82,46 +109,55 @@ class _VenueScreenState extends State<VenueScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Venues'),
-        elevation: 0.5,
-        actions: [
-          //CupertinoButton(
-          //  padding: EdgeInsets.zero,
-          //  alignment: Alignment.centerRight,
-          //  child: Icon(Icons.history,
-          //      color: Theme.of(context).brightness == Brightness.light
-          //          ? Colors.grey[600]
-          //          : whiteColor),
-          //  onPressed: () => launchScreen(context, BookingHistoryScreen.tag),
-          //),
-          CupertinoButton(
-            child: Icon(FeatherIcons.bell,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? Colors.grey[600]
-                    : whiteColor),
-            onPressed: () => launchScreen(context, NotificationScreen.tag),
-          ),
-          SizedBox(),
-        ],
-      ),
-      backgroundColor: Theme.of(context).primaryColor,
-      body: EasyRefresh.custom(
-        header: MaterialHeader(
-          valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+        appBar: AppBar(
+          title: Text('Venues'),
+          elevation: 0.5,
+          actions: [
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              alignment: Alignment.centerRight,
+              child: Icon(
+                Icons.history,
+                color: ColorResources.getSecondaryIconColor(context),
+              ),
+              onPressed: () => launchScreen(context, BookingHistoryScreen.tag),
+            ),
+            CupertinoButton(
+              child: Icon(
+                FeatherIcons.bell,
+                color: ColorResources.getSecondaryIconColor(context),
+              ),
+              onPressed: () => launchScreen(context, NotificationScreen.tag),
+            ),
+            SizedBox(),
+          ],
         ),
-        slivers: [
-          isConnection
-              ? buildVenueList()
-              : SliverFillRemaining(
-                  child: KSNoInternet(),
-                ),
-        ],
-        onRefresh: () async {
-          getVenueList();
-        },
-      ),
-    );
+        backgroundColor: Theme.of(context).primaryColor,
+        body: CustomScrollView(
+          slivers: [
+            isConnection
+                ? buildVenueList()
+                : SliverFillRemaining(
+                    child: KSNoInternet(),
+                  ),
+          ],
+        )
+        // EasyRefresh.custom(
+        //   header: MaterialHeader(
+        //     valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+        //   ),
+        //   slivers: [
+        //     isConnection
+        //         ? buildVenueList()
+        //         : SliverFillRemaining(
+        //             child: KSNoInternet(),
+        //           ),
+        //   ],
+        //   onRefresh: () async {
+        //     getVenueList();
+        //   },
+        // ),
+        );
   }
 
   @override

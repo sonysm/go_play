@@ -15,6 +15,7 @@ import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/option_screen.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen_new.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
@@ -70,7 +71,6 @@ class _MainViewState extends State<MainView> {
           color: Theme.of(context).primaryColor,
           child: SafeArea(
             child: Container(
-              //color: Theme.of(context).primaryColor,
               height: 54.0,
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
@@ -100,7 +100,8 @@ class _MainViewState extends State<MainView> {
                       _screenIndex = index - 1;
                     });
                   } else {
-                    createActivityScreen();
+                    // createActivityScreen();
+                    showKSMainOption(context);
                   }
                 },
               ),

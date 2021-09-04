@@ -164,6 +164,9 @@ class _HomeFeedCellState extends State<HomeFeedCell>
                       child: SelectableLinkify(
                         text: _post.description!,
                         style: Theme.of(context).textTheme.bodyText1,
+                        strutStyle: StrutStyle(
+                          fontSize: 20.0,
+                        ),
                         onOpen: (link) async {
                           if (await canLaunch(link.url)) {
                             // await launch(link.url);
@@ -250,6 +253,7 @@ class _HomeFeedCellState extends State<HomeFeedCell>
                         4.width,
                         KSIconButton(
                           icon: FeatherIcons.messageSquare,
+                          iconColor: ColorResources.getInactiveIconColor(context),
                           onTap: () =>
                               launchFeedDetailScreen(isCommentTap: true),
                         ),
@@ -409,7 +413,7 @@ class _HomeFeedCellState extends State<HomeFeedCell>
             showKSConfirmDialog(
               context,
               message:
-                  'That\'t person won\'t be able to follow or see any of your activity. Are you sure you want to block ${post.owner.getFullname()}?',
+                  'Are you sure you want to block ${post.owner.getFullname()}?',
               onYesPressed: () {
                 showKSLoading(context);
                 Future.delayed(Duration(seconds: 1), () {

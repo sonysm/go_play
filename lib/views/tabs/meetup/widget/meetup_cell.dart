@@ -517,7 +517,7 @@ class _MeetupCellState extends State<MeetupCell> {
             showKSConfirmDialog(
               context,
               message:
-                  'That\'t person won\'t be able to follow or see any of your activity. Are you sure you want to block ${post.owner.getFullname()}?',
+                  'Are you sure you want to block ${post.owner.getFullname()}?',
               onYesPressed: () {
                 // var res =
                 //     await ksClient.postApi('/user/unfollow/${post.owner.id}');

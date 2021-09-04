@@ -523,7 +523,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                 );
               }),
               buildProfileHeader(),
-              buildFavoriteSport(),
+              if (!_user.isPublic) buildFavoriteSport(),
             ];
           },
           pinnedHeaderSliverHeightBuilder: () {
@@ -722,7 +722,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
           showKSConfirmDialog(
             context,
             message:
-                'That\'t person won\'t be able to follow or see any of your activity. Are you sure you want to block ${_user.getFullname()}?',
+                'Are you sure you want to block ${_user.getFullname()}?',
             onYesPressed: () {
               showKSLoading(context);
               Future.delayed(Duration(seconds: 1), () {
