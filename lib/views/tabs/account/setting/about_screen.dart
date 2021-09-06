@@ -24,8 +24,7 @@ class _AboutScreenState extends State<AboutScreen> {
       ),
       backgroundColor: ColorResources.getPrimary(context),
       body: Padding(
-        padding: const EdgeInsets.only(
-            left: 24.0, top: 24.0, right: 24.0, bottom: 16.0),
+        padding: const EdgeInsets.only(left: 24.0, top: 24.0, right: 24.0, bottom: 16.0),
         child: Center(
           child: Column(
             children: [

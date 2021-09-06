@@ -16,9 +16,7 @@ import 'package:kroma_sport/utils/constant.dart';
 import 'package:kroma_sport/views/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -28,11 +26,9 @@ void main() async {
 
   /// Update the iOS foreground notification presentation options to allow
   /// heads up notifications.
-  await FirebaseMessaging.instance
-      .setForegroundNotificationPresentationOptions();
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions();
 
-  ConnectionStatusSingleton connectionStatus =
-      ConnectionStatusSingleton.getInstance();
+  ConnectionStatusSingleton connectionStatus = ConnectionStatusSingleton.getInstance();
   connectionStatus.initialize();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
@@ -66,53 +62,44 @@ class App extends StatelessWidget {
           home: SplashScreen(),
           onGenerateRoute: RouteGenerator.generateRoute,
           theme: ThemeData.light().copyWith(
-            primaryColor: primaryColor,
-            accentColor: mainColor,
-            scaffoldBackgroundColor: greyColor,
-            iconTheme: IconThemeData(color: mainColor),
-            accentIconTheme: IconThemeData(color: mainColor),
-            primaryIconTheme: IconThemeData(color: mainColor),
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-            primaryTextTheme:
-                Theme.of(context).primaryTextTheme.apply(bodyColor: blackColor),
-            textTheme: TextTheme(
-              headline1: avenirRegularBlack,
-              headline2: avenirRegularBlack,
-              headline3: avenirRegularBlack,
-              headline4: avenirRegularBlack,
-              headline5: avenirRegularBlack.copyWith(fontSize: 24.0),
-              headline6: avenirRegularBlack.copyWith(fontSize: 20.0),
-              bodyText1: avenirRegularBlack.copyWith(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w400,
+              primaryColor: primaryColor,
+              accentColor: mainColor,
+              scaffoldBackgroundColor: greyColor,
+              iconTheme: IconThemeData(color: mainColor),
+              accentIconTheme: IconThemeData(color: mainColor),
+              primaryIconTheme: IconThemeData(color: mainColor),
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              primaryTextTheme: Theme.of(context).primaryTextTheme.apply(bodyColor: blackColor),
+              textTheme: TextTheme(
+                headline1: avenirRegularBlack,
+                headline2: avenirRegularBlack,
+                headline3: avenirRegularBlack,
+                headline4: avenirRegularBlack,
+                headline5: avenirRegularBlack.copyWith(fontSize: 24.0),
+                headline6: avenirRegularBlack.copyWith(fontSize: 20.0),
+                bodyText1: avenirRegularBlack.copyWith(fontSize: 16.0, fontWeight: FontWeight.w400),
+                bodyText2: avenirRegularBlack,
+                caption: avenirRegularBlack.copyWith(fontSize: 12.0),
               ),
-              bodyText2: avenirRegularBlack,
-              caption: avenirRegularBlack.copyWith(fontSize: 12.0),
-            ),
-            appBarTheme: AppBarTheme(
-              elevation: 1,
-              textTheme: TextTheme(headline6: metropolisMainColor20),
-            ),
-            tabBarTheme: TabBarTheme(
-              labelColor: mainColor,
-              unselectedLabelColor: Colors.grey,
-              labelStyle: Theme.of(context).textTheme.bodyText1,
-            ),
-            radioTheme: RadioThemeData(
-              fillColor: MaterialStateProperty.all(mainColor)
-            )
-          ),
+              appBarTheme: AppBarTheme(
+                elevation: 1,
+                textTheme: TextTheme(headline6: metropolisMainColor20),
+              ),
+              tabBarTheme: TabBarTheme(
+                labelColor: mainColor,
+                unselectedLabelColor: Colors.grey,
+                labelStyle: Theme.of(context).textTheme.bodyText1,
+              ),
+              radioTheme: RadioThemeData(fillColor: MaterialStateProperty.all(mainColor))),
           darkTheme: ThemeData.dark().copyWith(
             primaryColor: primaryDarkColor,
             accentColor: mainDarkColor,
-            scaffoldBackgroundColor:
-                backgroundDarkPrimary, // Color(0xFF485b63),
+            scaffoldBackgroundColor: backgroundDarkPrimary,
             iconTheme: IconThemeData(color: mainDarkColor),
             accentIconTheme: IconThemeData(color: mainDarkColor),
             primaryIconTheme: IconThemeData(color: mainDarkColor),
             visualDensity: VisualDensity.adaptivePlatformDensity,
-            primaryTextTheme:
-                Theme.of(context).primaryTextTheme.apply(bodyColor: whiteColor),
+            primaryTextTheme: Theme.of(context).primaryTextTheme.apply(bodyColor: whiteColor),
             textTheme: TextTheme(
               headline1: avenirRegularWhite,
               headline2: avenirRegularWhite,
@@ -120,10 +107,7 @@ class App extends StatelessWidget {
               headline4: avenirRegularWhite,
               headline5: avenirRegularWhite.copyWith(fontSize: 24.0),
               headline6: avenirRegularWhite.copyWith(fontSize: 20.0),
-              bodyText1: avenirRegularWhite.copyWith(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w400,
-              ),
+              bodyText1: avenirRegularWhite.copyWith(fontSize: 16.0, fontWeight: FontWeight.w400),
               bodyText2: avenirRegularWhite,
               caption: avenirRegularWhite.copyWith(fontSize: 12.0),
             ),

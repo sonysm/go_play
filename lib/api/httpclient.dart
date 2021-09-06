@@ -231,7 +231,7 @@ class KSHttpClient {
       {Map<String, String>? fields, String imageKey = 'photo'}) async {
     var request = http.MultipartRequest("POST", _getUir(url));
     if (fields != null) {
-      fields.removeWhere((key, value) => value == null);
+      //fields.removeWhere((key, value) => value == null);
       request.fields.addAll(fields);
     }
     if (image != null) {

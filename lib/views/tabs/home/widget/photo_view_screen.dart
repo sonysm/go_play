@@ -21,7 +21,7 @@ class ViewPhotoScreen extends StatefulWidget {
 
 class _ViewPhotoScreenState extends State<ViewPhotoScreen> {
   var showDescription = true;
-  PageController pageController = PageController();
+  PageController pageController = PageController(viewportFraction: 1.05);
   PhotoViewScaleStateController scaleStateController =
       PhotoViewScaleStateController();
 

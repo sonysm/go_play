@@ -45,8 +45,7 @@ class RouteGenerator {
       case LoginScreen.tag:
         return MaterialPageRoute(builder: (_) => LoginScreen());
       case RegisterScreen.tag:
-        return MaterialPageRoute(
-            builder: (_) => RegisterScreen(phoneNumber: args as String));
+        return MaterialPageRoute(builder: (_) => RegisterScreen(phoneNumber: args as String));
       case VerifyCodeScreen.tag:
         return MaterialPageRoute(
           builder: (_) => VerifyCodeScreen(phoneNumber: args as String),
@@ -69,9 +68,6 @@ class RouteGenerator {
         );
       case FeedDetailScreen.tag:
         var data = args as Map<String, dynamic>;
-        // return MaterialPageRoute(
-        //     builder: (_) => FeedDetailScreen(
-        //         post: data['post'], isCommentTap: data['isCommentTap']));
 
         return MaterialPageRoute(
             builder: (_) => FeedDetailScreen(
@@ -95,12 +91,8 @@ class RouteGenerator {
           ),
         );
       case SportDetailScreen.tag:
-        return MaterialPageRoute(
-            builder: (_) => SportDetailScreen(sport: args as Sport));
+        return MaterialPageRoute(builder: (_) => SportDetailScreen(sport: args as Sport));
       case ViewUserProfileScreen.tag:
-        // return MaterialPageRoute(
-        //     builder: (_) => ViewUserProfileScreen(user: args as User));
-
         args as Map;
         return KSPageRoute(
           builder: (_) => ViewUserProfileScreen(
@@ -119,8 +111,7 @@ class RouteGenerator {
           ),
         );
       case SetAddressScreen.tag:
-        return MaterialPageRoute(
-            builder: (_) => SetAddressScreen(address: args));
+        return MaterialPageRoute(builder: (_) => SetAddressScreen(address: args));
       case ActivityPreviewScreen.tag:
         return MaterialPageRoute(
           builder: (_) => ActivityPreviewScreen(
@@ -206,15 +197,13 @@ class RouteGenerator {
 }
 
 class KSPageRoute<T> extends MaterialPageRoute<T> {
-  KSPageRoute({required WidgetBuilder builder, RouteSettings? settings})
-      : super(builder: builder, settings: settings);
+  KSPageRoute({required WidgetBuilder builder, RouteSettings? settings}) : super(builder: builder, settings: settings);
 
   @override
   Duration get transitionDuration => const Duration(milliseconds: 350);
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     // animation = CurvedAnimation(
     //     parent: animation,
     //     curve: Curves.fastLinearToSlowEaseIn,

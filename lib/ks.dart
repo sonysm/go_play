@@ -44,7 +44,7 @@ class KS {
         }
         currentPosition = latlng;
       });
-    } on PlatformException catch (e) {
+    } on PlatformException catch (_) {
       //print("Errr xxxxxx =  setupLocationMintor =$e");
     } catch (e) {
       //print("Errr xxxxxx = setupLocationMintor = $e");

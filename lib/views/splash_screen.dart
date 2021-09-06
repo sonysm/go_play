@@ -29,8 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
       child: BlocListener<SplashCubit, SplashState>(
         listener: (context, state) {
           if (state == SplashState.Exist) {
-            Navigator.pushNamedAndRemoveUntil(
-                context, MainView.tag, (route) => false);
+            Navigator.pushNamedAndRemoveUntil(context, MainView.tag, (route) => false);
           } else if (state == SplashState.New) {
             navigateToLoginScreen();
           }
@@ -67,8 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   navigateToLoginScreen() {
-    return Timer(Duration(milliseconds: 1500),
-        () => Navigator.pushReplacementNamed(context, LoginScreen.tag));
+    return Timer(Duration(milliseconds: 1500), () => Navigator.pushReplacementNamed(context, LoginScreen.tag));
   }
 
   Future<void> _initPackageInfo() async {
