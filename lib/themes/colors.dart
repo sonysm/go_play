@@ -67,4 +67,8 @@ class ColorResources {
   static Color getOverlayIconColor(BuildContext context) {
     return isLight(context) ? Color(0xFFEEEEEE) : Color(0xFF90A4AE);
   }
+
+  static Color getCloseButtonColor(BuildContext context) {
+    return isLight(context) ? Color(0xFFCFD8DC) : Colors.blueGrey[400]!;
+  }
 }

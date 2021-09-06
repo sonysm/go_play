@@ -22,7 +22,7 @@ class VenueScreen extends StatefulWidget {
   _VenueScreenState createState() => _VenueScreenState();
 }
 
-class _VenueScreenState extends State<VenueScreen> {
+class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStateMixin {
   List<String> venueImageList = [
     'https://images.unsplash.com/photo-1487466365202-1afdb86c764e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1052&q=80',
     'https://images.unsplash.com/photo-1510526292299-20af3f62d453?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1014&q=80',
@@ -45,30 +45,45 @@ class _VenueScreenState extends State<VenueScreen> {
 
   bool isConnection = false;
 
+  bool isLoading = true;
+
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
   Widget buildVenueList() {
-    // venueList = [];
+    if (isLoading) {
+      return SliverFillRemaining(
+        child: Center(
+          child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.greenAccent)),
+        ),
+      );
+    }
+
     return venueList.isNotEmpty
         ? SliverFillRemaining(
             child: EasyRefresh(
             header: MaterialHeader(
               valueColor: AlwaysStoppedAnimation<Color>(mainColor),
             ),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: 1.3,
-                crossAxisCount: 2,
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-                // mainAxisExtent: 150
+            child: FadeTransition(
+              opacity: _animation,
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 1.3,
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 8.0,
+                  crossAxisSpacing: 8.0,
+                  // mainAxisExtent: 150
+                ),
+                padding: const EdgeInsets.all(8.0),
+                itemCount: venueList.length,
+                itemBuilder: (_, index) {
+                  final venue = venueList[index];
+                  return VenueCell(venue: venue);
+                },
               ),
-              padding: const EdgeInsets.all(8.0),
-              itemCount: venueList.length,
-              itemBuilder: (_, index) {
-                final venue = venueList[index];
-                return VenueCell(venue: venue);
-              },
             ),
             onRefresh: () async {},
           )
@@ -109,61 +124,51 @@ class _VenueScreenState extends State<VenueScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Venues'),
-          elevation: 0.5,
-          actions: [
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              alignment: Alignment.centerRight,
-              child: Icon(
-                Icons.history,
-                color: ColorResources.getSecondaryIconColor(context),
-              ),
-              onPressed: () => launchScreen(context, BookingHistoryScreen.tag),
+      appBar: AppBar(
+        title: Text('Venues'),
+        elevation: 0.5,
+        actions: [
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            alignment: Alignment.centerRight,
+            child: Icon(
+              Icons.history,
+              color: ColorResources.getSecondaryIconColor(context),
             ),
-            CupertinoButton(
-              child: Icon(
-                FeatherIcons.bell,
-                color: ColorResources.getSecondaryIconColor(context),
-              ),
-              onPressed: () => launchScreen(context, NotificationScreen.tag),
+            onPressed: () => launchScreen(context, BookingHistoryScreen.tag),
+          ),
+          CupertinoButton(
+            child: Icon(
+              FeatherIcons.bell,
+              color: ColorResources.getSecondaryIconColor(context),
             ),
-            SizedBox(),
-          ],
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        body: CustomScrollView(
-          slivers: [
-            isConnection
-                ? buildVenueList()
-                : SliverFillRemaining(
-                    child: KSNoInternet(),
-                  ),
-          ],
-        )
-        // EasyRefresh.custom(
-        //   header: MaterialHeader(
-        //     valueColor: AlwaysStoppedAnimation<Color>(mainColor),
-        //   ),
-        //   slivers: [
-        //     isConnection
-        //         ? buildVenueList()
-        //         : SliverFillRemaining(
-        //             child: KSNoInternet(),
-        //           ),
-        //   ],
-        //   onRefresh: () async {
-        //     getVenueList();
-        //   },
-        // ),
-        );
+            onPressed: () => launchScreen(context, NotificationScreen.tag),
+          ),
+          SizedBox(),
+        ],
+      ),
+      backgroundColor: Theme.of(context).primaryColor,
+      body: CustomScrollView(
+        slivers: [
+          buildVenueList(),
+        ],
+      ),
+    );
   }
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 700));
+    _animation = Tween(begin: 0.0, end: 1.0).animate(_animationController);
+
     getVenueList();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -177,14 +182,17 @@ class _VenueScreenState extends State<VenueScreen> {
     if (res != null) {
       if (res is! HttpResult) {
         isConnection = true;
-        venueList =
-            List<Venue>.from((res as List).map((e) => Venue.fromJson(e)));
+        venueList = List<Venue>.from((res as List).map((e) => Venue.fromJson(e)));
       } else {
         if (res.code == -500) {
           isConnection = false;
         }
       }
+
+      isLoading = false;
+      await Future.delayed(Duration.zero);
       setState(() {});
+      _animationController.forward();
     }
   }
 }
