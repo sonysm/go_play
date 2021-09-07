@@ -563,31 +563,32 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
             color: Colors.grey[200],
             child: Stack(
               children: [
-                Swiper(
-                  itemCount: venueImageList.length,
-                  itemBuilder: (context, index) => Container(
-                    child: CacheImage(
-                      url: venueImageList[index],
-                    ),
-                  ),
-                  curve: Curves.easeInOutCubic,
-                  autoplay: true,
-                  loop: false,
-                  // autoplayDelay: 5000,
-                  // duration: 850,
-                  pagination: venueImageList.length > 1
-                      ? SwiperPagination(
-                          builder: DotSwiperPaginationBuilder(
-                            activeColor: mainColor,
-                            color: Colors.grey[100],
-                            size: 8.0,
-                            activeSize: 8.0,
-                          ),
-                        )
-                      : null,
+                // Swiper(
+                //   itemCount: venueImageList.length,
+                //   itemBuilder: (context, index) => Container(
+                //     child: CacheImage(
+                //       url: venueImageList[index],
+                //     ),
+                //   ),
+                //   curve: Curves.easeInOutCubic,
+                //   autoplay: true,
+                //   loop: false,
+                //   // autoplayDelay: 5000,
+                //   // duration: 850,
+                //   pagination: venueImageList.length > 1
+                //       ? SwiperPagination(
+                //           builder: DotSwiperPaginationBuilder(
+                //             activeColor: mainColor,
+                //             color: Colors.grey[100],
+                //             size: 8.0,
+                //             activeSize: 8.0,
+                //           ),
+                //         )
+                //       : null,
 
-                  // onTap: (index) {},
-                ),
+                //   // onTap: (index) {},
+                // ),
+                Hero(tag: 'venue_profile${venue.id}', child: CacheImage(url: venue.profilePhoto!))
               ],
             ),
           ),

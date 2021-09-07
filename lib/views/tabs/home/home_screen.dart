@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -286,46 +287,55 @@ class _HomeScreenState extends State<HomeScreen> {
       listener: (context, state) {
         ApiChecker.checkApi(context, state.status);
       },
-      child: Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
-        body: SafeArea(
-          child: Container(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: EasyRefresh.custom(
-              scrollController: _homeScrollController,
-              header: MaterialHeader(
-                valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle(
+          statusBarIconBrightness: isLight(context) ? Brightness.dark : Brightness.light,
+          systemNavigationBarColor:
+              isLight(context)
+                  ? Color.fromRGBO(113, 113, 113, 1)
+                  : Color.fromRGBO(15, 15, 15, 1),
+        ),
+        child: Scaffold(
+          backgroundColor: Theme.of(context).primaryColor,
+          body: SafeArea(
+            child: Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: EasyRefresh.custom(
+                scrollController: _homeScrollController,
+                header: MaterialHeader(
+                  valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+                ),
+                footer: ClassicalFooter(
+                  enableInfiniteLoad: false,
+                  completeDuration: Duration(milliseconds: 1200),
+                ),
+                slivers: [
+                  buildNavbar(),
+                  createFeedWidget(),
+                  buildSuggestionWidget(),
+                  buildHomeFeedList(),
+                  //BottomRefresher(onRefresh: () {
+                  //    return Future<void>.delayed(const Duration(seconds: 10))
+                  //        ..then((re) {
+                  //          // setState(() {
+                  //          //   changeRandomList();
+                  //          //   _scrollController.animateTo(0.0,
+                  //          //       duration: new Duration(milliseconds: 100),
+                  //          //       curve: Curves.bounceOut);
+                  //          // });
+                  //          print("==============");
+                  //        });
+                  //}),
+                ],
+                onRefresh: () async {
+                  _homeCubit.onRefresh();
+                  _suggestionCubit.onLoad();
+                },
+                onLoad: () async {
+                  await Future.delayed(Duration(milliseconds: 300));
+                  _homeCubit.onLoadMore();
+                },
               ),
-              footer: ClassicalFooter(
-                enableInfiniteLoad: false,
-                completeDuration: Duration(milliseconds: 1200),
-              ),
-              slivers: [
-                buildNavbar(),
-                createFeedWidget(),
-                buildSuggestionWidget(),
-                buildHomeFeedList(),
-                //BottomRefresher(onRefresh: () {
-                //    return Future<void>.delayed(const Duration(seconds: 10))
-                //        ..then((re) {
-                //          // setState(() {
-                //          //   changeRandomList();
-                //          //   _scrollController.animateTo(0.0,
-                //          //       duration: new Duration(milliseconds: 100),
-                //          //       curve: Curves.bounceOut);
-                //          // });
-                //          print("==============");
-                //        });
-                //}),
-              ],
-              onRefresh: () async {
-                _homeCubit.onRefresh();
-                _suggestionCubit.onLoad();
-              },
-              onLoad: () async {
-                await Future.delayed(Duration(milliseconds: 300));
-                _homeCubit.onLoadMore();
-              },
             ),
           ),
         ),

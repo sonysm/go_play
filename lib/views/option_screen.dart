@@ -3,6 +3,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_screen.dart';
 import 'package:line_icons/line_icons.dart';
 
@@ -94,6 +95,10 @@ class _OptionMainScreenState extends State<OptionMainScreen> with SingleTickerPr
                             FeatherIcons.activity,
                             color: whiteColor,
                           ),
+                          onPressed: () {
+                            dismissScreen(context);
+                            launchScreen(context, OrganizeListScreen.tag);
+                          },
                         ),
                       ),
                     ),

@@ -35,6 +35,7 @@ import 'package:kroma_sport/views/tabs/venue/booking_history_detail.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/pitch_booking_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_detail_screen.dart';
+import 'package:kroma_sport/views/tabs/venue/venue_map_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_screen.dart';
 
 class RouteGenerator {
@@ -44,139 +45,114 @@ class RouteGenerator {
     switch (settings.name) {
       case LoginScreen.tag:
         return MaterialPageRoute(builder: (_) => LoginScreen());
+
       case RegisterScreen.tag:
         return MaterialPageRoute(builder: (_) => RegisterScreen(phoneNumber: args as String));
+
       case VerifyCodeScreen.tag:
-        return MaterialPageRoute(
-          builder: (_) => VerifyCodeScreen(phoneNumber: args as String),
-        );
+        return MaterialPageRoute(builder: (_) => VerifyCodeScreen(phoneNumber: args as String));
+
       case MainView.tag:
-        return MaterialPageRoute(
-          builder: (_) => MainView(),
-          settings: RouteSettings(name: MainView.tag),
-        );
+        return MaterialPageRoute(builder: (_) => MainView(), settings: RouteSettings(name: MainView.tag));
+
       case HomeScreen.tag:
         return MaterialPageRoute(builder: (_) => HomeScreen());
+
       case MeetupScreen.tag:
         return MaterialPageRoute(builder: (_) => MeetupScreen());
+
       case NotificationScreen.tag:
         return KSPageRoute(builder: (_) => NotificationScreen());
+
       case AccountScreen.tag:
-        return KSPageRoute(
-          builder: (_) => AccountScreen(),
-          // settings: RouteSettings(name: AccountScreen.tag),
-        );
+        return KSPageRoute(builder: (_) => AccountScreen());
+
       case FeedDetailScreen.tag:
         var data = args as Map<String, dynamic>;
-
         return MaterialPageRoute(
             builder: (_) => FeedDetailScreen(
-                  post: data['post'],
-                  postIndex: data['postIndex'],
-                  isCommentTap: data['isCommentTap'],
-                  postCallback: data['postCallback'],
-                ));
+                post: data['post'], postIndex: data['postIndex'], isCommentTap: data['isCommentTap'], postCallback: data['postCallback']));
+
       case CreatePostScreen.tag:
         return MaterialPageRoute(builder: (_) => CreatePostScreen(data: args));
+
       case SettingScreen.tag:
         return KSPageRoute(builder: (_) => SettingScreen());
+
       case SportsScreen.tag:
         return KSPageRoute(builder: (_) => SportsScreen());
+
       case FavoriteSportDetailScreen.tag:
         args as Map<String, dynamic>;
-        return KSPageRoute(
-          builder: (_) => FavoriteSportDetailScreen(
-            favSport: args['favSport'],
-            isMe: args['isMe'],
-          ),
-        );
+        return KSPageRoute(builder: (_) => FavoriteSportDetailScreen(favSport: args['favSport'], isMe: args['isMe']));
+
       case SportDetailScreen.tag:
         return MaterialPageRoute(builder: (_) => SportDetailScreen(sport: args as Sport));
+
       case ViewUserProfileScreen.tag:
         args as Map;
-        return KSPageRoute(
-          builder: (_) => ViewUserProfileScreen(
-            user: args['user'],
-            profileBackgroundColor: args['backgroundColor'],
-          ),
-        );
+        return KSPageRoute(builder: (_) => ViewUserProfileScreen(user: args['user'], profileBackgroundColor: args['backgroundColor']));
+
       case CreateActivityScreen.tag:
         return KSPageRoute(builder: (_) => CreateActivityScreen());
+
       case ViewPhotoScreen.tag:
         args as Map<String, dynamic>;
-        return MaterialPageRoute(
-          builder: (_) => ViewPhotoScreen(
-            post: args['post'],
-            initailIndex: args['index'],
-          ),
-        );
+        return MaterialPageRoute(builder: (_) => ViewPhotoScreen(post: args['post'], initailIndex: args['index']));
+
       case SetAddressScreen.tag:
         return MaterialPageRoute(builder: (_) => SetAddressScreen(address: args));
+
       case ActivityPreviewScreen.tag:
-        return MaterialPageRoute(
-          builder: (_) => ActivityPreviewScreen(
-            activityData: args as Map<String, dynamic>,
-          ),
-        );
+        return MaterialPageRoute(builder: (_) => ActivityPreviewScreen(activityData: args as Map<String, dynamic>));
+
       case MeetupDetailScreen.tag:
-        return KSPageRoute(
-          builder: (_) => MeetupDetailScreen(
-            meetup: args,
-          ),
-        );
+        return KSPageRoute(builder: (_) => MeetupDetailScreen(meetup: args));
+
       case OrganizeListScreen.tag:
         return MaterialPageRoute(builder: (_) => OrganizeListScreen());
+
       case OragnizeActivityScreen.tag:
-        return MaterialPageRoute(
-          builder: (_) => OragnizeActivityScreen(
-            data: args,
-          ),
-        );
+        return MaterialPageRoute(builder: (_) => OragnizeActivityScreen(data: args));
+
       case EditProfileScreen.tag:
         return MaterialPageRoute(builder: (_) => EditProfileScreen());
+
       case VenueScreen.tag:
         return MaterialPageRoute(builder: (_) => VenueScreen());
+
       case VenueDetailScreen.tag:
-        return KSPageRoute(
-          builder: (_) => VenueDetailScreen(venue: args as Venue),
-        );
+        return MaterialPageRoute(builder: (_) => VenueDetailScreen(venue: args as Venue));
+
       case PitchBookingScreen.tag:
         args as Map<String, dynamic>;
-        return KSPageRoute(
-          builder: (_) => PitchBookingScreen(
-            venue: args['venue'],
-            venueService: args['venueService'],
-          ),
-        );
+        return KSPageRoute(builder: (_) => PitchBookingScreen(venue: args['venue'], venueService: args['venueService']));
+
       case BookingHistoryScreen.tag:
         return KSPageRoute(builder: (_) => BookingHistoryScreen());
+
       case BookingHistoryDetailScreen.tag:
         args as Map<String, dynamic>;
-        return MaterialPageRoute(
-          builder: (_) => BookingHistoryDetailScreen(
-            booking: args['booking'],
-            bookingId: args['id'],
-          ),
-        );
+        return MaterialPageRoute(builder: (_) => BookingHistoryDetailScreen(booking: args['booking'], bookingId: args['id']));
       case FollowScreen.tag:
         return KSPageRoute(builder: (_) => FollowScreen(user: args as User?));
+
       case InviteMeetupScreen.tag:
         args as Map<String, dynamic>;
-        return KSPageRoute(
-          builder: (_) => InviteMeetupScreen(
-            joinMember: args['joinMember'],
-            meetup: args['meetup'],
-          ),
-        );
+        return KSPageRoute(builder: (_) => InviteMeetupScreen(joinMember: args['joinMember'], meetup: args['meetup']));
+
       case ConnectBookingScreen.tag:
-        return KSPageRoute(
-            builder: (_) => ConnectBookingScreen(
-                  meetup: args as Post,
-                ));
+        return KSPageRoute(builder: (_) => ConnectBookingScreen(meetup: args as Post));
+
       case AboutScreen.tag:
         return KSPageRoute(builder: (_) => AboutScreen());
+
       case BlockAccountScreen.tag:
         return MaterialPageRoute(builder: (_) => BlockAccountScreen());
+
+      case VenueMapScreen.tag:
+        return MaterialPageRoute(builder: (_) => VenueMapScreen(venueList: args as List<Venue>));
+
       default:
         return _errorRoute();
     }

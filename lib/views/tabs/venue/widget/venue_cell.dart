@@ -30,8 +30,11 @@ class VenueCell extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             venue.profilePhoto != null
-                ? CacheImage(
-                    url: venue.profilePhoto!, type: ImageErrorType.venue)
+                ? Hero(
+                  tag: 'venue_profile${venue.id}',
+                  child: CacheImage(
+                      url: venue.profilePhoto!, type: ImageErrorType.venue),
+                )
                 : CachedNetworkImage(
                     imageUrl: urlVenue,
                     fit: BoxFit.cover,

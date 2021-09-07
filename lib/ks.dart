@@ -52,6 +52,10 @@ class KS {
 
     return currentPosition;
   }
+
+  Future<String> getFileData(String path) async {
+    return await rootBundle.loadString(path);
+  }
 }
 
 typedef void AppLocationCallback(LatLng latLng);

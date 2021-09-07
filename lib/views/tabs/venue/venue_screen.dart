@@ -10,8 +10,10 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
+import 'package:kroma_sport/views/tabs/venue/venue_map_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/widget/venue_cell.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class VenueScreen extends StatefulWidget {
   static const tag = '/venueScreen';
@@ -23,22 +25,6 @@ class VenueScreen extends StatefulWidget {
 }
 
 class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStateMixin {
-  List<String> venueImageList = [
-    'https://images.unsplash.com/photo-1487466365202-1afdb86c764e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1052&q=80',
-    'https://images.unsplash.com/photo-1510526292299-20af3f62d453?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1014&q=80',
-    'https://images.unsplash.com/photo-1511439664149-58b346f60448?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=675&q=80',
-    'https://images.unsplash.com/photo-1596740327709-1645e2562a37?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=924&q=80',
-    'https://images.unsplash.com/photo-1531861218190-f90c89febf69?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1050&q=80'
-  ];
-
-  List<String> venueNameList = [
-    'XP Sport',
-    'Downtown Sport Club',
-    'Rooy7 Sport Club',
-    'Emperial Sport Club',
-    'Champion Sport Club',
-  ];
-
   KSHttpClient ksClient = KSHttpClient();
 
   List<Venue> venueList = [];
@@ -49,6 +35,9 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
 
   late AnimationController _animationController;
   late Animation<double> _animation;
+
+  int? _crossAxisCount;
+  double? _childAspectRatio;
 
   Widget buildVenueList() {
     if (isLoading) {
@@ -62,49 +51,32 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
     return venueList.isNotEmpty
         ? SliverFillRemaining(
             child: EasyRefresh(
-            header: MaterialHeader(
-              valueColor: AlwaysStoppedAnimation<Color>(mainColor),
-            ),
-            child: FadeTransition(
-              opacity: _animation,
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 1.3,
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 8.0,
-                  crossAxisSpacing: 8.0,
-                  // mainAxisExtent: 150
-                ),
-                padding: const EdgeInsets.all(8.0),
-                itemCount: venueList.length,
-                itemBuilder: (_, index) {
-                  final venue = venueList[index];
-                  return VenueCell(venue: venue);
-                },
+              header: MaterialHeader(
+                valueColor: AlwaysStoppedAnimation<Color>(mainColor),
               ),
+              child: FadeTransition(
+                opacity: _animation,
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: _childAspectRatio ?? 1.3,
+                    crossAxisCount: _crossAxisCount ?? 2,
+                    mainAxisSpacing: 8.0,
+                    crossAxisSpacing: 8.0,
+                    // mainAxisExtent: 150
+                  ),
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: venueList.length,
+                  itemBuilder: (_, index) {
+                    final venue = venueList[index];
+                    return VenueCell(venue: venue);
+                  },
+                ),
+              ),
+              onRefresh: () async {},
             ),
-            onRefresh: () async {},
           )
-
-            // ListView.separated(
-            //   shrinkWrap: true,
-            //   physics: NeverScrollableScrollPhysics(),
-            //   padding: const EdgeInsets.only(bottom: 8.0),
-            //   itemBuilder: (context, index) {
-            //     final venue = venueList[index];
-            //     return Padding(
-            //       padding: EdgeInsets.only(top: index == 0 ? 8.0 : 0),
-            //       child: VenueCell(venue: venue),
-            //     );
-            //   },
-            //   separatorBuilder: (context, index) {
-            //     return 8.height;
-            //   },
-            //   itemCount: venueList.length,
-            // ),
-            )
         : SliverFillRemaining(
             child: KSScreenState(
               icon: RotatedBox(
@@ -130,19 +102,31 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
         actions: [
           CupertinoButton(
             padding: EdgeInsets.zero,
-            alignment: Alignment.centerRight,
+            // alignment: Alignment.centerRight,
+            child: Icon(
+              (_crossAxisCount != null && _crossAxisCount == 2) ? FeatherIcons.grid : FeatherIcons.list,
+              color: ColorResources.getSecondaryIconColor(context),
+              size: 20.0,
+            ),
+            onPressed: changeVenueView,
+          ),
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            // alignment: Alignment.centerRight,
+            child: Icon(
+              FeatherIcons.map,
+              color: ColorResources.getSecondaryIconColor(context),
+              size: 20.0,
+            ),
+            onPressed: () => launchScreen(context, VenueMapScreen.tag, arguments: venueList),
+          ),
+          CupertinoButton(
+            padding: EdgeInsets.zero,
             child: Icon(
               Icons.history,
               color: ColorResources.getSecondaryIconColor(context),
             ),
             onPressed: () => launchScreen(context, BookingHistoryScreen.tag),
-          ),
-          CupertinoButton(
-            child: Icon(
-              FeatherIcons.bell,
-              color: ColorResources.getSecondaryIconColor(context),
-            ),
-            onPressed: () => launchScreen(context, NotificationScreen.tag),
           ),
           SizedBox(),
         ],
@@ -161,7 +145,7 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
     super.initState();
     _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 700));
     _animation = Tween(begin: 0.0, end: 1.0).animate(_animationController);
-
+    getListviewSetting();
     getVenueList();
   }
 
@@ -194,5 +178,35 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
       setState(() {});
       _animationController.forward();
     }
+  }
+
+  void getListviewSetting() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (prefs.getBool('isGrid') != null) {
+      if (prefs.getBool('isGrid')!) {
+        _crossAxisCount = 2;
+        _childAspectRatio = 1.3;
+      } else {
+        _crossAxisCount = 1;
+        _childAspectRatio = 1.7;
+      }
+    } else {
+      _crossAxisCount = 2;
+      _childAspectRatio = 1.3;
+    }
+
+    setState(() {});
+  }
+
+  void changeVenueView() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (prefs.getBool('isGrid') != null) {
+      prefs.setBool('isGrid', !prefs.getBool('isGrid')!);
+    } else {
+      prefs.setBool('isGrid', false);
+    }
+    getListviewSetting();
   }
 }

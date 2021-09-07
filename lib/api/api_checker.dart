@@ -17,6 +17,7 @@ class ApiChecker {
         context,
         message: 'Sessions Expired',
         barrierDismissible: true,
+        buttonTitle: 'OK',
         onYesPressed: () {
           Navigator.pushNamedAndRemoveUntil(
               context, LoginScreen.tag, (route) => false);
