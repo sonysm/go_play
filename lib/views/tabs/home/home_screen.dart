@@ -299,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Theme.of(context).primaryColor,
           body: SafeArea(
             child: Container(
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: ColorResources.getSecondaryBackgroundColor(context),
               child: EasyRefresh.custom(
                 scrollController: _homeScrollController,
                 header: MaterialHeader(

@@ -22,10 +22,12 @@ class VenueDetailScreen extends StatefulWidget {
   static const tag = '/venueDetailScreen';
 
   final Venue venue;
+  final String heroTag;
 
   VenueDetailScreen({
     Key? key,
     required this.venue,
+    this.heroTag = '',
   }) : super(key: key);
 
   @override
@@ -58,6 +60,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
         openHeight: AppSize(context).appWidth(70),
         closeHeight: kToolbarHeight,
         venue: _venue,
+        heroTag: widget.heroTag,
       ),
     );
   }
@@ -533,12 +536,14 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
   double closeHeight;
   double openHeight;
   Venue venue;
+  String heroTag;
 
   VenueDetailHeader({
     required this.toolbarHeight,
     required this.closeHeight,
     required this.openHeight,
     required this.venue,
+    required this.heroTag,
   });
 
   List<String> venueImageList = [
@@ -588,7 +593,7 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
 
                 //   // onTap: (index) {},
                 // ),
-                Hero(tag: 'venue_profile${venue.id}', child: CacheImage(url: venue.profilePhoto!))
+                Hero(tag: heroTag, child: CacheImage(url: venue.profilePhoto!))
               ],
             ),
           ),

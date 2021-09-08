@@ -7,7 +7,7 @@ const mainDarkColor = Colors.greenAccent;
 const primaryColor = Colors.white;
 const primaryDarkColor = Color(0xFF536872);
 
-const backgroundPrimary = Color(0xFFF1F2F6);
+const backgroundPrimary = Color(0xFFFAFAFA);
 const backgroundDarkPrimary = Color(0xFF36454f);
 
 const darkColor = Color(0xFF6F6F6F);
@@ -22,6 +22,10 @@ const appBackgroundColor = Color(0xFFf8f8f8);
 class ColorResources {
   static Color getPrimary(BuildContext context) {
     return isLight(context) ? Color(0xFFFFFFFF) : Color(0xFF536872);
+  }
+
+  static Color getSecondaryBackgroundColor(BuildContext context) {
+    return isLight(context) ? greyColor : backgroundDarkPrimary;
   }
 
   static Color getMainColor(BuildContext context) {

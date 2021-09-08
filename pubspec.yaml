@@ -123,3 +123,47 @@ flutter:
         - asset: assets/fonts/metropolis/Metropolis-SemiBoldItalic.otf
         - asset: assets/fonts/metropolis/Metropolis-Thin.otf
         - asset: assets/fonts/metropolis/Metropolis-ThinItalic.otf
+
+    - family: Aeonik
+      fonts:
+        - asset: assets/fonts/aeonik/Aeonik-Air.otf
+          weight: 100
+        - asset: assets/fonts/aeonik/Aeonik-AirItalic.otf
+          weight: 100
+          style: italic
+          
+        - asset: assets/fonts/aeonik/Aeonik-Thin.otf
+          weight: 200
+        - asset: assets/fonts/aeonik/Aeonik-ThinItalic.otf
+          weight: 200
+          style: italic
+
+        - asset: assets/fonts/aeonik/Aeonik-Light.otf
+          weight: 300
+        - asset: assets/fonts/aeonik/Aeonik-LightItalic.otf
+          weight: 300
+          style: italic
+
+        - asset: assets/fonts/aeonik/Aeonik-Regular.otf
+          weight: 400
+        - asset: assets/fonts/aeonik/Aeonik-RegularItalic.otf
+          weight: 400
+          style: italic
+
+        - asset: assets/fonts/aeonik/Aeonik-Medium.otf
+          weight: 500
+        - asset: assets/fonts/aeonik/Aeonik-MediumItalic.otf
+          weight: 500
+          style: italic
+
+        - asset: assets/fonts/aeonik/Aeonik-Bold.otf
+          weight: 700
+        - asset: assets/fonts/aeonik/Aeonik-BoldItalic.otf
+          weight: 700
+          style: italic
+
+        - asset: assets/fonts/aeonik/Aeonik-Black.otf
+          weight: 900
+        - asset: assets/fonts/aeonik/Aeonik-BlackItalic.otf
+          weight: 900
+          style: italic

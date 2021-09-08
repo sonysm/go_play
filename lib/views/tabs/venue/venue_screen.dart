@@ -8,7 +8,6 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/venue.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
-import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_map_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/widget/venue_cell.dart';
@@ -104,16 +103,6 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
             padding: EdgeInsets.zero,
             // alignment: Alignment.centerRight,
             child: Icon(
-              (_crossAxisCount != null && _crossAxisCount == 2) ? FeatherIcons.grid : FeatherIcons.list,
-              color: ColorResources.getSecondaryIconColor(context),
-              size: 20.0,
-            ),
-            onPressed: changeVenueView,
-          ),
-          CupertinoButton(
-            padding: EdgeInsets.zero,
-            // alignment: Alignment.centerRight,
-            child: Icon(
               FeatherIcons.map,
               color: ColorResources.getSecondaryIconColor(context),
               size: 20.0,
@@ -122,12 +111,22 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
           ),
           CupertinoButton(
             padding: EdgeInsets.zero,
+            // alignment: Alignment.centerRight,
             child: Icon(
-              Icons.history,
+              (_crossAxisCount != null && _crossAxisCount == 2) ? FeatherIcons.grid : FeatherIcons.list,
               color: ColorResources.getSecondaryIconColor(context),
+              size: 20.0,
             ),
-            onPressed: () => launchScreen(context, BookingHistoryScreen.tag),
+            onPressed: changeVenueView,
           ),
+          // CupertinoButton(
+          //   padding: EdgeInsets.zero,
+          //   child: Icon(
+          //     Icons.history,
+          //     color: ColorResources.getSecondaryIconColor(context),
+          //   ),
+          //   onPressed: () => launchScreen(context, BookingHistoryScreen.tag),
+          // ),
           SizedBox(),
         ],
       ),

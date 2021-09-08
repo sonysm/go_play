@@ -35,6 +35,7 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
   late AnimationController _animationController;
   late Animation<double> _animation;
 
+  Map<MarkerId, Marker> venueMarker = {};
   List<Marker> allMarkers = [];
   Venue? _venue;
 
@@ -58,15 +59,18 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
                   _mapController.setMapStyle(mapStyle);
                 });
               },
-              markers: Set.from(allMarkers),
+              markers: Set.from(venueMarker.values),
               initialCameraPosition: _initialCameraPosition,
               myLocationEnabled: true,
               zoomControlsEnabled: false,
               onTap: (_) {
-                _animationController.reverse();
+                if (_selectedMarkerId != null) {
+                  scaleMarker();
+                  _selectedMarkerId = null;
+                  _animationController.reverse();
+                }
               },
             ),
-            // VenueCardsCarouselWidget(venueList: widget.venueList)
             if (_venue != null)
               AnimatedBuilder(
                 animation: _animation,
@@ -78,8 +82,14 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
                     child: VenueCardWidget(
                       venue: _venue!,
                       onDirectionClick: () => launchMaps(_venue!.latitude, _venue!.longitude),
-                      onCardTap: () => launchScreen(context, VenueDetailScreen.tag, arguments: _venue),
-                      onClose: () => _animationController.reverse(),
+                      onCardTap: () =>
+                          launchScreen(context, VenueDetailScreen.tag, arguments: {'venue': _venue, 'heroTag': 'map_venue_profile${_venue!.id}'}),
+                      onClose: () {
+                        _animationController.reverse().then((_) {
+                          _selectedMarkerId = null;
+                          scaleMarker();
+                        });
+                      },
                     ),
                   );
                 },
@@ -112,7 +122,7 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
     }
 
     widget.venueList.forEach((element) {
-      getMarker(element).then((value) => setState(() => allMarkers.add(value)));
+      getMarker(element).then((value) => setState(() => venueMarker.addAll(value)));
     });
   }
 
@@ -129,22 +139,50 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
   }
 
-  Future<Marker> getMarker(Venue v) async {
-    final Uint8List markerIcon = await getBytesFromAsset('assets/images/ic_venue_marker.png', 120);
+  MarkerId? _selectedMarkerId;
+
+  Future<Map<MarkerId, Marker>> getMarker(Venue v) async {
+    Map<MarkerId, Marker> newMarker = {};
+    final Uint8List markerIcon = await getBytesFromAsset('assets/images/ic_venue_marker.png', 80);
+    final MarkerId markerId = MarkerId('marker${v.id}');
+
     final Marker marker = Marker(
-      markerId: MarkerId('${v.id}'),
+      markerId: markerId,
       icon: BitmapDescriptor.fromBytes(markerIcon),
       onTap: () {
         print(v.name);
-        setState(() {
-          _venue = v;
-        });
+        _venue = v;
+        _selectedMarkerId = markerId;
         _animationController.forward();
+        scaleMarker(id: markerId);
       },
       position: LatLng(double.parse(v.latitude), double.parse(v.longitude)),
     );
 
-    return marker;
+    newMarker[markerId] = marker;
+
+    return newMarker;
+  }
+
+  void scaleMarker({MarkerId? id}) async {
+    final Uint8List bigicon = await getBytesFromAsset('assets/images/ic_venue_marker.png', 150);
+    final Uint8List smallicon = await getBytesFromAsset('assets/images/ic_venue_marker.png', 80);
+
+    if (id != null) {
+      venueMarker.forEach((markerId, marker) {
+        if (markerId == id) {
+          venueMarker[markerId] = marker.copyWith(iconParam: BitmapDescriptor.fromBytes(bigicon));
+        } else {
+          venueMarker[markerId] = marker.copyWith(iconParam: BitmapDescriptor.fromBytes(smallicon));
+        }
+      });
+    } else {
+      venueMarker.forEach((markerId, marker) {
+        venueMarker[markerId] = marker.copyWith(iconParam: BitmapDescriptor.fromBytes(smallicon));
+      });
+    }
+
+    setState(() {});
   }
 
   launchMaps(String lat, String lng) async {
@@ -199,7 +237,7 @@ class VenueCardWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Hero(
-                    tag: 'venue_profile${venue.id}',
+                    tag: 'map_venue_profile${venue.id}',
                     child: Container(
                       height: 150,
                       decoration: BoxDecoration(

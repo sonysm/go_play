@@ -64,7 +64,7 @@ class App extends StatelessWidget {
           theme: ThemeData.light().copyWith(
               primaryColor: primaryColor,
               accentColor: mainColor,
-              scaffoldBackgroundColor: greyColor,
+              scaffoldBackgroundColor: backgroundPrimary,
               iconTheme: IconThemeData(color: mainColor),
               accentIconTheme: IconThemeData(color: mainColor),
               primaryIconTheme: IconThemeData(color: mainColor),

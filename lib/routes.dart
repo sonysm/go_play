@@ -122,7 +122,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => VenueScreen());
 
       case VenueDetailScreen.tag:
-        return MaterialPageRoute(builder: (_) => VenueDetailScreen(venue: args as Venue));
+        args as Map;
+        return MaterialPageRoute(builder: (_) => VenueDetailScreen(venue: args['venue'], heroTag: args['heroTag']));
 
       case PitchBookingScreen.tag:
         args as Map<String, dynamic>;

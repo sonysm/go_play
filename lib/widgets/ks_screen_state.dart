@@ -36,11 +36,9 @@ class KSScreenState extends StatelessWidget {
               child: Text(
                 title!,
                 style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: titleColor ??
-                          (isLight(context)
-                              ? Colors.grey[600]
-                              : Colors.white60),
+                      fontWeight: FontWeight.w700,
+                      color: titleColor ?? (isLight(context) ? Colors.blueGrey[700] : Colors.white60),
+                      fontFamily: 'Aeonik'
                     ),
               ),
             ),
@@ -48,8 +46,7 @@ class KSScreenState extends StatelessWidget {
             Text(
               subTitle!,
               style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                    color: subTitleColor ??
-                        (isLight(context) ? Colors.grey : Colors.white54),
+                    color: subTitleColor ?? (isLight(context) ? Colors.grey : Colors.white54),
                   ),
             ),
           SizedBox(height: bottomPadding),
@@ -76,15 +73,15 @@ class KSNoInternet extends StatelessWidget {
           32.height,
           Text(
             'No Internet connection!',
-            style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: isLight(context) ? Colors.grey[600] : Colors.white60),
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1
+                ?.copyWith(fontWeight: FontWeight.w600, color: isLight(context) ? Colors.grey[600] : Colors.white60),
           ),
           4.height,
           Text(
             'Please check your network connection.',
-            style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                color: isLight(context) ? Colors.grey : Colors.white54),
+            style: Theme.of(context).textTheme.bodyText1?.copyWith(color: isLight(context) ? Colors.grey : Colors.white54),
           ),
         ],
       ),

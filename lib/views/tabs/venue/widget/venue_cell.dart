@@ -31,10 +31,9 @@ class VenueCell extends StatelessWidget {
           children: [
             venue.profilePhoto != null
                 ? Hero(
-                  tag: 'venue_profile${venue.id}',
-                  child: CacheImage(
-                      url: venue.profilePhoto!, type: ImageErrorType.venue),
-                )
+                    tag: 'venue_profile${venue.id}',
+                    child: CacheImage(url: venue.profilePhoto!, type: ImageErrorType.venue),
+                  )
                 : CachedNetworkImage(
                     imageUrl: urlVenue,
                     fit: BoxFit.cover,
@@ -44,8 +43,7 @@ class VenueCell extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
-                  padding: const EdgeInsets.only(
-                      left: 8.0, top: 8.0, right: 8.0, bottom: 12.0),
+                  padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 12.0),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -172,11 +170,7 @@ class VenueCell extends StatelessWidget {
             Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () => launchScreen(
-                  context,
-                  VenueDetailScreen.tag,
-                  arguments: venue,
-                ),
+                onTap: () => launchScreen(context, VenueDetailScreen.tag, arguments: {'venue': venue, 'heroTag': 'venue_profile${venue.id}'}),
                 child: Container(),
               ),
             )
@@ -305,14 +299,11 @@ class VenueCell2 extends StatelessWidget {
                         Spacer(),
                         ElevatedButton(
                           style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(horizontal: 32.0)),
+                            padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 32.0)),
                             elevation: MaterialStateProperty.all(0),
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            backgroundColor:
-                                MaterialStateProperty.all(whiteColor),
-                            foregroundColor:
-                                MaterialStateProperty.all(mainColor),
+                            backgroundColor: MaterialStateProperty.all(whiteColor),
+                            foregroundColor: MaterialStateProperty.all(mainColor),
                           ),
                           onPressed: () {},
                           child: Text(
