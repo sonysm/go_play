@@ -32,13 +32,7 @@ class ActivityCell extends StatefulWidget {
   final bool isAvatarSelectable;
   final bool isHomeFeed;
 
-  const ActivityCell({
-    Key? key,
-    required this.index,
-    required this.post,
-    this.isAvatarSelectable = true,
-    this.isHomeFeed = true
-  }) : super(key: key);
+  const ActivityCell({Key? key, required this.index, required this.post, this.isAvatarSelectable = true, this.isHomeFeed = true}) : super(key: key);
 
   @override
   _ActivityCellState createState() => _ActivityCellState();
@@ -46,13 +40,12 @@ class ActivityCell extends StatefulWidget {
 
 class _ActivityCellState extends State<ActivityCell> {
   late Post _post;
-  
+
   late HomeCubit _homeCubit;
   late MeetupCubit _meetupCubit;
 
   String calcMinuteDuration() {
-    var s =
-        DateTime.parse(_post.activityDate! + ' ' + _post.activityStartTime!);
+    var s = DateTime.parse(_post.activityDate! + ' ' + _post.activityStartTime!);
     var e = DateTime.parse(_post.activityDate! + ' ' + _post.activityEndTime!);
 
     if (e.difference(s).inMinutes == 0) {
@@ -71,15 +64,11 @@ class _ActivityCellState extends State<ActivityCell> {
   @override
   Widget build(BuildContext context) {
     Widget buildTotalReaction(int total) {
-      return total > 0
-          ? Text(total > 1 ? '$total likes' : '$total like')
-          : SizedBox();
+      return total > 0 ? Text(total > 1 ? '$total likes' : '$total like') : SizedBox();
     }
 
     Widget buildTotalComment(int total) {
-      return total > 0
-          ? Text(total > 1 ? '$total comments' : '$total comment')
-          : SizedBox();
+      return total > 0 ? Text(total > 1 ? '$total comments' : '$total comment') : SizedBox();
     }
 
     return InkWell(
@@ -117,20 +106,12 @@ class _ActivityCellState extends State<ActivityCell> {
                                   children: [
                                     TextSpan(
                                       text: _post.owner.getFullname(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          ?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'Metropolis'),
+                                      style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                                     ),
                                     _post.activityLocation != null
                                         ? TextSpan(
-                                            text:
-                                                ' added an activity at ${_post.activityLocation!.name}.',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1,
+                                            text: ' added an activity at ${_post.activityLocation!.name}.',
+                                            style: Theme.of(context).textTheme.bodyText1,
                                           )
                                         : TextSpan(),
                                   ],
@@ -141,10 +122,7 @@ class _ActivityCellState extends State<ActivityCell> {
                         ),
                         Text(
                           _post.createdAt.toString().timeAgoString,
-                          style: Theme.of(context).textTheme.caption!.copyWith(
-                              color: isLight(context)
-                                  ? Colors.blueGrey[400]
-                                  : Colors.blueGrey[100]),
+                          style: Theme.of(context).textTheme.caption!.copyWith(color: isLight(context) ? Colors.blueGrey[400] : Colors.blueGrey[100]),
                         ),
                       ],
                     ),
@@ -193,8 +171,7 @@ class _ActivityCellState extends State<ActivityCell> {
                   bottom: 0,
                   right: 0,
                   child: Container(
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16.0, bottom: 8.0, top: 26.0),
+                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0, top: 26.0),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -209,7 +186,7 @@ class _ActivityCellState extends State<ActivityCell> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: AppSize(context).appWidth(70),
+                          width: AppSize(context).appWidth(60),
                           child: Text(
                             _post.title,
                             style: TextStyle(
@@ -219,6 +196,7 @@ class _ActivityCellState extends State<ActivityCell> {
                             ),
                           ),
                         ),
+                        4.height,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -249,8 +227,7 @@ class _ActivityCellState extends State<ActivityCell> {
                                 ),
                               ],
                             ),
-                            SizedBox(
-                                height: 24, child: Image.asset(imgVplayText)),
+                            SizedBox(height: 24, child: Image.asset(imgVplayText)),
                           ],
                         ),
                       ],
@@ -266,17 +243,14 @@ class _ActivityCellState extends State<ActivityCell> {
                   Row(
                     children: [
                       KSIconButton(
-                        icon: _post.reacted!
-                            ? Icons.favorite
-                            : FeatherIcons.heart,
-                        iconColor:
-                            Theme.of(context).brightness == Brightness.light
-                                ? _post.reacted!
-                                    ? Colors.green
-                                    : Colors.blueGrey
-                                : _post.reacted!
-                                    ? Colors.green
-                                    : Colors.white,
+                        icon: _post.reacted! ? Icons.favorite : FeatherIcons.heart,
+                        iconColor: Theme.of(context).brightness == Brightness.light
+                            ? _post.reacted!
+                                ? Colors.green
+                                : Colors.blueGrey
+                            : _post.reacted!
+                                ? Colors.green
+                                : Colors.white,
                         onTap: () {
                           if (_post.reacted!) {
                             _post.totalReaction -= 1;
@@ -306,8 +280,7 @@ class _ActivityCellState extends State<ActivityCell> {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0, vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -323,12 +296,10 @@ class _ActivityCellState extends State<ActivityCell> {
                         8.width,
                         Expanded(
                           child: InkWell(
-                            onTap: () =>
-                                launchFeedDetailScreen(isCommentTap: true),
+                            onTap: () => launchFeedDetailScreen(isCommentTap: true),
                             child: Container(
                               height: 32.0,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
                               decoration: BoxDecoration(
                                 border: Border.all(color: Color(0XFFB0BEC5)),
                                 borderRadius: BorderRadius.circular(16.0),
@@ -336,10 +307,7 @@ class _ActivityCellState extends State<ActivityCell> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 'Add a comment',
-                                style: TextStyle(
-                                    color: isLight(context)
-                                        ? Colors.blueGrey[300]
-                                        : Colors.blueGrey[100]),
+                                style: TextStyle(color: isLight(context) ? Colors.blueGrey[300] : Colors.blueGrey[100]),
                               ),
                             ),
                           ),
@@ -392,7 +360,6 @@ class _ActivityCellState extends State<ActivityCell> {
             );
           },
         ),
-      
       if (!isMe(post.owner.id) && widget.isHomeFeed) ...[
         KSTextButtonBottomSheet(
           title: 'Hide Activity',
@@ -411,8 +378,7 @@ class _ActivityCellState extends State<ActivityCell> {
                   action: true,
                   actionTitle: 'Undo',
                   onAction: () {
-                    _homeCubit.onUndoHidingPost(
-                        index: widget.index, post: post);
+                    _homeCubit.onUndoHidingPost(index: widget.index, post: post);
                   },
                 );
               },
@@ -427,11 +393,9 @@ class _ActivityCellState extends State<ActivityCell> {
             dismissScreen(context);
             showKSConfirmDialog(
               context,
-              message:
-                  'Are you sure you want to unfollow ${post.owner.getFullname()}?',
+              message: 'Are you sure you want to unfollow ${post.owner.getFullname()}?',
               onYesPressed: () async {
-                var res =
-                    await ksClient.postApi('/user/unfollow/${post.owner.id}');
+                var res = await ksClient.postApi('/user/unfollow/${post.owner.id}');
                 if (res != null) {
                   if (res is! HttpResult) {}
                 }
@@ -447,8 +411,7 @@ class _ActivityCellState extends State<ActivityCell> {
             dismissScreen(context);
             showKSConfirmDialog(
               context,
-              message:
-                  'Are you sure you want to block ${post.owner.getFullname()}?',
+              message: 'Are you sure you want to block ${post.owner.getFullname()}?',
               onYesPressed: () {
                 showKSLoading(context);
                 Future.delayed(Duration(seconds: 1), () {
@@ -461,7 +424,6 @@ class _ActivityCellState extends State<ActivityCell> {
           },
         ),
       ],
-      
       if (!isMe(post.owner.id))
         KSTextButtonBottomSheet(
           title: 'Report Post',

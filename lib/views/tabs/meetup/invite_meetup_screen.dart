@@ -18,8 +18,7 @@ class InviteMeetupScreen extends StatefulWidget {
   final List<Member> joinMember;
   final Post meetup;
 
-  InviteMeetupScreen({Key? key, required this.joinMember, required this.meetup})
-      : super(key: key);
+  InviteMeetupScreen({Key? key, required this.joinMember, required this.meetup}) : super(key: key);
 
   @override
   _InviteMeetupScreenState createState() => _InviteMeetupScreenState();
@@ -38,31 +37,17 @@ class _InviteMeetupScreenState extends State<InviteMeetupScreen> {
           onChanged: (text) {
             searchPlayer(text);
           },
-          style: Theme.of(context)
-              .textTheme
-              .bodyText1
-              ?.copyWith(fontWeight: FontWeight.w500),
+          style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w500),
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
             hintText: 'Search',
             isDense: true,
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-            enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Colors.grey[400]!)),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4.0),
-                borderSide: BorderSide(color: Colors.grey[400]!)),
+            contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0), borderSide: BorderSide(color: Colors.grey[400]!)),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0), borderSide: BorderSide(color: Colors.grey[400]!)),
             fillColor: Colors.white,
-            labelStyle: Theme.of(context)
-                .textTheme
-                .bodyText1
-                ?.copyWith(fontWeight: FontWeight.w500),
-            counterStyle: Theme.of(context)
-                .textTheme
-                .bodyText1
-                ?.copyWith(fontWeight: FontWeight.w500),
+            labelStyle: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w500),
+            counterStyle: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w500),
             suffixIcon: Icon(
               Feather.search,
               size: 20.0,
@@ -92,8 +77,7 @@ class _InviteMeetupScreenState extends State<InviteMeetupScreen> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 final user = followerList[index];
-                var isJoined = widget.joinMember
-                    .any((element) => element.user.id == user.id);
+                var isJoined = widget.joinMember.any((element) => element.user.id == user.id);
                 return UserInviteCell(
                   user: user,
                   isJoined: isJoined,
@@ -107,9 +91,7 @@ class _InviteMeetupScreenState extends State<InviteMeetupScreen> {
           )
         : SliverFillRemaining(
             child: Center(
-              child: !isLoading
-                  ? Text('Player not found')
-                  : CircularProgressIndicator(),
+              child: !isLoading ? Text('Player not found') : CircularProgressIndicator(),
             ),
           );
   }
@@ -150,11 +132,7 @@ class _InviteMeetupScreenState extends State<InviteMeetupScreen> {
   }
 
   void getFollower({String queryString = ''}) async {
-    var followerRes = await ksClient.getApi('/user/invite/users',
-        queryParameters: {
-          'q': queryString,
-          'meetup_id': widget.meetup.id.toString()
-        });
+    var followerRes = await ksClient.getApi('/user/invite/users', queryParameters: {'q': queryString, 'meetup_id': widget.meetup.id.toString()});
     if (followerRes != null) {
       if (followerRes is! HttpResult) {
         followerList = List.from(followerRes.map((e) => User.fromJson(e)));
@@ -179,8 +157,7 @@ class _InviteMeetupScreenState extends State<InviteMeetupScreen> {
       context,
       message: 'Invite\n${user.getFullname()}',
       onYesPressed: () async {
-        var res = await ksClient
-            .postApi('/invite/join/meetup/${widget.meetup.id}/${user.id}');
+        var res = await ksClient.postApi('/invite/join/meetup/${widget.meetup.id}/${user.id}');
         if (res != null) {
           if (res is! HttpResult) {
             print('object $res');
@@ -218,8 +195,7 @@ class UserInviteCell extends StatelessWidget {
             8.width,
             Text(
               user.getFullname(),
-              style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                  fontFamily: 'ProximaNova', fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
             ),
             Spacer(),
             isJoined

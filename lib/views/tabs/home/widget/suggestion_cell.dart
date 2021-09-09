@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kroma_sport/api/httpclient.dart';
+import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/suggestion.dart';
 import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -41,14 +42,10 @@ class _SuggestionCellState extends State<SuggestionCell> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       child: Text(
                         'Suggested for you',
-                        style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Metropolis',
-                            ),
+                        style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                       ),
                     ),
                     Expanded(
@@ -100,11 +97,7 @@ class _FollowCellState extends State<FollowCell> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        var data = await launchScreen(context, ViewUserProfileScreen.tag,
-            arguments: {
-              'user': widget.user,
-              'backgroundColor': _backgroundColor
-            });
+        var data = await launchScreen(context, ViewUserProfileScreen.tag, arguments: {'user': widget.user, 'backgroundColor': _backgroundColor});
         if (data != null) {
           isFollowing = data['following'];
           setState(() {});
@@ -140,8 +133,7 @@ class _FollowCellState extends State<FollowCell> {
                   '${widget.user.getFullname()}',
                   maxLines: 3,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                      fontWeight: FontWeight.w600, fontFamily: 'Metropolis'),
+                  style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -152,15 +144,11 @@ class _FollowCellState extends State<FollowCell> {
               child: ElevatedButton(
                 onPressed: () {
                   if (isFollowing) {
-                    _ksClient
-                        .postApi('/user/unfollow/${widget.user.id}')
-                        .then((value) {
+                    _ksClient.postApi('/user/unfollow/${widget.user.id}').then((value) {
                       _userCubit.onRefresh();
                     });
                   } else {
-                    _ksClient
-                        .postApi('/user/follow/${widget.user.id}')
-                        .then((value) {
+                    _ksClient.postApi('/user/follow/${widget.user.id}').then((value) {
                       _userCubit.onRefresh();
                     });
                   }
@@ -175,31 +163,20 @@ class _FollowCellState extends State<FollowCell> {
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4.0),
                       side: BorderSide(
-                        color: isLight(context)
-                            ? Colors.blueGrey
-                            : (isFollowing
-                                ? Colors.blueGrey
-                                : Colors.grey[300]!),
+                        color: isLight(context) ? Colors.blueGrey : (isFollowing ? Colors.blueGrey : Colors.grey[300]!),
                       ),
                     ),
                   ),
-                  overlayColor: MaterialStateProperty.all(
-                      ColorResources.getOverlayIconColor(context)),
+                  overlayColor: MaterialStateProperty.all(ColorResources.getOverlayIconColor(context)),
                   backgroundColor: MaterialStateProperty.all(
-                    isLight(context)
-                        ? (isFollowing ? Colors.blueGrey : Colors.transparent)
-                        : (isFollowing ? Colors.blueGrey : Colors.transparent),
+                    isLight(context) ? (isFollowing ? Colors.blueGrey : Colors.transparent) : (isFollowing ? Colors.blueGrey : Colors.transparent),
                   ),
-                  foregroundColor: MaterialStateProperty.all(isLight(context)
-                      ? (isFollowing ? whiteColor : Colors.blueGrey)
-                      : (isFollowing ? whiteColor : Colors.grey[300])),
+                  foregroundColor: MaterialStateProperty.all(
+                      isLight(context) ? (isFollowing ? whiteColor : Colors.blueGrey) : (isFollowing ? whiteColor : Colors.grey[300])),
                 ),
                 child: Text(
                   isFollowing ? 'Following' : 'Follow',
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    fontFamily: 'Metropolis',
-                  ),
+                  style: TextStyle(fontSize: 14.0),
                 ),
               ),
             ),
@@ -213,5 +190,11 @@ class _FollowCellState extends State<FollowCell> {
   void initState() {
     super.initState();
     _userCubit = context.read<UserCubit>();
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
   }
 }

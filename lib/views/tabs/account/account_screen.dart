@@ -38,8 +38,7 @@ class AccountScreen extends StatefulWidget {
   _AccountScreenState createState() => _AccountScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen>
-    with SingleTickerProviderStateMixin {
+class _AccountScreenState extends State<AccountScreen> with SingleTickerProviderStateMixin {
   KSHttpClient ksClient = KSHttpClient();
   List<FavoriteSport> favSportList = [];
 
@@ -50,8 +49,7 @@ class _AccountScreenState extends State<AccountScreen>
 
   late ConnectionStatusSingleton connectionStatus;
 
-  Widget actionHeader(
-      {String? amt, required String title, VoidCallback? onTap}) {
+  Widget actionHeader({String? amt, required String title, VoidCallback? onTap}) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -63,10 +61,7 @@ class _AccountScreenState extends State<AccountScreen>
             children: [
               Text(
                 amt ?? '0',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
               ),
               Text(title),
             ],
@@ -79,8 +74,7 @@ class _AccountScreenState extends State<AccountScreen>
   Widget buildProfileHeader() {
     return SliverToBoxAdapter(
       child: Container(
-        padding: const EdgeInsets.only(
-            left: 16.0, top: 16.0, right: 16.0, bottom: 16.0),
+        padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0, bottom: 16.0),
         color: Theme.of(context).primaryColor,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,10 +89,7 @@ class _AccountScreenState extends State<AccountScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(KS.shared.user.getFullname(),
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Metropolis')),
+                  Text(KS.shared.user.getFullname(), style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w600)),
                   //Text(
                   //  'Phnom Penh, Cambodia',
                   //  style: Theme.of(context).textTheme.bodyText2,
@@ -109,8 +100,7 @@ class _AccountScreenState extends State<AccountScreen>
                       // actionHeader(amt: '0', title: 'Coin'),
                       actionHeader(
                         amt: '${KS.shared.user.followerCount}',
-                        title:
-                            '${KS.shared.user.followerCount > 1 ? 'Followers' : 'Follower'}',
+                        title: '${KS.shared.user.followerCount > 1 ? 'Followers' : 'Follower'}',
                         onTap: () => launchScreen(context, FollowScreen.tag),
                       ),
                       actionHeader(
@@ -182,10 +172,7 @@ class _AccountScreenState extends State<AccountScreen>
                     8.width,
                     Text(
                       'Add Sport',
-                      style: TextStyle(
-                          fontSize: 18.0,
-                          color: whiteColor,
-                          fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 18.0, color: whiteColor, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -211,12 +198,7 @@ class _AccountScreenState extends State<AccountScreen>
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
-                border: Border(
-                    bottom: BorderSide(
-                        width: 0.5,
-                        color: isLight(context)
-                            ? Colors.blueGrey[50]!
-                            : Colors.blueGrey)),
+                border: Border(bottom: BorderSide(width: 0.5, color: isLight(context) ? Colors.blueGrey[50]! : Colors.blueGrey)),
               ),
               child: TabBar(
                 controller: tabController,
@@ -224,8 +206,7 @@ class _AccountScreenState extends State<AccountScreen>
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
                 ),
-                indicatorColor:
-                    isLight(context) ? mainColor : Colors.greenAccent,
+                indicatorColor: isLight(context) ? mainColor : Colors.greenAccent,
                 isScrollable: true,
                 onTap: (index) => setState(() => _currentIndex = index),
                 tabs: [
@@ -431,8 +412,7 @@ class _AccountScreenState extends State<AccountScreen>
     var data = await ksClient.getApi('/user/favorite/sport');
     if (data != null) {
       if (data is! HttpResult) {
-        favSportList =
-            List.from((data as List).map((e) => FavoriteSport.fromJson(e)));
+        favSportList = List.from((data as List).map((e) => FavoriteSport.fromJson(e)));
         isLoaded = true;
       } else {
         if (data.code == -500) {

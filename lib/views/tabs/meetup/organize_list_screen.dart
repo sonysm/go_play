@@ -29,9 +29,7 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
     return SliverToBoxAdapter(
       child: Container(
         alignment: Alignment.center,
-        margin: EdgeInsets.only(
-            top: (MediaQuery.of(context).size.height / 2) -
-                AppBar().preferredSize.height),
+        margin: EdgeInsets.only(top: (MediaQuery.of(context).size.height / 2) - AppBar().preferredSize.height),
         child: Text('No sport'),
       ),
     );
@@ -65,19 +63,13 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
                                 decoration: BoxDecoration(
                                     color: Theme.of(context).primaryColor,
                                     borderRadius: BorderRadius.circular(4.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          blurRadius: 8.0,
-                                          color: Colors.black.withOpacity(0.1))
-                                    ]),
+                                    boxShadow: [BoxShadow(blurRadius: 8.0, color: Colors.black.withOpacity(0.1))]),
                                 child: ListTile(
                                   title: Text(
                                     sport.name,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
+                                    style: Theme.of(context).textTheme.bodyText1,
                                   ),
-                                  contentPadding:
-                                      EdgeInsets.only(left: 16.0, right: 16),
+                                  contentPadding: EdgeInsets.only(left: 16.0, right: 16),
                                   onTap: () {
                                     launchScreen(
                                       context,
@@ -85,12 +77,7 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
                                       arguments: sport,
                                     );
                                   },
-                                  trailing: SizedBox(
-                                      width: 24.0,
-                                      height: 24.0,
-                                      child: sport.icon != null
-                                          ? CacheImage(url: sport.icon!)
-                                          : null),
+                                  trailing: SizedBox(width: 24.0, height: 24.0, child: sport.icon != null ? CacheImage(url: sport.icon!) : null),
                                 ),
                               );
                             },
@@ -105,8 +92,6 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
                             color: Colors.grey,
                           ),
                           title: 'No any activity',
-                          bottomPadding:
-                              AppBar().preferredSize.height + kToolbarHeight,
                         ),
                       ),
               )

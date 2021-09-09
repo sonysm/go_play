@@ -48,8 +48,7 @@ class ViewUserProfileScreen extends StatefulWidget {
   _ViewUserProfileScreenState createState() => _ViewUserProfileScreenState();
 }
 
-class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
-    with TickerProviderStateMixin {
+class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with TickerProviderStateMixin {
   KSHttpClient ksClient = KSHttpClient();
   List<FavoriteSport> favSportList = [];
 
@@ -86,8 +85,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
     );
   }
 
-  Widget actionHeader(
-      {String? amt, required String title, VoidCallback? onTap}) {
+  Widget actionHeader({String? amt, required String title, VoidCallback? onTap}) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -99,10 +97,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
             children: [
               Text(
                 amt ?? '0',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
               ),
               Text(title),
             ],
@@ -115,8 +110,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
   Widget buildProfileHeader() {
     return SliverToBoxAdapter(
       child: Container(
-        padding: const EdgeInsets.only(
-            left: 16.0, top: 16.0, right: 16.0, bottom: 16.0),
+        padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0, bottom: 16.0),
         color: Theme.of(context).primaryColor,
         child: Column(
           children: [
@@ -126,7 +120,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                 Avatar(
                   radius: 48.0,
                   user: widget.user,
-                  // isSelectable: false,
+                  isSelectable: false,
                   backgroundcolor: widget.profileBackgroundColor,
                 ),
                 8.width,
@@ -136,9 +130,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                     children: [
                       Text(
                         widget.user.getFullname(),
-                        style: Theme.of(context).textTheme.headline6?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Metropolis'),
+                        style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       //Text(
                       //  'Phnom Penh, Cambodia',
@@ -150,14 +142,12 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                           actionHeader(
                             amt: '${_user.followerCount}',
                             title: 'Followers',
-                            onTap: () => launchScreen(context, FollowScreen.tag,
-                                arguments: _user),
+                            onTap: () => launchScreen(context, FollowScreen.tag, arguments: _user),
                           ),
                           actionHeader(
                             amt: '${_user.followingCount}',
                             title: 'Following',
-                            onTap: () => launchScreen(context, FollowScreen.tag,
-                                arguments: _user),
+                            onTap: () => launchScreen(context, FollowScreen.tag, arguments: _user),
                           ),
                         ],
                       )
@@ -172,55 +162,39 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                 Expanded(
                   child: isLoaded
                       ? ElevatedButton(
-                          onPressed:
-                              isFollow ? showFollowingOption : followUser,
+                          onPressed: isFollow ? showFollowingOption : followUser,
                           style: ButtonStyle(
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             elevation: MaterialStateProperty.all(0.0),
-                            backgroundColor: MaterialStateProperty.all(isFollow
-                                ? Colors.transparent
-                                : Color(0xFF1D976C)),
+                            backgroundColor: MaterialStateProperty.all(isFollow ? Colors.transparent : Color(0xFF1D976C)),
                             shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4.0),
-                                  side: isFollow
-                                      ? BorderSide(
-                                          color: isLight(context)
-                                              ? Color(0xFF1D976C)
-                                              : whiteColor)
-                                      : BorderSide.none),
+                                  side: isFollow ? BorderSide(color: isLight(context) ? Color(0xFF1D976C) : whiteColor) : BorderSide.none),
                             ),
                           ),
                           child: isLoaded
                               ? Text(
                                   isFollow ? 'Following' : 'Follow',
                                   style: TextStyle(
-                                    color: isFollow
-                                        ? isLight(context)
-                                            ? Color(0xFF1D976C)
-                                            : whiteColor
-                                        : whiteColor,
-                                    fontSize: 16.0,
-                                    fontFamily: 'ProximaNova',
-                                  ),
+                                      color: isFollow
+                                          ? isLight(context)
+                                              ? Color(0xFF1D976C)
+                                              : whiteColor
+                                          : whiteColor,
+                                      fontSize: 16.0),
                                 )
                               : Container(
                                   color: Colors.grey[300],
                                 ),
                         )
                       : Shimmer.fromColors(
-                          baseColor: isLight(context)
-                              ? Colors.grey[300]!
-                              : Colors.blueGrey[600]!,
-                          highlightColor: isLight(context)
-                              ? Colors.grey[100]!
-                              : Colors.blueGrey,
+                          baseColor: isLight(context) ? Colors.grey[300]! : Colors.blueGrey[600]!,
+                          highlightColor: isLight(context) ? Colors.grey[100]! : Colors.blueGrey,
                           child: Container(
                             height: 32.0,
                             decoration: BoxDecoration(
-                              color: isLight(context)
-                                  ? Colors.grey[300]
-                                  : Colors.blueGrey[600],
+                              color: isLight(context) ? Colors.grey[300] : Colors.blueGrey[600],
                               borderRadius: BorderRadius.circular(4.0),
                             ),
                           ),
@@ -276,10 +250,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                               var value = await launchScreen(
                                 context,
                                 FavoriteSportDetailScreen.tag,
-                                arguments: {
-                                  'favSport': favSport,
-                                  'isMe': false
-                                },
+                                arguments: {'favSport': favSport, 'isMe': false},
                               );
                               if (value != null && value) {
                                 // getFavoriteSport();
@@ -299,7 +270,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
     );
   }
 
-  Widget buildFeedTabbar() {
+  /*Widget buildFeedTabbar() {
     return SliverPadding(
       padding: const EdgeInsets.only(top: 8.0),
       sliver: SliverToBoxAdapter(
@@ -309,12 +280,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
-                border: Border(
-                    bottom: BorderSide(
-                        width: 0.5,
-                        color: isLight(context)
-                            ? Colors.blueGrey[50]!
-                            : Colors.blueGrey)),
+                border: Border(bottom: BorderSide(width: 0.5, color: isLight(context) ? Colors.blueGrey[50]! : Colors.blueGrey)),
               ),
               child: TabBar(
                 controller: tabController,
@@ -322,8 +288,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
                 ),
-                indicatorColor:
-                    isLight(context) ? mainColor : Colors.greenAccent,
+                indicatorColor: isLight(context) ? mainColor : Colors.greenAccent,
                 isScrollable: true,
                 onTap: (index) => setState(() => _currentIndex = index),
                 tabs: [
@@ -337,7 +302,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
         ),
       ),
     );
-  }
+  }*/
 
   Widget buildPostFeedList() {
     return isLoaded
@@ -349,8 +314,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                   onNotification: (ScrollNotification scrollInfo) {
                     if (scrollInfo.metrics.atEdge &&
                         scrollInfo.metrics.pixels > 0 &&
-                        scrollInfo.metrics.pixels ==
-                            scrollInfo.metrics.maxScrollExtent) {
+                        scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
                       loadMorePost();
                     }
                     return false;
@@ -393,28 +357,21 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                     separatorBuilder: (context, index) {
                       return 8.height;
                     },
-                    itemCount: postHasReachedMax
-                        ? userPostList.length
-                        : userPostList.length + 1,
+                    itemCount: postHasReachedMax ? userPostList.length : userPostList.length + 1,
                   ),
                 ),
               )
             : Container(
-                margin: const EdgeInsets.only(top: 50),
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: KSScreenState(
-                      icon: SizedBox(
-                        height: 100,
-                        child: Image.asset(
-                          'assets/images/img_emptypost.png',
-                          color: Colors.grey,
-                        ),
+                child: SingleChildScrollView(
+                  child: KSScreenState(
+                    icon: SizedBox(
+                      height: 100,
+                      child: Image.asset(
+                        'assets/images/img_emptypost.png',
+                        color: Colors.grey,
                       ),
-                      title: 'No Post',
-                      bottomPadding:
-                          AppBar().preferredSize.height + kToolbarHeight,
                     ),
+                    title: 'No Post',
                   ),
                 ),
               )
@@ -426,10 +383,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
         ? NotificationListener<ScrollNotification>(
             key: Key('ownerMeetupScroll'),
             onNotification: (ScrollNotification scrollInfo) {
-              if (scrollInfo.metrics.atEdge &&
-                  scrollInfo.metrics.pixels > 0 &&
-                  scrollInfo.metrics.pixels ==
-                      scrollInfo.metrics.maxScrollExtent) {
+              if (scrollInfo.metrics.atEdge && scrollInfo.metrics.pixels > 0 && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
                 loadMoreMeetup();
               }
 
@@ -456,26 +410,20 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                   ),
                 );
               },
-              itemCount: meetupHasReachedMax
-                  ? userMeetupList.length
-                  : userMeetupList.length + 1,
+              itemCount: meetupHasReachedMax ? userMeetupList.length : userMeetupList.length + 1,
             ),
           )
         : Container(
-            margin: const EdgeInsets.only(top: 50),
-            child: Center(
-              child: SingleChildScrollView(
-                child: KSScreenState(
-                  icon: SizedBox(
-                    height: 100,
-                    child: Image.asset(
-                      'assets/images/img_emptypost.png',
-                      color: Colors.grey,
-                    ),
+            child: SingleChildScrollView(
+              child: KSScreenState(
+                icon: Container(
+                  child: Image.asset(
+                    'assets/images/img_emptypost.png',
+                    color: Colors.blueGrey[700],
+                    height: 100.0,
                   ),
-                  title: 'No Meetup',
-                  bottomPadding: AppBar().preferredSize.height + kToolbarHeight,
                 ),
+                title: 'No Meetup',
               ),
             ),
           );
@@ -512,8 +460,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                   )
                 ],
               ),
-              PullToRefreshContainer(
-                  (PullToRefreshScrollNotificationInfo? info) {
+              PullToRefreshContainer((PullToRefreshScrollNotificationInfo? info) {
                 return SliverToBoxAdapter(
                   child: PullToRefreshHeader(
                     info,
@@ -536,12 +483,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
                 alignment: Alignment.centerLeft,
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
-                  border: Border(
-                      bottom: BorderSide(
-                          width: 0.5,
-                          color: isLight(context)
-                              ? Colors.blueGrey[50]!
-                              : Colors.blueGrey)),
+                  border: Border(bottom: BorderSide(width: 0.5, color: isLight(context) ? Colors.blueGrey[50]! : Colors.blueGrey)),
                 ),
                 child: TabBar(
                   controller: tabController,
@@ -611,8 +553,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
     tabController = TabController(length: 2, vsync: this);
     _user = widget.user;
 
-    animationController = AnimationController(
-        duration: Duration(milliseconds: 1500), vsync: this);
+    animationController = AnimationController(duration: Duration(milliseconds: 1500), vsync: this);
 
     animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
 
@@ -636,16 +577,14 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
     var postData = await ksClient.getApi('/user/feed/by/${widget.user.id}');
     if (postData != null) {
       if (postData is! HttpResult) {
-        userPostList =
-            List.from((postData as List).map((e) => Post.fromJson(e)));
+        userPostList = List.from((postData as List).map((e) => Post.fromJson(e)));
       }
     }
 
     var meetupData = await ksClient.getApi('/user/meetup/by/${widget.user.id}');
     if (meetupData != null) {
       if (meetupData is! HttpResult) {
-        userMeetupList =
-            List.from((meetupData as List).map((e) => Post.fromJson(e)));
+        userMeetupList = List.from((meetupData as List).map((e) => Post.fromJson(e)));
 
         if (userMeetupList.length < 15) {
           meetupHasReachedMax = true;
@@ -662,9 +601,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
       if (data is! HttpResult) {
         _user = User.fromJson(data['user']);
         isFollow = data['my_following'];
-        favSportList = (data['fav_sport'] as List)
-            .map((e) => FavoriteSport.fromJson(e))
-            .toList();
+        favSportList = (data['fav_sport'] as List).map((e) => FavoriteSport.fromJson(e)).toList();
         isLoaded = true;
         // setState(() {});
       }
@@ -692,8 +629,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
 
           showKSConfirmDialog(
             context,
-            message:
-                'Are you sure you want to unfollow ${_user.getFullname()}?',
+            message: 'Are you sure you want to unfollow ${_user.getFullname()}?',
             onYesPressed: () async {
               var res = await ksClient.postApi('/user/unfollow/${_user.id}');
               if (res != null) {
@@ -721,8 +657,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
           dismissScreen(context);
           showKSConfirmDialog(
             context,
-            message:
-                'Are you sure you want to block ${_user.getFullname()}?',
+            message: 'Are you sure you want to block ${_user.getFullname()}?',
             onYesPressed: () {
               showKSLoading(context);
               Future.delayed(Duration(seconds: 1), () {
@@ -741,8 +676,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
   void loadMorePost() async {
     postPage += 1;
     List<Post> morePost = [];
-    await ksClient.getApi('/user/feed/by/${widget.user.id}',
-        queryParameters: {'page': postPage.toString()}).then((data) {
+    await ksClient.getApi('/user/feed/by/${widget.user.id}', queryParameters: {'page': postPage.toString()}).then((data) {
       if (data != null) {
         if (data is! HttpResult) {
           morePost = List.from((data as List).map((e) => Post.fromJson(e)));
@@ -763,8 +697,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen>
   void loadMoreMeetup() async {
     meetupPage += 1;
     List<Post> moreMeetup = [];
-    await ksClient.getApi('/user/meetup/by/${widget.user.id}',
-        queryParameters: {'page': meetupPage.toString()}).then((data) {
+    await ksClient.getApi('/user/meetup/by/${widget.user.id}', queryParameters: {'page': meetupPage.toString()}).then((data) {
       if (data != null) {
         if (data is! HttpResult) {
           moreMeetup = List.from((data as List).map((e) => Post.fromJson(e)));

@@ -87,8 +87,7 @@ class _BlockAccountScreenState extends State<BlockAccountScreen> {
   void fecthBlockedAccount() {
     _ksClient.getApi('/user/activity/my/blocks').then((data) {
       if (data != null && data is! HttpResult) {
-        _blockedAccount =
-            List.from((data as List).map((e) => User.fromJson(e['user'])));
+        _blockedAccount = List.from((data as List).map((e) => User.fromJson(e['user'])));
         _isLoading = false;
         setState(() {});
       }
@@ -113,8 +112,7 @@ class EmptyBlockedAccount extends StatelessWidget {
       color: ColorResources.getPrimary(context),
       padding: const EdgeInsets.all(24.0),
       child: Padding(
-        padding: EdgeInsets.only(
-            bottom: AppBar().preferredSize.height + kToolbarHeight),
+        padding: EdgeInsets.only(bottom: AppBar().preferredSize.height + kToolbarHeight),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -138,8 +136,7 @@ class EmptyBlockedAccount extends StatelessWidget {
 class BlockedAccountCell extends StatefulWidget {
   final User user;
   final Function(bool)? onTap;
-  BlockedAccountCell({Key? key, required this.user, this.onTap})
-      : super(key: key);
+  BlockedAccountCell({Key? key, required this.user, this.onTap}) : super(key: key);
 
   @override
   _BlockedAccountCellState createState() => _BlockedAccountCellState();
@@ -167,15 +164,13 @@ class _BlockedAccountCellState extends State<BlockedAccountCell> {
             8.width,
             Text(
               widget.user.getFullname(),
-              style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                  fontFamily: 'ProximaNova', fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
             ),
             Spacer(),
             ElevatedButton(
               style: ButtonStyle(
                 elevation: MaterialStateProperty.all(0.0),
-                backgroundColor: MaterialStateProperty.all(
-                    isBlocked ? mainColor : Colors.blueGrey),
+                backgroundColor: MaterialStateProperty.all(isBlocked ? mainColor : Colors.blueGrey),
                 foregroundColor: MaterialStateProperty.all(whiteColor),
               ),
               onPressed: () {

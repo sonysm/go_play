@@ -27,19 +27,13 @@ class NotificationCell extends StatelessWidget {
             children: [
               Text(
                 'Booking success',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText2
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.bodyText2?.copyWith(fontWeight: FontWeight.w600),
               ),
               Text('Downtown football club, court 2 for 1 hour'),
               4.height,
               Text(
                 '25 mn ago',
-                style: Theme.of(context)
-                    .textTheme
-                    .caption
-                    ?.copyWith(color: Colors.grey),
+                style: Theme.of(context).textTheme.caption?.copyWith(color: Colors.grey),
               )
             ],
           )
@@ -51,26 +45,21 @@ class NotificationCell extends StatelessWidget {
 
 class InviteNoticationCell extends StatelessWidget {
   final KSNotification notification;
-  const InviteNoticationCell({Key? key, required this.notification})
-      : super(key: key);
+  const InviteNoticationCell({Key? key, required this.notification}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Theme.of(context).primaryColor,
       child: InkWell(
-        onTap: () {
-          print('hello invite_______');
-          launchScreen(context, MeetupDetailScreen.tag,
-              arguments: notification.post);
-        },
+        onTap: () => launchScreen(context, MeetupDetailScreen.tag, arguments: notification.post),
         child: Container(
-          // color: Theme.of(context).primaryColor,
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Row(
             children: [
               SizedBox(
                 width: 54.0,
+                height: 54.4,
                 child: Avatar(
                   radius: 32.0,
                   user: notification.actor!,
@@ -84,17 +73,11 @@ class InviteNoticationCell extends StatelessWidget {
                   children: [
                     Text(
                       notification.title!,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText2
-                          ?.copyWith(fontWeight: FontWeight.w600),
+                      style: Theme.of(context).textTheme.bodyText2?.copyWith(fontWeight: FontWeight.w600),
                     ),
                     Text(
                       notification.updatedAt.toString().timeAgoString,
-                      style: Theme.of(context)
-                          .textTheme
-                          .caption
-                          ?.copyWith(color: Colors.grey),
+                      style: Theme.of(context).textTheme.caption?.copyWith(color: Colors.grey),
                     ),
                   ],
                 ),

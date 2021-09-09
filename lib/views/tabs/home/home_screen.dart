@@ -26,6 +26,7 @@ import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/suggestion_cell.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
+import 'package:kroma_sport/views/tabs/search/search_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -65,17 +66,26 @@ class _HomeScreenState extends State<HomeScreen> {
         overlayColor: MaterialStateProperty.all(Colors.transparent),
         child: SizedBox(
           height: 28.0,
-          child: Image.asset(imgVplayText,
-              color: isLight(context) ? mainColor : whiteColor),
+          child: Image.asset(imgVplayText, color: isLight(context) ? mainColor : whiteColor),
         ),
       ),
       actions: [
         CupertinoButton(
-          child: Icon(FeatherIcons.bell,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.grey[600]
-                  : whiteColor),
-          onPressed: () => launchScreen(context, NotificationScreen.tag),
+          padding: EdgeInsets.only(right: 16.0),
+          alignment: Alignment.centerLeft,
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isLight(context) ? Colors.blueGrey[50] : Colors.blueGrey,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              FeatherIcons.search,
+              size: 20.0,
+              color: isLight(context) ? Colors.grey[600] : whiteColor,
+            ),
+          ),
+          onPressed: () => launchScreen(context, SearchScreen.tag),
         ),
         SizedBox(),
       ],
@@ -127,11 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: TextButton(
                     onPressed: addPhoto,
                     style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all(isLight(context)
-                          ? Colors.grey[100]
-                          : Colors.blueGrey[300]),
-                      foregroundColor: MaterialStateProperty.all(
-                          ColorResources.getMainColor(context)),
+                      overlayColor: MaterialStateProperty.all(isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
+                      foregroundColor: MaterialStateProperty.all(ColorResources.getMainColor(context)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -140,13 +147,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         8.width,
                         Text(
                           'Post',
-                          style:
-                              Theme.of(context).textTheme.bodyText1?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: ColorResources.getMainColor(context),
-                                    fontSize: 18.0,
-                                    fontFamily: 'ProximaNova',
-                                  ),
+                          style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: ColorResources.getMainColor(context),
+                                fontSize: 18.0,
+                              ),
                           strutStyle: StrutStyle(fontSize: 18),
                         ),
                       ],
@@ -155,14 +160,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Expanded(
                   child: TextButton(
-                    onPressed: () =>
-                        launchScreen(context, CreateActivityScreen.tag),
+                    onPressed: () => launchScreen(context, CreateActivityScreen.tag),
                     style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all(isLight(context)
-                          ? Colors.grey[100]
-                          : Colors.blueGrey[300]),
-                      foregroundColor: MaterialStateProperty.all(
-                          ColorResources.getMainColor(context)),
+                      overlayColor: MaterialStateProperty.all(isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
+                      foregroundColor: MaterialStateProperty.all(ColorResources.getMainColor(context)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -171,13 +172,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         8.width,
                         Text(
                           'Activity',
-                          style:
-                              Theme.of(context).textTheme.bodyText1?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18.0,
-                                    color: ColorResources.getMainColor(context),
-                                    fontFamily: 'ProximaNova',
-                                  ),
+                          style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18.0,
+                                color: ColorResources.getMainColor(context),
+                              ),
                           strutStyle: StrutStyle(fontSize: 18),
                         ),
                       ],
@@ -210,22 +209,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (post.type == PostType.feed) {
                     String? _urlInfo;
                     if (post.description != null) {
-                      final urlMatches =
-                          urlRegExp.allMatches(post.description!);
+                      final urlMatches = urlRegExp.allMatches(post.description!);
 
-                      List<String> urls = urlMatches
-                          .map((urlMatch) => post.description!
-                              .substring(urlMatch.start, urlMatch.end))
-                          .toList();
+                      List<String> urls = urlMatches.map((urlMatch) => post.description!.substring(urlMatch.start, urlMatch.end)).toList();
                       // urls.forEach((x) => print(x));
                       if (urls.isNotEmpty) {
                         _urlInfo = urls.elementAt(0);
 
                         if (!_urlInfo.startsWith(_protocolIdentifierRegex)) {
-                          _urlInfo = (LinkifyOptions().defaultToHttps
-                                  ? "https://"
-                                  : "http://") +
-                              _urlInfo;
+                          _urlInfo = (LinkifyOptions().defaultToHttps ? "https://" : "http://") + _urlInfo;
                         }
                       }
                     }
@@ -290,10 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           statusBarIconBrightness: isLight(context) ? Brightness.dark : Brightness.light,
-          systemNavigationBarColor:
-              isLight(context)
-                  ? Color.fromRGBO(113, 113, 113, 1)
-                  : Color.fromRGBO(15, 15, 15, 1),
+          systemNavigationBarColor: isLight(context) ? Color.fromRGBO(113, 113, 113, 1) : Color.fromRGBO(15, 15, 15, 1),
         ),
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
@@ -379,14 +368,12 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context) {
           return AlertDialog(
             title: Text('Photo disable'),
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+            contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
             content: Text(
               'Please enable your photo.',
               style: Theme.of(context).textTheme.bodyText1,
             ),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
             actions: <Widget>[
               TextButton(
                   onPressed: () {

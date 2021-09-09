@@ -54,15 +54,11 @@ class _MeetupCellState extends State<MeetupCell> {
   KSHttpClient ksClient = KSHttpClient();
 
   Widget buildTotalReaction(int total) {
-    return total > 0
-        ? Text(total > 1 ? '$total likes' : '$total like')
-        : SizedBox();
+    return total > 0 ? Text(total > 1 ? '$total likes' : '$total like') : SizedBox();
   }
 
   Widget buildTotalComment(int total) {
-    return total > 0
-        ? Text(total > 1 ? '$total comments' : '$total comment')
-        : SizedBox();
+    return total > 0 ? Text(total > 1 ? '$total comments' : '$total comment') : SizedBox();
   }
 
   @override
@@ -70,9 +66,7 @@ class _MeetupCellState extends State<MeetupCell> {
     super.didUpdateWidget(oldWidget);
     if (widget.post != oldWidget.post) {
       meetup = widget.post;
-      joinMember = widget.post.meetupMember!
-          .where((element) => element.status == 1)
-          .toList();
+      joinMember = widget.post.meetupMember!.where((element) => element.status == 1).toList();
       setState(() {});
     }
   }
@@ -89,20 +83,15 @@ class _MeetupCellState extends State<MeetupCell> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          borderRadius: BorderRadius.circular(8.0)),
+      decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(8.0)),
       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
       margin: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
       child: InkWell(
         onTap: () async {
-          var data = await launchScreen(context, MeetupDetailScreen.tag,
-              arguments: widget.post);
+          var data = await launchScreen(context, MeetupDetailScreen.tag, arguments: widget.post);
           if (data != null) {
             meetup = data as Post;
-            joinMember = data.meetupMember!
-                .where((element) => element.status == 1)
-                .toList();
+            joinMember = data.meetupMember!.where((element) => element.status == 1).toList();
             setState(() {});
           }
         },
@@ -136,26 +125,15 @@ class _MeetupCellState extends State<MeetupCell> {
                                   children: [
                                     TextSpan(
                                       text: widget.post.owner.getFullname(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          ?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'Metropolis'),
+                                      style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                                     ),
                                     TextSpan(
                                       text: ' is hosting ',
-                                      style:
-                                          Theme.of(context).textTheme.bodyText1,
+                                      style: Theme.of(context).textTheme.bodyText1,
                                     ),
                                     TextSpan(
                                       text: widget.post.title,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1
-                                          ?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: 'Metropolis'),
+                                      style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                                     ),
                                   ],
                                 ),
@@ -166,10 +144,7 @@ class _MeetupCellState extends State<MeetupCell> {
                         4.height,
                         Text(
                           widget.post.createdAt.toString().timeAgoString,
-                          style: Theme.of(context).textTheme.caption!.copyWith(
-                              color: isLight(context)
-                                  ? Colors.blueGrey[400]
-                                  : Colors.blueGrey[100]),
+                          style: Theme.of(context).textTheme.caption!.copyWith(color: isLight(context) ? Colors.blueGrey[400] : Colors.blueGrey[100]),
                         ),
                       ],
                     ),
@@ -193,10 +168,10 @@ class _MeetupCellState extends State<MeetupCell> {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
                       meetup.sport!.name + ' Meetup',
-                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Metropolis',
-                          color: isLight(context) ? mainColor : Colors.white70),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .copyWith(fontWeight: FontWeight.w600, color: isLight(context) ? mainColor : Colors.white70),
                     ),
                   ),
                   Divider(),
@@ -213,10 +188,7 @@ class _MeetupCellState extends State<MeetupCell> {
                   // Divider(),
                   Text(
                     'Members Joined',
-                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                        color: isLight(context)
-                            ? Colors.grey[600]
-                            : Colors.white70),
+                    style: Theme.of(context).textTheme.bodyText2!.copyWith(color: isLight(context) ? Colors.grey[600] : Colors.white70),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -227,21 +199,17 @@ class _MeetupCellState extends State<MeetupCell> {
                         if (index <= joinMember.length - 1) {
                           return CircleAvatar(
                             radius: 18,
-                            backgroundColor:
-                                isLight(context) ? Colors.amber : whiteColor,
+                            backgroundColor: isLight(context) ? Colors.amber : whiteColor,
                             child: Avatar(
                               radius: 16,
                               user: joinMember.elementAt(index).user,
-                              isSelectable:
-                                  joinMember.elementAt(index).user.id !=
-                                      KS.shared.user.id,
+                              isSelectable: joinMember.elementAt(index).user.id != KS.shared.user.id,
                             ),
                           );
                         }
 
                         return DottedBorder(
-                          color:
-                              isLight(context) ? Colors.blueGrey : whiteColor,
+                          color: isLight(context) ? Colors.blueGrey : whiteColor,
                           strokeWidth: 1.5,
                           dashPattern: [3, 4],
                           borderType: BorderType.Circle,
@@ -252,9 +220,7 @@ class _MeetupCellState extends State<MeetupCell> {
                             width: 32.0,
                             height: 32.0,
                             decoration: BoxDecoration(
-                              color: isLight(context)
-                                  ? Colors.grey[100]
-                                  : Colors.white60,
+                              color: isLight(context) ? Colors.grey[100] : Colors.white60,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -268,20 +234,11 @@ class _MeetupCellState extends State<MeetupCell> {
                             children: [
                               TextSpan(
                                 text: meetup.price.toString() + ' USD',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    ?.copyWith(fontWeight: FontWeight.w600),
+                                style: Theme.of(context).textTheme.bodyText2?.copyWith(fontWeight: FontWeight.w600),
                               ),
                               TextSpan(
                                 text: ' /person',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    ?.copyWith(
-                                        color: isLight(context)
-                                            ? Colors.blueGrey
-                                            : Colors.white70),
+                                style: Theme.of(context).textTheme.bodyText2?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.white70),
                               ),
                             ],
                           ),
@@ -292,8 +249,7 @@ class _MeetupCellState extends State<MeetupCell> {
                   // Text(
                   //   meetup.sport!.name + ' Meetup',
                   //   style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                  //       fontWeight: FontWeight.w600,
-                  //       fontFamily: 'Metropolis',
+                  //       fontWeight: FontWeight.w600
                   //       color: isLight(context)
                   //           ? Colors.blueGrey[600]
                   //           : Colors.white70),
@@ -305,9 +261,7 @@ class _MeetupCellState extends State<MeetupCell> {
                       Icon(
                         Feather.clock,
                         size: 16.0,
-                        color: isLight(context)
-                            ? Colors.grey[700]
-                            : Colors.grey[300]!,
+                        color: isLight(context) ? Colors.grey[700] : Colors.grey[300]!,
                       ),
                       8.width,
                       Column(
@@ -319,13 +273,7 @@ class _MeetupCellState extends State<MeetupCell> {
                           ),
                           Text(
                             'One time activity',
-                            style: Theme.of(context)
-                                .textTheme
-                                .caption
-                                ?.copyWith(
-                                    color: isLight(context)
-                                        ? Colors.blueGrey
-                                        : Colors.white70),
+                            style: Theme.of(context).textTheme.caption?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.white70),
                           ),
                         ],
                       ),
@@ -340,9 +288,7 @@ class _MeetupCellState extends State<MeetupCell> {
                           Icon(
                             Feather.map_pin,
                             size: 16.0,
-                            color: isLight(context)
-                                ? Colors.grey[700]
-                                : Colors.grey[300]!,
+                            color: isLight(context) ? Colors.grey[700] : Colors.grey[300]!,
                           ),
                           8.width,
                           Flexible(
@@ -363,9 +309,7 @@ class _MeetupCellState extends State<MeetupCell> {
                               Icon(
                                 Feather.bookmark,
                                 size: 16.0,
-                                color: isLight(context)
-                                    ? Colors.grey[700]
-                                    : Colors.grey[300]!,
+                                color: isLight(context) ? Colors.grey[700] : Colors.grey[300]!,
                               ),
                               8.width,
                               Text(
@@ -383,31 +327,18 @@ class _MeetupCellState extends State<MeetupCell> {
                       Icon(
                         Feather.pocket,
                         size: 16.0,
-                        color: isLight(context)
-                            ? Colors.grey[700]
-                            : Colors.grey[300]!,
+                        color: isLight(context) ? Colors.grey[700] : Colors.grey[300]!,
                       ),
                       8.width,
                       meetup.status == PostStatus.active
                           ? Text(
-                              isMeetupAvailable()
-                                  ? 'Meetup Available'
-                                  : 'Meetup Expired',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2
-                                  ?.copyWith(
-                                      color: isMeetupAvailable()
-                                          ? mainColor
-                                          : Colors.amber[700]),
+                              isMeetupAvailable() ? 'Meetup Available' : 'Meetup Expired',
+                              style: Theme.of(context).textTheme.bodyText2?.copyWith(color: isMeetupAvailable() ? mainColor : Colors.amber[700]),
                               strutStyle: StrutStyle(fontSize: 14.0),
                             )
                           : Text(
                               'Meetup Canceled',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2
-                                  ?.copyWith(color: Colors.red),
+                              style: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.red),
                               strutStyle: StrutStyle(fontSize: 14.0),
                             ),
                     ],
@@ -430,8 +361,7 @@ class _MeetupCellState extends State<MeetupCell> {
     _homeCubit = context.read<HomeCubit>();
     _meetupCubit = context.read<MeetupCubit>();
 
-    joinMember =
-        meetup.meetupMember!.where((element) => element.status == 1).toList();
+    joinMember = meetup.meetupMember!.where((element) => element.status == 1).toList();
   }
 
   void showOptionActionBottomSheet(Post post) {
@@ -442,8 +372,7 @@ class _MeetupCellState extends State<MeetupCell> {
           icon: Feather.edit,
           onTab: () {
             dismissScreen(context);
-            launchScreen(context, OragnizeActivityScreen.tag,
-                arguments: meetup);
+            launchScreen(context, OragnizeActivityScreen.tag, arguments: meetup);
           },
         ),
       if (isMe(post.owner.id) && meetup.status == PostStatus.active)
@@ -480,8 +409,7 @@ class _MeetupCellState extends State<MeetupCell> {
                   action: true,
                   actionTitle: 'Undo',
                   onAction: () {
-                    _meetupCubit.onUndoHidingMeetup(
-                        index: widget.index, post: post);
+                    _meetupCubit.onUndoHidingMeetup(index: widget.index, post: post);
                   },
                 );
               },
@@ -496,11 +424,9 @@ class _MeetupCellState extends State<MeetupCell> {
             dismissScreen(context);
             showKSConfirmDialog(
               context,
-              message:
-                  'Are you sure you want to unfollow ${post.owner.getFullname()}?',
+              message: 'Are you sure you want to unfollow ${post.owner.getFullname()}?',
               onYesPressed: () async {
-                var res =
-                    await ksClient.postApi('/user/unfollow/${post.owner.id}');
+                var res = await ksClient.postApi('/user/unfollow/${post.owner.id}');
                 if (res != null) {
                   if (res is! HttpResult) {}
                 }
@@ -516,8 +442,7 @@ class _MeetupCellState extends State<MeetupCell> {
             dismissScreen(context);
             showKSConfirmDialog(
               context,
-              message:
-                  'Are you sure you want to block ${post.owner.getFullname()}?',
+              message: 'Are you sure you want to block ${post.owner.getFullname()}?',
               onYesPressed: () {
                 // var res =
                 //     await ksClient.postApi('/user/unfollow/${post.owner.id}');
@@ -575,8 +500,7 @@ class _MeetupCellState extends State<MeetupCell> {
     }
 
     showKSLoading(context);
-    var result =
-        await ksClient.postApi('/cancel/post/meetup/${widget.post.id}');
+    var result = await ksClient.postApi('/cancel/post/meetup/${widget.post.id}');
     if (result != null) {
       await Future.delayed(Duration(milliseconds: 300));
       dismissScreen(context);
@@ -590,8 +514,7 @@ class _MeetupCellState extends State<MeetupCell> {
         elevation: 0,
         backgroundColor: Colors.orange[400], //Color(0xFF696969),
         behavior: SnackBarBehavior.floating,
-        content: Text('Meetup Expired',
-            style: Theme.of(context).textTheme.bodyText2),
+        content: Text('Meetup Expired', style: Theme.of(context).textTheme.bodyText2),
         margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         // action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),

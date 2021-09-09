@@ -87,7 +87,6 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
                 ),
               ),
               title: 'No any available venue',
-              bottomPadding: AppBar().preferredSize.height,
             ),
           );
   }

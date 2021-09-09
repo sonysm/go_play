@@ -89,7 +89,6 @@ class MeetupCubit extends Cubit<MeetupData> {
   }
 
   Future<void> onRefresh() async {
-    // if (state.status == DataState.Loaded) {
     emit(state.copyWith(status: DataState.None, page: 1));
     var data = await _client
         .getApi('/meetup', queryParameters: {'page': state.page.toString()});
@@ -126,7 +125,6 @@ class MeetupCubit extends Cubit<MeetupData> {
         print("error");
       }
     }
-    // }
   }
 
   Future<void> onLoadMore() async {

@@ -45,20 +45,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
               )
             : SliverFillRemaining(
                 child: KSScreenState(
-                  icon: SizedBox(
-                      // height: 100,
-                      child: SvgPicture.asset(
-                    'assets/icons/ic_bell.svg',
-                    height: 120,
-                    color: Colors.blueGrey[700],
-                  )
-                      // Image.asset(
-                      //   'assets/images/img_emptybox.png',
-                      //   color: isLight(context) ? Colors.grey[600] : Colors.white60,
-                      // ),
-                      ),
-                  title: 'No notification yet',
-                  bottomPadding: AppBar().preferredSize.height + kToolbarHeight,
+                  icon: SvgPicture.asset('assets/icons/ic_bell.svg', height: 150, color: Colors.blueGrey[700]),
+                  title: 'No Notification',
+                  subTitle: 'We\'ll notify you when someting arrives.',
                 ),
               )
         : SliverToBoxAdapter(
@@ -84,7 +73,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         topBouncing: false,
         bottomBouncing: false,
         header: MaterialHeader(valueColor: AlwaysStoppedAnimation<Color>(mainColor)),
-        footer: noticationList.isNotEmpty ? ClassicalFooter(enableInfiniteLoad: false, completeDuration: Duration(milliseconds: 500)) : null,
+        footer: noticationList.isNotEmpty ? ClassicalFooter(enableInfiniteLoad: false, completeDuration: Duration(milliseconds: 700)) : null,
         slivers: [
           buildNoticationList(),
         ],

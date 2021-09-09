@@ -26,15 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Text(
-        //   'VPlay',
-        //   style: TextStyle(
-        //     color: whiteColor,
-        //     fontSize: 36.0,
-        //     fontWeight: FontWeight.w700,
-        //     fontFamily: 'ProximaNova',
-        //   ),
-        // ),
         SizedBox(height: 42.0, child: Image.asset(imgVplayText)),
         8.height,
         Text(
@@ -42,8 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
           style: TextStyle(
             color: whiteColor,
             fontSize: 20.0,
-            fontWeight: FontWeight.w600,
-            fontFamily: 'Metropolis',
+            fontWeight: FontWeight.w700,
           ),
         ),
         4.height,
@@ -53,7 +43,6 @@ class _LoginScreenState extends State<LoginScreen> {
             color: whiteColor,
             fontSize: 16.0,
             fontWeight: FontWeight.w500,
-            // fontFamily: 'Metropolis',
           ),
         ),
       ],
@@ -72,29 +61,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 // textTheme: Theme.of(context).textTheme,
                 ),
             child: InternationalPhoneNumberInput(
-              textStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
-                    color: whiteColor,
-                    fontSize: 18.0,
-                    fontFamily: 'ProximaNova',
-                  ),
-              selectorTextStyle:
-                  Theme.of(context).textTheme.bodyText2?.copyWith(
-                        color: whiteColor,
-                        fontSize: 18.0,
-                        fontFamily: 'ProximaNova',
-                      ),
+              textStyle: Theme.of(context).textTheme.bodyText1?.copyWith(color: whiteColor, fontSize: 18.0),
+              selectorTextStyle: Theme.of(context).textTheme.bodyText2?.copyWith(color: whiteColor, fontSize: 18.0),
               inputDecoration: InputDecoration(
                   hintText: 'Phone number',
-                  hintStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
-                        color: Colors.white70,
-                        fontSize: 18,
-                        fontFamily: 'ProximaNova',
-                      ),
-                  enabledBorder: UnderlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white60, width: 1.5)),
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 2.0))),
+                  hintStyle: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.white70, fontSize: 18),
+                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white60, width: 1.5)),
+                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white, width: 2.0))),
               searchBoxDecoration: InputDecoration(
                 labelStyle: Theme.of(context).textTheme.bodyText2,
                 hintStyle: Theme.of(context).textTheme.bodyText2,
@@ -166,11 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Text(
                 'Facebook',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                    color: whiteColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16.0,
-                    fontFamily: 'ProximaNova'),
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(color: whiteColor, fontWeight: FontWeight.w600, fontSize: 16.0),
               ),
             ),
             28.width,
@@ -219,14 +188,10 @@ class _LoginScreenState extends State<LoginScreen> {
             elevation: MaterialStateProperty.all(0),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             backgroundColor: MaterialStateProperty.all(whiteColor),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0)))),
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)))),
         child: Text(
           'Login',
-          style: Theme.of(context).textTheme.bodyText1?.copyWith(
-              color: mainColor,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'ProximaNova'),
+          style: Theme.of(context).textTheme.bodyText1?.copyWith(color: mainColor, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -287,11 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
               bottom: 16.0,
               left: 24.0,
               right: 24.0,
-              child: Text(
-                'Copyrights 2021, Kroma Tec',
-                style: TextStyle(color: whiteColor),
-                textAlign: TextAlign.center,
-              ),
+              child: Text('Copyrights 2021, Kroma Tec', style: TextStyle(color: whiteColor), textAlign: TextAlign.center),
             ),
           ],
         ),
@@ -301,8 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   onLogin() {
     if (isValid) {
-      launchScreen(context, VerifyCodeScreen.tag,
-          arguments: number.phoneNumber);
+      launchScreen(context, VerifyCodeScreen.tag, arguments: number.phoneNumber);
     } else {
       setState(() => showInvalidText = true);
     }

@@ -27,9 +27,7 @@ class DiscussionCell extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: discussion.sender.getFullname() + ' ',
-                        style: Theme.of(context).textTheme.bodyText2?.copyWith(
-                            fontFamily: 'Metropolis',
-                            fontWeight: FontWeight.w600),
+                        style: Theme.of(context).textTheme.bodyText2?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       TextSpan(
                         text: discussion.content,
@@ -40,10 +38,7 @@ class DiscussionCell extends StatelessWidget {
                 ),
                 4.height,
                 Text(discussion.createdAt.toString().timeAgoString,
-                    style: Theme.of(context)
-                        .textTheme
-                        .caption
-                        ?.copyWith(color: isLight(context) ? Colors.grey[600]: Colors.grey[400])),
+                    style: Theme.of(context).textTheme.caption?.copyWith(color: isLight(context) ? Colors.grey[600] : Colors.grey[400])),
               ],
             ),
           ),

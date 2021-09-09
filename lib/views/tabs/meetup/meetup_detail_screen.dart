@@ -73,10 +73,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               dense: true,
               horizontalTitleGap: 0,
               leading: Icon(Feather.align_left, size: 20.0),
-              title: Text(meetup!.sport!.name,
-                  style: Theme.of(context).textTheme.bodyText2),
-              subtitle: Text(meetup!.title,
-                  style: Theme.of(context).textTheme.headline6),
+              title: Text(meetup!.sport!.name, style: Theme.of(context).textTheme.bodyText2),
+              subtitle: Text(meetup!.title, style: Theme.of(context).textTheme.headline6),
             ),
             ListTile(
               dense: true,
@@ -84,14 +82,10 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               leading: Icon(Feather.calendar, size: 20.0),
               title: Text(
                   '${DateFormat('EEE dd MMM').format(DateTime.parse(meetup!.activityDate!))}, ${DateFormat('h:mm a').format(DateTime.parse(meetup!.activityDate! + ' ' + meetup!.activityStartTime!))} - ${DateFormat('h:mm a').format(DateTime.parse(meetup!.activityDate! + ' ' + meetup!.activityEndTime!))}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1
-                      ?.copyWith(fontWeight: FontWeight.w600)),
+                  style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600)),
               subtitle: Text(
                 'One time activity',
-                style: Theme.of(context).textTheme.bodyText2?.copyWith(
-                    color: isLight(context) ? Colors.blueGrey : Colors.white70),
+                style: Theme.of(context).textTheme.bodyText2?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.white70),
               ),
             ),
             if (meetup!.activityLocation != null)
@@ -99,8 +93,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 dense: true,
                 horizontalTitleGap: 0,
                 leading: Icon(Feather.map_pin, size: 20.0),
-                title: Text(meetup!.activityLocation!.name,
-                    style: Theme.of(context).textTheme.bodyText1),
+                title: Text(meetup!.activityLocation!.name, style: Theme.of(context).textTheme.bodyText1),
               ),
             ListTile(
               dense: true,
@@ -111,17 +104,11 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                   children: [
                     TextSpan(
                       text: meetup!.price.toString() + ' USD',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          ?.copyWith(fontWeight: FontWeight.w600),
+                      style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                     ),
                     TextSpan(
                       text: ' /person',
-                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                          color: isLight(context)
-                              ? Colors.blueGrey
-                              : Colors.white70),
+                      style: Theme.of(context).textTheme.bodyText1?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.white70),
                     ),
                   ],
                 ),
@@ -132,8 +119,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                     dense: true,
                     horizontalTitleGap: 0,
                     leading: Icon(Feather.bookmark, size: 20.0),
-                    title: Text('Field Booked',
-                        style: Theme.of(context).textTheme.bodyText1),
+                    title: Text('Field Booked', style: Theme.of(context).textTheme.bodyText1),
                     trailing: TextButton(
                       onPressed: () {
                         launchScreen(
@@ -142,12 +128,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                           arguments: {'id': meetup!.book},
                         );
                       },
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.grey[300]),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                      child: Text('view',
-                          style: Theme.of(context).textTheme.bodyText2),
+                      style:
+                          ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.grey[300]), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                      child: Text('view', style: Theme.of(context).textTheme.bodyText2),
                     ),
                   )
                 : SizedBox(),
@@ -160,24 +143,11 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                   children: [
                     meetup!.status == PostStatus.active
                         ? TextSpan(
-                            text: isMeetupAvailable()
-                                ? 'Meetup Available'
-                                : 'Meetup Expired',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(
-                                    color: isMeetupAvailable()
-                                        ? mainColor
-                                        : Colors.amber[700]))
+                            text: isMeetupAvailable() ? 'Meetup Available' : 'Meetup Expired',
+                            style: Theme.of(context).textTheme.bodyText1?.copyWith(color: isMeetupAvailable() ? mainColor : Colors.amber[700]))
                         : TextSpan(
                             text: 'Meetup Canceled',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1
-                                ?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.red),
+                            style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600, color: Colors.red),
                           ),
                   ],
                 ),
@@ -240,18 +210,14 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               padding: const EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
               child: Text(
                 'Going(${joinMember.length}/${meetup!.maxPeople})',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
             Container(
               height: 130.0,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding:
-                    const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0),
+                padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0),
                 itemBuilder: (context, index) {
                   if (index <= joinMember.length - 1) {
                     return SizedBox(
@@ -260,14 +226,11 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                         children: [
                           CircleAvatar(
                             radius: 34,
-                            backgroundColor:
-                                isLight(context) ? Colors.amber : whiteColor,
+                            backgroundColor: isLight(context) ? Colors.amber : whiteColor,
                             child: Avatar(
                               radius: 32,
                               user: joinMember.elementAt(index).user,
-                              isSelectable:
-                                  joinMember.elementAt(index).user.id !=
-                                      KS.shared.user.id,
+                              isSelectable: joinMember.elementAt(index).user.id != KS.shared.user.id,
                               onTap: (_) {},
                             ),
                           ),
@@ -278,8 +241,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                             maxLines: 1,
                             overflow: TextOverflow.clip,
                           ),
-                          joinMember.elementAt(index).user.id ==
-                                  meetup!.owner.id
+                          joinMember.elementAt(index).user.id == meetup!.owner.id
                               ? Text(
                                   '(Host)',
                                   textAlign: TextAlign.center,
@@ -301,24 +263,19 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                                 launchScreen(
                                   context,
                                   InviteMeetupScreen.tag,
-                                  arguments: {
-                                    'joinMember': joinMember,
-                                    'meetup': meetup
-                                  },
+                                  arguments: {'joinMember': joinMember, 'meetup': meetup},
                                 );
                               } else {
                                 showKSMessageDialog(
                                   context,
-                                  message:
-                                      'You cannot invite player.\nMeetup is expired.',
+                                  message: 'You cannot invite player.\nMeetup is expired.',
                                   buttonTitle: 'OK',
                                 );
                               }
                             }
                           },
                           child: DottedBorder(
-                            color:
-                                isLight(context) ? Colors.blueGrey : whiteColor,
+                            color: isLight(context) ? Colors.blueGrey : whiteColor,
                             strokeWidth: 1.5,
                             dashPattern: [3, 4],
                             borderType: BorderType.Circle,
@@ -329,9 +286,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                               width: 64.0,
                               height: 64.0,
                               decoration: BoxDecoration(
-                                color: isLight(context)
-                                    ? Colors.grey[100]
-                                    : Colors.white60,
+                                color: isLight(context) ? Colors.grey[100] : Colors.white60,
                                 shape: BoxShape.circle,
                               ),
                               child: KS.shared.user.id == meetup!.owner.id
@@ -367,20 +322,13 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
           header: MaterialHeader(
             valueColor: AlwaysStoppedAnimation<Color>(mainColor),
           ),
-          slivers: [
-            buildMainInfo(),
-            buildMap(),
-            buildMember(),
-            SliverPadding(padding: EdgeInsets.only(bottom: 64.0))
-          ],
+          slivers: [buildMainInfo(), buildMap(), buildMember(), SliverPadding(padding: EdgeInsets.only(bottom: 64.0))],
           onRefresh: () async {
             fetchMeetup();
           },
         ),
         if (isMeetupAvailable()) ...[
-          (meetup!.owner.id != KS.shared.user.id &&
-                      joinMember.length < meetup!.maxPeople!) ||
-                  (meetup!.owner.id != KS.shared.user.id && isJoined)
+          (meetup!.owner.id != KS.shared.user.id && joinMember.length < meetup!.maxPeople!) || (meetup!.owner.id != KS.shared.user.id && isJoined)
               ? Positioned(
                   bottom: 0,
                   left: 0,
@@ -389,20 +337,15 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                     height: 64.0,
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
-                      border: Border(
-                          top: BorderSide(
-                              width: 0.5,
-                              color: Colors.black.withOpacity(0.1))),
+                      border: Border(top: BorderSide(width: 0.5, color: Colors.black.withOpacity(0.1))),
                     ),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                     child: ElevatedButton(
                       onPressed: isJoined ? leaveGame : joinGame,
                       style: ButtonStyle(
                         elevation: MaterialStateProperty.all(0),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: MaterialStateProperty.all(
-                            isJoined ? Colors.grey[200] : mainColor),
+                        backgroundColor: MaterialStateProperty.all(isJoined ? Colors.grey[200] : mainColor),
                       ),
                       child: Text(
                         isJoined ? 'Leave Game' : 'Join Game',
@@ -453,10 +396,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                     isDense: true,
                     border: InputBorder.none,
                     hintText: 'Add a comment',
-                    hintStyle: Theme.of(context).textTheme.bodyText2?.copyWith(
-                        color: isLight(context)
-                            ? Colors.blueGrey
-                            : Colors.blueGrey[100])),
+                    hintStyle: Theme.of(context).textTheme.bodyText2?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.blueGrey[100])),
                 onChanged: (value) {
                   setState(() {});
                 },
@@ -482,8 +422,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         CupertinoScrollbar(
           isAlwaysShown: true,
           child: EasyRefresh.custom(
-            header:
-                MaterialHeader(valueColor: AlwaysStoppedAnimation(mainColor)),
+            header: MaterialHeader(valueColor: AlwaysStoppedAnimation(mainColor)),
             slivers: [
               discussionList.isNotEmpty
                   ? SliverPadding(
@@ -544,8 +483,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               elevation: 0.5,
               actions: [
                 CupertinoButton(
-                  child: Icon(FeatherIcons.moreVertical,
-                      color: isLight(context) ? Colors.grey[600] : whiteColor),
+                  child: Icon(FeatherIcons.moreVertical, color: isLight(context) ? Colors.grey[600] : whiteColor),
                   onPressed: () => showMeetupBottomSheet(meetup!),
                 )
               ],
@@ -554,11 +492,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: TabBar(
-                    labelStyle: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Metropolis',
-                    ),
+                    labelStyle: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
                     indicatorColor: mainColor,
                     isScrollable: true,
                     tabs: [
@@ -594,14 +528,12 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                                           child: Text('No any discussion yet!'),
                                         ),
                                       ),
-                                Positioned(
-                                    bottom: 0, child: bottomCommentAction()),
+                                Positioned(bottom: 0, child: bottomCommentAction()),
                               ],
                             )
                           : Container(
                               child: Center(
-                                child: Text(
-                                    'Only joined member can discuss here.'),
+                                child: Text('Only joined member can discuss here.'),
                               ),
                             ),
                     ],
@@ -620,9 +552,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
       isLoading = false;
       meetup = widget.meetup;
 
-      channel = IOWebSocketChannel.connect(
-          (DEBUG ? DEV_WS : PRO_WS) + '/ws/meetup/message/${meetup!.id}/',
-          headers: {'x-key': ksClient.token()});
+      channel = IOWebSocketChannel.connect((DEBUG ? DEV_WS : PRO_WS) + '/ws/meetup/message/${meetup!.id}/', headers: {'x-key': ksClient.token()});
 
       channel.stream.listen((message) {
         var data = jsonDecode(message.toString());
@@ -633,9 +563,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
 
       getDiscussion();
 
-      joinMember = meetup!.meetupMember!
-          .where((element) => element.status == 1)
-          .toList();
+      joinMember = meetup!.meetupMember!.where((element) => element.status == 1).toList();
       isJoined = joinMember.any((e) => e.user.id == KS.shared.user.id);
     } else if (widget.meetup is int) {
       isLoading = true;
@@ -659,12 +587,9 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         if (value is! HttpResult) {
           meetup = Post.fromJson(value['post']);
 
-          joinMember = meetup!.meetupMember!
-              .where((element) => element.status == 1)
-              .toList();
+          joinMember = meetup!.meetupMember!.where((element) => element.status == 1).toList();
 
-          isJoined =
-              meetup!.meetupMember!.any((e) => e.user.id == KS.shared.user.id);
+          isJoined = meetup!.meetupMember!.any((e) => e.user.id == KS.shared.user.id);
           isJoined = joinMember.any((e) => e.user.id == KS.shared.user.id);
           isLoading = false;
           isShowMap = true;
@@ -689,9 +614,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
   }
 
   void joinGame() {
-    showKSConfirmDialog(context,
-        message: 'Are you sure you want to join the game?',
-        onYesPressed: () async {
+    showKSConfirmDialog(context, message: 'Are you sure you want to join the game?', onYesPressed: () async {
       showKSLoading(context);
       var result = await ksClient.postApi('/join/post/meetup/${meetup!.id}');
       if (result != null) {
@@ -702,9 +625,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
             if (res is! HttpResult) {
               meetup = Post.fromJson(res['post']);
               // widget.meetup.meetupMember = meetup.meetupMember;
-              joinMember = meetup!.meetupMember!
-                  .where((element) => element.status == 1)
-                  .toList();
+              joinMember = meetup!.meetupMember!.where((element) => element.status == 1).toList();
               isJoined = true;
               BlocProvider.of<MeetupCubit>(context).onRefresh();
               setState(() {});
@@ -725,20 +646,16 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
           title: 'Tell the reason why you want to leave:',
           onSubmit: () async {
             showKSLoading(context);
-            var result =
-                await ksClient.postApi('/leave/post/meetup/${meetup!.id}');
+            var result = await ksClient.postApi('/leave/post/meetup/${meetup!.id}');
             if (result != null) {
               if (result is! HttpResult) {
-                var res =
-                    await ksClient.getApi('/view/meetup/post/${meetup!.id}');
+                var res = await ksClient.getApi('/view/meetup/post/${meetup!.id}');
                 if (res != null) {
                   dismissScreen(context);
                   if (res is! HttpResult) {
                     meetup = Post.fromJson(res['post']);
                     // widget.meetup.meetupMember = meetup.meetupMember;
-                    joinMember = meetup!.meetupMember!
-                        .where((element) => element.status == 1)
-                        .toList();
+                    joinMember = meetup!.meetupMember!.where((element) => element.status == 1).toList();
                     isJoined = false;
                     BlocProvider.of<MeetupCubit>(context).onRefresh();
                     setState(() {});
@@ -761,9 +678,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                 icon: Feather.link_2,
                 onTab: () async {
                   dismissScreen(context);
-                  var booked = await launchScreen(
-                      context, ConnectBookingScreen.tag,
-                      arguments: meetup);
+                  var booked = await launchScreen(context, ConnectBookingScreen.tag, arguments: meetup);
                   meetup.book = booked;
                   setState(() {});
                 },
@@ -776,8 +691,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
           icon: Feather.edit,
           onTab: () {
             dismissScreen(context);
-            launchScreen(context, OragnizeActivityScreen.tag,
-                arguments: meetup);
+            launchScreen(context, OragnizeActivityScreen.tag, arguments: meetup);
           },
         ),
       if (isMe(meetup.owner.id) && meetup.status == PostStatus.active)
@@ -858,12 +772,10 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
     var res = await ksClient.getApi('/meetup/message/${widget.meetup.id}');
     if (res != null) {
       if (res is! HttpResult) {
-        discussionList =
-            (res as List).map((e) => Discussion.fromJson(e)).toList();
+        discussionList = (res as List).map((e) => Discussion.fromJson(e)).toList();
         discussionList = List.from(discussionList.reversed);
         isShowMap = true;
-        Future.delayed(Duration(milliseconds: 300))
-            .then((_) => setState(() {}));
+        Future.delayed(Duration(milliseconds: 300)).then((_) => setState(() {}));
       }
     }
   }
@@ -875,8 +787,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
         elevation: 0,
         backgroundColor: Colors.orange[400], //Color(0xFF696969),
         behavior: SnackBarBehavior.floating,
-        content: Text('Meetup Expired',
-            style: Theme.of(context).textTheme.bodyText2),
+        content: Text('Meetup Expired', style: Theme.of(context).textTheme.bodyText2),
         margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         // action: SnackBarAction(label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
@@ -912,8 +823,7 @@ class DiscussionTab extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 64.0),
           child: EasyRefresh.custom(
-            header:
-                MaterialHeader(valueColor: AlwaysStoppedAnimation(mainColor)),
+            header: MaterialHeader(valueColor: AlwaysStoppedAnimation(mainColor)),
             slivers: [
               SliverPadding(
                 padding: const EdgeInsets.only(bottom: 0.0),

@@ -30,8 +30,7 @@ class FavoriteSportDetailScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FavoriteSportDetailScreenState createState() =>
-      _FavoriteSportDetailScreenState();
+  _FavoriteSportDetailScreenState createState() => _FavoriteSportDetailScreenState();
 }
 
 class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
@@ -85,9 +84,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
     return SliverToBoxAdapter(
       child: Container(
         alignment: Alignment.center,
-        margin: EdgeInsets.only(
-            top: (MediaQuery.of(context).size.height / 2) -
-                AppBar().preferredSize.height),
+        margin: EdgeInsets.only(top: (MediaQuery.of(context).size.height / 2) - AppBar().preferredSize.height),
         child: Text('No activity yet'),
       ),
     );
@@ -168,10 +165,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                 children: [
                   Text(
                     attributeData.title!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   Column(
                     children: List.generate(
@@ -201,9 +195,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                                     selectedList.remove(attr.slug);
                                   }
 
-                                  removePlayAttribute(
-                                      slug: attributeData.slug!,
-                                      addSlug: attr.slug!);
+                                  removePlayAttribute(slug: attributeData.slug!, addSlug: attr.slug!);
                                 } else {
                                   // if (_favSport.playAttribute != null && _favSport.playAttribute![attributeData.slug] != null) {
                                   //   selectedList!.add(attr.slug);
@@ -214,9 +206,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
 
                                   selectedList!.add(attr.slug);
 
-                                  addPlayAttribute(
-                                      slug: attributeData.slug!,
-                                      addSlug: attr.slug!);
+                                  addPlayAttribute(slug: attributeData.slug!, addSlug: attr.slug!);
                                 }
 
                                 setState(() {});
@@ -248,11 +238,9 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                 shrinkWrap: true,
                 primary: false,
                 itemBuilder: (context, index) {
-                  final attributeData =
-                      _favSport.sport.attribute!.elementAt(index);
+                  final attributeData = _favSport.sport.attribute!.elementAt(index);
                   List? fav;
-                  if (_favSport.playAttribute != null &&
-                      _favSport.playAttribute![attributeData.slug] != null) {
+                  if (_favSport.playAttribute != null && _favSport.playAttribute![attributeData.slug] != null) {
                     fav = _favSport.playAttribute![attributeData.slug];
                   }
 
@@ -263,10 +251,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                       children: [
                         Text(
                           attributeData.title!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                          style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                         ),
                         fav != null
                             ? Column(
@@ -281,9 +266,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                                             contentPadding: EdgeInsets.zero,
                                             title: Text(
                                               e.title!,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText1,
+                                              style: Theme.of(context).textTheme.bodyText1,
                                             ),
                                           ),
                                         );
@@ -300,8 +283,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                                   contentPadding: EdgeInsets.zero,
                                   title: Text(
                                     'Not set',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
+                                    style: Theme.of(context).textTheme.bodyText1,
                                   ),
                                 ),
                               ),
@@ -312,8 +294,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
                 itemCount: _favSport.sport.attribute!.length,
               )
             : Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 50.0, horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 16.0),
                 child: Text('No information', textAlign: TextAlign.center),
               ),
       ),
@@ -330,8 +311,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
             onPressed: () {
               showKSConfirmDialog(
                 context,
-                message:
-                    'Are you sure you want to remove ${_favSport.sport.name} from your favorite?',
+                message: 'Are you sure you want to remove ${_favSport.sport.name} from your favorite?',
                 onYesPressed: () => removeFavSport(),
               );
             },
@@ -340,22 +320,15 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
               shape: MaterialStateProperty.all(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
-                  side: BorderSide(
-                      color: isLight(context)
-                          ? Colors.blueGrey
-                          : Colors.grey[300]!),
+                  side: BorderSide(color: isLight(context) ? Colors.blueGrey : Colors.grey[300]!),
                 ),
               ),
               backgroundColor: MaterialStateProperty.all(Colors.transparent),
-              foregroundColor: MaterialStateProperty.all(
-                  isLight(context) ? Colors.blueGrey : Colors.grey[300]),
+              foregroundColor: MaterialStateProperty.all(isLight(context) ? Colors.blueGrey : Colors.grey[300]),
             ),
             child: Text(
               'Remove ${_favSport.sport.name} from my profile',
-              style: TextStyle(
-                fontSize: 14.0,
-                fontFamily: 'Metropolis',
-              ),
+              style: TextStyle(fontSize: 16.0),
             ),
           ),
         ),
@@ -397,8 +370,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
           dismissScreen(context);
           showKSConfirmDialog(
             context,
-            message:
-                'Are you sure you want to remove this sport from your favorite?',
+            message: 'Are you sure you want to remove this sport from your favorite?',
             onYesPressed: () => removeFavSport(),
           );
         },
@@ -408,8 +380,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
 
   void removeFavSport() async {
     showKSLoading(context);
-    var data = await ksClient
-        .postApi('/user/remove/favorite/sport/${_favSport.sport.id}');
+    var data = await ksClient.postApi('/user/remove/favorite/sport/${_favSport.sport.id}');
     if (data != null) {
       await Future.delayed(Duration(milliseconds: 300));
       dismissScreen(context);
@@ -528,10 +499,7 @@ class FavSportFlexibleAppbar extends StatelessWidget {
             24.height,
             Text(
               'Skill Level',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  ?.copyWith(fontWeight: FontWeight.w600, color: whiteColor),
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600, color: whiteColor),
             ),
             8.height,
             isMe
@@ -554,10 +522,7 @@ class FavSportFlexibleAppbar extends StatelessWidget {
                   )
                 : Text(
                     mapPlayLevel(),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.copyWith(color: whiteColor),
+                    style: Theme.of(context).textTheme.bodyText1?.copyWith(color: whiteColor),
                   ),
           ],
         ),

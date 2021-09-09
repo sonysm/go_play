@@ -115,7 +115,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                             }
                           },
                           child: Text(_post.owner.getFullname(),
-                              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600, fontFamily: 'Metropolis')),
+                              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600)),
                         ),
                         Text(
                           _post.createdAt.toString().timeAgoString,

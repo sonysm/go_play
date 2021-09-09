@@ -192,7 +192,7 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            width: AppSize(context).appWidth(70),
+                            width: AppSize(context).appWidth(50),
                             child: Text(
                               widget.activityData['name'],
                               style: TextStyle(

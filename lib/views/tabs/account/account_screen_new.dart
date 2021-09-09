@@ -24,8 +24,10 @@ import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
 import 'package:kroma_sport/views/tabs/account/widget/sport_card.dart';
+import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
+import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
@@ -41,8 +43,7 @@ class AccountScreen2 extends StatefulWidget {
   _AccountScreen2State createState() => _AccountScreen2State();
 }
 
-class _AccountScreen2State extends State<AccountScreen2>
-    with TickerProviderStateMixin {
+class _AccountScreen2State extends State<AccountScreen2> with TickerProviderStateMixin {
   late TabController _controller;
   late ConnectionStatusSingleton connectionStatus;
   late HomeCubit _homeCubit;
@@ -55,8 +56,7 @@ class _AccountScreen2State extends State<AccountScreen2>
   int postPage = 1;
   int meetupPage = 1;
 
-  Widget actionHeader(
-      {String? amt, required String title, VoidCallback? onTap}) {
+  Widget actionHeader({String? amt, required String title, VoidCallback? onTap}) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -68,10 +68,7 @@ class _AccountScreen2State extends State<AccountScreen2>
             children: [
               Text(
                 amt ?? '0',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
               ),
               Text(title),
             ],
@@ -85,8 +82,7 @@ class _AccountScreen2State extends State<AccountScreen2>
     return BlocBuilder<UserCubit, User>(builder: (context, user) {
       return SliverToBoxAdapter(
         child: Container(
-          padding: const EdgeInsets.only(
-              left: 16.0, top: 16.0, right: 16.0, bottom: 16.0),
+          padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0, bottom: 16.0),
           color: Theme.of(context).primaryColor,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,10 +97,10 @@ class _AccountScreen2State extends State<AccountScreen2>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(user.getFullname(),
-                        style: Theme.of(context).textTheme.headline6?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Metropolis')),
+                    Text(
+                      user.getFullname(),
+                      style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w600),
+                    ),
                     //Text(
                     //  'Phnom Penh, Cambodia',
                     //  style: Theme.of(context).textTheme.bodyText2,
@@ -115,8 +111,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                         // actionHeader(amt: '0', title: 'Coin'),
                         actionHeader(
                           amt: '${user.followerCount}',
-                          title:
-                              '${user.followerCount > 1 ? 'Followers' : 'Follower'}',
+                          title: '${user.followerCount > 1 ? 'Followers' : 'Follower'}',
                           onTap: () => launchScreen(context, FollowScreen.tag),
                         ),
                         actionHeader(
@@ -189,10 +184,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                     8.width,
                     Text(
                       'Add Sport',
-                      style: TextStyle(
-                          fontSize: 18.0,
-                          color: whiteColor,
-                          fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 18.0, color: whiteColor, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -231,8 +223,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                     onNotification: (ScrollNotification scrollInfo) {
                       if (scrollInfo.metrics.atEdge &&
                           scrollInfo.metrics.pixels > 0 &&
-                          (scrollInfo.metrics.pixels ==
-                              scrollInfo.metrics.maxScrollExtent)) {
+                          (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent)) {
                         loadMoreMeetup();
                       }
                       return false;
@@ -262,28 +253,37 @@ class _AccountScreen2State extends State<AccountScreen2>
                       separatorBuilder: (context, index) {
                         return 8.height;
                       },
-                      itemCount: data.ownerHasReachedMax
-                          ? data.ownerMeetup.length
-                          : data.ownerMeetup.length + 1,
+                      itemCount: data.ownerHasReachedMax ? data.ownerMeetup.length : data.ownerMeetup.length + 1,
                     ),
                   )
-                : Container(
-                    margin: const EdgeInsets.only(top: 50),
-                    child: Center(
-                      child: SingleChildScrollView(
-                        child: KSScreenState(
-                          icon: SizedBox(
-                            height: 100,
-                            child: Image.asset(
-                              'assets/images/img_emptypost.png',
-                              color: Colors.grey,
+                : SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        KSScreenState(
+                          icon: Image.asset('assets/images/img_emptypost.png', color: Colors.blueGrey[700], height: 100.0),
+                          title: 'No Meetup',
+                          subTitle: 'You don\'t have meetup yet.',
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 24.0),
+                          child: SizedBox(
+                            width: 200.0,
+                            height: 44.0,
+                            child: ElevatedButton(
+                              onPressed: () => launchScreen(context, OrganizeListScreen.tag),
+                              style: ButtonStyle(
+                                elevation: MaterialStateProperty.all(0),
+                                shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0))),
+                                backgroundColor: MaterialStateProperty.all(mainColor),
+                              ),
+                              child: Text(
+                                'Create new meetup',
+                                style: TextStyle(color: whiteColor, fontWeight: FontWeight.w600),
+                              ),
                             ),
                           ),
-                          title: 'No Meetup',
-                          bottomPadding:
-                              AppBar().preferredSize.height + kToolbarHeight,
                         ),
-                      ),
+                      ],
                     ),
                   );
       },
@@ -313,8 +313,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                     onNotification: (ScrollNotification scrollInfo) {
                       if (scrollInfo.metrics.atEdge &&
                           scrollInfo.metrics.pixels > 0 &&
-                          (scrollInfo.metrics.pixels ==
-                              scrollInfo.metrics.maxScrollExtent)) {
+                          (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent)) {
                         loadMorePost();
                       }
                       return false;
@@ -332,8 +331,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                         var post = data.ownerPost.elementAt(index);
                         if (post.type == PostType.feed) {
                           return Padding(
-                            padding:
-                                EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
+                            padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                             child: HomeFeedCell(
                               index: index,
                               key: Key("home${post.id}"),
@@ -344,8 +342,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                           );
                         } else if (post.type == PostType.activity) {
                           return Padding(
-                            padding:
-                                EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
+                            padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
                             child: ActivityCell(
                               index: index,
                               post: post,
@@ -359,28 +356,41 @@ class _AccountScreen2State extends State<AccountScreen2>
                       separatorBuilder: (context, index) {
                         return 8.height;
                       },
-                      itemCount: data.ownerHasReachedMax
-                          ? data.ownerPost.length
-                          : data.ownerPost.length + 1,
+                      itemCount: data.ownerHasReachedMax ? data.ownerPost.length : data.ownerPost.length + 1,
                     ),
                   )
-                : Container(
-                    margin: const EdgeInsets.only(top: 50),
-                    child: Center(
-                      child: SingleChildScrollView(
-                        child: KSScreenState(
-                          icon: SizedBox(
-                            height: 100,
-                            child: Image.asset(
-                              'assets/images/img_emptypost.png',
-                              color: Colors.grey,
+                : SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        KSScreenState(
+                          icon: Image.asset(
+                            'assets/images/img_emptypost.png',
+                            color: Colors.blueGrey[700],
+                            height: 100.0,
+                          ),
+                          title: 'No Post yet',
+                          subTitle: 'You don\'t have any post.',
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 24.0),
+                          child: SizedBox(
+                            width: 200.0,
+                            height: 44.0,
+                            child: ElevatedButton(
+                              onPressed: () => launchScreen(context, CreatePostScreen.tag),
+                              style: ButtonStyle(
+                                elevation: MaterialStateProperty.all(0),
+                                shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0))),
+                                backgroundColor: MaterialStateProperty.all(mainColor),
+                              ),
+                              child: Text(
+                                'Create new post',
+                                style: TextStyle(color: whiteColor, fontWeight: FontWeight.w600),
+                              ),
                             ),
                           ),
-                          title: 'No Post',
-                          bottomPadding:
-                              AppBar().preferredSize.height + kToolbarHeight,
                         ),
-                      ),
+                      ],
                     ),
                   );
       },
@@ -423,8 +433,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                   ),
                 ],
               ),
-              PullToRefreshContainer(
-                  (PullToRefreshScrollNotificationInfo? info) {
+              PullToRefreshContainer((PullToRefreshScrollNotificationInfo? info) {
                 return SliverToBoxAdapter(
                   child: PullToRefreshHeader(
                     info,
@@ -447,12 +456,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                 alignment: Alignment.centerLeft,
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
-                  border: Border(
-                      bottom: BorderSide(
-                          width: 0.5,
-                          color: isLight(context)
-                              ? Colors.blueGrey[50]!
-                              : Colors.blueGrey)),
+                  border: Border(bottom: BorderSide(width: 0.5, color: isLight(context) ? Colors.blueGrey[50]! : Colors.blueGrey)),
                 ),
                 child: TabBar(
                   controller: _controller,
@@ -460,8 +464,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                     fontSize: 16.0,
                     fontWeight: FontWeight.w600,
                   ),
-                  indicatorColor:
-                      isLight(context) ? mainColor : Colors.greenAccent,
+                  indicatorColor: isLight(context) ? mainColor : Colors.greenAccent,
                   isScrollable: true,
                   tabs: const <Tab>[
                     Tab(text: 'Post'),
@@ -518,8 +521,7 @@ class _AccountScreen2State extends State<AccountScreen2>
     var data = await ksClient.getApi('/user/favorite/sport');
     if (data != null) {
       if (data is! HttpResult) {
-        favSportList =
-            List.from((data as List).map((e) => FavoriteSport.fromJson(e)));
+        favSportList = List.from((data as List).map((e) => FavoriteSport.fromJson(e)));
         isLoaded = true;
       } else {
         if (data.code == -500) {
@@ -538,13 +540,11 @@ class _AccountScreen2State extends State<AccountScreen2>
     }
   }
 
-  Future accountOptionSheet(BuildContext context, {Widget? child}) async =>
-      await showModalBottomSheet(
+  Future accountOptionSheet(BuildContext context, {Widget? child}) async => await showModalBottomSheet(
         useRootNavigator: true,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
         ),
         elevation: 2,
         context: context,
@@ -553,9 +553,7 @@ class _AccountScreen2State extends State<AccountScreen2>
           final statusHeight = MediaQuery.of(context).padding.top;
           return SafeArea(
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                  maxHeight:
-                      AppSize(context).appHeight(100) - statusHeight - 80),
+              constraints: BoxConstraints(maxHeight: AppSize(context).appHeight(100) - statusHeight - 80),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -589,10 +587,7 @@ class _AccountScreen2State extends State<AccountScreen2>
             ),
             title: Text(
               KS.shared.user.getFullname(),
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  ?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
             ),
             subtitle: Row(
               children: [
@@ -605,9 +600,7 @@ class _AccountScreen2State extends State<AccountScreen2>
                       overlayColor: MaterialStateProperty.all(Colors.grey[100]),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       minimumSize: MaterialStateProperty.all(Size(0, 0)),
-                      padding: MaterialStateProperty.all(
-                          const EdgeInsets.symmetric(
-                              vertical: 4.0, horizontal: 0.0))),
+                      padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0))),
                   child: Text(
                     'Edit Profile',
                     style: Theme.of(context).textTheme.bodyText1?.copyWith(
@@ -630,8 +623,7 @@ class _AccountScreen2State extends State<AccountScreen2>
             ),
             title: Text(
               'Settings & Privacy',
-              style:
-                  Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 18),
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 18),
             ),
             horizontalTitleGap: 0,
           )
