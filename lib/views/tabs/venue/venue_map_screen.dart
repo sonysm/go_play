@@ -12,6 +12,7 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_detail_screen.dart';
 import 'dart:ui' as ui;
+import 'dart:io' show Platform;
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -137,7 +138,7 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
     // });
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      if (MediaQuery.of(context).size.width > 420) {
+      if (MediaQuery.of(context).size.width > 420 && !Platform.isIOS) {
         bigIconWidth = 90;
         smallIconWidth = 50;
       } else {
@@ -242,7 +243,6 @@ class VenueCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 250,
       margin: EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 20),
       padding: EdgeInsets.only(top: 16.0),
       child: InkWell(
