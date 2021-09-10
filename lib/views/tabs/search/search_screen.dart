@@ -33,18 +33,19 @@ class _SearchScreenState extends State<SearchScreen> {
               focusNode: _searchFocusScop,
               onSubmitted: onSearch,
               textInputAction: TextInputAction.search,
-              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontFamily: 'OpenSans'),
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontFamily: 'OpenSans', color: blackColor),
               decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  contentPadding: EdgeInsets.all(0),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey.shade500,
-                  ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(50), borderSide: BorderSide.none),
-                  hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
-                  hintText: "Search users"),
+                filled: true,
+                fillColor: Colors.grey[100],
+                contentPadding: EdgeInsets.all(0),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.grey.shade500,
+                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(50), borderSide: BorderSide.none),
+                hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+                hintText: "Search",
+              ),
             ),
           ),
         ),
@@ -133,7 +134,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void onSearch(String? text) {
     print('________$text');
-    showKSLoading(context);
+    showKSLoading(context, message: 'Loading...');
     Future.delayed(Duration(seconds: 1), () {
       dismissScreen(context);
       setState(() => _isSearched = true);

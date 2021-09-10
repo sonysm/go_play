@@ -552,7 +552,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
             );
           },
         ),
-        KSTextButtonBottomSheet(
+        /*KSTextButtonBottomSheet(
           title: 'Block ${post.owner.getFullname()}',
           icon: LineIcons.ban,
           iconSize: 24.0,
@@ -576,7 +576,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
               },
             );
           },
-        ),
+        ),*/
         KSTextButtonBottomSheet(
           title: 'Report Post',
           icon: LineIcons.infoCircle,

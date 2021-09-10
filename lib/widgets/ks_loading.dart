@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/themes/colors.dart';
 
 class LoadingDialog extends StatefulWidget {
   final Color color;
+  final String? message;
 
   LoadingDialog({
     Key? key,
+    this.message,
     required this.color,
   }) : super(key: key);
 
@@ -12,8 +15,7 @@ class LoadingDialog extends StatefulWidget {
   State<StatefulWidget> createState() => LoadingDialogState();
 }
 
-class LoadingDialogState extends State<LoadingDialog>
-    with SingleTickerProviderStateMixin {
+class LoadingDialogState extends State<LoadingDialog> with SingleTickerProviderStateMixin {
   AnimationController? controller;
   Animation<double>? scaleAnimation;
 
@@ -21,10 +23,8 @@ class LoadingDialogState extends State<LoadingDialog>
   void initState() {
     super.initState();
 
-    controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 350));
-    scaleAnimation =
-        CurvedAnimation(parent: controller!, curve: Curves.easeInOut);
+    controller = AnimationController(vsync: this, duration: Duration(milliseconds: 350));
+    scaleAnimation = CurvedAnimation(parent: controller!, curve: Curves.easeInOut);
 
     controller!.addListener(() {
       setState(() {});
@@ -47,14 +47,27 @@ class LoadingDialogState extends State<LoadingDialog>
         width: double.infinity,
         height: double.infinity,
         color: Colors.transparent,
-        child: Center(
-          child: Material(
-            color: Colors.transparent,
-            child: ScaleTransition(
+        child: Material(
+          color: Colors.transparent,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ScaleTransition(
                 scale: scaleAnimation!,
                 child: CircularProgressIndicator(
+                  strokeWidth: 3.0,
                   valueColor: AlwaysStoppedAnimation<Color>(widget.color),
-                )),
+                ),
+              ),
+              if (widget.message != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Text(
+                    widget.message!,
+                    style: TextStyle(color: whiteColor, fontSize: 16.0),
+                  ),
+                )
+            ],
           ),
         ),
       ),
@@ -62,11 +75,11 @@ class LoadingDialogState extends State<LoadingDialog>
   }
 }
 
-void showKSLoading(BuildContext context, {Color color: Colors.greenAccent}) {
+void showKSLoading(BuildContext context, {Color color: Colors.greenAccent, String? message}) {
   showDialog(
     context: context,
     barrierDismissible: false,
     barrierColor: Colors.black.withOpacity(.4),
-    builder: (_) => LoadingDialog(color: color),
+    builder: (_) => LoadingDialog(color: color, message: message),
   );
 }

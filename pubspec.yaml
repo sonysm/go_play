@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.2+5
+version: 1.0.3+5
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -156,10 +156,22 @@ flutter:
           weight: 500
           style: italic
 
+        - asset: assets/fonts/aeonik/Aeonik-Medium.otf
+          weight: 600
+        - asset: assets/fonts/aeonik/Aeonik-MediumItalic.otf
+          weight: 600
+          style: italic
+
         - asset: assets/fonts/aeonik/Aeonik-Bold.otf
           weight: 700
         - asset: assets/fonts/aeonik/Aeonik-BoldItalic.otf
           weight: 700
+          style: italic
+
+        - asset: assets/fonts/aeonik/Aeonik-Bold.otf
+          weight: 800
+        - asset: assets/fonts/aeonik/Aeonik-BoldItalic.otf
+          weight: 800
           style: italic
 
         - asset: assets/fonts/aeonik/Aeonik-Black.otf

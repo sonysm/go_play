@@ -109,7 +109,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   : null,
               style: ButtonStyle(
                 padding: MaterialStateProperty.all(
-                    EdgeInsets.symmetric(vertical: 8.0)),
+                    EdgeInsets.symmetric(vertical: 12.0)),
                 elevation: MaterialStateProperty.all(0),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 foregroundColor: MaterialStateProperty.all(

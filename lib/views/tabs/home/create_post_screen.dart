@@ -553,7 +553,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       fields['ex_link'] = exUrl!;
     }
 
-    showKSLoading(context);
+    showKSLoading(context, message: 'Uploading...');
 
     var data;
     if (widget.data is Post) {
@@ -588,7 +588,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         }
         showKSMessageDialog(context,
             message:
-                'Something went wrong with the content! Image size might be too large!',
+                'Something went wrong with the content!',
             buttonTitle: 'OK');
       }
     }

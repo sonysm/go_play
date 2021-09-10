@@ -39,9 +39,20 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
   List<Marker> allMarkers = [];
   Venue? _venue;
 
+  int? bigIconWidth, smallIconWidth;
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+
+    // if (MediaQuery.of(context).size.width > 420) {
+    //   bigIconWidth = 90;
+    //   smallIconWidth = 50;
+    // } else {
+    //   bigIconWidth = 150;
+    //   smallIconWidth = 80;
+    // }
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0.5,
@@ -121,8 +132,22 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
       _currentPosition = _latLng;
     }
 
-    widget.venueList.forEach((element) {
+    // widget.venueList.forEach((element) {
+    //   getMarker(element).then((value) => setState(() => venueMarker.addAll(value)));
+    // });
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (MediaQuery.of(context).size.width > 420) {
+        bigIconWidth = 90;
+        smallIconWidth = 50;
+      } else {
+        bigIconWidth = 150;
+        smallIconWidth = 80;
+      }
+
+      widget.venueList.forEach((element) {
       getMarker(element).then((value) => setState(() => venueMarker.addAll(value)));
+    });
     });
   }
 
@@ -143,7 +168,7 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
 
   Future<Map<MarkerId, Marker>> getMarker(Venue v) async {
     Map<MarkerId, Marker> newMarker = {};
-    final Uint8List markerIcon = await getBytesFromAsset('assets/images/ic_venue_marker.png', 80);
+    final Uint8List markerIcon = await getBytesFromAsset('assets/images/ic_venue_marker.png', smallIconWidth!);
     final MarkerId markerId = MarkerId('marker${v.id}');
 
     final Marker marker = Marker(
@@ -165,8 +190,8 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
   }
 
   void scaleMarker({MarkerId? id}) async {
-    final Uint8List bigicon = await getBytesFromAsset('assets/images/ic_venue_marker.png', 150);
-    final Uint8List smallicon = await getBytesFromAsset('assets/images/ic_venue_marker.png', 80);
+    final Uint8List bigicon = await getBytesFromAsset('assets/images/ic_venue_marker.png', bigIconWidth!);
+    final Uint8List smallicon = await getBytesFromAsset('assets/images/ic_venue_marker.png', smallIconWidth!);
 
     if (id != null) {
       venueMarker.forEach((markerId, marker) {
@@ -289,7 +314,7 @@ class VenueCardWidget extends StatelessWidget {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: onDirectionClick,
-                            child: Icon(Icons.directions, color: Theme.of(context).primaryColor),
+                            child: Icon(Icons.directions, color: whiteColor),
                             style: ButtonStyle(
                               elevation: MaterialStateProperty.all(0),
                               padding: MaterialStateProperty.all(EdgeInsets.zero),

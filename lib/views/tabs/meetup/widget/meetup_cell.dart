@@ -434,7 +434,7 @@ class _MeetupCellState extends State<MeetupCell> {
             );
           },
         ),
-        KSTextButtonBottomSheet(
+        /*KSTextButtonBottomSheet(
           title: 'Block ${post.owner.getFullname()}',
           icon: LineIcons.ban,
           iconSize: 24.0,
@@ -458,7 +458,7 @@ class _MeetupCellState extends State<MeetupCell> {
               },
             );
           },
-        ),
+        ),*/
       ],
       KSTextButtonBottomSheet(
         title: 'Report Meetup',

@@ -112,7 +112,7 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
             padding: EdgeInsets.zero,
             // alignment: Alignment.centerRight,
             child: Icon(
-              (_crossAxisCount != null && _crossAxisCount == 2) ? FeatherIcons.grid : FeatherIcons.list,
+              (_crossAxisCount != null && _crossAxisCount == 2) ? FeatherIcons.list : FeatherIcons.grid,
               color: ColorResources.getSecondaryIconColor(context),
               size: 20.0,
             ),

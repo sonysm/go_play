@@ -10,6 +10,7 @@ import 'package:kroma_sport/models/user.dart' as KSUser;
 import 'package:kroma_sport/repositories/user_repository.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/auth/register_screen.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
@@ -83,9 +84,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           Container(
                             width: 50,
                             height: 50,
-                            child: CircularProgressIndicator(
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(mainColor)),
+                            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(mainColor)),
                           ),
                         ],
                       );
@@ -99,9 +98,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           Container(
                             width: 70,
                             height: 70,
-                            child: CircularProgressIndicator(
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(mainColor)),
+                            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(mainColor)),
                           ),
                         ],
                       );
@@ -118,25 +115,18 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           Container(
                             width: 100,
                             height: 100,
-                            child: Icon(Icons.error_outline,
-                                color: Colors.grey, size: 100),
+                            child: Icon(Icons.error_outline, size: 100),
                           ),
                           SizedBox(height: 24),
-                          Container(
-                            width: double.infinity,
-                            color: mainColor,
-                            child: TextButton(
-                              child: Text(
-                                'Try again',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _status = OTPStatus.otp;
-                                });
-                              },
+                          ElevatedButton(
+                            onPressed: () => setState(() => _status = OTPStatus.otp),
+                            child: Text('Try again'),
+                            style: ButtonStyle(
+                              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0)),
+                              elevation: MaterialStateProperty.all(0),
+                              backgroundColor: MaterialStateProperty.all(mainColor),
                             ),
-                          ),
+                          )
                         ],
                       );
 
@@ -152,8 +142,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           Container(
                             width: 100,
                             height: 100,
-                            child: Icon(Icons.check_circle_outline,
-                                size: 100, color: mainColor),
+                            child: Icon(Icons.check_circle_outline, size: 100, color: mainColor),
                           ),
                         ],
                       );
@@ -170,8 +159,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           Container(
                             width: 100,
                             height: 100,
-                            child: Icon(Icons.check_circle_outline,
-                                size: 100, color: mainColor),
+                            child: Icon(Icons.check_circle_outline, size: 100, color: mainColor),
                           ),
                         ],
                       );
@@ -194,14 +182,9 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           Container(
                             width: double.infinity,
                             color: mainColor,
-                            child: TextButton(
-                              child: Text(
-                                'Try again',
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
+                            child: Text(
+                              'Try again',
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                         ],
@@ -211,9 +194,13 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                       return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Text(
-                            'Something went wrong',
-                            style: TextStyle(fontSize: 17),
+                          SizedBox(
+                            width: 320.0,
+                            child: Text(
+                              '${_firebaseError!.message}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 16, color: isLight(context) ? Colors.red : Colors.red[300]),
+                            ),
                           ),
                           SizedBox(height: 24),
                           Container(
@@ -222,13 +209,19 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                             child: Icon(Icons.error_outline, size: 100),
                           ),
                           SizedBox(height: 24),
-                          TextButton(
+                          ElevatedButton(
                             child: Text('Try again'),
+                            style: ButtonStyle(
+                              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0)),
+                              elevation: MaterialStateProperty.all(0),
+                              backgroundColor: MaterialStateProperty.all(mainColor),
+                            ),
                             onPressed: () {
-                              // Navigator.of(context).pushNamedAndRemoveUntil(
-                              //     '/verification',
-                              //     (Route<dynamic> route) => false,
-                              //     arguments: widget.data);
+                              _sendSMSCode();
+                              setState(() {
+                                _status = OTPStatus.loading;
+                                _valideStatus = ValidateStatus.sendingSMS;
+                              });
                             },
                           ),
                         ],
@@ -244,139 +237,136 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
     );
   }
 
-  Stack _buildOTPScreen() {
-    return Stack(
-      children: <Widget>[
-        Padding(
-          padding:
-              const EdgeInsets.only(top: 16, left: 32, right: 32, bottom: 16.0),
-          child: GestureDetector(
-            onTap: () {
-              FocusScope.of(context).requestFocus(FocusNode());
-            },
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text('Verify code', style: TextStyle(fontSize: 28)),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
+  Widget _buildOTPScreen() {
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Container(
+        color: Colors.transparent,
+        child: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 16, left: 32, right: 32, bottom: 16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            "Please type the verification code sent to ${widget.phoneNumber}",
-                            style: TextStyle(
-                              fontSize: 18,
-                              height: 1.5,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+                        Text('Verify code', style: TextStyle(fontSize: 28)),
                       ],
                     ),
-                  ),
-                  SizedBox(height: 36),
-                  PinInputTextField(
-                    controller: _editController,
-                    pinLength: 6,
-                    decoration: BoxLooseDecoration(
-                      strokeColorBuilder: FixedColorBuilder(Colors.grey),
-                      hintText: "------",
-                      // enteredColor: mainColor,
-                      // strokeColor: Colors.grey
-                    ),
-                    // focusNode: FocusNode(),
-                    onChanged: (t) {
-                      print(t);
-                      setState(() {});
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      CountdownTimer(
-                        controller: controller,
-                        onEnd: onEnd,
-                        endTime: endTime,
-                        widgetBuilder: (_, CurrentRemainingTime? time) {
-                          if (time != null) {
-                            var min = time.min ?? 0;
-                            return Text(
-                                '${_getNumberAddZero(min)} : ${_getNumberAddZero(time.sec!)}');
-                          }
-                          return TextButton(
+                    SizedBox(height: 16),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
                             child: Text(
-                              'Resend code',
+                              "Please type the verification code sent to ${widget.phoneNumber}",
                               style: TextStyle(
-                                fontSize: 16,
-                                color: mainColor,
+                                fontSize: 18,
+                                height: 1.5,
                               ),
+                              textAlign: TextAlign.center,
                             ),
-                            onPressed: () {
-                              _sendSMSCode();
-                              setState(() {
-                                _status = OTPStatus.loading;
-                                _valideStatus = ValidateStatus.sendingSMS;
-                              });
-                            },
-                          );
-                        },
-                        //endWidget: TextButton(
-                        //  child: Text(
-                        //    'Resend code',
-                        //    style: TextStyle(
-                        //      fontSize: 16,
-                        //      color: mainColor,
-                        //    ),
-                        //  ),
-                        //  onPressed: () {
-                        //    _sendSMSCode();
-                        //    setState(() {
-                        //      _status = OTPStatus.loading;
-                        //      _valideStatus = ValidateStatus.sendingSMS;
-                        //    });
-                        //  },
-                        //),
-                      )
-                    ],
-                  ),
-                  16.height,
-                  Container(
-                    width: double.infinity,
-                    height: 54,
-                    child: ElevatedButton(
-                      child: Text(
-                        'Verify',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 36),
+                    PinInputTextField(
+                      controller: _editController,
+                      pinLength: 6,
+                      decoration: BoxLooseDecoration(
+                        strokeColorBuilder: FixedColorBuilder(Colors.grey),
+                        hintText: "------",
+                        // enteredColor: mainColor,
+                        // strokeColor: Colors.grey
+                      ),
+                      // focusNode: FocusNode(),
+                      onChanged: (t) {
+                        print(t);
+                        setState(() {});
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        CountdownTimer(
+                          controller: controller,
+                          onEnd: onEnd,
+                          endTime: endTime,
+                          widgetBuilder: (_, CurrentRemainingTime? time) {
+                            if (time != null) {
+                              var min = time.min ?? 0;
+                              return Text('${_getNumberAddZero(min)} : ${_getNumberAddZero(time.sec!)}');
+                            }
+                            return TextButton(
+                              child: Text(
+                                'Resend code',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: mainColor,
+                                ),
+                              ),
+                              onPressed: () {
+                                _sendSMSCode();
+                                setState(() {
+                                  _status = OTPStatus.loading;
+                                  _valideStatus = ValidateStatus.sendingSMS;
+                                });
+                              },
+                            );
+                          },
+                          //endWidget: TextButton(
+                          //  child: Text(
+                          //    'Resend code',
+                          //    style: TextStyle(
+                          //      fontSize: 16,
+                          //      color: mainColor,
+                          //    ),
+                          //  ),
+                          //  onPressed: () {
+                          //    _sendSMSCode();
+                          //    setState(() {
+                          //      _status = OTPStatus.loading;
+                          //      _valideStatus = ValidateStatus.sendingSMS;
+                          //    });
+                          //  },
+                          //),
+                        )
+                      ],
+                    ),
+                    16.height,
+                    Container(
+                      width: double.infinity,
+                      height: 54,
+                      child: ElevatedButton(
+                        child: Text(
+                          'Verify',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: _editController.text.length == 6 ? _verifyCode : null,
+                        style: ButtonStyle(
+                          elevation: MaterialStateProperty.all(0),
+                          backgroundColor: MaterialStateProperty.all(_editController.text.length == 6 ? mainColor : Colors.green[200]),
                         ),
                       ),
-                      onPressed:
-                          _editController.text.length == 6 ? _verifyCode : null,
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            _editController.text.length == 6
-                                ? mainColor
-                                : Colors.green[200]),
-                      ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -498,8 +488,11 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
     // print("================ codeAutoRetrievalTimeout____$s");
   }
 
+  FirebaseAuthException? _firebaseError;
+
   _verificationFailed(FirebaseAuthException f) {
     setState(() {
+      _firebaseError = f;
       _status = OTPStatus.loading;
       _valideStatus = ValidateStatus.error;
     });
@@ -551,8 +544,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   }
 
   void redirectToScreen() async {
-    var data =
-        await ksClient.postLogin('/user/login', {'phone': widget.phoneNumber});
+    var data = await ksClient.postLogin('/user/login', {'phone': widget.phoneNumber});
 
     if (data != null) {
       if (data is! HttpResult) {
@@ -561,13 +553,10 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
         userRepository.persistHeaderToken(data['token']);
         KS.shared.user = KSUser.User.fromJson(data['user']);
         BlocProvider.of<UserCubit>(context).emitUser(KS.shared.user);
-        Navigator.pushNamedAndRemoveUntil(
-            context, MainView.tag, (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, MainView.tag, (route) => false);
       } else {
         if (data.code == 0) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, RegisterScreen.tag, (route) => false,
-              arguments: widget.phoneNumber);
+          Navigator.pushNamedAndRemoveUntil(context, RegisterScreen.tag, (route) => false, arguments: widget.phoneNumber);
         }
       }
     }

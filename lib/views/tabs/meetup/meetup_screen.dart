@@ -100,23 +100,23 @@ class _ActivityScreenState extends State<MeetupScreen> {
             title: Text('Meetup'),
             elevation: 0.5,
             actions: [
-              CupertinoButton(
-                padding: EdgeInsets.only(right: 16.0),
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: isLight(context) ? Colors.blueGrey[50] : Colors.blueGrey,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    FeatherIcons.search,
-                    size: 20.0,
-                    color: Theme.of(context).brightness == Brightness.light ? Colors.grey[600] : whiteColor,
-                  ),
-                ),
-                onPressed: () => launchScreen(context, SearchScreen.tag),
-              ),
+              // CupertinoButton(
+              //   padding: EdgeInsets.only(right: 16.0),
+              //   alignment: Alignment.centerLeft,
+              //   child: Container(
+              //     padding: const EdgeInsets.all(8),
+              //     decoration: BoxDecoration(
+              //       color: isLight(context) ? Colors.blueGrey[50] : Colors.blueGrey,
+              //       shape: BoxShape.circle,
+              //     ),
+              //     child: Icon(
+              //       FeatherIcons.search,
+              //       size: 20.0,
+              //       color: Theme.of(context).brightness == Brightness.light ? Colors.grey[600] : whiteColor,
+              //     ),
+              //   ),
+              //   onPressed: () => launchScreen(context, SearchScreen.tag),
+              // ),
               SizedBox(),
             ],
           ),
