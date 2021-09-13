@@ -58,7 +58,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with Tick
   late User _user;
 
   late TabController tabController;
-  int _currentIndex = 0;
+  //int _currentIndex = 0;
 
   bool isLoaded = false;
 
@@ -447,7 +447,8 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with Tick
           headerSliverBuilder: (BuildContext c, bool f) {
             return <Widget>[
               SliverAppBar(
-                elevation: 0.5,
+                elevation: 0.3,
+                titleSpacing: 0,
                 pinned: true,
                 title: Text(widget.user.getFullname()),
                 actions: [

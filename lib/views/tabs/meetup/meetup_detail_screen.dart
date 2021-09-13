@@ -19,6 +19,7 @@ import 'package:kroma_sport/models/member.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
+import 'package:kroma_sport/utils/constant.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/report_screen.dart';
@@ -469,6 +470,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
           length: 2,
           child: Scaffold(
             appBar: AppBar(
+              titleSpacing: 0,
               title: SizedBox(
                 height: 44.0,
                 child: Marquee(
@@ -479,8 +481,8 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                   accelerationDuration: Duration(seconds: 2),
                 ),
               ),
-              // Text(meetup.title),
-              elevation: 0.5,
+              titleTextStyle: aeonikMainColor20.copyWith(fontWeight: FontWeight.w400),
+              elevation: 0.3,
               actions: [
                 CupertinoButton(
                   child: Icon(FeatherIcons.moreVertical, color: isLight(context) ? Colors.grey[600] : whiteColor),

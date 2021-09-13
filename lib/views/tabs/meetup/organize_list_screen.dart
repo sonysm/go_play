@@ -105,6 +105,8 @@ class _OrganizeListScreenState extends State<OrganizeListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0.3,
+        titleSpacing: 0,
         title: Text('Organize Activity'),
       ),
       backgroundColor: Theme.of(context).primaryColor,

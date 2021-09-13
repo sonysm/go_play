@@ -8,7 +8,6 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/venue.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
-import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_map_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/widget/venue_cell.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
@@ -95,8 +94,9 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0.3,
+        titleSpacing: 0,
         title: Text('Venues'),
-        elevation: 0.5,
         actions: [
           CupertinoButton(
             padding: EdgeInsets.zero,

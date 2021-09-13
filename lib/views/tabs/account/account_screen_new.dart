@@ -37,6 +37,7 @@ import 'package:loading_more_list/loading_more_list.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 
 class AccountScreen2 extends StatefulWidget {
+  static const tag = '/accountScreen2';
   AccountScreen2({Key? key}) : super(key: key);
 
   @override
@@ -419,7 +420,7 @@ class _AccountScreen2State extends State<AccountScreen2> with TickerProviderStat
           headerSliverBuilder: (BuildContext c, bool f) {
             return <Widget>[
               SliverAppBar(
-                elevation: 0.5,
+                elevation: 0.3,
                 pinned: true,
                 title: Text('Account'),
                 actions: [

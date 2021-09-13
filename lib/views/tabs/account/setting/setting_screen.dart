@@ -33,6 +33,8 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget buildNavbar() {
     return SliverAppBar(
       title: Text('Settings & Privacy'),
+      elevation: 0.3,
+      forceElevated: true,
       titleSpacing: 0,
     );
   }
@@ -243,6 +245,8 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                 ),
               ),
-            ));
+            ),).then((value) {
+              print('______brightness: ${Theme.of(context).brightness}');
+            });
   }
 }

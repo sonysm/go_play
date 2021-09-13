@@ -447,6 +447,8 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0.3,
+        titleSpacing: 0,
         title: Text('Organize ${sport.name}'),
       ),
       body: SafeArea(

@@ -25,8 +25,6 @@ import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/suggestion_cell.dart';
-import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
-import 'package:kroma_sport/views/tabs/search/search_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 import 'package:permission_handler/permission_handler.dart';

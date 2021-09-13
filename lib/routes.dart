@@ -8,6 +8,7 @@ import 'package:kroma_sport/views/auth/register_screen.dart';
 import 'package:kroma_sport/views/auth/verify_code_screen.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
+import 'package:kroma_sport/views/tabs/account/account_screen_new.dart';
 import 'package:kroma_sport/views/tabs/account/edit_profile_screen.dart';
 import 'package:kroma_sport/views/tabs/account/follow_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/about_screen.dart';
@@ -67,6 +68,9 @@ class RouteGenerator {
 
       case AccountScreen.tag:
         return KSPageRoute(builder: (_) => AccountScreen());
+        
+      case AccountScreen2.tag:
+        return KSPageRoute(builder: (_) => AccountScreen2());
 
       case FeedDetailScreen.tag:
         var data = args as Map<String, dynamic>;
