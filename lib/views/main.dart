@@ -76,7 +76,7 @@ class _MainViewState extends State<MainView> {
                 color: Theme.of(context).primaryColor,
                 border: Border(
                   top: BorderSide(
-                    color: isLight(context) ? Colors.grey : Color(0xFF455A64),
+                    color: !isLight(context) ? Colors.grey : Color(0xFF455A64),
                     width: 0.1,
                   ),
                 ),

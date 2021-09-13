@@ -193,7 +193,7 @@ class _DefaultRefresherIndicator extends StatelessWidget {
             : refreshState == RefreshState.refresh? Opacity(
                 opacity: opacityCurve
                     .transform(min(pulledExtent / refreshIndicatorExtent, 1.0)),
-                child: AnimationBounce(color: Theme.of(context).accentColor, size: 25.0,)
+                child: AnimationBounce(color: Theme.of(context).colorScheme.secondary, size: 25.0,)
               ): SizedBox.shrink(),
       ),
     );

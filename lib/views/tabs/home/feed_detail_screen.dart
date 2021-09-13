@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -16,6 +17,7 @@ import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
+import 'package:kroma_sport/utils/constant.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
@@ -85,9 +87,11 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   Widget buildNavbar() {
     return SliverAppBar(
       title: Text('Post Detail'),
-      elevation: 0.5,
+      elevation: 0.3,
       forceElevated: true,
       pinned: true,
+      titleSpacing: 0,
+      titleTextStyle: aeonikMainColor20.copyWith(fontWeight: FontWeight.w400),
     );
   }
 

@@ -46,6 +46,7 @@ class _FavoriteSportDetailScreenState extends State<FavoriteSportDetailScreen> {
   Widget buildNavbar() {
     return SliverAppBar(
       elevation: 0,
+      titleSpacing: 0,
       forceElevated: true,
       title: Text(
         widget.favSport.sport.name,

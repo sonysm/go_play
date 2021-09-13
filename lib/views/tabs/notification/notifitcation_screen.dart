@@ -67,7 +67,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Notification'),
-        elevation: 0.5,
+        elevation: 0.3,
       ),
       body: EasyRefresh.custom(
         topBouncing: false,

@@ -65,6 +65,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
       iconTheme: Theme.of(context).iconTheme.copyWith(color: whiteColor),
       pinned: true,
       elevation: 0.0,
+      titleSpacing: 0,
     );
   }
 

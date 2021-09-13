@@ -47,6 +47,7 @@ void main() async {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print('_____Main______brightness: ${Theme.of(context).brightness}');
     return MultiBlocProvider(
       providers: [
         BlocProvider<ThemeCubit>(create: (BuildContext context) => ThemeCubit()..init()),
@@ -62,11 +63,10 @@ class App extends StatelessWidget {
           home: SplashScreen(),
           onGenerateRoute: RouteGenerator.generateRoute,
           theme: ThemeData.light().copyWith(
+            brightness: Brightness.light,
             primaryColor: primaryColor,
-            accentColor: mainColor,
             scaffoldBackgroundColor: backgroundPrimary,
             iconTheme: IconThemeData(color: mainColor),
-            accentIconTheme: IconThemeData(color: mainColor),
             primaryIconTheme: IconThemeData(color: mainColor),
             visualDensity: VisualDensity.adaptivePlatformDensity,
             primaryTextTheme: Theme.of(context).primaryTextTheme.apply(bodyColor: blackColor),
@@ -83,7 +83,10 @@ class App extends StatelessWidget {
             ),
             appBarTheme: AppBarTheme(
               elevation: 1,
-              textTheme: TextTheme(headline6: aeonikMainColor20),
+              color: primaryColor,
+              centerTitle: false,
+              titleTextStyle: aeonikMainColor20,
+              iconTheme: IconThemeData(color: mainColor),
             ),
             tabBarTheme: TabBarTheme(
               labelColor: mainColor,
@@ -99,13 +102,16 @@ class App extends StatelessWidget {
                 // backgroundColor: MaterialStateProperty.all(mainColor),
               ),
             ),
+            colorScheme: ColorScheme.fromSwatch().copyWith(
+              primary: primaryColor,
+              secondary: mainColor,
+            ),
           ),
           darkTheme: ThemeData.dark().copyWith(
+            brightness: Brightness.dark,
             primaryColor: primaryDarkColor,
-            accentColor: mainDarkColor,
             scaffoldBackgroundColor: backgroundDarkPrimary,
             iconTheme: IconThemeData(color: mainDarkColor),
-            accentIconTheme: IconThemeData(color: mainDarkColor),
             primaryIconTheme: IconThemeData(color: mainDarkColor),
             visualDensity: VisualDensity.adaptivePlatformDensity,
             primaryTextTheme: Theme.of(context).primaryTextTheme.apply(bodyColor: whiteColor),
@@ -122,7 +128,10 @@ class App extends StatelessWidget {
             ),
             appBarTheme: AppBarTheme(
               elevation: 1,
-              textTheme: TextTheme(headline6: aeonikWhite20),
+              centerTitle: false,
+              color: primaryDarkColor,
+              titleTextStyle: aeonikWhite20,
+              iconTheme: IconThemeData(color: mainDarkColor),
             ),
             tabBarTheme: TabBarTheme(
               labelColor: mainDarkColor,
@@ -133,6 +142,10 @@ class App extends StatelessWidget {
               style: ButtonStyle(
                 textStyle: MaterialStateProperty.all(aeonikRegularBlack.copyWith(fontSize: 16.0)),
               ),
+            ),
+            colorScheme: ColorScheme.fromSwatch().copyWith(
+              primary: primaryDarkColor,
+              secondary: mainDarkColor,
             ),
           ),
         );

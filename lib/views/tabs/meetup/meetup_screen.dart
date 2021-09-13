@@ -8,10 +8,7 @@ import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
-import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
-import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
-import 'package:kroma_sport/views/tabs/search/search_screen.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
 class MeetupScreen extends StatefulWidget {
@@ -98,7 +95,7 @@ class _ActivityScreenState extends State<MeetupScreen> {
         return Scaffold(
           appBar: AppBar(
             title: Text('Meetup'),
-            elevation: 0.5,
+            elevation: 0.3,
             actions: [
               // CupertinoButton(
               //   padding: EdgeInsets.only(right: 16.0),

@@ -56,7 +56,8 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 0.5,
+        elevation: 0.3,
+        titleSpacing: 0,
         title: Text('Venue Explorer'),
       ),
       backgroundColor: theme.primaryColor,
