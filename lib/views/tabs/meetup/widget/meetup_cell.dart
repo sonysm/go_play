@@ -220,7 +220,7 @@ class _MeetupCellState extends State<MeetupCell> {
                             width: 32.0,
                             height: 32.0,
                             decoration: BoxDecoration(
-                              color: isLight(context) ? Colors.grey[100] : Colors.white60,
+                              color: isLight(context) ? Colors.grey[100] : Colors.blueGrey[400],
                               shape: BoxShape.circle,
                             ),
                           ),

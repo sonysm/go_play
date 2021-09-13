@@ -287,13 +287,13 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                               width: 64.0,
                               height: 64.0,
                               decoration: BoxDecoration(
-                                color: isLight(context) ? Colors.grey[100] : Colors.white60,
+                                color: isLight(context) ? Colors.grey[100] : Colors.blueGrey[200],
                                 shape: BoxShape.circle,
                               ),
                               child: KS.shared.user.id == meetup!.owner.id
                                   ? Icon(
                                       Feather.plus,
-                                      color: Colors.blueGrey,
+                                      color: isLight(context) ? Colors.blueGrey : Colors.white,
                                     )
                                   : SizedBox(),
                             ),
@@ -481,7 +481,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                   accelerationDuration: Duration(seconds: 2),
                 ),
               ),
-              titleTextStyle: aeonikMainColor20.copyWith(fontWeight: FontWeight.w400),
+              titleTextStyle: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w400),
               elevation: 0.3,
               actions: [
                 CupertinoButton(

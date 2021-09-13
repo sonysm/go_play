@@ -91,7 +91,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
       forceElevated: true,
       pinned: true,
       titleSpacing: 0,
-      titleTextStyle: aeonikMainColor20.copyWith(fontWeight: FontWeight.w400),
+      titleTextStyle: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w400),
     );
   }
 

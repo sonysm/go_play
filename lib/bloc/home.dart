@@ -12,6 +12,7 @@ class HomeData extends Equatable {
   final String? search;
   final DataState status;
   final List<Post> ownerPost;
+  final bool hasReachedMax;
   final bool ownerHasReachedMax;
   final bool reload;
 
@@ -21,6 +22,7 @@ class HomeData extends Equatable {
       this.page = 1,
       this.search,
       required this.ownerPost,
+      this.hasReachedMax = false,
       this.ownerHasReachedMax = false,
       this.reload = false});
 
@@ -30,6 +32,7 @@ class HomeData extends Equatable {
     List<Post>? data,
     String? search,
     List<Post>? ownerPost,
+    bool? hasReachedMax,
     bool? ownerHasReachedMax,
     bool? reload,
   }) {
@@ -39,14 +42,14 @@ class HomeData extends Equatable {
       data: data ?? this.data,
       search: search ?? this.search,
       ownerPost: ownerPost ?? this.ownerPost,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       ownerHasReachedMax: ownerHasReachedMax ?? this.ownerHasReachedMax,
       reload: reload ?? this.reload,
     );
   }
 
   @override
-  List<Object> get props =>
-      [status, data, page, ownerHasReachedMax, ownerPost, reload];
+  List<Object> get props => [status, data, page, hasReachedMax, ownerHasReachedMax, ownerPost, reload];
 }
 
 class HomeCubit extends Cubit<HomeData> {
@@ -56,8 +59,7 @@ class HomeCubit extends Cubit<HomeData> {
 
   Future<void> onLoad() async {
     emit(state.copyWith(status: DataState.Loading, page: 1));
-    var data = await _client
-        .getApi('/home', queryParameters: {'page': state.page.toString()});
+    var data = await _client.getApi('/home', queryParameters: {'page': state.page.toString()});
     if (data != null) {
       if (data is! HttpResult) {
         List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
@@ -71,8 +73,7 @@ class HomeCubit extends Cubit<HomeData> {
           }
         });
 
-        emit(state.copyWith(
-            status: DataState.Loaded, data: posts, ownerPost: ownerPosts));
+        emit(state.copyWith(status: DataState.Loaded, data: posts, ownerPost: ownerPosts));
       } else {
         if (data.code == -500) {
           emit(state.copyWith(status: DataState.ErrorSocket));
@@ -96,19 +97,16 @@ class HomeCubit extends Cubit<HomeData> {
   }
 
   Future<void> onRefresh() async {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       emit(state.copyWith(page: 1));
-      var data = await _client
-          .getApi('/home', queryParameters: {'page': state.page.toString()});
+      var data = await _client.getApi('/home', queryParameters: {'page': state.page.toString()});
       if (data != null) {
         if (data is! HttpResult) {
-          List<Post> posts =
-              (data as List).map((e) => Post.fromJson(e)).toList();
-          emit(state.copyWith(
-              status: DataState.Loaded, data: posts, reload: !state.reload));
+          List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
+          emit(state.copyWith(status: DataState.Loaded, data: posts, reload: !state.reload, hasReachedMax: false));
         } else {
           if (data.code == -500) {
-            emit(state.copyWith(status: DataState.ErrorSocket));
+            emit(state.copyWith(status: DataState.ErrorSocket, reload: !state.reload));
             return;
           } else if (data.code == 401) {
             emit(state.copyWith(status: DataState.UnAuthorized));
@@ -116,28 +114,24 @@ class HomeCubit extends Cubit<HomeData> {
           print("error");
         }
       }
-    }
+    // }
   }
 
   Future<void> onLoadMore() async {
     if (state.status != DataState.LoadedMore) {
       emit(state.copyWith(status: DataState.LoadingMore, page: state.page + 1));
-      var data = await _client.getApi('/home', queryParameters: {
-        'page': state.page.toString(),
-        'search': state.search
-      });
+      var data = await _client.getApi('/home', queryParameters: {'page': state.page.toString(), 'search': state.search});
       if (data != null) {
         if (data is! HttpResult) {
           var newPosts = (data as List).map((e) => Post.fromJson(e)).toList();
           if (newPosts.isNotEmpty) {
-            emit(state.copyWith(
-                status: DataState.Loaded, data: state.data + newPosts));
+            emit(state.copyWith(status: DataState.Loaded, data: state.data + newPosts));
           } else {
-            emit(state.copyWith(status: DataState.Loaded));
+            emit(state.copyWith(status: DataState.Loaded, hasReachedMax: true));
           }
         } else {
           if (data.code == -500) {
-            emit(state.copyWith(status: DataState.ErrorSocket));
+            emit(state.copyWith(status: DataState.ErrorSocket, hasReachedMax: true));
             return;
           }
           print('error $data');
@@ -148,18 +142,14 @@ class HomeCubit extends Cubit<HomeData> {
 
   Future<void> onPostFeed(Post newPost) async {
     if (state.status == DataState.Loaded) {
-      emit(state.copyWith(
-          data: [newPost] + state.data,
-          ownerPost: [newPost] + state.ownerPost));
+      emit(state.copyWith(data: [newPost] + state.data, ownerPost: [newPost] + state.ownerPost));
     }
   }
 
   Future<void> onDeletePostFeed(int postId) async {
     if (state.status == DataState.Loaded) {
-      final updatedList =
-          state.data.where((element) => element.id != postId).toList();
-      final updatedOwnerList =
-          state.ownerPost.where((element) => element.id != postId).toList();
+      final updatedList = state.data.where((element) => element.id != postId).toList();
+      final updatedOwnerList = state.ownerPost.where((element) => element.id != postId).toList();
 
       emit(state.copyWith(data: updatedList, ownerPost: updatedOwnerList));
     }
@@ -186,14 +176,12 @@ class HomeCubit extends Cubit<HomeData> {
   Future<void> loadOwnerPost(int page) async {
     if (state.status == DataState.Loaded) {
       List<Post> morePosts = [];
-      await _client.getApi('/user/feed/by/${KS.shared.user.id}',
-          queryParameters: {'page': page.toString()}).then((data) {
+      await _client.getApi('/user/feed/by/${KS.shared.user.id}', queryParameters: {'page': page.toString()}).then((data) {
         if (data != null) {
           if (data is! HttpResult) {
             morePosts = (data as List).map((e) => Post.fromJson(e)).toList();
             if (page == 1) {
-              emit(state.copyWith(
-                  ownerPost: morePosts, ownerHasReachedMax: false));
+              emit(state.copyWith(ownerPost: morePosts, ownerHasReachedMax: false));
             } else {
               if (morePosts.isNotEmpty) {
                 emit(state.copyWith(ownerPost: state.ownerPost + morePosts));
@@ -240,10 +228,7 @@ class HomeCubit extends Cubit<HomeData> {
       }
 
       if (reEmit) {
-        emit(state.copyWith(
-            data: state.data,
-            ownerPost: state.ownerPost,
-            reload: !state.reload));
+        emit(state.copyWith(data: state.data, ownerPost: state.ownerPost, reload: !state.reload));
       }
     }
   }
@@ -252,8 +237,7 @@ class HomeCubit extends Cubit<HomeData> {
     if (state.status == DataState.Loaded) {
       _client.postApi('/user/activity/hide_post/$postId');
 
-      final updatedList =
-          state.data.where((element) => element.id != postId).toList();
+      final updatedList = state.data.where((element) => element.id != postId).toList();
 
       emit(state.copyWith(data: updatedList));
     }
@@ -272,8 +256,7 @@ class HomeCubit extends Cubit<HomeData> {
     if (state.status == DataState.Loaded) {
       _client.postApi('/user/activity/block/$userId');
 
-      final updatedList =
-          state.data.where((element) => element.owner.id != userId).toList();
+      final updatedList = state.data.where((element) => element.owner.id != userId).toList();
 
       emit(state.copyWith(data: updatedList));
     }

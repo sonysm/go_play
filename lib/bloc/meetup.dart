@@ -144,6 +144,11 @@ class MeetupCubit extends Cubit<MeetupData> {
             emit(state.copyWith(status: DataState.Loaded));
           }
         } else {
+          if (data.code == -500) {
+            emit(state.copyWith(status: DataState.ErrorSocket));
+            return;
+          }
+
           print('error $data');
         }
       }

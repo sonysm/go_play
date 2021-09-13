@@ -25,6 +25,7 @@ import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/suggestion_cell.dart';
+import 'package:kroma_sport/views/tabs/search/search_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -68,23 +69,23 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       actions: [
-        // CupertinoButton(
-        //   padding: EdgeInsets.only(right: 16.0),
-        //   alignment: Alignment.centerLeft,
-        //   child: Container(
-        //     padding: const EdgeInsets.all(8),
-        //     decoration: BoxDecoration(
-        //       color: isLight(context) ? Colors.blueGrey[50] : Colors.blueGrey,
-        //       shape: BoxShape.circle,
-        //     ),
-        //     child: Icon(
-        //       FeatherIcons.search,
-        //       size: 20.0,
-        //       color: isLight(context) ? Colors.grey[600] : whiteColor,
-        //     ),
-        //   ),
-        //   onPressed: () => launchScreen(context, SearchScreen.tag),
-        // ),
+        CupertinoButton(
+          padding: EdgeInsets.only(right: 16.0),
+          alignment: Alignment.centerLeft,
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isLight(context) ? Colors.blueGrey[50] : Colors.blueGrey,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              FeatherIcons.search,
+              size: 20.0,
+              color: isLight(context) ? Colors.grey[600] : whiteColor,
+            ),
+          ),
+          onPressed: () => launchScreen(context, SearchScreen.tag),
+        ),
         SizedBox(),
       ],
       floating: true,
@@ -189,64 +190,62 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildHomeFeedList() {
-    return BlocBuilder<HomeCubit, HomeData>(builder: (context, state) {
-      if (state.status == DataState.ErrorSocket && state.data.isEmpty) {
-        return SliverFillRemaining(
-          child: KSNoInternet(),
-        );
-      }
+  Widget buildHomeFeedList(HomeData state) {
+    if (state.status == DataState.ErrorSocket && state.data.isEmpty) {
+      return SliverFillRemaining(
+        child: KSNoInternet(),
+      );
+    }
 
-      return state.status == DataState.Loading
-          ? loadingSliver()
-          : SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  var post = state.data.elementAt(index);
+    return state.status == DataState.Loading
+        ? loadingSliver()
+        : SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                var post = state.data.elementAt(index);
 
-                  if (post.type == PostType.feed) {
-                    String? _urlInfo;
-                    if (post.description != null) {
-                      final urlMatches = urlRegExp.allMatches(post.description!);
+                if (post.type == PostType.feed) {
+                  String? _urlInfo;
+                  if (post.description != null) {
+                    final urlMatches = urlRegExp.allMatches(post.description!);
 
-                      List<String> urls = urlMatches.map((urlMatch) => post.description!.substring(urlMatch.start, urlMatch.end)).toList();
-                      // urls.forEach((x) => print(x));
-                      if (urls.isNotEmpty) {
-                        _urlInfo = urls.elementAt(0);
+                    List<String> urls = urlMatches.map((urlMatch) => post.description!.substring(urlMatch.start, urlMatch.end)).toList();
+                    // urls.forEach((x) => print(x));
+                    if (urls.isNotEmpty) {
+                      _urlInfo = urls.elementAt(0);
 
-                        if (!_urlInfo.startsWith(_protocolIdentifierRegex)) {
-                          _urlInfo = (LinkifyOptions().defaultToHttps ? "https://" : "http://") + _urlInfo;
-                        }
+                      if (!_urlInfo.startsWith(_protocolIdentifierRegex)) {
+                        _urlInfo = (LinkifyOptions().defaultToHttps ? "https://" : "http://") + _urlInfo;
                       }
                     }
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: HomeFeedCell(
-                        index: index,
-                        post: post,
-                        key: Key("home${post.id}"),
-                        isHomeFeed: true,
-                      ),
-                    );
-                  } else if (post.type == PostType.activity) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: ActivityCell(
-                        index: index,
-                        post: post,
-                        key: Key(
-                          post.id.toString(),
-                        ),
-                      ),
-                    );
                   }
-                  return SizedBox();
-                },
-                childCount: state.data.length,
-              ),
-            );
-    });
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: HomeFeedCell(
+                      index: index,
+                      post: post,
+                      key: Key("home${post.id}"),
+                      isHomeFeed: true,
+                    ),
+                  );
+                } else if (post.type == PostType.activity) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: ActivityCell(
+                      index: index,
+                      post: post,
+                      key: Key(
+                        post.id.toString(),
+                      ),
+                    ),
+                  );
+                }
+                return SizedBox();
+              },
+              childCount: state.data.length,
+            ),
+          );
   }
 
   Widget loadingSliver() {
@@ -287,40 +286,46 @@ class _HomeScreenState extends State<HomeScreen> {
           body: SafeArea(
             child: Container(
               color: ColorResources.getSecondaryBackgroundColor(context),
-              child: EasyRefresh.custom(
-                scrollController: _homeScrollController,
-                header: MaterialHeader(
-                  valueColor: AlwaysStoppedAnimation<Color>(mainColor),
-                ),
-                footer: ClassicalFooter(
-                  enableInfiniteLoad: false,
-                  completeDuration: Duration(milliseconds: 1200),
-                ),
-                slivers: [
-                  buildNavbar(),
-                  createFeedWidget(),
-                  buildSuggestionWidget(),
-                  buildHomeFeedList(),
-                  //BottomRefresher(onRefresh: () {
-                  //    return Future<void>.delayed(const Duration(seconds: 10))
-                  //        ..then((re) {
-                  //          // setState(() {
-                  //          //   changeRandomList();
-                  //          //   _scrollController.animateTo(0.0,
-                  //          //       duration: new Duration(milliseconds: 100),
-                  //          //       curve: Curves.bounceOut);
-                  //          // });
-                  //          print("==============");
-                  //        });
-                  //}),
-                ],
-                onRefresh: () async {
-                  _homeCubit.onRefresh();
-                  _suggestionCubit.onLoad();
-                },
-                onLoad: () async {
-                  await Future.delayed(Duration(milliseconds: 300));
-                  _homeCubit.onLoadMore();
+              child: BlocBuilder<HomeCubit, HomeData>(
+                builder: (context, state) {
+                  return EasyRefresh.custom(
+                    scrollController: _homeScrollController,
+                    bottomBouncing: state.status != DataState.ErrorSocket,
+                    header: MaterialHeader(
+                      valueColor: AlwaysStoppedAnimation<Color>(mainColor),
+                    ),
+                    footer: ClassicalFooter(
+                      enableInfiniteLoad: state.hasReachedMax ? false : true,
+                      // completeDuration: Duration(milliseconds: 1200),
+                    ),
+                    slivers: [
+                      buildNavbar(),
+                      createFeedWidget(),
+                      buildSuggestionWidget(),
+                      buildHomeFeedList(state),
+                      //BottomRefresher(onRefresh: () {
+                      //    return Future<void>.delayed(const Duration(seconds: 10))
+                      //        ..then((re) {
+                      //          // setState(() {
+                      //          //   changeRandomList();
+                      //          //   _scrollController.animateTo(0.0,
+                      //          //       duration: new Duration(milliseconds: 100),
+                      //          //       curve: Curves.bounceOut);
+                      //          // });
+                      //          print("==============");
+                      //        });
+                      //}),
+                    ],
+                    onRefresh: () async {
+                      await Future.delayed(Duration(milliseconds: 300));
+                      _homeCubit.onRefresh();
+                      _suggestionCubit.onLoad();
+                    },
+                    onLoad: state.status != DataState.ErrorSocket ? () async {
+                      await Future.delayed(Duration(milliseconds: 300));
+                      _homeCubit.onLoadMore();
+                    } : null,
+                  );
                 },
               ),
             ),

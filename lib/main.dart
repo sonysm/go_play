@@ -47,7 +47,6 @@ void main() async {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('_____Main______brightness: ${Theme.of(context).brightness}');
     return MultiBlocProvider(
       providers: [
         BlocProvider<ThemeCubit>(create: (BuildContext context) => ThemeCubit()..init()),
@@ -106,6 +105,11 @@ class App extends StatelessWidget {
               primary: primaryColor,
               secondary: mainColor,
             ),
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: mainColor,
+              selectionColor: mainColor,
+              selectionHandleColor: mainColor,
+            ),
           ),
           darkTheme: ThemeData.dark().copyWith(
             brightness: Brightness.dark,
@@ -131,7 +135,7 @@ class App extends StatelessWidget {
               centerTitle: false,
               color: primaryDarkColor,
               titleTextStyle: aeonikWhite20,
-              iconTheme: IconThemeData(color: mainDarkColor),
+              iconTheme: IconThemeData(color: whiteColor),
             ),
             tabBarTheme: TabBarTheme(
               labelColor: mainDarkColor,
@@ -146,6 +150,11 @@ class App extends StatelessWidget {
             colorScheme: ColorScheme.fromSwatch().copyWith(
               primary: primaryDarkColor,
               secondary: mainDarkColor,
+            ),
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: mainDarkColor,
+              selectionColor: mainDarkColor,
+              selectionHandleColor: mainDarkColor,
             ),
           ),
         );

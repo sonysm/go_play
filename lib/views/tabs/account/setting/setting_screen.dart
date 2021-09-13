@@ -92,8 +92,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         userRepository.deleteHeaderToken();
                         Future.delayed(Duration(seconds: 1)).then(
                           (value) {
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, LoginScreen.tag, (route) => false);
+                            Navigator.pushNamedAndRemoveUntil(context, LoginScreen.tag, (route) => false);
                           },
                         );
                       }
@@ -111,10 +110,7 @@ class _SettingScreenState extends State<SettingScreen> {
               },
               title: Text(
                 'Logout',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    ?.copyWith(color: Colors.red),
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.red),
               ),
             ),
           )
@@ -152,101 +148,92 @@ class _SettingScreenState extends State<SettingScreen> {
     // prefs.setString('theme', isLight(context) ? 'dark' : 'light');
 
     showGeneralDialog(
-        context: context,
-        barrierDismissible: true,
-        barrierLabel:
-            MaterialLocalizations.of(context).modalBarrierDismissLabel,
-        barrierColor: Colors.black54,
-        transitionDuration: const Duration(milliseconds: 200),
-        pageBuilder: (context, animaiton, secondaryAnimation) =>
-            AnnotatedRegion<SystemUiOverlayStyle>(
-              value: SystemUiOverlayStyle(
-                statusBarIconBrightness: Brightness.light,
-                systemNavigationBarColor:
-                    Theme.of(context).brightness == Brightness.light
-                        ? Color.fromRGBO(113, 113, 113, 1)
-                        : Color.fromRGBO(15, 15, 15, 1),
-              ),
-              child: AlertDialog(
-                backgroundColor: ColorResources.getPrimary(context),
-                titlePadding: EdgeInsets.only(
-                  top: 20,
-                  left: 40,
-                  right: AppSize(context).appWidth(100) / 3,
-                ),
-                elevation: 1,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                title: Text('Theme Setting'),
-                content: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: RadioListTile(
-                              title: Text(
-                                'System Default',
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                              value: ThemeMode.system,
-                              groupValue: _themeSetting,
-                              onChanged: (value) {
-                                BlocProvider.of<ThemeCubit>(context)
-                                    .emitTheme(ThemeMode.system);
-                                prefs.setString('theme', 'system');
-                                Navigator.of(context).pop();
-                              }),
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (context, animaiton, secondaryAnimation) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle(
+          statusBarIconBrightness: Brightness.light,
+          systemNavigationBarColor:
+              Theme.of(context).brightness == Brightness.light ? Color.fromRGBO(113, 113, 113, 1) : Color.fromRGBO(15, 15, 15, 1),
+        ),
+        child: AlertDialog(
+          backgroundColor: ColorResources.getPrimary(context),
+          titlePadding: EdgeInsets.only(
+            top: 20,
+            left: 40,
+            right: AppSize(context).appWidth(100) / 3,
+          ),
+          elevation: 1,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          title: Text('Theme Setting'),
+          content: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: RadioListTile(
+                        title: Text(
+                          'System Default',
+                          style: Theme.of(context).textTheme.bodyText1,
                         ),
-                      ),
-                      ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: RadioListTile(
-                              title: Text(
-                                'Dark Mode',
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                              value: ThemeMode.dark,
-                              groupValue: _themeSetting,
-                              onChanged: (value) {
-                                BlocProvider.of<ThemeCubit>(context)
-                                    .emitTheme(ThemeMode.dark);
-                                prefs.setString('theme', 'dark');
-                                Navigator.of(context).pop();
-                              }),
-                        ),
-                      ),
-                      ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: RadioListTile(
-                              title: Text(
-                                'Light Mode',
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                              value: ThemeMode.light,
-                              groupValue: _themeSetting,
-                              onChanged: (value) {
-                                BlocProvider.of<ThemeCubit>(context)
-                                    .emitTheme(ThemeMode.light);
-                                prefs.setString('theme', 'light');
-                                Navigator.of(context).pop();
-                              }),
-                        ),
-                      ),
-                    ],
+                        value: ThemeMode.system,
+                        groupValue: _themeSetting,
+                        onChanged: (value) {
+                          BlocProvider.of<ThemeCubit>(context).emitTheme(ThemeMode.system);
+                          prefs.setString('theme', 'system');
+                          Navigator.of(context).pop();
+                        }),
                   ),
                 ),
-              ),
-            ),).then((value) {
-              print('______brightness: ${Theme.of(context).brightness}');
-            });
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: RadioListTile(
+                        title: Text(
+                          'Dark Mode',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                        value: ThemeMode.dark,
+                        groupValue: _themeSetting,
+                        onChanged: (value) {
+                          BlocProvider.of<ThemeCubit>(context).emitTheme(ThemeMode.dark);
+                          prefs.setString('theme', 'dark');
+                          Navigator.of(context).pop();
+                        }),
+                  ),
+                ),
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: RadioListTile(
+                        title: Text(
+                          'Light Mode',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                        value: ThemeMode.light,
+                        groupValue: _themeSetting,
+                        onChanged: (value) {
+                          BlocProvider.of<ThemeCubit>(context).emitTheme(ThemeMode.light);
+                          prefs.setString('theme', 'light');
+                          Navigator.of(context).pop();
+                        }),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

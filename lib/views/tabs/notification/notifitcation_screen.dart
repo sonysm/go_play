@@ -23,8 +23,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
   List<KSNotification> noticationList = [];
 
   bool isLoading = true;
+  bool noInternet = false;
 
   Widget buildNoticationList() {
+    if (!isLoading && noInternet) {
+      return SliverFillRemaining(
+        child: KSNoInternet(),
+      );
+    }
+
     return !isLoading
         ? noticationList.isNotEmpty
             ? SliverList(
@@ -77,7 +84,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         slivers: [
           buildNoticationList(),
         ],
-        onRefresh: () async {},
+        onRefresh: () async => getNotification(),
         onLoad: noticationList.isNotEmpty ? () async {} : null,
       ),
     );
@@ -103,8 +110,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
         Future.delayed(Duration(milliseconds: 300)).then((_) {
           isLoading = false;
+          noInternet = false;
           setState(() {});
         });
+      } else {
+        if (res.code == -500) {
+          isLoading = false;
+          noInternet = true;
+          setState(() {});
+        }
       }
     }
   }

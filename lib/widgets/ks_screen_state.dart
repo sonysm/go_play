@@ -72,33 +72,37 @@ class KSNoInternet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(color: Colors.green.shade50, shape: BoxShape.circle),
-          child: SvgPicture.asset(
-            icNoConnection,
-            height: 150,
-            color: isLight(context) ? Colors.blueGrey[700] : Colors.white60,
-          ),
-        ),
-        32.height,
-        Text(
-          'No Internet connection!',
-          style: Theme.of(context).textTheme.headline6?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: (isLight(context) ? Colors.blueGrey[700] : Colors.white60),
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(color: Colors.green.shade50, shape: BoxShape.circle),
+              child: SvgPicture.asset(
+                icNoConnection,
+                height: 150,
+                color: isLight(context) ? Colors.blueGrey[700] : Colors.white60,
               ),
+            ),
+            32.height,
+            Text(
+              'No Internet connection!',
+              style: Theme.of(context).textTheme.headline6?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: (isLight(context) ? Colors.blueGrey[700] : Colors.white60),
+                  ),
+            ),
+            8.height,
+            Text(
+              'Please check your network connection.',
+              style: Theme.of(context).textTheme.bodyText2?.copyWith(color: isLight(context) ? Colors.grey[800] : Colors.white54),
+            ),
+            SizedBox(height: AppBar().preferredSize.height + kToolbarHeight - 32),
+          ],
         ),
-        8.height,
-        Text(
-          'Please check your network connection.',
-          style: Theme.of(context).textTheme.bodyText2?.copyWith(color: isLight(context) ? Colors.grey[800] : Colors.white54),
-        ),
-        SizedBox(height: AppBar().preferredSize.height + kToolbarHeight - 32),
-      ],
+      ),
     );
   }
 }
