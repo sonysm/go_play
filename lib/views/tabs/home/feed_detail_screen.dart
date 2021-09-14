@@ -523,17 +523,36 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
               context,
               message: 'Are you sure you want to hide this post?',
               onYesPressed: () {
-                _homeCubit.onHidePost(post.id);
-                dismissScreen(context);
-                showKSSnackBar(
-                  context,
-                  title: 'This post is no longer show to you.',
-                  action: true,
-                  actionTitle: 'Undo',
-                  onAction: () {
-                    _homeCubit.onUndoHidingPost(index: widget.postIndex, post: post);
-                  },
-                );
+                if (widget.postIndex != -1) {
+                  _homeCubit.onHidePost(post.id);
+                } else {
+                  ksClient.postApi('/user/activity/hide_post/${post.id}').then((value) {
+                    if (value != null) {
+                      _homeCubit.onRefresh();
+                    }
+                  });
+                }
+
+                dismissScreen(context, 1);
+                if (widget.postIndex != -1) {
+                  showKSSnackBar(
+                    context,
+                    title: 'This post is no longer show to you.',
+                    action: true,
+                    actionTitle: 'Undo',
+                    onAction: () {
+                      if (widget.postIndex != -1) {
+                        _homeCubit.onUndoHidingPost(index: widget.postIndex, post: post);
+                      } else {
+                        ksClient.postApi('/user/activity/show/hidden_post/${post.id}').then((value) {
+                          if (value != null) {
+                            _homeCubit.onRefresh();
+                          }
+                        });
+                      }
+                    },
+                  );
+                }
               },
             );
           },
@@ -601,7 +620,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
         post = Post.fromJson(data['post']);
         post.owner = post.owner;
         commentList = List.from((data['comment'] as List).map((e) => Comment.fromJson(e)));
-        widget.postCallback!(post);
+        if (widget.postCallback != null) {
+          widget.postCallback!(post);
+        }
         setState(() {});
       }
     }

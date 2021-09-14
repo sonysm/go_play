@@ -144,6 +144,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                       child: SelectableLinkify(
                         text: _post.description!,
                         style: Theme.of(context).textTheme.bodyText1,
+                        strutStyle: StrutStyle(fontSize: 16),
                         onOpen: (link) async {
                           if (await canLaunch(link.url)) {
                             // await launch(link.url);

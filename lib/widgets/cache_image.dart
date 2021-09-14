@@ -23,6 +23,7 @@ class CacheImage extends StatelessWidget {
               image: DecorationImage(
                 image: url,
                 fit: fit,
+                alignment: Alignment.topCenter
               ),
             ),
           );
