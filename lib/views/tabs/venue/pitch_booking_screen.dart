@@ -283,7 +283,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                       label: 'Total',
                       data: duration != null
                           ? '\$' +
-                              ((duration! * _venueService.hourPrice) / 60)
+                              ((duration! * _venueService.hourPrice!) / 60)
                                   .toStringAsFixed(2)
                           : null),
                 ],
@@ -397,7 +397,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                     'Book' +
                         (duration != null
                             ? ' - \$' +
-                                ((duration! * _venueService.hourPrice) / 60)
+                                ((duration! * _venueService.hourPrice!) / 60)
                                     .toStringAsFixed(2)
                             : ''),
                     style: TextStyle(
@@ -419,7 +419,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
   void initState() {
     super.initState();
     _venueService = widget.venueService;
-    picthTitle = _venueService.name +
+    picthTitle = _venueService.name! +
         ' (${_venueService.serviceData!.people! ~/ 2}x${_venueService.serviceData!.people! ~/ 2})';
 
     getUnavailableTime();
@@ -534,7 +534,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
           'from_time': DateFormat('HH:mm:ss').format(selectedStartTime!),
           'to_time': DateFormat('HH:mm:ss')
               .format(selectedStartTime!.add(Duration(minutes: duration!))),
-          'price': (duration! * _venueService.hourPrice) / 60
+          'price': (duration! * _venueService.hourPrice!) / 60
         };
 
         var res = await ksClient.postApi('/booking/service/${_venueService.id}',

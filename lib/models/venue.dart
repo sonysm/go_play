@@ -4,6 +4,9 @@
 
 import 'dart:convert';
 
+import 'package:kroma_sport/models/sport.dart';
+import 'package:kroma_sport/models/venue_detail.dart';
+
 Venue venueFromJson(String str) => Venue.fromJson(json.decode(str));
 
 String venueToJson(Venue data) => json.encode(data.toJson());
@@ -21,6 +24,8 @@ class Venue {
     required this.latitude,
     required this.longitude,
     this.description,
+    this.venueFacility,
+    this.venueService,
   });
 
   int id;
@@ -34,14 +39,13 @@ class Venue {
   String latitude;
   String longitude;
   String? description;
+  List<VenueFacility>? venueFacility;
+  List<VenueService>? venueService;
 
   factory Venue.fromJson(Map<String, dynamic> json) => Venue(
         id: json["id"],
         owner: (json["owner"] is Map) ? Owner.fromJson(json["owner"]) : null,
-        schedule: json["schedule"] != null
-            ? List<Schedule>.from(
-                json["schedule"].map((x) => Schedule.fromJson(x)))
-            : null,
+        schedule: json["schedule"] != null ? List<Schedule>.from(json["schedule"].map((x) => Schedule.fromJson(x))) : null,
         isActive: json["is_active"],
         name: json["name"],
         profilePhoto: json["profile_photo"],
@@ -50,6 +54,8 @@ class Venue {
         latitude: json["latitude"],
         longitude: json["longitude"],
         description: json["description"],
+        venueFacility: json["venue_facility"] != null ? List<VenueFacility>.from(json["venue_facility"].map((e) => VenueFacility.fromJson(e))) : null,
+        venueService: json["venue_service"] != null ? List.from(json["venue_service"].map((e) => VenueService.fromJson(e))) : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -64,6 +70,8 @@ class Venue {
         "latitude": latitude,
         "longitude": longitude,
         "description": description,
+        "venue_facility": venueFacility,
+        "venue_service": venueService,
       };
 }
 
@@ -142,3 +150,83 @@ class Schedule {
         "venue": venue,
       };
 }
+
+class VenueFacility {
+  VenueFacility({
+    required this.id,
+    required this.facility,
+    required this.status,
+    required this.venue,
+  });
+
+  int id;
+  Facility facility;
+  String status;
+  int venue;
+
+  factory VenueFacility.fromJson(Map<String, dynamic> json) => VenueFacility(
+        id: json["id"],
+        facility: Facility.fromJson(json["facility"]),
+        status: json["status"],
+        venue: json["venue"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "facility": facility.toJson(),
+        "status": status,
+        "venue": venue,
+      };
+}
+
+class Facility {
+  Facility({
+    required this.id,
+    required this.name,
+    required this.isActive,
+  });
+
+  int id;
+  String name;
+  int isActive;
+
+  factory Facility.fromJson(Map<String, dynamic> json) => Facility(
+        id: json["id"],
+        name: json["name"],
+        isActive: json["is_active"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "is_active": isActive,
+      };
+}
+
+// class VenueService {
+//   VenueService({
+//     required this.id,
+//     required this.sport,
+//     required this.status,
+//     required this.venue,
+//   });
+
+//   int id;
+//   Sport sport;
+//   int status;
+//   int venue;
+
+//   factory VenueService.fromJson(Map<String, dynamic> json) => VenueService(
+//         id: json["id"],
+//         sport: Sport.fromJson(json["sport"]),
+//         status: json["status"],
+//         venue: json["venue"],
+//       );
+
+//   Map<String, dynamic> toJson() => {
+//         "id": id,
+//         "sport": sport.toJson(),
+//         "status": status,
+//         "venue": venue,
+//       };
+// }

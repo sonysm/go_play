@@ -229,7 +229,7 @@ class BookingConnectCell extends StatelessWidget {
                             ),
                             4.height,
                             Text(
-                              booking.service.name,
+                              booking.service.name!,
                               style: Theme.of(context).textTheme.bodyText2,
                             ),
                             Text(

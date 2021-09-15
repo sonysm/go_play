@@ -127,7 +127,7 @@ class _BookingHistoryDetailScreenState
                   leading: SizedBox(width: 20.0),
                   horizontalTitleGap: 0,
                   title: Text(
-                      _booking.service.name +
+                      _booking.service.name! +
                           ' (${_booking.service.serviceData!.people! ~/ 2}x${_booking.service.serviceData!.people! ~/ 2})',
                       style: Theme.of(context).textTheme.bodyText1),
                 ),

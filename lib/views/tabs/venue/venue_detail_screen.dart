@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kroma_sport/api/httpclient.dart';
@@ -34,12 +35,7 @@ class VenueDetailScreen extends StatefulWidget {
 }
 
 class _VenueDetailScreenState extends State<VenueDetailScreen> {
-  List<String> facilityList = [
-    'Parking',
-    'Bath',
-    'Changing Room',
-    'Drinking Water Room'
-  ];
+  List<String> facilityList = ['Parking', 'Bath', 'Changing Room', 'Drinking Water Room'];
 
   late Venue _venue;
   bool isMaploaded = false;
@@ -49,6 +45,14 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
 
   Map sportType = {};
   Sport? sportTypeSelected;
+
+  List<String> venueImageList = [
+    // 'https://images.unsplash.com/photo-1487466365202-1afdb86c764e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1052&q=80',
+    // 'https://images.unsplash.com/photo-1510526292299-20af3f62d453?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1014&q=80',
+    // 'https://images.unsplash.com/photo-1511439664149-58b346f60448?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=675&q=80',
+    // 'https://images.unsplash.com/photo-1596740327709-1645e2562a37?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=924&q=80',
+    // 'https://images.unsplash.com/photo-1531861218190-f90c89febf69?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1050&q=80'
+  ];
 
   Widget buildVenueNavbar() {
     return SliverPersistentHeader(
@@ -60,6 +64,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
         closeHeight: kToolbarHeight,
         venue: _venue,
         heroTag: widget.heroTag,
+        coverList: venueImageList,
       ),
     );
   }
@@ -79,10 +84,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                     children: [
                       Text(
                         _venue.name,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline6
-                            ?.copyWith(fontWeight: FontWeight.w600),
+                        style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       4.height,
                       Row(
@@ -94,11 +96,10 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                           4.width,
                           Text(
                             '4.5',
-                            style:
-                                Theme.of(context).textTheme.bodyText1?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 18.0,
-                                    ),
+                            style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18.0,
+                                ),
                             strutStyle: StrutStyle(fontSize: 18.0, height: 1.3),
                           ),
                         ],
@@ -111,68 +112,85 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
             Divider(),
             Text(
               'Sport type',
-              style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                  color:
-                      isLight(context) ? Colors.grey[600] : Colors.grey[100]),
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: isLight(context) ? Colors.grey[600] : Colors.grey[100]),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  Text('⚽️', style: TextStyle(fontSize: 24.0)),
-                  16.width,
-                  Text('🏀', style: TextStyle(fontSize: 24.0)),
-                  16.width,
-                  Text('🏐', style: TextStyle(fontSize: 24.0)),
-                ],
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child:
+                  // Wrap(
+                  //   children: _venue.venueService!.map(
+                  //     (venueService) {
+                  //       if (venueService.status == 0) {
+                  //         return SizedBox();
+                  //       }
+
+                  //       return SizedBox(width: 32.0, height: 32.0, child: CacheImage(url: venueService.sport.icon!));
+                  //     },
+                  //   ).toList(),
+                  //   runSpacing: 16.0,
+                  //   spacing: 24.0,
+                  // ),
+                  Row(
+                children: _venue.venueService!.map(
+                  (venueService) {
+                    if (venueService.status == 0) {
+                      return SizedBox();
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: SizedBox(width: 32.0, height: 32.0, child: CacheImage(url: venueService.sport.icon!)),
+                    );
+                  },
+                ).toList(),
+                // [
+                //   Text('⚽️', style: TextStyle(fontSize: 24.0)),
+                //   16.width,
+                //   Text('🏀', style: TextStyle(fontSize: 24.0)),
+                //   16.width,
+                //   Text('🏐', style: TextStyle(fontSize: 24.0)),
+                // ],
               ),
             ),
             Divider(),
-            8.height,
-            Text(
-              'Facilites',
-              style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                  color:
-                      isLight(context) ? Colors.grey[600] : Colors.grey[100]),
-            ),
-            8.height,
-            Wrap(
-              children: facilityList.map(
-                (e) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0, vertical: 4.0),
-                    decoration: BoxDecoration(
-                      color: isLight(context)
-                          ? Colors.grey[100]
-                          : Colors.blueGrey[400],
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Text(
-                      e,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                  );
-                },
-              ).toList(),
-              runSpacing: 8.0,
-              spacing: 8.0,
-            ),
-            Divider(
-              height: 32.0,
-            ),
+            // 8.height,
+
+            if (_venue.venueFacility != null && _venue.venueFacility!.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  'Facilites',
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: isLight(context) ? Colors.grey[600] : Colors.grey[100]),
+                ),
+              ),
+              // 8.height,
+              Wrap(
+                children: _venue.venueFacility!.map(
+                  (venueFacility) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      decoration: BoxDecoration(
+                        color: isLight(context) ? Colors.grey[100] : Colors.blueGrey[400],
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Text(
+                        venueFacility.facility.name,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    );
+                  },
+                ).toList(),
+                runSpacing: 8.0,
+                spacing: 8.0,
+              ),
+              Divider(
+                height: 32.0,
+              ),
+            ],
             if (_venue.description != null) ...[
               Text(
                 'Description',
-                style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                    color:
-                        isLight(context) ? Colors.grey[600] : Colors.grey[100]),
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: isLight(context) ? Colors.grey[600] : Colors.grey[100]),
               ),
               8.height,
               Text(
@@ -198,11 +216,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
             padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
             child: Text(
               'Location',
-              style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                  color:
-                      isLight(context) ? Colors.grey[600] : Colors.grey[100]),
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: isLight(context) ? Colors.grey[600] : Colors.grey[100]),
             ),
           ),
           Container(
@@ -241,10 +255,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     );
   }
 
-  Widget buildPitchCell(
-      {required String pitchName,
-      required String pitchPrice,
-      required VenueService venueService}) {
+  Widget buildPitchCell({required String pitchName, required String pitchPrice, required VenueService venueService}) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -259,18 +270,12 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
             children: [
               Text(
                 pitchName,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
               ),
               4.height,
               Text(
                 pitchPrice,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -288,8 +293,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
             },
             style: ButtonStyle(
               elevation: MaterialStateProperty.all(0),
-              backgroundColor: MaterialStateProperty.all(
-                  isLight(context) ? mainColor : Color(0xFF2ecc71)),
+              backgroundColor: MaterialStateProperty.all(isLight(context) ? mainColor : Color(0xFF2ecc71)),
               minimumSize: MaterialStateProperty.all(Size(0, 0)),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               padding: MaterialStateProperty.all(
@@ -319,20 +323,14 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                 children: [
                   Text(
                     'Select sport type',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   8.height,
                   ElevatedButton(
                     onPressed: showSportTypeOption,
                     style: ButtonStyle(
                       elevation: MaterialStateProperty.all(0),
-                      backgroundColor: MaterialStateProperty.all(
-                          isLight(context)
-                              ? Colors.grey[100]
-                              : Colors.blueGrey[400]),
+                      backgroundColor: MaterialStateProperty.all(isLight(context) ? Colors.grey[100] : Colors.blueGrey[400]),
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4.0),
                         side: BorderSide(color: Colors.grey[200]!),
@@ -345,14 +343,10 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                       children: [
                         Text(
                           'Futsal / Football',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                          style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                         ),
                         Spacer(),
-                        Icon(FeatherIcons.chevronDown,
-                            color: isLight(context) ? blackColor : whiteColor),
+                        Icon(FeatherIcons.chevronDown, color: isLight(context) ? blackColor : whiteColor),
                       ],
                     ),
                   ),
@@ -360,10 +354,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                   if (venueServiceList.isNotEmpty) ...[
                     Text(
                       'Available pitches:',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          ?.copyWith(fontWeight: FontWeight.w600),
+                      style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                     ),
                     8.height,
                     ListView.separated(
@@ -373,13 +364,10 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                       itemBuilder: (context, index) {
                         final service = venueServiceList[index];
 
-                        if (service.serviceData != null &&
-                            service.serviceData!.people != null) {
+                        if (service.serviceData != null && service.serviceData!.people != null) {
                           return buildPitchCell(
-                            pitchName: service.name +
-                                ' (${service.serviceData!.people! ~/ 2}x${service.serviceData!.people! ~/ 2})',
-                            pitchPrice:
-                                '\$${service.hourPrice.toStringAsFixed(2)}/h',
+                            pitchName: service.name! + ' (${service.serviceData!.people! ~/ 2}x${service.serviceData!.people! ~/ 2})',
+                            pitchPrice: '\$${service.hourPrice!.toStringAsFixed(2)}/h',
                             venueService: service,
                           );
                         }
@@ -413,7 +401,11 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
           buildVenueLocation(),
           buildAvailablePitch(),
         ],
-        onRefresh: () async {},
+        onRefresh: () async {
+          Future.delayed(Duration.zero, () {
+            getVenueDetail();
+          });
+        },
       ),
     );
   }
@@ -422,6 +414,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
   void initState() {
     super.initState();
     _venue = widget.venue;
+    if (_venue.profilePhoto != null) venueImageList.insert(0, _venue.profilePhoto!);
     getVenueDetail();
   }
 
@@ -442,8 +435,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  padding: const EdgeInsets.only(
-                      top: 16.0, left: 16.0, bottom: 16.0),
+                  padding: const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 16.0),
                   child: Text(
                     'Choose sport type',
                     style: Theme.of(context).textTheme.headline6,
@@ -469,8 +461,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
   Widget sportTypeButton(Sport s) {
     return TextButton(
       style: ButtonStyle(
-        padding:
-            MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 0.0)),
+        padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 0.0)),
       ),
       onPressed: () {
         sportTypeSelected = s;
@@ -489,10 +480,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
           children: <Widget>[
             Text(
               s.name,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  ?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
             ),
             Spacer(),
             if (sportTypeSelected!.id == s.id)
@@ -513,8 +501,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
         VenueDetail detail = VenueDetail.fromJson(res);
         _venue = detail.venue;
         venueServiceList = detail.service;
-        sportType =
-            groupBy(venueServiceList, (VenueService obj) => obj.sport.id);
+        sportType = groupBy(venueServiceList, (VenueService obj) => obj.sport.id);
 
         if (sportType.isNotEmpty) {
           VenueService v = sportType[sportType.keys.first][0];
@@ -536,6 +523,7 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
   double openHeight;
   Venue venue;
   String heroTag;
+  List<String> coverList;
 
   VenueDetailHeader({
     required this.toolbarHeight,
@@ -543,19 +531,19 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
     required this.openHeight,
     required this.venue,
     required this.heroTag,
+    required this.coverList,
   });
 
-  List<String> venueImageList = [
-    'https://images.unsplash.com/photo-1487466365202-1afdb86c764e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1052&q=80',
-    'https://images.unsplash.com/photo-1510526292299-20af3f62d453?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1014&q=80',
-    'https://images.unsplash.com/photo-1511439664149-58b346f60448?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=675&q=80',
-    'https://images.unsplash.com/photo-1596740327709-1645e2562a37?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=924&q=80',
-    'https://images.unsplash.com/photo-1531861218190-f90c89febf69?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1050&q=80'
-  ];
+  // List<String> venueImageList = [
+  //   'https://images.unsplash.com/photo-1487466365202-1afdb86c764e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1052&q=80',
+  //   'https://images.unsplash.com/photo-1510526292299-20af3f62d453?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1014&q=80',
+  //   'https://images.unsplash.com/photo-1511439664149-58b346f60448?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=675&q=80',
+  //   'https://images.unsplash.com/photo-1596740327709-1645e2562a37?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=924&q=80',
+  //   'https://images.unsplash.com/photo-1531861218190-f90c89febf69?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1050&q=80'
+  // ];
 
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       height: openHeight,
       color: whiteColor,
@@ -567,32 +555,34 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
             color: Colors.grey[200],
             child: Stack(
               children: [
-                // Swiper(
-                //   itemCount: venueImageList.length,
-                //   itemBuilder: (context, index) => Container(
-                //     child: CacheImage(
-                //       url: venueImageList[index],
-                //     ),
-                //   ),
-                //   curve: Curves.easeInOutCubic,
-                //   autoplay: true,
-                //   loop: false,
-                //   // autoplayDelay: 5000,
-                //   // duration: 850,
-                //   pagination: venueImageList.length > 1
-                //       ? SwiperPagination(
-                //           builder: DotSwiperPaginationBuilder(
-                //             activeColor: mainColor,
-                //             color: Colors.grey[100],
-                //             size: 8.0,
-                //             activeSize: 8.0,
-                //           ),
-                //         )
-                //       : null,
+                Hero(
+                  tag: heroTag,
+                  child: Swiper(
+                    itemCount: coverList.length,
+                    itemBuilder: (context, index) => Container(
+                      child: CacheImage(
+                        url: coverList[index],
+                      ),
+                    ),
+                    curve: Curves.easeInOutCubic,
+                    autoplay: true,
+                    loop: false,
+                    // autoplayDelay: 5000,
+                    // duration: 850,
+                    pagination: coverList.length > 1
+                        ? SwiperPagination(
+                            builder: DotSwiperPaginationBuilder(
+                              activeColor: mainColor,
+                              color: Colors.grey[100],
+                              size: 8.0,
+                              activeSize: 8.0,
+                            ),
+                          )
+                        : null,
 
-                //   // onTap: (index) {},
-                // ),
-                Hero(tag: heroTag, child: CacheImage(url: venue.profilePhoto!))
+                    // onTap: (index) {},
+                  ),
+                ),
               ],
             ),
           ),
@@ -606,9 +596,7 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
                 decoration: BoxDecoration(
                   color: (1 - shrinkOffset / openHeight) > 0.7
                       ? blackColor.withOpacity(0.6)
-                      : Theme.of(context)
-                          .primaryColor
-                          .withOpacity(backgroundOpacity(shrinkOffset)),
+                      : Theme.of(context).primaryColor.withOpacity(backgroundOpacity(shrinkOffset)),
                   shape: BoxShape.circle,
                 ),
                 child: CupertinoButton(
@@ -616,9 +604,7 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
                   padding: EdgeInsets.zero,
                   child: Icon(
                     Icons.arrow_back,
-                    color: (1 - shrinkOffset / openHeight) > 0.7
-                        ? whiteColor
-                        : mainColor,
+                    color: (1 - shrinkOffset / openHeight) > 0.7 ? whiteColor : mainColor,
                     size: 22.0,
                   ),
                 ),
@@ -634,9 +620,7 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
                 ),
               ),
               titleSpacing: 0,
-              backgroundColor: shrinkOffset < openHeight - 100
-                  ? Colors.transparent
-                  : Theme.of(context).primaryColor,
+              backgroundColor: shrinkOffset < openHeight - 100 ? Colors.transparent : Theme.of(context).primaryColor,
               elevation: 0,
             ),
             height: MediaQuery.of(context).padding.top + 54.0,
@@ -656,7 +640,5 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
 
   double backgroundOpacity(double shrinkOffset) =>
-      (shrinkOffset / (openHeight - toolbarHeight)) < 1
-          ? (shrinkOffset / (openHeight - toolbarHeight))
-          : 1;
+      (shrinkOffset / (openHeight - toolbarHeight)) < 1 ? (shrinkOffset / (openHeight - toolbarHeight)) : 1;
 }

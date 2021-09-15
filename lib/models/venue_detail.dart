@@ -20,18 +20,22 @@ class VenueService {
   VenueService({
     required this.id,
     required this.sport,
-    required this.name,
-    this.serviceData,
-    required this.hourPrice,
+    required this.status,
     required this.venue,
+    this.name,
+    this.serviceData,
+    this.hourPrice,
+    this.size,
   });
 
   int id;
   Sport sport;
-  String name;
+  String? name;
   ServiceData? serviceData;
-  double hourPrice;
+  double? hourPrice;
   int venue;
+  String? size;
+  int status; // 0 : inactive, 1 : active
 
   factory VenueService.fromJson(Map<String, dynamic> json) => VenueService(
         id: json["id"],
@@ -40,6 +44,8 @@ class VenueService {
         serviceData: json["data"] != null ? ServiceData.fromJson(json["data"]) : null,
         hourPrice: json["hour_price"],
         venue: json["venue"],
+        size: json["size"],
+        status: json["status"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -49,6 +55,8 @@ class VenueService {
         "data": serviceData!.toJson(),
         "hour_price": hourPrice,
         "venue": venue,
+        "size": size,
+        "status": status,
       };
 }
 
