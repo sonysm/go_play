@@ -17,6 +17,7 @@ import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/venue/pitch_booking_screen.dart';
 import 'package:kroma_sport/widgets/cache_image.dart';
+import 'package:kroma_sport/widgets/ks_widgets.dart';
 
 class VenueDetailScreen extends StatefulWidget {
   static const tag = '/venueDetailScreen';
@@ -40,6 +41,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
   late Venue _venue;
   bool isMaploaded = false;
   List<VenueService> venueServiceList = [];
+  List<VenueService> venueServiceBySportType = [];
 
   KSHttpClient ksClient = KSHttpClient();
 
@@ -110,52 +112,27 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
               ],
             ),
             Divider(),
-            Text(
-              'Sport type',
-              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: isLight(context) ? Colors.grey[600] : Colors.grey[100]),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0),
-              child:
-                  // Wrap(
-                  //   children: _venue.venueService!.map(
-                  //     (venueService) {
-                  //       if (venueService.status == 0) {
-                  //         return SizedBox();
-                  //       }
-
-                  //       return SizedBox(width: 32.0, height: 32.0, child: CacheImage(url: venueService.sport.icon!));
-                  //     },
-                  //   ).toList(),
-                  //   runSpacing: 16.0,
-                  //   spacing: 24.0,
-                  // ),
-                  Row(
-                children: _venue.venueService!.map(
-                  (venueService) {
-                    if (venueService.status == 0) {
-                      return SizedBox();
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: SizedBox(width: 32.0, height: 32.0, child: CacheImage(url: venueService.sport.icon!)),
-                    );
-                  },
-                ).toList(),
-                // [
-                //   Text('⚽️', style: TextStyle(fontSize: 24.0)),
-                //   16.width,
-                //   Text('🏀', style: TextStyle(fontSize: 24.0)),
-                //   16.width,
-                //   Text('🏐', style: TextStyle(fontSize: 24.0)),
-                // ],
+            if (_venue.venueService != null && _venue.venueService!.isNotEmpty && _venue.venueService!.any((element) => element.status == 1)) ...[
+              Text(
+                'Sport type',
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: isLight(context) ? Colors.grey[600] : Colors.grey[100]),
               ),
-            ),
-            Divider(),
-            // 8.height,
-
-            if (_venue.venueFacility != null && _venue.venueFacility!.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: Wrap(
+                  children: _venue.venueService!
+                      .where((element) => element.status != 0)
+                      .map(
+                        (venueService) => SizedBox(width: 32.0, height: 32.0, child: CacheImage(url: venueService.sport.icon!)),
+                      )
+                      .toList(),
+                  runSpacing: 16.0,
+                  spacing: 24.0,
+                ),
+              ),
+              Divider(),
+            ],
+            if (_venue.venueFacility != null && _venue.venueFacility!.isNotEmpty && _venue.venueFacility!.any((element) => element.status == 1)) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
@@ -165,7 +142,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
               ),
               // 8.height,
               Wrap(
-                children: _venue.venueFacility!.map(
+                children: _venue.venueFacility!.where((element) => element.status != 0).map(
                   (venueFacility) {
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -317,7 +294,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     return SliverToBoxAdapter(
       child: Container(
         padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 32.0),
-        child: sportType.isNotEmpty
+        child: _venue.venueService!.where((e) => e.status != 0).toList().isNotEmpty
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -341,17 +318,21 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                     ),
                     child: Row(
                       children: [
-                        Text(
-                          'Futsal / Football',
-                          style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
+                        SizedBox(width: 16.0, height: 16.0, child: CacheImage(url: sportTypeSelected!.icon!)),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            sportTypeSelected!.name,
+                            style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
+                          ),
                         ),
                         Spacer(),
                         Icon(FeatherIcons.chevronDown, color: isLight(context) ? blackColor : whiteColor),
                       ],
                     ),
                   ),
-                  16.height,
-                  if (venueServiceList.isNotEmpty) ...[
+                  if (venueServiceBySportType.isNotEmpty) ...[
+                    16.height,
                     Text(
                       'Available pitches:',
                       style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
@@ -362,7 +343,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        final service = venueServiceList[index];
+                        final service = venueServiceBySportType[index];
 
                         if (service.serviceData != null && service.serviceData!.people != null) {
                           return buildPitchCell(
@@ -377,7 +358,15 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                       separatorBuilder: (context, index) {
                         return 8.height;
                       },
-                      itemCount: venueServiceList.length,
+                      itemCount: venueServiceBySportType.length,
+                    )
+                  ] else ...[
+                    Container(
+                      height: 150.0,
+                      padding: const EdgeInsets.all(16.0),
+                      child: Center(
+                        child: Text('No any available pitch'),
+                      ),
                     )
                   ],
                 ],
@@ -415,80 +404,67 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     super.initState();
     _venue = widget.venue;
     if (_venue.profilePhoto != null) venueImageList.insert(0, _venue.profilePhoto!);
+    if (_venue.venueService != null && _venue.venueService!.where((e) => e.status != 0).toList().isNotEmpty) {
+      sportTypeSelected = _venue.venueService!.where((e) => e.status != 0).first.sport;
+    }
     getVenueDetail();
   }
 
   void showSportTypeOption() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).primaryColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+    var sportTypeList = _venue.venueService!.where((e) => e.status != 0).toList();
+
+    showKSBottomSheet(
+      context,
+      title: 'Choose sport type',
+      hasTopbar: false,
+      children: List.generate(
+        sportTypeList.length,
+        (index) {
+          VenueService s = sportTypeList.elementAt(index);
+          return sportTypeButton(s.sport);
+        },
       ),
-      builder: (context) {
-        return SafeArea(
-          maintainBottomViewPadding: true,
-          child: Container(
-            padding: EdgeInsets.only(bottom: 36.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 16.0),
-                  child: Text(
-                    'Choose sport type',
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                ),
-                Column(
-                  children: List.generate(
-                    sportType.length,
-                    (index) {
-                      VenueService s = sportType[sportType.keys.first][0];
-                      return sportTypeButton(s.sport);
-                    },
-                  ),
-                )
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 
   Widget sportTypeButton(Sport s) {
-    return TextButton(
-      style: ButtonStyle(
-        padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 0.0)),
-      ),
-      onPressed: () {
-        sportTypeSelected = s;
-        setState(() {});
-        dismissScreen(context);
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16.0),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        decoration: BoxDecoration(
-          color: isLight(context) ? Colors.grey[200] : Colors.blueGrey[400],
-          // border: Border.all(color: isLight(context) ? Colors.grey[300]! : Colors.grey[200]!),
-          borderRadius: BorderRadius.circular(4.0),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0, left: 16.0, right: 16.0),
+      child: TextButton(
+        style: ButtonStyle(
+          padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 4.0)),
+          overlayColor: MaterialStateProperty.all(isLight(context) ? Colors.grey.shade100 : Colors.blueGrey.shade400),
         ),
-        child: Row(
-          children: <Widget>[
-            Text(
-              s.name,
-              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            Spacer(),
-            if (sportTypeSelected!.id == s.id)
-              Icon(
-                Feather.check,
-                color: isLight(context) ? mainColor : Colors.greenAccent,
+        onPressed: () {
+          sportTypeSelected = s;
+          venueServiceBySportType = venueServiceList.where((e) => e.sport.id == s.id).toList();
+          setState(() {});
+          dismissScreen(context);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
+          child: Row(
+            children: <Widget>[
+              SizedBox(
+                width: 24.0,
+                height: 24.0,
+                child: CacheImage(url: s.icon!),
               ),
-          ],
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  s.name,
+                  style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              Spacer(),
+              if (sportTypeSelected!.id == s.id)
+                Icon(
+                  Feather.check,
+                  color: isLight(context) ? mainColor : Colors.greenAccent,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -500,12 +476,21 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
       if (res is! HttpResult) {
         VenueDetail detail = VenueDetail.fromJson(res);
         _venue = detail.venue;
-        venueServiceList = detail.service;
-        sportType = groupBy(venueServiceList, (VenueService obj) => obj.sport.id);
 
-        if (sportType.isNotEmpty) {
-          VenueService v = sportType[sportType.keys.first][0];
-          sportTypeSelected = v.sport;
+        venueServiceList = detail.service.where((e) => e.sport.id == sportTypeSelected!.id).toList();
+
+        if (sportTypeSelected != null) {
+          venueServiceBySportType = venueServiceList.where((e) => e.sport.id == sportTypeSelected!.id).toList();
+        }
+        // sportType = groupBy(venueServiceList, (VenueService obj) => obj.sport.id);
+
+        // if (sportType.isNotEmpty) {
+        //   VenueService v = sportType[sportType.keys.first][0];
+        //   sportTypeSelected = v.sport;
+        // }
+
+        if (_venue.venueService != null && _venue.venueService!.where((e) => e.status != 0).toList().isNotEmpty) {
+          sportTypeSelected = _venue.venueService!.where((e) => e.status != 0).first.sport;
         }
 
         Future.delayed(Duration(milliseconds: 300)).then((_) {

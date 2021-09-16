@@ -161,7 +161,7 @@ class VenueFacility {
 
   int id;
   Facility facility;
-  String status;
+  int status;
   int venue;
 
   factory VenueFacility.fromJson(Map<String, dynamic> json) => VenueFacility(

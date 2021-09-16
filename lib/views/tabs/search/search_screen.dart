@@ -124,7 +124,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
+      backgroundColor: ColorResources.getPrimary(context),
       appBar: AppBar(
         elevation: 0.3,
         titleSpacing: 0,
