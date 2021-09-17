@@ -1,10 +1,4 @@
-// To parse this JSON data, do
-//
-//     final venue = venueFromJson(jsonString);
-
 import 'dart:convert';
-
-import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/venue_detail.dart';
 
 Venue venueFromJson(String str) => Venue.fromJson(json.decode(str));
@@ -26,6 +20,7 @@ class Venue {
     this.description,
     this.venueFacility,
     this.venueService,
+    this.venueCover,
   });
 
   int id;
@@ -41,6 +36,7 @@ class Venue {
   String? description;
   List<VenueFacility>? venueFacility;
   List<VenueService>? venueService;
+  List<VenueCover>? venueCover;
 
   factory Venue.fromJson(Map<String, dynamic> json) => Venue(
         id: json["id"],
@@ -56,6 +52,7 @@ class Venue {
         description: json["description"],
         venueFacility: json["venue_facility"] != null ? List<VenueFacility>.from(json["venue_facility"].map((e) => VenueFacility.fromJson(e))) : null,
         venueService: json["venue_service"] != null ? List.from(json["venue_service"].map((e) => VenueService.fromJson(e))) : null,
+        venueCover: json["venue_cover"] != null ? List.from(json["venue_cover"].map((e) => VenueCover.fromJson(e))) : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -72,6 +69,7 @@ class Venue {
         "description": description,
         "venue_facility": venueFacility,
         "venue_service": venueService,
+        "venue_cover": venueCover,
       };
 }
 
@@ -203,30 +201,30 @@ class Facility {
       };
 }
 
-// class VenueService {
-//   VenueService({
-//     required this.id,
-//     required this.sport,
-//     required this.status,
-//     required this.venue,
-//   });
+class VenueCover {
+  VenueCover({
+    required this.id,
+    required this.photo,
+    required this.venueId,
+    required this.isShow,
+  });
 
-//   int id;
-//   Sport sport;
-//   int status;
-//   int venue;
+  int id;
+  String photo;
+  int venueId;
+  int isShow;
 
-//   factory VenueService.fromJson(Map<String, dynamic> json) => VenueService(
-//         id: json["id"],
-//         sport: Sport.fromJson(json["sport"]),
-//         status: json["status"],
-//         venue: json["venue"],
-//       );
+  factory VenueCover.fromJson(Map<String, dynamic> json) => VenueCover(
+        id: json["id"],
+        photo: json["photo"] ?? '',
+        venueId: json["venue_id"],
+        isShow: json["is_show"],
+      );
 
-//   Map<String, dynamic> toJson() => {
-//         "id": id,
-//         "sport": sport.toJson(),
-//         "status": status,
-//         "venue": venue,
-//       };
-// }
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "photo": photo,
+        "venue_id": venueId,
+        "is_show": isShow,
+      };
+}

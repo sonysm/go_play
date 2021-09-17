@@ -19,7 +19,6 @@ import 'package:kroma_sport/models/member.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
-import 'package:kroma_sport/utils/constant.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/home/report_screen.dart';
@@ -477,6 +476,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
                   text: meetup!.title,
                   // startPadding: 50.0,
                   blankSpace: 50.0,
+                  startAfter: Duration(milliseconds: 1500),
                   pauseAfterRound: Duration(seconds: 1),
                   accelerationDuration: Duration(seconds: 2),
                 ),

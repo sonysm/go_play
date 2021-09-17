@@ -266,6 +266,7 @@ class _ActivityCellState extends State<ActivityCell> {
                       4.width,
                       KSIconButton(
                         icon: FeatherIcons.messageSquare,
+                        iconColor: ColorResources.getInactiveIconColor(context),
                         onTap: () => launchFeedDetailScreen(isCommentTap: true),
                       ),
                       // 4.width,
