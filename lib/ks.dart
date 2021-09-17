@@ -21,6 +21,8 @@ class KS {
 
   late User user;
 
+  String deviceId = '';
+
   PackageInfo packageInfo = PackageInfo(
     appName: 'Unknown',
     packageName: 'Unknown',

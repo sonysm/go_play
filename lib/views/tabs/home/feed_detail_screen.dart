@@ -309,8 +309,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                   Row(
                     children: [
                       KSIconButton(
-                        icon: post.reacted! ? Icons.favorite : FeatherIcons.heart,
-                        iconColor: post.reacted! ? ColorResources.getActiveIconColor(context) : ColorResources.getInactiveIconColor(context),
+                        icon: (post.reacted != null && post.reacted!) ? Icons.favorite : FeatherIcons.heart,
+                        iconColor: (post.reacted != null && post.reacted!) ? ColorResources.getActiveIconColor(context) : ColorResources.getInactiveIconColor(context),
                         onTap: () {
                           if (post.reacted!) {
                             post.totalReaction -= 1;

@@ -59,14 +59,14 @@ class SearchResultCell extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    post.description ?? '',
+                    post.title ?? post.description ?? '',
                     maxLines: 3,
                   ),
                   Align(
                     alignment: Alignment.centerRight,
                     child: Text(
                       post.createdAt.toString().timeAgoString,
-                      style: Theme.of(context).textTheme.caption,
+                      style: Theme.of(context).textTheme.caption?.copyWith(color: ColorResources.getSecondaryText(context)),
                     ),
                   ),
                 ],

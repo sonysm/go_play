@@ -368,7 +368,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with Tick
                       height: 100,
                       child: Image.asset(
                         'assets/images/img_emptypost.png',
-                        color: Colors.grey,
+                        color: isLight(context) ? Colors.grey : Colors.grey[400],
                       ),
                     ),
                     title: 'No Post',
@@ -419,7 +419,7 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with Tick
                 icon: Container(
                   child: Image.asset(
                     'assets/images/img_emptypost.png',
-                    color: Colors.blueGrey[700],
+                    color: isLight(context) ? Colors.grey : Colors.grey[400],
                     height: 100.0,
                   ),
                 ),

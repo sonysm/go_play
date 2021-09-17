@@ -33,9 +33,7 @@ class CommentCell extends StatelessWidget {
                     vertical: 8.0,
                   ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.light
-                        ? Colors.grey[100]
-                        : Colors.blueGrey,
+                    color: Theme.of(context).brightness == Brightness.light ? Colors.grey[100] : Colors.blueGrey,
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                   child: Column(
@@ -56,12 +54,7 @@ class CommentCell extends StatelessWidget {
                         ),
                         child: Text(
                           comment.user.getFullname(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              ?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Metropolis'),
+                          style: Theme.of(context).textTheme.bodyText2?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
                       4.height,

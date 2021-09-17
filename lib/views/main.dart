@@ -32,12 +32,7 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  List<Widget> _screens = [
-    HomeScreen(),
-    MeetupScreen(),
-    NotificationScreen(),
-    AccountScreen2()
-  ];
+  List<Widget> _screens = [HomeScreen(), MeetupScreen(), NotificationScreen(), AccountScreen2()];
 
   List<IconData> _icons = [
     FeatherIcons.home,
@@ -51,8 +46,7 @@ class _MainViewState extends State<MainView> {
 
   KSHttpClient ksClient = KSHttpClient();
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +154,7 @@ class _MainViewState extends State<MainView> {
     required String deviceToken,
     required String deviceId,
   }) async {
+    KS.shared.deviceId = deviceId;
     var res = await ksClient.postApi(
       '/user/update/device_token',
       body: {
@@ -179,15 +174,10 @@ class _MainViewState extends State<MainView> {
     try {
       if (Platform.isAndroid) {
         var build = await deviceInfoPlugin.androidInfo;
-        setState(() {
-          identifier = build.androidId;
-        });
-        //UUID for Android
+        setState(() => identifier = build.androidId); //UUID for Android
       } else if (Platform.isIOS) {
         var data = await deviceInfoPlugin.iosInfo;
-        setState(() {
-          identifier = data.identifierForVendor;
-        }); //UUID for iOS
+        setState(() => identifier = data.identifierForVendor); //UUID for iOS
       }
     } on PlatformException {
       print('Failed to get platform version');
@@ -201,8 +191,7 @@ class _MainViewState extends State<MainView> {
 
   void initShareIntent() {
     // For sharing or opening urls/text coming from outside the app while the app is in the memory
-    _intentDataStreamSubscription =
-        ReceiveSharingIntent.getTextStream().listen((String value) {
+    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
       setState(() {
         _sharedText = value;
         _sharedInfo = value;
@@ -251,12 +240,7 @@ class _CustomTabBar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onTap;
 
-  const _CustomTabBar(
-      {Key? key,
-      required this.icons,
-      required this.selectedIndex,
-      required this.onTap})
-      : super(key: key);
+  const _CustomTabBar({Key? key, required this.icons, required this.selectedIndex, required this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -272,40 +256,77 @@ class _CustomTabBar extends StatelessWidget {
                   child: ElevatedButton(
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0)),
+                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
                       ),
                       elevation: MaterialStateProperty.all(0),
-                      overlayColor:
-                          MaterialStateProperty.all(Colors.transparent),
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.transparent),
+                      overlayColor: MaterialStateProperty.all(Colors.transparent),
+                      backgroundColor: MaterialStateProperty.all(Colors.transparent),
                     ),
                     onPressed: () => onTap(key),
                     child: Tab(
-                      icon: key != 2
-                          ? Icon(value,
-                              color: key == selectedIndex
-                                  ? ColorResources.getPrimaryIconColor(context)
-                                  : ColorResources.getPrimaryIconColorDark(
-                                      context))
-                          : Container(
-                              height: 40,
-                              width: 40,
-                              child: Material(
-                                shape: CircleBorder(
-                                    side: BorderSide(
-                                        width: 0, color: Colors.transparent)),
-                                clipBehavior: Clip.hardEdge,
-                                color:
-                                    ColorResources.getPrimaryIconColor(context),
+                        icon: key != 2
+                            ? Icon(value,
+                                color: key == selectedIndex
+                                    ? ColorResources.getPrimaryIconColor(context)
+                                    : ColorResources.getPrimaryIconColorDark(context))
+                            :
+                            // Container(
+                            //     height: 40,
+                            //     width: 40,
+                            //     child: Material(
+                            //       shape: CircleBorder(
+                            //           side: BorderSide(
+                            //               width: 0, color: Colors.transparent)),
+                            //       clipBehavior: Clip.hardEdge,
+                            //       color:
+                            //           ColorResources.getPrimaryIconColor(context),
+                            //       child: Icon(
+                            //         value,
+                            //         color: Colors.white,
+                            //       ),
+                            //     ),
+                            //   ),
+
+                            Container(
+                                width: 48.0,
+                                height: 48.0,
+                                decoration: BoxDecoration(
+                                  border: Border.all(width: 3.0, color: whiteColor),
+                                  shape: BoxShape.circle,
+                                  // color: Colors.green,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xFF11998e),
+                                      Color(0xFF38ef7d),
+                                    ],
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      blurRadius: 4.0,
+                                      color: Colors.black12,
+                                      spreadRadius: 2.0,
+                                    )
+                                  ],
+                                ),
                                 child: Icon(
                                   value,
                                   color: Colors.white,
-                                ),
-                              ),
-                            ),
-                    ),
+                                )
+                                // ElevatedButton(
+                                //   onPressed: onPressed,
+                                //   style: ButtonStyle(
+                                //     padding: MaterialStateProperty.all(EdgeInsetsDirectional.all(10.0)),
+                                //     backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                                //     shape: MaterialStateProperty.all(CircleBorder()),
+                                //     elevation: MaterialStateProperty.all(0),
+                                //     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                //   ),
+                                //   child: Icon(
+                                //     value,
+                                //     color: Colors.white,
+                                //   ),
+                                // ),
+                                )),
                   ),
                 ),
               ),

@@ -152,8 +152,8 @@ class App extends StatelessWidget {
               secondary: mainDarkColor,
             ),
             textSelectionTheme: TextSelectionThemeData(
-              cursorColor: mainDarkColor,
-              selectionColor: mainDarkColor,
+              cursorColor: Colors.greenAccent[400],
+              selectionColor: Colors.greenAccent[400],
               selectionHandleColor: mainDarkColor,
             ),
           ),

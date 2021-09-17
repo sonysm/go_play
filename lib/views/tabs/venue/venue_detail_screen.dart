@@ -408,6 +408,12 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     getVenueDetail();
   }
 
+  @override
+  void dispose() {
+    scaffold.clearSnackBars();
+    super.dispose();
+  }
+
   void showSportTypeOption() {
     var sportTypeList = _venue.venueService!.where((e) => e.status != 0).toList();
 

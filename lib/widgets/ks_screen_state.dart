@@ -30,7 +30,7 @@ class KSScreenState extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(color: Colors.green.shade50, shape: BoxShape.circle),
+            decoration: BoxDecoration(color: isLight(context) ? Colors.green.shade50 : Colors.blueGrey[600], shape: BoxShape.circle),
             child: icon,
           ),
           24.height,
