@@ -400,6 +400,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
     _venue = widget.venue;
     venueCoverList = [...widget.venue.venueCover!];
     if (_venue.profilePhoto != null) {
+      venueCoverList = venueCoverList.where((element) => element.isShow != 0).toList();
       venueCoverList.insert(0, VenueCover(id: -1, photo: _venue.profilePhoto!, venueId: _venue.id, isShow: 1));
     }
     if (_venue.venueService != null && _venue.venueService!.where((e) => e.status != 0).toList().isNotEmpty) {
@@ -482,8 +483,10 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
         _venue = detail.venue;
 
         venueServiceList = detail.service.where((e) => e.sport.id == sportTypeSelected!.id).toList();
-        venueCoverList = detail.venue.venueCover!;
-        if (_venue.profilePhoto != null) venueCoverList.insert(0, VenueCover(id: -1, photo: _venue.profilePhoto!, venueId: _venue.id, isShow: 1));
+        venueCoverList = detail.venue.venueCover!.where((element) => element.isShow != 0).toList();
+        if (_venue.profilePhoto != null) {
+          venueCoverList.insert(0, VenueCover(id: -1, photo: _venue.profilePhoto!, venueId: _venue.id, isShow: 1));
+        }
 
         if (sportTypeSelected != null) {
           venueServiceBySportType = venueServiceList.where((e) => e.sport.id == sportTypeSelected!.id).toList();
@@ -607,7 +610,11 @@ class VenueDetailHeader extends SliverPersistentHeaderDelegate {
                   padding: EdgeInsets.zero,
                   child: Icon(
                     Icons.arrow_back,
-                    color: (1 - shrinkOffset / openHeight) > 0.7 ? whiteColor : whiteColor,
+                    color: (1 - shrinkOffset / openHeight) > 0.7
+                        ? whiteColor
+                        : isLight(context)
+                            ? mainColor
+                            : whiteColor,
                     size: 22.0,
                   ),
                 ),

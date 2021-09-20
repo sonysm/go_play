@@ -29,6 +29,7 @@ import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
 import 'package:kroma_sport/views/tabs/home/widget/home_feed_cell.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
+import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 import 'package:kroma_sport/widgets/pull_to_refresh_header.dart';
@@ -615,6 +616,22 @@ class _AccountScreen2State extends State<AccountScreen2> with TickerProviderStat
           ListTile(
             onTap: () {
               dismissScreen(context);
+              launchScreen(context, BookingHistoryScreen.tag);
+            },
+            leading: Icon(
+              LineIcons.history,
+              color: ColorResources.getSecondaryIconColor(context),
+              // size: 20.0,
+            ),
+            title: Text(
+              'My Booking',
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 18),
+            ),
+            horizontalTitleGap: 0,
+          ),
+          ListTile(
+            onTap: () {
+              dismissScreen(context);
               launchScreen(context, SettingScreen.tag);
             },
             leading: Icon(
@@ -627,7 +644,7 @@ class _AccountScreen2State extends State<AccountScreen2> with TickerProviderStat
               style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 18),
             ),
             horizontalTitleGap: 0,
-          )
+          ),
         ],
       ),
     );

@@ -41,8 +41,11 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
+GlobalKey<_HomeScreenState> homeStateKey = GlobalKey();
+
 class _HomeScreenState extends State<HomeScreen> {
   ScrollController _homeScrollController = ScrollController();
+  EasyRefreshController _easyRefreshController = EasyRefreshController();
 
   late HomeCubit _homeCubit;
   late SuggestionCubit _suggestionCubit;
@@ -290,6 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, state) {
                   return EasyRefresh.custom(
                     scrollController: _homeScrollController,
+                    controller: _easyRefreshController,
                     bottomBouncing: state.status != DataState.ErrorSocket,
                     header: MaterialHeader(
                       valueColor: AlwaysStoppedAnimation<Color>(mainColor),
@@ -321,10 +325,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       _homeCubit.onRefresh();
                       _suggestionCubit.onLoad();
                     },
-                    onLoad: state.status != DataState.ErrorSocket ? () async {
-                      await Future.delayed(Duration(milliseconds: 300));
-                      _homeCubit.onLoadMore();
-                    } : null,
+                    onLoad: state.status != DataState.ErrorSocket
+                        ? () async {
+                            await Future.delayed(Duration(milliseconds: 300));
+                            _homeCubit.onLoadMore();
+                          }
+                        : null,
                   );
                 },
               ),
@@ -392,5 +398,18 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           );
         });
+  }
+
+  void onHomeIconTap() {
+    if (_homeScrollController.offset > 500) {
+      Future.delayed(Duration.zero).then((value) {
+      _homeScrollController.animateTo(
+        _homeScrollController.position.minScrollExtent,
+        duration: Duration(milliseconds: 1000),
+        curve: Curves.easeInOut,
+      );
+      _easyRefreshController.callRefresh();
+    });
+    }
   }
 }

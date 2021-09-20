@@ -62,7 +62,7 @@ class ExpandableTextState extends State<ExpandableText> {
           textSize.width - linkSize.width,
           textSize.height,
         ));
-        endIndex = textPainter.getOffsetBefore(pos.offset)!;
+        endIndex = textPainter.getOffsetBefore(pos.offset) ?? 0;
         var textSpan;
         if (textPainter.didExceedMaxLines) {
           textSpan = TextSpan(

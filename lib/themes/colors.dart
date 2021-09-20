@@ -29,7 +29,7 @@ class ColorResources {
   }
 
   static Color getMainColor(BuildContext context) {
-    return isLight(context) ? Color(0xFF26a65b) : mainDarkColor;
+    return isLight(context) ? mainColor : mainDarkColor;
   }
 
   static Color getPrimaryText(BuildContext context) {
@@ -74,5 +74,9 @@ class ColorResources {
 
   static Color getCloseButtonColor(BuildContext context) {
     return isLight(context) ? Color(0xFFCFD8DC) : Colors.blueGrey[400]!;
+  }
+
+  static Color getAppbarTitleColor(BuildContext context) {
+    return isLight(context) ? mainColor : Colors.white;
   }
 }

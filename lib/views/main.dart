@@ -32,7 +32,7 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  List<Widget> _screens = [HomeScreen(), MeetupScreen(), NotificationScreen(), AccountScreen2()];
+  List<Widget> _screens = [HomeScreen(key: homeStateKey,), MeetupScreen(), NotificationScreen(), AccountScreen2()];
 
   List<IconData> _icons = [
     FeatherIcons.home,
@@ -80,6 +80,9 @@ class _MainViewState extends State<MainView> {
                 selectedIndex: _tapIndex,
                 onTap: (index) {
                   if (index == _tapIndex) {
+                    if (_screenIndex == 0) {
+                      homeStateKey.currentState!.onHomeIconTap();
+                    }
                     return;
                   }
 

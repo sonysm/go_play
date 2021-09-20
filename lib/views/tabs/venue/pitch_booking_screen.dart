@@ -425,6 +425,12 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
     getUnavailableTime();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   void onSelectDate(DateTime date) {
     timeAvailableString = null;
     dateTimeString = null;

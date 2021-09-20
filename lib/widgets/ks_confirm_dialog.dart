@@ -202,7 +202,7 @@ showKSConfirmDialog(
   showDialog(
     context: context,
     barrierDismissible: false,
-    barrierColor: Colors.black.withOpacity(.3),
+    barrierColor: Colors.black.withOpacity(.6),
     builder: (_) => KSConfirmDialog(
       msg: message,
       onYesPressed: onYesPressed,

@@ -14,8 +14,7 @@ class BookingCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isMeetupAvailable() {
-      var bookDate = DateFormat('yyyy-MM-dd hh:mm:ss')
-          .parse(booking.bookDate + ' ' + booking.fromTime);
+      var bookDate = DateFormat('yyyy-MM-dd hh:mm:ss').parse(booking.bookDate + ' ' + booking.fromTime);
       if (DateTime.now().isAfter(bookDate)) {
         return false;
       }
@@ -36,7 +35,15 @@ class BookingCell extends StatelessWidget {
         return mainColor;
       }
 
-      return blackColor;
+      return ColorResources.getPrimaryText(context);
+    }
+
+    Color mapDateBackgroundColor() {
+      if (isMeetupAvailable()) {
+        return isLight(context) ? Colors.green[200]! : Colors.green[600]!;
+      }
+
+      return isLight(context) ? Colors.amber[200]! : Colors.amber[600]!;
     }
 
     return InkWell(
@@ -49,8 +56,7 @@ class BookingCell extends StatelessWidget {
       },
       child: Container(
         height: 100.0,
-        padding: const EdgeInsets.only(
-            left: 16.0, top: 8.0, right: 8.0, bottom: 8.0),
+        padding: const EdgeInsets.only(left: 16.0, top: 8.0, right: 8.0, bottom: 8.0),
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
           // borderRadius: BorderRadius.circular(8.0),
@@ -61,7 +67,7 @@ class BookingCell extends StatelessWidget {
               width: 80.0,
               padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: isLight(context) ? Colors.amber[200] : Colors.amber[600],
+                color: mapDateBackgroundColor(),
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Column(
@@ -73,10 +79,7 @@ class BookingCell extends StatelessWidget {
                   ),
                   Text(
                     DateFormat('dd').format(DateTime.parse(booking.bookDate)),
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   Text(
                     DateFormat('EEE').format(DateTime.parse(booking.bookDate)),
@@ -101,10 +104,7 @@ class BookingCell extends StatelessWidget {
                               booking.venue.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  ?.copyWith(fontWeight: FontWeight.w600),
+                              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                             ),
                             Text(
                               booking.venue.address,
@@ -131,12 +131,8 @@ class BookingCell extends StatelessWidget {
                               style: Theme.of(context).textTheme.caption,
                             ),
                             TextSpan(
-                              text: DateFormat('hh:mm a').format(DateTime.parse(
-                                  booking.bookDate + ' ' + booking.fromTime)),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .caption
-                                  ?.copyWith(color: Colors.amber[700]),
+                              text: DateFormat('hh:mm a').format(DateTime.parse(booking.bookDate + ' ' + booking.fromTime)),
+                              style: Theme.of(context).textTheme.caption?.copyWith(color: Colors.amber[700]),
                             ),
                           ],
                         ),
@@ -145,15 +141,8 @@ class BookingCell extends StatelessWidget {
                       RichText(
                         text: TextSpan(
                           children: [
-                            TextSpan(
-                                text: 'Booking ID: ',
-                                style: Theme.of(context).textTheme.caption),
-                            TextSpan(
-                                text: 'KS${booking.id}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .caption
-                                    ?.copyWith(color: Colors.amber[700])),
+                            TextSpan(text: 'Booking ID: ', style: Theme.of(context).textTheme.caption),
+                            TextSpan(text: 'KS${booking.id}', style: Theme.of(context).textTheme.caption?.copyWith(color: Colors.amber[700])),
                           ],
                         ),
                       ),

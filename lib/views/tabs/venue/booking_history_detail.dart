@@ -29,12 +29,10 @@ class BookingHistoryDetailScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _BookingHistoryDetailScreenState createState() =>
-      _BookingHistoryDetailScreenState();
+  _BookingHistoryDetailScreenState createState() => _BookingHistoryDetailScreenState();
 }
 
-class _BookingHistoryDetailScreenState
-    extends State<BookingHistoryDetailScreen> {
+class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen> {
   late Booking _booking;
   late bool isLoading;
   String title = '';
@@ -60,9 +58,8 @@ class _BookingHistoryDetailScreenState
           Expanded(
             child: Text(
               data,
-              style: TextStyle(
-                  color:
-                      isLight(context) ? Colors.grey[600] : Colors.grey[200]),
+              style: TextStyle(color: isLight(context) ? Colors.grey[600] : Colors.grey[200]),
+              strutStyle: StrutStyle(fontSize: 14.0),
             ),
           ),
         ],
@@ -77,12 +74,8 @@ class _BookingHistoryDetailScreenState
         margin: const EdgeInsets.only(top: 16.0),
         child: Column(
           children: [
-            buildTextInfo(
-                data:
-                    'You as the organizer will need to invite to other player to the match.'),
-            buildTextInfo(
-                data:
-                    'Your name and booking details will be shared to the field owners.'),
+            buildTextInfo(data: 'You as the organizer will need to invite to other player to the match.'),
+            buildTextInfo(data: 'Your name and booking details will be shared to the field owners.'),
             buildTextInfo(
                 data:
                     'Cancellation fee: \$0 if cancelled 2 or more days before booking, 50% of your payment if cancelled 1 day before, 100% of your payment if cancelled 12 hours before'),
@@ -95,11 +88,11 @@ class _BookingHistoryDetailScreenState
   Widget buildBookingInfo() {
     var startTime = DateTime.parse(_booking.bookDate + ' ' + _booking.fromTime);
     var endTime = DateTime.parse(_booking.bookDate + ' ' + _booking.toTime);
-    var duration =
-        endTime.difference(startTime).inMinutes.toString() + ' minutes';
+    var duration = endTime.difference(startTime).inMinutes.toString() + ' minutes';
 
     return SliverToBoxAdapter(
       child: Container(
+        padding: const EdgeInsets.only(top: 8.0),
         color: Theme.of(context).primaryColor,
         child: Column(
           children: [
@@ -113,10 +106,8 @@ class _BookingHistoryDetailScreenState
                   color: ColorResources.getSecondaryIconColor(context),
                 ),
                 horizontalTitleGap: 0,
-                title: Text(_booking.venue.name,
-                    style: Theme.of(context).textTheme.bodyText1),
-                subtitle: Text(_booking.venue.address,
-                    style: Theme.of(context).textTheme.headline2),
+                title: Text(_booking.venue.name, style: Theme.of(context).textTheme.bodyText1),
+                subtitle: Text(_booking.venue.address, style: Theme.of(context).textTheme.headline2),
               ),
             ),
             if (_booking.service.serviceData != null)
@@ -127,8 +118,7 @@ class _BookingHistoryDetailScreenState
                   leading: SizedBox(width: 20.0),
                   horizontalTitleGap: 0,
                   title: Text(
-                      _booking.service.name! +
-                          ' (${_booking.service.serviceData!.people! ~/ 2}x${_booking.service.serviceData!.people! ~/ 2})',
+                      _booking.service.name! + ' (${_booking.service.serviceData!.people! ~/ 2}x${_booking.service.serviceData!.people! ~/ 2})',
                       style: Theme.of(context).textTheme.bodyText1),
                 ),
               ),
@@ -142,9 +132,7 @@ class _BookingHistoryDetailScreenState
                   color: ColorResources.getSecondaryIconColor(context),
                 ),
                 horizontalTitleGap: 0,
-                title: Text(
-                    DateFormat('dd/MM/yyyy - hh:mm a').format(DateTime.parse(
-                        _booking.bookDate + ' ' + _booking.fromTime)),
+                title: Text(DateFormat('dd/MM/yyyy - hh:mm a').format(DateTime.parse(_booking.bookDate + ' ' + _booking.fromTime)),
                     style: Theme.of(context).textTheme.bodyText1),
               ),
             ),
@@ -158,8 +146,7 @@ class _BookingHistoryDetailScreenState
                   color: ColorResources.getSecondaryIconColor(context),
                 ),
                 horizontalTitleGap: 0,
-                title: Text(duration,
-                    style: Theme.of(context).textTheme.bodyText1),
+                title: Text(duration, style: Theme.of(context).textTheme.bodyText1),
               ),
             ),
             SizedBox(
@@ -172,8 +159,7 @@ class _BookingHistoryDetailScreenState
                   color: ColorResources.getSecondaryIconColor(context),
                 ),
                 horizontalTitleGap: 0,
-                title: Text(_booking.price.toString(),
-                    style: Theme.of(context).textTheme.bodyText1),
+                title: Text(_booking.price.toString(), style: Theme.of(context).textTheme.bodyText1),
               ),
             ),
             SizedBox(
@@ -186,11 +172,7 @@ class _BookingHistoryDetailScreenState
                   color: ColorResources.getSecondaryIconColor(context),
                 ),
                 horizontalTitleGap: 0,
-                title: Text(mapStatusTitle(),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.copyWith(color: mapStatusColor())),
+                title: Text(mapStatusTitle(), style: Theme.of(context).textTheme.bodyText1?.copyWith(color: mapStatusColor())),
               ),
             ),
             Divider(
@@ -223,14 +205,15 @@ class _BookingHistoryDetailScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0.3,
+        titleTextStyle: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w500, color: ColorResources.getAppbarTitleColor(context)),
+        titleSpacing: 0,
         title: Text('ID - KS$title'),
         actions: [
           !isLoading
               ? isMeetupAvailable()
                   ? CupertinoButton(
-                      child: Icon(FeatherIcons.moreVertical,
-                          color:
-                              isLight(context) ? Colors.grey[600] : whiteColor),
+                      child: Icon(FeatherIcons.moreVertical, color: isLight(context) ? Colors.grey[600] : whiteColor),
                       onPressed: cancelBooking,
                     )
                   : SizedBox()
@@ -322,8 +305,7 @@ class _BookingHistoryDetailScreenState
   }
 
   bool isMeetupAvailable() {
-    var bookDate = DateFormat('yyyy-MM-dd hh:mm:ss')
-        .parse(_booking.bookDate + ' ' + _booking.fromTime);
+    var bookDate = DateFormat('yyyy-MM-dd hh:mm:ss').parse(_booking.bookDate + ' ' + _booking.fromTime);
     if (DateTime.now().isAfter(bookDate)) {
       return false;
     }

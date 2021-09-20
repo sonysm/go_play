@@ -6,6 +6,8 @@ import 'package:kroma_sport/models/booking.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/views/tabs/venue/widget/booking_cell.dart';
+import 'package:kroma_sport/widgets/ks_screen_state.dart';
+import 'package:line_icons/line_icons.dart';
 
 class BookingHistoryScreen extends StatefulWidget {
   static const tag = '/bookingHistoryScreen';
@@ -38,15 +40,18 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                     },
                     itemCount: myBookingList.length,
                   )
-                : Container(
-                    margin: const EdgeInsets.only(top: 100),
-                    child: Center(child: Text('No any booking yet!')),
+                : KSScreenState(
+                    icon: Icon(LineIcons.history, size: 150, color: Colors.blueGrey[700]),
+                    title: 'No Booking yet',
                   ),
           )
         : SliverToBoxAdapter(
             child: Container(
               margin: const EdgeInsets.only(top: 200),
-              child: Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(mainColor),)),
+              child: Center(
+                  child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(mainColor),
+              )),
             ),
           );
   }
@@ -80,8 +85,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     var res = await ksClient.getApi('/booking/my');
     if (res != null) {
       if (res is! HttpResult) {
-        myBookingList =
-            List.from((res as List).map((e) => Booking.fromJson(e)));
+        myBookingList = List.from((res as List).map((e) => Booking.fromJson(e)));
 
         Future.delayed(Duration(milliseconds: 500)).then((_) {
           isLoading = false;

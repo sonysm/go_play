@@ -12,6 +12,7 @@ import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/dimensions.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
@@ -65,6 +66,8 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
   late AnimationController controller;
   Animation<double>? animation;
 
+  bool isShowMore = false;
+
   @override
   Widget build(BuildContext context) {
     Widget buildTotalReaction(int total) {
@@ -74,6 +77,15 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
     Widget buildTotalComment(int total) {
       return total > 0 ? Text(total > 1 ? '$total comments' : '$total comment') : SizedBox();
     }
+
+    Size getTextSize(String text, TextStyle style) {
+      final TextPainter textPainter = TextPainter(text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
+        ..layout(minWidth: 0, maxWidth: double.infinity);
+      return textPainter.size;
+    }
+
+    final textWidth = getTextSize(_post.description ?? '', Theme.of(context).textTheme.bodyText1!).width;
+    // print('w________: $textWidth ${_post.description ?? 'n/a'}');
 
     return FadeTransition(
       opacity: animation!,
@@ -114,8 +126,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                               launchScreen(context, AccountScreen.tag);
                             }
                           },
-                          child: Text(_post.owner.getFullname(),
-                              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600)),
+                          child: Text(_post.owner.getFullname(), style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600)),
                         ),
                         Text(
                           _post.createdAt.toString().timeAgoString,
@@ -141,25 +152,83 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                         vertical: 8.0,
                         horizontal: 16.0,
                       ),
-                      child: SelectableLinkify(
-                        text: _post.description!,
-                        style: Theme.of(context).textTheme.bodyText1,
-                        strutStyle: StrutStyle(fontSize: 16),
-                        onOpen: (link) async {
-                          if (await canLaunch(link.url)) {
-                            // await launch(link.url);
-                            FlutterWebBrowser.openWebPage(url: link.url);
-                          } else {
-                            throw 'Could not launch $link';
-                          }
-                        },
-                        linkifiers: [UrlLinkifier()],
-                        options: LinkifyOptions(looseUrl: true),
-                        linkStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
-                              color: isLight(context) ? Colors.blue : Colors.grey[100],
-                              decoration: TextDecoration.underline,
+                      child: isShowMore
+                          ? SelectableLinkify(
+                              enableInteractiveSelection: false,
+                              text: _post.description!,
+                              style: Theme.of(context).textTheme.bodyText1,
+                              strutStyle: StrutStyle(fontSize: 16),
+                              scrollPhysics: NeverScrollableScrollPhysics(),
+                              onOpen: (link) async {
+                                if (await canLaunch(link.url)) {
+                                  // await launch(link.url);
+                                  FlutterWebBrowser.openWebPage(url: link.url);
+                                } else {
+                                  throw 'Could not launch $link';
+                                }
+                              },
+                              linkifiers: [UrlLinkifier()],
+                              options: LinkifyOptions(looseUrl: true),
+                              linkStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
+                                    color: isLight(context) ? Colors.blue : Colors.grey[100],
+                                    decoration: TextDecoration.underline,
+                                  ),
+                              onTap: () {
+                                if (isShowMore) {
+                                  setState(() => isShowMore = !isShowMore);
+                                }
+                              },
+                            )
+                          : ConstrainedBox(
+                              constraints: BoxConstraints(maxHeight: textWidth / (AppSize(context).appWidth(100) - 32) > 2 ? 95 : 22),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                    child: SelectableLinkify(
+                                      enableInteractiveSelection: false,
+                                      text: _post.description!,
+                                      style: Theme.of(context).textTheme.bodyText1,
+                                      strutStyle: StrutStyle(fontSize: 16),
+                                      scrollPhysics: NeverScrollableScrollPhysics(),
+                                      onOpen: (link) async {
+                                        if (await canLaunch(link.url)) {
+                                          // await launch(link.url);
+                                          FlutterWebBrowser.openWebPage(url: link.url);
+                                        } else {
+                                          throw 'Could not launch $link';
+                                        }
+                                      },
+                                      linkifiers: [UrlLinkifier()],
+                                      options: LinkifyOptions(looseUrl: true),
+                                      linkStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
+                                            color: isLight(context) ? Colors.blue : Colors.grey[100],
+                                            decoration: TextDecoration.underline,
+                                          ),
+                                      // onTap: () {
+                                      //   if (isShowMore) {
+                                      //     setState(() => isShowMore = !isShowMore);
+                                      //   }
+                                      // },
+                                    ),
+                                  ),
+                                  if (textWidth / (AppSize(context).appWidth(100) - 32) > 2)
+                                    TextButton(
+                                      onPressed: () {
+                                        setState(() => isShowMore = true);
+                                      },
+                                      style: ButtonStyle(
+                                          padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                          foregroundColor: MaterialStateProperty.all(Colors.blue),
+                                          minimumSize: MaterialStateProperty.all(Size.zero),
+                                          splashFactory: InkRipple.splashFactory),
+                                      child: Text('See more...',
+                                          style: Theme.of(context).textTheme.bodyText1?.copyWith(color: ColorResources.getSecondaryText(context))),
+                                    )
+                                ],
+                              ),
                             ),
-                      ),
                     )
                   : SizedBox(height: 8.0),
               _post.photo != null && !_post.isExternal

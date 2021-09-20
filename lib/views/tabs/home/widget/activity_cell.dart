@@ -404,7 +404,7 @@ class _ActivityCellState extends State<ActivityCell> {
             );
           },
         ),
-        KSTextButtonBottomSheet(
+        /*KSTextButtonBottomSheet(
           title: 'Block ${post.owner.getFullname()}',
           icon: LineIcons.ban,
           iconSize: 24.0,
@@ -423,7 +423,7 @@ class _ActivityCellState extends State<ActivityCell> {
               },
             );
           },
-        ),
+        ),*/
       ],
       if (!isMe(post.owner.id))
         KSTextButtonBottomSheet(

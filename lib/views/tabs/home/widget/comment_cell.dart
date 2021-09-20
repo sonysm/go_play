@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kroma_sport/models/comment.dart';
+import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
@@ -71,7 +72,7 @@ class CommentCell extends StatelessWidget {
                     children: [
                       Text(
                         comment.createdAt.toString().timeAgoString,
-                        style: TextStyle(color: Colors.grey, fontSize: 12.0),
+                        style: TextStyle(color: ColorResources.getSecondaryText(context), fontSize: 12.0),
                       ),
                     ],
                   ),
