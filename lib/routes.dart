@@ -212,3 +212,31 @@ class KSPageRoute<T> extends MaterialPageRoute<T> {
     );
   }
 }
+
+class KSSlidePageRoute<T> extends MaterialPageRoute<T> {
+  KSSlidePageRoute({required WidgetBuilder builder, RouteSettings? settings})
+      : super(builder: builder, settings: settings);
+
+  // @override
+  // Duration get transitionDuration => const Duration(milliseconds: 350);
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    return SlideTransition(
+      position: animation.drive(
+        Tween<Offset>(
+          begin: Offset(1.0, 0.0),
+          end: Offset.zero,
+        ),
+      ),
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: Offset.zero,
+          end: Offset(-1.0, 0.0),
+        ).animate(secondaryAnimation),
+        child: child,
+      ),
+    );
+  }
+}

@@ -18,6 +18,7 @@ import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/connection_service.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/auth/get_started_screen.dart';
 import 'package:kroma_sport/views/tabs/account/edit_profile_screen.dart';
 import 'package:kroma_sport/views/tabs/account/follow_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
@@ -625,6 +626,42 @@ class _AccountScreen2State extends State<AccountScreen2> with TickerProviderStat
             ),
             title: Text(
               'My Booking',
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 18),
+            ),
+            horizontalTitleGap: 0,
+          ),
+          ListTile(
+            onTap: () {
+              dismissScreen(context);
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) {
+                    return GetStartedScreen();
+                  },
+                  transitionsBuilder: (context, animation1, animation2, child) {
+                    return FadeTransition(
+                      opacity: animation1,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: Offset.zero,
+                          end: Offset(-1.0, 0.0),
+                        ).animate(animation2),
+                        child: child,
+                      ),
+                    );
+                  },
+                  transitionDuration: Duration(milliseconds: 350),
+                ),
+              );
+            },
+            leading: Icon(
+              LineIcons.inbox,
+              color: ColorResources.getSecondaryIconColor(context),
+              // size: 20.0,
+            ),
+            title: Text(
+              'Get started',
               style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 18),
             ),
             horizontalTitleGap: 0,
