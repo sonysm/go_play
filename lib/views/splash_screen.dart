@@ -6,6 +6,7 @@ import 'package:kroma_sport/bloc/splash.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
+import 'package:kroma_sport/views/auth/get_started_screen.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:package_info/package_info.dart';
@@ -19,7 +20,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   Widget splashText() {
-    return SizedBox(height: 42.0, child: Image.asset(imgVplayText));
+    return SizedBox(height: 42.0, child: Image.asset(imgVplayText, color: mainColor,));
   }
 
   @override
@@ -37,17 +38,17 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Scaffold(
           backgroundColor: whiteColor,
           body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  mainColor,
-                  Color(0xFF3cba92),
-                  Color(0xFF1ba39c),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
+            // decoration: BoxDecoration(
+            //   gradient: LinearGradient(
+            //     colors: [
+            //       mainColor,
+            //       Color(0xFF3cba92),
+            //       Color(0xFF1ba39c),
+            //     ],
+            //     begin: Alignment.topCenter,
+            //     end: Alignment.bottomCenter,
+            //   ),
+            // ),
             child: Stack(
               children: [
                 Center(child: splashText()),
@@ -66,7 +67,25 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   navigateToLoginScreen() {
-    return Timer(Duration(milliseconds: 1500), () => Navigator.pushReplacementNamed(context, LoginScreen.tag));
+    // return Timer(Duration(milliseconds: 500), () => Navigator.pushReplacementNamed(context, GetStartedScreen.tag));
+    return Timer(Duration(milliseconds: 1000), () => Navigator.pushReplacement(context, PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) {
+                    return GetStartedScreen();
+                  },
+                  transitionsBuilder: (context, animation1, animation2, child) {
+                    return FadeTransition(
+                      opacity: animation1,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: Offset.zero,
+                          end: Offset(-1.0, 0.0),
+                        ).animate(animation2),
+                        child: child,
+                      ),
+                    );
+                  },
+                  transitionDuration: Duration(milliseconds: 350),
+                )));
   }
 
   Future<void> _initPackageInfo() async {

@@ -8,6 +8,7 @@ import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/auth/walkthrough_screen.dart';
 
 class GetStartedScreen extends StatelessWidget {
+  static const tag = '/getStarted';
   const GetStartedScreen({Key? key}) : super(key: key);
 
   Widget headerText() {
@@ -45,9 +46,19 @@ class GetStartedScreen extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            loginBackground,
-            fit: BoxFit.cover,
+          // Image.asset(
+          //   loginBackground,
+          //   fit: BoxFit.cover,
+          // ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.black,
+              image: new DecorationImage(
+                fit: BoxFit.cover,
+                colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.8), BlendMode.dstATop),
+                image: AssetImage(loginBackground),
+              ),
+            ),
           ),
           // Positioned(
           //   top: -210.0,
@@ -131,7 +142,7 @@ class GetStartedScreen extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.push(context, KSSlidePageRoute(builder: (_) => LoginScreen()));
+                      Navigator.push(context, KSSlidePageRoute(builder: (_) => LoginScreen(isLogin: true)));
                     },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0)),

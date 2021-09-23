@@ -13,6 +13,7 @@ import 'package:kroma_sport/routes.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/connection_service.dart';
 import 'package:kroma_sport/utils/constant.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/views/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -47,6 +48,7 @@ void main() async {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    precacheImage(AssetImage(loginBackground), context);
     return MultiBlocProvider(
       providers: [
         BlocProvider<ThemeCubit>(create: (BuildContext context) => ThemeCubit()..init()),

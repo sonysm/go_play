@@ -3,6 +3,7 @@ import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/models/venue.dart';
+import 'package:kroma_sport/views/auth/get_started_screen.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/auth/register_screen.dart';
 import 'package:kroma_sport/views/auth/verify_code_screen.dart';
@@ -161,6 +162,8 @@ class RouteGenerator {
 
       case SearchScreen.tag:
         return MaterialPageRoute(builder: (_) => SearchScreen());
+      case GetStartedScreen.tag:
+        return MaterialPageRoute(builder: (_) => GetStartedScreen());
 
       default:
         return _errorRoute();
