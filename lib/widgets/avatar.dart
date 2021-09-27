@@ -6,7 +6,7 @@ import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
-import 'package:kroma_sport/views/tabs/account/account_screen_new.dart';
+import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 
 class Avatar extends StatefulWidget {
@@ -73,7 +73,7 @@ class _AvatarState extends State<Avatar> {
                   }
                 }
               } else {
-                launchScreen(context, AccountScreen2.tag);
+                launchScreen(context, AccountScreen.tag);
               }
             }
           : null,

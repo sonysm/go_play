@@ -116,7 +116,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                       .map(
                         (venueService) => InkWell(
                           onTap: () => showSportTypeTitle(venueService.sport.name),
-                          child: SizedBox(width: 32.0, height: 32.0, child: CacheImage(url: venueService.sport.icon!)),
+                          child: SizedBox(width: 32.0, height: 32.0, child: CacheImage(url: venueService.sport.icon ?? '')),
                         ),
                       )
                       .toList(),
@@ -312,7 +312,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
                     ),
                     child: Row(
                       children: [
-                        SizedBox(width: 16.0, height: 16.0, child: CacheImage(url: sportTypeSelected!.icon!)),
+                        SizedBox(width: 16.0, height: 16.0, child: CacheImage(url: sportTypeSelected!.icon ?? '')),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Text(
@@ -453,7 +453,7 @@ class _VenueDetailScreenState extends State<VenueDetailScreen> {
               SizedBox(
                 width: 24.0,
                 height: 24.0,
-                child: CacheImage(url: s.icon!),
+                child: CacheImage(url: s.icon ?? ''),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),

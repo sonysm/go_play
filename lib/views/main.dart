@@ -16,7 +16,7 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/option_screen.dart';
-import 'package:kroma_sport/views/tabs/account/account_screen_new.dart';
+import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
@@ -32,7 +32,7 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  List<Widget> _screens = [HomeScreen(key: homeStateKey,), MeetupScreen(), NotificationScreen(), AccountScreen2()];
+  List<Widget> _screens = [HomeScreen(key: homeStateKey,), MeetupScreen(), NotificationScreen(), AccountScreen()];
 
   List<IconData> _icons = [
     FeatherIcons.home,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -13,6 +15,7 @@ import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
+import 'package:kroma_sport/views/tabs/venue/booking_payment_screen.dart';
 import 'package:kroma_sport/widgets/ks_complete_dialog.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
@@ -79,12 +82,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                 8.width,
                 Text(
                   'Select Date',
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w600,
-                      color: isLight(context)
-                          ? Colors.grey[600]
-                          : Colors.grey[100]),
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: isLight(context) ? Colors.grey[600] : Colors.grey[100]),
                 ),
               ],
             ),
@@ -94,15 +92,12 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
               initialSelectedDate: DateTime.now(),
               selectionColor: mainColor,
               selectedTextColor: Colors.white,
-              monthTextStyle:
-                  Theme.of(context).textTheme.caption!.copyWith(fontSize: 11.0),
-              dayTextStyle:
-                  Theme.of(context).textTheme.caption!.copyWith(fontSize: 11.0),
+              monthTextStyle: Theme.of(context).textTheme.caption!.copyWith(fontSize: 11.0),
+              dayTextStyle: Theme.of(context).textTheme.caption!.copyWith(fontSize: 11.0),
               dateTextStyle: Theme.of(context).textTheme.headline5!,
               height: 90,
               daysCount: 14,
-              activeDates: List.generate(
-                  14, (index) => DateTime.now().add(Duration(days: index))),
+              activeDates: List.generate(14, (index) => DateTime.now().add(Duration(days: index))),
               onDateChange: (date) {
                 if (date != selectedDate) {
                   onSelectDate(date);
@@ -120,12 +115,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                 8.width,
                 Text(
                   'Select Start Time',
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w600,
-                      color: isLight(context)
-                          ? Colors.grey[600]
-                          : Colors.grey[100]),
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: isLight(context) ? Colors.grey[600] : Colors.grey[100]),
                 ),
               ],
             ),
@@ -136,9 +126,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                 onPressed: isLoaded ? selectAvailableTime : null,
                 style: ButtonStyle(
                   elevation: MaterialStateProperty.all(0),
-                  backgroundColor: MaterialStateProperty.all(isLight(context)
-                      ? Colors.grey[100]
-                      : Colors.blueGrey[300]),
+                  backgroundColor: MaterialStateProperty.all(isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     side: BorderSide(color: Colors.grey[200]!),
@@ -153,14 +141,10 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                     children: [
                       Text(
                         timeAvailableString ?? 'Select Start Time',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            ?.copyWith(fontWeight: FontWeight.w600),
+                        style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       Spacer(),
-                      Icon(FeatherIcons.chevronDown,
-                          color: isLight(context) ? blackColor : whiteColor),
+                      Icon(FeatherIcons.chevronDown, color: isLight(context) ? blackColor : whiteColor),
                     ],
                   ),
                 ),
@@ -173,9 +157,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                 onPressed: timeAvailableString != null ? selectDuration : null,
                 style: ButtonStyle(
                   elevation: MaterialStateProperty.all(0),
-                  backgroundColor: MaterialStateProperty.all(isLight(context)
-                      ? Colors.grey[100]
-                      : Colors.blueGrey[300]),
+                  backgroundColor: MaterialStateProperty.all(isLight(context) ? Colors.grey[100] : Colors.blueGrey[300]),
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4.0),
                     side: BorderSide(color: Colors.grey[200]!),
@@ -189,17 +171,11 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
                   child: Row(
                     children: [
                       Text(
-                        duration != null
-                            ? '$duration minutes'
-                            : 'Select Duration',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            ?.copyWith(fontWeight: FontWeight.w600),
+                        duration != null ? '$duration minutes' : 'Select Duration',
+                        style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       Spacer(),
-                      Icon(FeatherIcons.chevronDown,
-                          color: isLight(context) ? blackColor : whiteColor),
+                      Icon(FeatherIcons.chevronDown, color: isLight(context) ? blackColor : whiteColor),
                     ],
                   ),
                 ),
@@ -221,20 +197,14 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
             width: 130.0,
             child: Text(
               label + ':',
-              style: TextStyle(
-                  fontSize: 16.0,
-                  color:
-                      isLight(context) ? Colors.grey[700] : Colors.grey[100]),
+              style: TextStyle(fontSize: 16.0, color: isLight(context) ? Colors.grey[700] : Colors.grey[100]),
             ),
           ),
           Expanded(
             child: Text(
               data ?? '------',
               textAlign: TextAlign.right,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1
-                  ?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -262,30 +232,18 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
               margin: const EdgeInsets.only(top: 8.0),
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color:
-                    isLight(context) ? Colors.grey[200] : Colors.blueGrey[300],
+                color: isLight(context) ? Colors.grey[200] : Colors.blueGrey[300],
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Column(
                 children: [
-                  buildTextDetail(
-                      label: 'Organizer', data: KS.shared.user.getFullname()),
+                  buildTextDetail(label: 'Organizer', data: KS.shared.user.getFullname()),
                   buildTextDetail(label: 'Phone', data: KS.shared.user.phone),
-                  buildTextDetail(
-                      label: 'Place',
-                      data: '${widget.venue.name}, $picthTitle'),
+                  buildTextDetail(label: 'Place', data: '${widget.venue.name}, $picthTitle'),
                   buildTextDetail(label: 'Date & Time', data: dateTimeString),
+                  buildTextDetail(label: 'Duration', data: duration != null ? duration.toString() + 'mn' : null),
                   buildTextDetail(
-                      label: 'Duration',
-                      data:
-                          duration != null ? duration.toString() + 'mn' : null),
-                  buildTextDetail(
-                      label: 'Total',
-                      data: duration != null
-                          ? '\$' +
-                              ((duration! * _venueService.hourPrice!) / 60)
-                                  .toStringAsFixed(2)
-                          : null),
+                      label: 'Total', data: duration != null ? '\$' + ((duration! * _venueService.hourPrice!) / 60).toStringAsFixed(2) : null),
                 ],
               ),
             )
@@ -314,9 +272,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
           Expanded(
             child: Text(
               data,
-              style: TextStyle(
-                  color:
-                      isLight(context) ? Colors.grey[600] : Colors.grey[200]),
+              style: TextStyle(color: isLight(context) ? Colors.grey[600] : Colors.grey[200]),
             ),
           ),
         ],
@@ -331,12 +287,8 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
         margin: const EdgeInsets.only(bottom: 84.0),
         child: Column(
           children: [
-            buildTextInfo(
-                data:
-                    'You as the organizer will need to invite to other player to the match.'),
-            buildTextInfo(
-                data:
-                    'Your name and booking details will be shared to the field owners.'),
+            buildTextInfo(data: 'You as the organizer will need to invite to other player to the match.'),
+            buildTextInfo(data: 'Your name and booking details will be shared to the field owners.'),
             buildTextInfo(
                 data:
                     'Cancellation fee: \$0 if cancelled 2 or more days before booking, 50% of your payment if cancelled 1 day before, 100% of your payment if cancelled 12 hours before'),
@@ -381,25 +333,16 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
               ),
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: Opacity(
-                opacity:
-                    duration != null && timeAvailableString != null ? 1 : 0.5,
+                opacity: duration != null && timeAvailableString != null ? 1 : 0.5,
                 child: ElevatedButton(
-                  onPressed: duration != null && timeAvailableString != null
-                      ? bookPitch
-                      : null,
+                  onPressed: duration != null && timeAvailableString != null ? bookPitch : null,
                   style: ButtonStyle(
                       elevation: MaterialStateProperty.all(0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       backgroundColor: MaterialStateProperty.all(mainColor),
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0)))),
+                      shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)))),
                   child: Text(
-                    'Book' +
-                        (duration != null
-                            ? ' - \$' +
-                                ((duration! * _venueService.hourPrice!) / 60)
-                                    .toStringAsFixed(2)
-                            : ''),
+                    'Book' + (duration != null ? ' - \$' + ((duration! * _venueService.hourPrice!) / 60).toStringAsFixed(2) : ''),
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Colors.white,
@@ -419,8 +362,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
   void initState() {
     super.initState();
     _venueService = widget.venueService;
-    picthTitle = _venueService.name! +
-        ' (${_venueService.serviceData!.people! ~/ 2}x${_venueService.serviceData!.people! ~/ 2})';
+    picthTitle = _venueService.name! + ' (${_venueService.serviceData!.people! ~/ 2}x${_venueService.serviceData!.people! ~/ 2})';
 
     getUnavailableTime();
   }
@@ -452,10 +394,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
         return KSTextButtonBottomSheet(
           title: '${durationList[index]} minutes',
           height: 40,
-          titleTextStyle: Theme.of(context)
-              .textTheme
-              .bodyText1
-              ?.copyWith(fontWeight: FontWeight.w600),
+          titleTextStyle: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
           onTab: () {
             duration = durationList[index];
             dismissScreen(context);
@@ -478,10 +417,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
               return KSTextButtonBottomSheet(
                 title: DateFormat('hh:mm a').format(time),
                 height: 40,
-                titleTextStyle: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                titleTextStyle: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
                 onTab: () {
                   selectedStartTime = time;
                   timeAvailableString = DateFormat('hh:mm a').format(time);
@@ -492,8 +428,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
 
                   for (var i = index; i < availableTimeList.length; i++) {
                     if (i + 1 < availableTimeList.length) {
-                      if (availableTimeList[i].add(Duration(hours: 1)) ==
-                          availableTimeList[i + 1]) {
+                      if (availableTimeList[i].add(Duration(hours: 1)) == availableTimeList[i + 1]) {
                         durationList.add(dur);
                         dur += 60;
                       } else {
@@ -511,8 +446,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
             })
           : [
               Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                   child: Text(
                     'No available time.',
                     style: Theme.of(context).textTheme.bodyText1,
@@ -520,14 +454,27 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
             ],
     ).then((value) {
       if (timeAvailableString != null) {
-        dateTimeString =
-            format.format(selectedDate) + ' - $timeAvailableString';
+        dateTimeString = format.format(selectedDate) + ' - $timeAvailableString';
       }
       setState(() {});
     });
   }
 
   void bookPitch() async {
+    Map<String, String> fields = {
+      'book_date': DateFormat('yyyy-MM-dd').format(selectedDate),
+      'from_time': DateFormat('HH:mm:ss').format(selectedStartTime!),
+      'to_time': DateFormat('HH:mm:ss').format(selectedStartTime!.add(Duration(minutes: duration!))),
+      'price': ((duration! * _venueService.hourPrice!) / 60).toString(),
+      'venue_id': _venueService.id.toString()
+    };
+
+    // var str = jsonEncode(fields);
+    // print('json decode: $str');
+
+    launchScreen(context, BookingPaymentScreen.tag, arguments: fields);
+    return;
+
     showKSConfirmDialog(
       context,
       message: 'You are about to book a pitch.\n\nPlease confirm!',
@@ -538,21 +485,18 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
         Map<String, dynamic> fields = {
           'book_date': DateFormat('yyyy-MM-dd').format(selectedDate),
           'from_time': DateFormat('HH:mm:ss').format(selectedStartTime!),
-          'to_time': DateFormat('HH:mm:ss')
-              .format(selectedStartTime!.add(Duration(minutes: duration!))),
+          'to_time': DateFormat('HH:mm:ss').format(selectedStartTime!.add(Duration(minutes: duration!))),
           'price': (duration! * _venueService.hourPrice!) / 60
         };
 
-        var res = await ksClient.postApi('/booking/service/${_venueService.id}',
-            body: fields);
+        var res = await ksClient.postApi('/booking/service/${_venueService.id}', body: fields);
         if (res != null) {
           if (res is! HttpResult) {
             dismissScreen(context);
             showKSComplete(context, message: 'Book successfully!');
             await Future.delayed(Duration(milliseconds: 1200));
             dismissScreen(context);
-            Navigator.pushNamedAndRemoveUntil(context, BookingHistoryScreen.tag,
-                ModalRoute.withName(MainView.tag));
+            Navigator.pushNamedAndRemoveUntil(context, BookingHistoryScreen.tag, ModalRoute.withName(MainView.tag));
           } else {
             dismissScreen(context);
             showKSMessageDialog(
@@ -580,17 +524,13 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
     var queryDate = DateFormat('yyyy-MM-dd').format(selectedDate);
     List<DateTime> unAvailableTimeList = [];
 
-    var res = await ksClient.getApi(
-        '/venue/service/unavailable/time/${_venueService.id}',
-        queryParameters: {'date': queryDate});
+    var res = await ksClient.getApi('/venue/service/unavailable/time/${_venueService.id}', queryParameters: {'date': queryDate});
     if (res != null) {
       if (res is! HttpResult) {
         for (var e in (res as List)) {
           List<DateTime> tempDate = [];
-          var fromTime = DateFormat('yyyy-MM-dd HH:mm:ss')
-              .parse('${e['date']} ${e['from_time']}');
-          var toTime = DateFormat('yyyy-MM-dd HH:mm:ss')
-              .parse('${e['date']} ${e['to_time']}');
+          var fromTime = DateFormat('yyyy-MM-dd HH:mm:ss').parse('${e['date']} ${e['from_time']}');
+          var toTime = DateFormat('yyyy-MM-dd HH:mm:ss').parse('${e['date']} ${e['to_time']}');
           var amt = toTime.difference(fromTime).inHours;
           for (var i = 0; i < amt; i++) {
             var date = fromTime.add(Duration(hours: i));
@@ -603,13 +543,11 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
     }
   }
 
-  void generateAvailableTime(List<DateTime> unAvailableTimes,
-      {bool showLoading = false}) {
+  void generateAvailableTime(List<DateTime> unAvailableTimes, {bool showLoading = false}) {
     if (widget.venue.schedule!.isNotEmpty) {
       var day = DateFormat('EEE').format(selectedDate);
 
-      var available = widget.venue.schedule!
-          .firstWhereOrNull((element) => element.day == day && element.isOpen);
+      var available = widget.venue.schedule!.firstWhereOrNull((element) => element.day == day && element.isOpen);
       if (available != null) {
         var oTime = DateFormat("yyyy-MM-dd hh:mm:ss").parse(
             '${DateTime.now().year}-${DateTime.now().month}-${selectedDate.day} ${widget.venue.schedule!.firstWhere((e) => e.day == day).openTime}');
@@ -625,12 +563,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
 
         DateTime tempDate = DateTime(2021, 1, 1);
         availableTimeList = List.from(availableTimeList.where((x) {
-          return x.hour !=
-                  unAvailableTimes
-                      .firstWhere((e) => e.hour == x.hour,
-                          orElse: () => tempDate)
-                      .hour &&
-              x.isAfter(DateTime.now());
+          return x.hour != unAvailableTimes.firstWhere((e) => e.hour == x.hour, orElse: () => tempDate).hour && x.isAfter(DateTime.now());
         }));
       }
     }
