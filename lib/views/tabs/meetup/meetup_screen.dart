@@ -84,7 +84,7 @@ class _ActivityScreenState extends State<MeetupScreen> {
               )
             : SliverFillRemaining(
                 child: KSScreenState(
-                  icon: Icon(FeatherIcons.activity, size: 150, color: Colors.blueGrey[700]),
+                  icon: Icon(FeatherIcons.activity, size: 150, color: isLight(context) ? Colors.blueGrey[700] : Colors.blueGrey[100]),
                   title: 'No Meetup Found',
                   subTitle: 'It seems there no meetup around you. You should try again later.',
                 ),

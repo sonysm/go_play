@@ -10,7 +10,7 @@ import 'package:kroma_sport/repositories/user_repository.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/app_size.dart';
 import 'package:kroma_sport/utils/tools.dart';
-import 'package:kroma_sport/views/auth/login_screen.dart';
+import 'package:kroma_sport/views/auth/get_started_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/about_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/block_account_screen.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
@@ -93,7 +93,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         userRepository.deleteHeaderToken();
                         Future.delayed(Duration(seconds: 1)).then(
                           (value) {
-                            Navigator.pushNamedAndRemoveUntil(context, LoginScreen.tag, (route) => false);
+                            Navigator.pushNamedAndRemoveUntil(context, GetStartedScreen.tag, (route) => false);
                           },
                         );
                       }

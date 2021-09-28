@@ -268,7 +268,7 @@ class VenueCardWidget extends StatelessWidget {
                       height: 150,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: NetworkImage(venue.profilePhoto!),
+                          image: NetworkImage(venue.profilePhoto ?? ''),
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),

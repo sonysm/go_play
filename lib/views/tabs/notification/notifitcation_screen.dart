@@ -5,6 +5,7 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/notification.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/notification/widget/notification_cell.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
@@ -52,7 +53,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               )
             : SliverFillRemaining(
                 child: KSScreenState(
-                  icon: SvgPicture.asset('assets/icons/ic_bell.svg', height: 150, color: Colors.blueGrey[700]),
+                  icon: SvgPicture.asset('assets/icons/ic_bell.svg', height: 150, color: isLight(context) ? Colors.blueGrey[700] : Colors.blueGrey[100]),
                   title: 'No Notification',
                   subTitle: 'We\'ll notify you when someting arrives.',
                 ),

@@ -16,7 +16,9 @@ import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/widgets/ks_complete_dialog.dart';
 import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
+import 'package:kroma_sport/widgets/ks_loading.dart';
 import 'package:kroma_sport/widgets/ks_message_dialog.dart';
+import 'package:line_icons/line_icons.dart';
 
 class BookingPaymentScreen extends StatefulWidget {
   static const tag = '/bookingPayment';
@@ -34,9 +36,11 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
 
   File? recieptImage;
 
-  int? selectedPayment;
+  Payment? selectedPayment;
 
   late Map<String, String> _bookingData;
+
+  TextEditingController _trxTextController = TextEditingController();
 
   Widget paymentsWidget() {
     return SliverPadding(
@@ -48,14 +52,15 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
             return Card(
               elevation: 0.3,
               clipBehavior: Clip.antiAlias,
-              child: RadioListTile<int>(
-                value: paymt.id,
+              color: ColorResources.getPrimary(context),
+              child: RadioListTile<Payment>(
+                value: paymt,
                 title: Text(
                   paymt.name,
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
-                onChanged: (int? value) {
-                  if (value == 1) {
+                onChanged: (Payment? value) {
+                  if (value!.slug == 'cash') {
                     recieptImage = null;
                   }
                   setState(() => selectedPayment = value);
@@ -74,7 +79,7 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
 
   Widget transactionImageWidget() {
     return SliverToBoxAdapter(
-      child: (selectedPayment != null && selectedPayment != 1)
+      child: (selectedPayment != null && selectedPayment!.slug != 'cash')
           ? Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -82,6 +87,38 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
                 children: [
                   Text('Please attach your payment transaction image'),
                   _buildUploadImageButton(),
+                ],
+              ),
+            )
+          : SizedBox(),
+    );
+  }
+
+  Widget transactionNumberWidget() {
+    return SliverToBoxAdapter(
+      child: (selectedPayment != null && selectedPayment!.slug != 'cash')
+          ? Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Please confirm your transaction ID'),
+                  Card(
+                    elevation: 0.3,
+                    clipBehavior: Clip.antiAlias,
+                    margin: const EdgeInsets.only(top: 8.0),
+                    color: ColorResources.getPrimary(context),
+                    child: TextField(
+                      controller: _trxTextController,
+                      style: Theme.of(context).textTheme.bodyText1,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                        border: InputBorder.none,
+                        hintText: 'Transaction ID',
+                        prefixIcon: Icon(LineIcons.receipt, color: ColorResources.getSecondaryIconColor(context))
+                      ),
+                    ),
+                  )
                 ],
               ),
             )
@@ -199,7 +236,8 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
       body: CustomScrollView(
         slivers: [
           paymentsWidget(),
-          transactionImageWidget(),
+          // transactionImageWidget(),
+          transactionNumberWidget(),
           confirmButton(),
         ],
       ),
@@ -236,17 +274,17 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
         buttonTitle: 'OK',
       );
     } else {
-      if (selectedPayment == 1) {
+      if (selectedPayment!.slug == 'cash') {
         showKSConfirmDialog(
           context,
           message: 'You are about to book a pitch.\n\nPlease confirm!',
           onYesPressed: placeBooking,
         );
       } else {
-        if (recieptImage == null) {
+        if (_trxTextController.text.trim().length < 4) {
           showKSMessageDialog(
             context,
-            message: 'Please attach payment transaction image',
+            message: 'Please input transaction number properly!',
             buttonTitle: 'OK',
           );
         } else {
@@ -267,19 +305,25 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
     //   'to_time': DateFormat('HH:mm:ss').format(selectedStartTime!.add(Duration(minutes: duration!))),
     //   'price': (duration! * _venueService.hourPrice!) / 60
     // };
-    var image;
-    _bookingData['payment_method'] = selectedPayment.toString();
+    
+    _bookingData['payment_method'] = selectedPayment!.id.toString();
 
-    if (recieptImage != null) {
-      List<int> imageData = recieptImage!.readAsBytesSync();
-      image = MultipartFile.fromBytes(
-        'photo',
-        imageData,
-        filename: 'PAYMT' + DateTime.now().millisecondsSinceEpoch.toString() + '.jpg',
-      );
-    }
+    if (_trxTextController.text.isNotEmpty) {
+      _bookingData['tranx'] =_trxTextController.text;
+    } 
 
-    var res = await _ksHttpClient.postFile('/booking/service/${_bookingData['venue_id']}', image, fields: _bookingData);
+    // var image;
+    // if (recieptImage != null) {
+    //   List<int> imageData = recieptImage!.readAsBytesSync();
+    //   image = MultipartFile.fromBytes(
+    //     'photo',
+    //     imageData,
+    //     filename: 'PAYMT' + DateTime.now().millisecondsSinceEpoch.toString() + '.jpg',
+    //   );
+    // }
+    showKSLoading(context);
+
+    var res = await _ksHttpClient.postApi('/booking/service/${_bookingData['venue_id']}', body: _bookingData);
     if (res != null) {
       if (res is! HttpResult) {
         dismissScreen(context);

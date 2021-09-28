@@ -32,7 +32,13 @@ class BookingCell extends StatelessWidget {
 
     Color mapStatusColor() {
       if (isMeetupAvailable()) {
-        return mainColor;
+        if (booking.status == 'book') {
+          return mainColor;
+        } else if (booking.status == 'pending') {
+          return Colors.amber[700]!;
+        } else if (booking.status == 'vcancel') {
+          return Colors.red[400]!;
+        }
       }
 
       return ColorResources.getPrimaryText(context);

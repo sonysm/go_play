@@ -95,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 isValid = value;
               },
               initialValue: number,
+              countries: ["KH"],
             ),
           ),
         ),

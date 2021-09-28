@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -152,8 +153,8 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                         vertical: 8.0,
                         horizontal: 16.0,
                       ),
-                      child: isShowMore
-                          ? SelectableLinkify(
+                      child: 
+                           SelectableLinkify(
                               enableInteractiveSelection: false,
                               text: _post.description!,
                               style: Theme.of(context).textTheme.bodyText1,
@@ -178,57 +179,59 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                                   setState(() => isShowMore = !isShowMore);
                                 }
                               },
+                              minLines: 1,
+                              maxLines: 4,
                             )
-                          : ConstrainedBox(
-                              constraints: BoxConstraints(maxHeight: textWidth / (AppSize(context).appWidth(100) - 32) > 2 ? 95 : 22),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Flexible(
-                                    child: SelectableLinkify(
-                                      enableInteractiveSelection: false,
-                                      text: _post.description!,
-                                      style: Theme.of(context).textTheme.bodyText1,
-                                      strutStyle: StrutStyle(fontSize: 16),
-                                      scrollPhysics: NeverScrollableScrollPhysics(),
-                                      onOpen: (link) async {
-                                        if (await canLaunch(link.url)) {
-                                          // await launch(link.url);
-                                          FlutterWebBrowser.openWebPage(url: link.url);
-                                        } else {
-                                          throw 'Could not launch $link';
-                                        }
-                                      },
-                                      linkifiers: [UrlLinkifier()],
-                                      options: LinkifyOptions(looseUrl: true),
-                                      linkStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
-                                            color: isLight(context) ? Colors.blue : Colors.grey[100],
-                                            decoration: TextDecoration.underline,
-                                          ),
-                                      // onTap: () {
-                                      //   if (isShowMore) {
-                                      //     setState(() => isShowMore = !isShowMore);
-                                      //   }
-                                      // },
-                                    ),
-                                  ),
-                                  if (textWidth / (AppSize(context).appWidth(100) - 32) > 2)
-                                    TextButton(
-                                      onPressed: () {
-                                        setState(() => isShowMore = true);
-                                      },
-                                      style: ButtonStyle(
-                                          padding: MaterialStateProperty.all(EdgeInsets.zero),
-                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                          foregroundColor: MaterialStateProperty.all(Colors.blue),
-                                          minimumSize: MaterialStateProperty.all(Size.zero),
-                                          splashFactory: InkRipple.splashFactory),
-                                      child: Text('See more...',
-                                          style: Theme.of(context).textTheme.bodyText1?.copyWith(color: ColorResources.getSecondaryText(context))),
-                                    )
-                                ],
-                              ),
-                            ),
+                          // : ConstrainedBox(
+                          //     constraints: BoxConstraints(maxHeight: textWidth / (AppSize(context).appWidth(100) - 32) > 2 ? 100 : 24),
+                          //     child: Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         Flexible(
+                          //           child: SelectableLinkify(
+                          //             enableInteractiveSelection: false,
+                          //             text: _post.description!,
+                          //             style: Theme.of(context).textTheme.bodyText1,
+                          //             strutStyle: StrutStyle(fontSize: 16),
+                          //             scrollPhysics: NeverScrollableScrollPhysics(),
+                          //             onOpen: (link) async {
+                          //               if (await canLaunch(link.url)) {
+                          //                 // await launch(link.url);
+                          //                 FlutterWebBrowser.openWebPage(url: link.url);
+                          //               } else {
+                          //                 throw 'Could not launch $link';
+                          //               }
+                          //             },
+                          //             linkifiers: [UrlLinkifier()],
+                          //             options: LinkifyOptions(looseUrl: true),
+                          //             linkStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
+                          //                   color: isLight(context) ? Colors.blue : Colors.grey[100],
+                          //                   decoration: TextDecoration.underline,
+                          //                 ),
+                          //             // onTap: () {
+                          //             //   if (isShowMore) {
+                          //             //     setState(() => isShowMore = !isShowMore);
+                          //             //   }
+                          //             // },
+                          //           ),
+                          //         ),
+                          //         if (textWidth / (AppSize(context).appWidth(100) - 32) > 2)
+                          //           TextButton(
+                          //             onPressed: () {
+                          //               setState(() => isShowMore = true);
+                          //             },
+                          //             style: ButtonStyle(
+                          //                 padding: MaterialStateProperty.all(EdgeInsets.zero),
+                          //                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          //                 foregroundColor: MaterialStateProperty.all(Colors.blue),
+                          //                 minimumSize: MaterialStateProperty.all(Size.zero),
+                          //                 splashFactory: InkRipple.splashFactory),
+                          //             child: Text('See more...',
+                          //                 style: Theme.of(context).textTheme.bodyText1?.copyWith(color: ColorResources.getSecondaryText(context))),
+                          //           )
+                          //       ],
+                          //     ),
+                          //   ),
                     )
                   : SizedBox(height: 8.0),
               _post.photo != null && !_post.isExternal
