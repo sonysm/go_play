@@ -7,9 +7,10 @@ import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_detail.dart';
 
 class BookingCell extends StatelessWidget {
-  const BookingCell({Key? key, required this.booking}) : super(key: key);
+  const BookingCell({Key? key, required this.booking, required this.onTap}) : super(key: key);
 
   final Booking booking;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -23,43 +24,60 @@ class BookingCell extends StatelessWidget {
     }
 
     String mapStatusTitle() {
-      if (isMeetupAvailable()) {
-        return booking.status.capitalize;
+      switch (booking.status) {
+        case 'book':
+          if (!isMeetupAvailable()) return 'Finished';
+          return 'Booked';
+        case 'pending':
+          if (!isMeetupAvailable()) return 'Expired';
+          return 'Pending';
+        case 'vcancel':
+          return 'Rejected';
+        case 'ucancel':
+          return 'Cancel';
+        case 'done':
+          return 'Finished';
+        default:
+          return '';
       }
-
-      return 'Finished';
     }
 
     Color mapStatusColor() {
-      if (isMeetupAvailable()) {
-        if (booking.status == 'book') {
+      switch (booking.status) {
+        case 'book':
           return mainColor;
-        } else if (booking.status == 'pending') {
+        case 'pending':
           return Colors.amber[700]!;
-        } else if (booking.status == 'vcancel') {
+        case 'vcancel':
           return Colors.red[400]!;
-        }
+        case 'ucancel':
+          return Colors.red[400]!;
+        case 'done':
+          return ColorResources.getPrimaryText(context);
+        default:
+          return ColorResources.getPrimaryText(context);
       }
-
-      return ColorResources.getPrimaryText(context);
     }
 
     Color mapDateBackgroundColor() {
-      if (isMeetupAvailable()) {
-        return isLight(context) ? Colors.green[200]! : Colors.green[600]!;
+      switch (booking.status) {
+        case 'book':
+          return isLight(context) ? Colors.green[200]! : Colors.green[600]!;
+        case 'pending':
+          return Colors.amber[200]!;
+        case 'vcancel':
+          return Colors.red[200]!;
+        case 'ucancel':
+          return Colors.red[200]!;
+        case 'done':
+          return isLight(context) ? Colors.green[200]! : Colors.green[600]!;
+        default:
+          return isLight(context) ? Colors.green[200]! : Colors.green[600]!;
       }
-
-      return isLight(context) ? Colors.amber[200]! : Colors.amber[600]!;
     }
 
     return InkWell(
-      onTap: () {
-        launchScreen(
-          context,
-          BookingHistoryDetailScreen.tag,
-          arguments: {'booking': booking},
-        );
-      },
+      onTap: onTap,
       child: Container(
         height: 100.0,
         padding: const EdgeInsets.only(left: 16.0, top: 8.0, right: 8.0, bottom: 8.0),
@@ -115,6 +133,8 @@ class BookingCell extends StatelessWidget {
                             Text(
                               booking.venue.address,
                               style: Theme.of(context).textTheme.bodyText2,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
@@ -138,7 +158,7 @@ class BookingCell extends StatelessWidget {
                             ),
                             TextSpan(
                               text: DateFormat('hh:mm a').format(DateTime.parse(booking.bookDate + ' ' + booking.fromTime)),
-                              style: Theme.of(context).textTheme.caption?.copyWith(color: Colors.amber[700]),
+                              style: Theme.of(context).textTheme.caption,
                             ),
                           ],
                         ),

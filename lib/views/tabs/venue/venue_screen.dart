@@ -8,9 +8,11 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/venue.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/venue_map_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/widget/venue_cell.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class VenueScreen extends StatefulWidget {
@@ -100,7 +102,11 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
         actions: [
           CupertinoButton(
             padding: EdgeInsets.zero,
-            // alignment: Alignment.centerRight,
+            child: Icon(LineIcons.history, size: 26.0, color: Colors.black),
+            onPressed: () => launchScreen(context, BookingHistoryScreen.tag),
+          ),
+          CupertinoButton(
+            padding: EdgeInsets.zero,
             child: Icon(
               FeatherIcons.map,
               color: ColorResources.getSecondaryIconColor(context),
@@ -110,7 +116,6 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
           ),
           CupertinoButton(
             padding: EdgeInsets.zero,
-            // alignment: Alignment.centerRight,
             child: Icon(
               (_crossAxisCount != null && _crossAxisCount == 2) ? FeatherIcons.list : FeatherIcons.grid,
               color: ColorResources.getSecondaryIconColor(context),

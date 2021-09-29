@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,13 +32,12 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
   KSHttpClient _ksHttpClient = KSHttpClient();
   List<Payment> paymentList = [];
 
-  File? recieptImage;
-
   Payment? selectedPayment;
 
   late Map<String, String> _bookingData;
 
   TextEditingController _trxTextController = TextEditingController();
+  FocusNode _trxFocusNode = FocusNode();
 
   Widget paymentsWidget() {
     return SliverPadding(
@@ -61,8 +58,9 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
                 ),
                 onChanged: (Payment? value) {
                   if (value!.slug == 'cash') {
-                    recieptImage = null;
+                    _trxFocusNode.unfocus();
                   }
+                   _trxFocusNode.requestFocus();
                   setState(() => selectedPayment = value);
                 },
                 groupValue: selectedPayment,
@@ -74,23 +72,6 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
           childCount: paymentList.length,
         ),
       ),
-    );
-  }
-
-  Widget transactionImageWidget() {
-    return SliverToBoxAdapter(
-      child: (selectedPayment != null && selectedPayment!.slug != 'cash')
-          ? Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Please attach your payment transaction image'),
-                  _buildUploadImageButton(),
-                ],
-              ),
-            )
-          : SizedBox(),
     );
   }
 
@@ -109,13 +90,14 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
                     margin: const EdgeInsets.only(top: 8.0),
                     color: ColorResources.getPrimary(context),
                     child: TextField(
+                      focusNode: _trxFocusNode,
                       controller: _trxTextController,
                       style: Theme.of(context).textTheme.bodyText1,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                         border: InputBorder.none,
                         hintText: 'Transaction ID',
-                        prefixIcon: Icon(LineIcons.receipt, color: ColorResources.getSecondaryIconColor(context))
+                        prefixIcon: Icon(LineIcons.receipt, color: ColorResources.getSecondaryIconColor(context)),
                       ),
                     ),
                   )
@@ -123,87 +105,6 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
               ),
             )
           : SizedBox(),
-    );
-  }
-
-  Widget _buildUploadImageButton() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12.0),
-      width: AppSize(context).appWidth(50),
-      height: AppSize(context).appWidth(50),
-      child: DottedBorder(
-          color: Colors.grey,
-          strokeWidth: 1.0,
-          dashPattern: [12, 8],
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              recieptImage != null
-                  ? Image.file(recieptImage!)
-                  : TextButton(
-                      onPressed: () {
-                        selectImage(
-                          context,
-                          (image) {
-                            recieptImage = image;
-                            setState(() {});
-                          },
-                          isRectangle: true,
-                          isCropped: false,
-                        );
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Icon(
-                            Feather.camera,
-                            color: mainColor,
-                            size: 32.0,
-                          ),
-                          SizedBox(height: 16.0),
-                          Text(
-                            'Upload payment transaction',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: mainColor,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: "OpenSans",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-              recieptImage != null
-                  ? Positioned(
-                      top: 8.0,
-                      right: 8.0,
-                      child: Container(
-                        padding: const EdgeInsets.all(4.0),
-                        decoration: BoxDecoration(
-                          color: blackColor.withOpacity(0.5),
-                          shape: BoxShape.circle,
-                        ),
-                        child: CupertinoButton(
-                          borderRadius: BorderRadius.zero,
-                          padding: EdgeInsets.zero,
-                          minSize: 22.0,
-                          child: Icon(
-                            Feather.x,
-                            size: 22.0,
-                            color: whiteColor,
-                          ),
-                          onPressed: () {
-                            recieptImage = null;
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                    )
-                  : SizedBox(),
-            ],
-          )),
     );
   }
 
@@ -257,6 +158,12 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
     super.setState(fn);
   }
 
+  @override
+  void dispose() {
+    _trxFocusNode.unfocus();
+    super.dispose();
+  }
+
   void getPaymentMethodList() async {
     await _ksHttpClient.getApi('/booking/payment/method').then((res) {
       if (res != null && res is! HttpResult) {
@@ -288,6 +195,7 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
             buttonTitle: 'OK',
           );
         } else {
+          _trxFocusNode.unfocus();
           showKSConfirmDialog(
             context,
             message: 'You are about to book a pitch.\n\nPlease confirm!',
@@ -299,28 +207,12 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
   }
 
   void placeBooking() async {
-    // Map<String, dynamic> fields = {
-    //   'book_date': DateFormat('yyyy-MM-dd').format(selectedDate),
-    //   'from_time': DateFormat('HH:mm:ss').format(selectedStartTime!),
-    //   'to_time': DateFormat('HH:mm:ss').format(selectedStartTime!.add(Duration(minutes: duration!))),
-    //   'price': (duration! * _venueService.hourPrice!) / 60
-    // };
-    
     _bookingData['payment_method'] = selectedPayment!.id.toString();
 
     if (_trxTextController.text.isNotEmpty) {
-      _bookingData['tranx'] =_trxTextController.text;
-    } 
+      _bookingData['tranx'] = _trxTextController.text;
+    }
 
-    // var image;
-    // if (recieptImage != null) {
-    //   List<int> imageData = recieptImage!.readAsBytesSync();
-    //   image = MultipartFile.fromBytes(
-    //     'photo',
-    //     imageData,
-    //     filename: 'PAYMT' + DateTime.now().millisecondsSinceEpoch.toString() + '.jpg',
-    //   );
-    // }
     showKSLoading(context);
 
     var res = await _ksHttpClient.postApi('/booking/service/${_bookingData['venue_id']}', body: _bookingData);
@@ -328,7 +220,7 @@ class _BookingPaymentScreenState extends State<BookingPaymentScreen> {
       if (res is! HttpResult) {
         dismissScreen(context);
         showKSComplete(context, message: 'Book successfully!');
-        await Future.delayed(Duration(milliseconds: 1200));
+        await Future.delayed(Duration(milliseconds: 700));
         dismissScreen(context);
         Navigator.pushNamedAndRemoveUntil(context, BookingHistoryScreen.tag, ModalRoute.withName(MainView.tag));
       } else {

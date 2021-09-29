@@ -37,6 +37,8 @@ class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen>
   late bool isLoading;
   String title = '';
 
+  late int _bookingID;
+
   KSHttpClient ksClient = KSHttpClient();
 
   Widget buildTextInfo({required String data}) {
@@ -97,7 +99,6 @@ class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen>
         child: Column(
           children: [
             SizedBox(
-              height: 54.0,
               child: ListTile(
                 dense: true,
                 leading: Icon(
@@ -111,11 +112,11 @@ class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen>
               ),
             ),
             if (_booking.service.serviceData != null)
-              SizedBox(
+              Container(
                 height: 48.0,
                 child: ListTile(
-                  dense: true,
-                  leading: SizedBox(width: 20.0),
+                  // dense: true,
+                  leading: SizedBox(width: 20.0, height: 20.0,),
                   horizontalTitleGap: 0,
                   title: Text(
                       _booking.service.name! + ' (${_booking.service.serviceData!.people! ~/ 2}x${_booking.service.serviceData!.people! ~/ 2})',
@@ -185,28 +186,65 @@ class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen>
     );
   }
 
+  // String mapStatusTitle() {
+  //   if (isMeetupAvailable()) {
+  //     return _booking.status.capitalize;
+  //   }
+
+  //   return 'Finished';
+  // }
+
+  // Color mapStatusColor() {
+  //   if (isMeetupAvailable()) {
+  //     return mainColor;
+  //   }
+
+  //   return blackColor;
+  // }
+
   String mapStatusTitle() {
-    if (isMeetupAvailable()) {
-      return _booking.status.capitalize;
+      switch (_booking.status) {
+        case 'book':
+        if (!isMeetupAvailable()) return 'Finished';
+          return 'Booked';
+        case 'pending':
+        if (!isMeetupAvailable()) return 'Expired';
+          return 'Pending';
+        case 'vcancel':
+          return 'Rejected';
+        case 'ucancel':
+          return 'Cancel';
+        case 'done':
+          return 'Finished';
+        default:
+          return '';
+      }
     }
 
-    return 'Finished';
-  }
-
-  Color mapStatusColor() {
-    if (isMeetupAvailable()) {
-      return mainColor;
+    Color mapStatusColor() {
+      switch (_booking.status) {
+        case 'book':
+          return mainColor;
+        case 'pending':
+          return Colors.amber[700]!;
+        case 'vcancel':
+          return Colors.red[400]!;
+        case 'ucancel':
+          return Colors.red[400]!;
+        case 'done':
+          return ColorResources.getPrimaryText(context);
+        default:
+          return ColorResources.getPrimaryText(context);
+      }
     }
-
-    return blackColor;
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.3,
-        titleTextStyle: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w500, color: ColorResources.getAppbarTitleColor(context)),
+        titleTextStyle:
+            Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w500, color: ColorResources.getAppbarTitleColor(context)),
         titleSpacing: 0,
         title: Text('ID - KS$title'),
         actions: [
@@ -230,7 +268,9 @@ class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen>
                 buildBookingInfo(),
                 buildInfo(),
               ],
-              onRefresh: () async {},
+              onRefresh: () async {
+                getBookingDetail();
+              },
             )
           : Center(
               child: CircularProgressIndicator(),
@@ -245,15 +285,17 @@ class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen>
       isLoading = false;
       _booking = widget.booking!;
       title = widget.booking!.id.toString();
+      _bookingID = widget.booking!.id;
     } else {
       title = widget.bookingId.toString();
+      _bookingID = widget.bookingId!;
       isLoading = true;
       getBookingDetail();
     }
   }
 
   void getBookingDetail() async {
-    var res = await ksClient.getApi('/booking/detail/${widget.bookingId}');
+    var res = await ksClient.getApi('/booking/detail/$_bookingID');
     if (res != null) {
       if (res is! HttpResult) {
         _booking = Booking.fromJson(res);
@@ -296,8 +338,15 @@ class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen>
           title: 'Tell the reason why you want to cancel booking:',
           onSubmit: () async {
             showKSLoading(context);
-            dismissScreen(context);
-            dismissScreen(context);
+            // dismissScreen(context);
+            // dismissScreen(context);
+
+            await ksClient.postApi('/booking/cancel/$_bookingID').then((value) {
+              dismissScreen(context);
+              if (value != null && value is! HttpResult) {
+                dismissScreen(context, true);
+              }
+            });
           },
         );
       },
@@ -307,6 +356,10 @@ class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen>
   bool isMeetupAvailable() {
     var bookDate = DateFormat('yyyy-MM-dd hh:mm:ss').parse(_booking.bookDate + ' ' + _booking.fromTime);
     if (DateTime.now().isAfter(bookDate)) {
+      return false;
+    } else if (_booking.status == 'ucancel') {
+      return false;
+    } else if (_booking.status == 'vcancel') {
       return false;
     }
 

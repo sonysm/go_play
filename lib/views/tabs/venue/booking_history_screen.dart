@@ -5,6 +5,8 @@ import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/booking.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/venue/booking_history_detail.dart';
 import 'package:kroma_sport/views/tabs/venue/widget/booking_cell.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 import 'package:line_icons/line_icons.dart';
@@ -33,7 +35,19 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       final booking = myBookingList[index];
-                      return BookingCell(booking: booking);
+                      return BookingCell(
+                          booking: booking,
+                          onTap: () async {
+                            var value = await launchScreen(
+                              context,
+                              BookingHistoryDetailScreen.tag,
+                              arguments: {'booking': booking},
+                            );
+
+                            if (value != null && value) {
+                              getMyBooking();
+                            }
+                          });
                     },
                     separatorBuilder: (context, index) {
                       return 8.height;
@@ -70,7 +84,9 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
         slivers: [
           buildBookingList(),
         ],
-        onRefresh: () async {},
+        onRefresh: () async {
+          getMyBooking();
+        },
       ),
     );
   }
