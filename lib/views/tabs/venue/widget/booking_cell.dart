@@ -4,7 +4,6 @@ import 'package:kroma_sport/models/booking.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
-import 'package:kroma_sport/views/tabs/venue/booking_history_detail.dart';
 
 class BookingCell extends StatelessWidget {
   const BookingCell({Key? key, required this.booking, required this.onTap}) : super(key: key);

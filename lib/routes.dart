@@ -9,7 +9,6 @@ import 'package:kroma_sport/views/auth/register_screen.dart';
 import 'package:kroma_sport/views/auth/verify_code_screen.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
-import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/edit_profile_screen.dart';
 import 'package:kroma_sport/views/tabs/account/follow_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/about_screen.dart';

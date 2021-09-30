@@ -1,14 +1,9 @@
-import 'package:dotted_border/dotted_border.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/payment.dart';
 import 'package:kroma_sport/themes/colors.dart';
-import 'package:kroma_sport/utils/app_size.dart';
-import 'package:kroma_sport/utils/image_helper.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';

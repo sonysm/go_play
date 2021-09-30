@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -13,13 +11,8 @@ import 'package:kroma_sport/models/venue_detail.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
-import 'package:kroma_sport/views/main.dart';
-import 'package:kroma_sport/views/tabs/venue/booking_history_screen.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_payment_screen.dart';
-import 'package:kroma_sport/widgets/ks_complete_dialog.dart';
-import 'package:kroma_sport/widgets/ks_confirm_dialog.dart';
 import 'package:kroma_sport/widgets/ks_loading.dart';
-import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:kroma_sport/widgets/ks_text_button.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 import 'package:collection/collection.dart';
@@ -469,51 +462,7 @@ class _PitchBookingScreenState extends State<PitchBookingScreen> {
       'venue_id': _venueService.id.toString()
     };
 
-    // var str = jsonEncode(fields);
-    // print('json decode: $str');
-
     launchScreen(context, BookingPaymentScreen.tag, arguments: fields);
-    return;
-
-    showKSConfirmDialog(
-      context,
-      message: 'You are about to book a pitch.\n\nPlease confirm!',
-      onYesPressed: () async {
-        showKSLoading(context);
-        // await Future.delayed(Duration(milliseconds: 700));
-
-        Map<String, dynamic> fields = {
-          'book_date': DateFormat('yyyy-MM-dd').format(selectedDate),
-          'from_time': DateFormat('HH:mm:ss').format(selectedStartTime!),
-          'to_time': DateFormat('HH:mm:ss').format(selectedStartTime!.add(Duration(minutes: duration!))),
-          'price': (duration! * _venueService.hourPrice!) / 60
-        };
-
-        var res = await ksClient.postApi('/booking/service/${_venueService.id}', body: fields);
-        if (res != null) {
-          if (res is! HttpResult) {
-            dismissScreen(context);
-            showKSComplete(context, message: 'Book successfully!');
-            await Future.delayed(Duration(milliseconds: 1200));
-            dismissScreen(context);
-            Navigator.pushNamedAndRemoveUntil(context, BookingHistoryScreen.tag, ModalRoute.withName(MainView.tag));
-          } else {
-            dismissScreen(context);
-            showKSMessageDialog(
-              context,
-              message: 'Booking failed. Please try again!',
-            );
-          }
-        }
-
-        // dismissScreen(context);
-        // showKSComplete(context, message: 'Book successfully!');
-        // await Future.delayed(Duration(milliseconds: 1200));
-        // dismissScreen(context);
-        // Navigator.pushNamedAndRemoveUntil(
-        //     context, BookingHistoryScreen.tag, ModalRoute.withName(MainView.tag));
-      },
-    );
   }
 
   void getUnavailableTime({bool showLoading = false}) async {

@@ -7,7 +7,6 @@ import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/views/auth/get_started_screen.dart';
-import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/views/main.dart';
 import 'package:package_info/package_info.dart';
 

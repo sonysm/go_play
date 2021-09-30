@@ -3,7 +3,6 @@ import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/repositories/user_repository.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/views/auth/get_started_screen.dart';
-import 'package:kroma_sport/views/auth/login_screen.dart';
 import 'package:kroma_sport/widgets/ks_message_dialog.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
 
