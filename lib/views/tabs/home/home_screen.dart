@@ -213,7 +213,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     final urlMatches = urlRegExp.allMatches(post.description!);
 
                     List<String> urls = urlMatches.map((urlMatch) => post.description!.substring(urlMatch.start, urlMatch.end)).toList();
-                    // urls.forEach((x) => print(x));
                     if (urls.isNotEmpty) {
                       _urlInfo = urls.elementAt(0);
 
@@ -403,13 +402,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void onHomeIconTap() {
     if (_homeScrollController.offset > 500) {
       Future.delayed(Duration.zero).then((value) {
-      _homeScrollController.animateTo(
-        _homeScrollController.position.minScrollExtent,
-        duration: Duration(milliseconds: 1000),
-        curve: Curves.easeInOut,
-      );
-      _easyRefreshController.callRefresh();
-    });
+        _homeScrollController.animateTo(
+          _homeScrollController.position.minScrollExtent,
+          duration: Duration(milliseconds: 1000),
+          curve: Curves.easeInOut,
+        );
+        _easyRefreshController.callRefresh();
+      });
     }
   }
 }

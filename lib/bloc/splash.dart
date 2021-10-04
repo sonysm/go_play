@@ -29,8 +29,6 @@ class SplashCubit extends Cubit<SplashState> {
           userRepository.persistUserPrefs(jsonEncode(data));
           emit(SplashState.Exist);
         } else {
-          // emit(SplashState.New);
-
           var localUser = await userRepository.fetchUserPrefs();
           KS.shared.user = localUser;
           emit(SplashState.Exist);

@@ -6,7 +6,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
@@ -20,7 +19,6 @@ import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
-import 'package:kroma_sport/views/tabs/meetup/organize_list_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
@@ -32,7 +30,12 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  List<Widget> _screens = [HomeScreen(key: homeStateKey,), MeetupScreen(), NotificationScreen(), AccountScreen()];
+  List<Widget> _screens = [
+    HomeScreen(key: homeStateKey),
+    MeetupScreen(),
+    NotificationScreen(),
+    AccountScreen(),
+  ];
 
   List<IconData> _icons = [
     FeatherIcons.home,
@@ -46,7 +49,10 @@ class _MainViewState extends State<MainView> {
 
   KSHttpClient ksClient = KSHttpClient();
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  late StreamSubscription _intentDataStreamSubscription;
+  List<SharedMediaFile>? _sharedFiles;
+  String? _sharedText;
+  dynamic _sharedInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +103,6 @@ class _MainViewState extends State<MainView> {
                       _screenIndex = index - 1;
                     });
                   } else {
-                    // createActivityScreen();
                     showKSMainOption(context);
                   }
                 },
@@ -113,7 +118,6 @@ class _MainViewState extends State<MainView> {
   void initState() {
     super.initState();
     setupFirebaseMessage();
-    // setupLocalNotification();
     fetchLocation();
     initShareIntent();
     BlocProvider.of<HomeCubit>(context).onLoad();
@@ -139,10 +143,6 @@ class _MainViewState extends State<MainView> {
         } catch (e) {}
       } else {}
     }
-  }
-
-  void createActivityScreen() {
-    launchScreen(context, OrganizeListScreen.tag);
   }
 
   setupFirebaseMessage() {
@@ -186,11 +186,6 @@ class _MainViewState extends State<MainView> {
       print('Failed to get platform version');
     }
   }
-
-  late StreamSubscription _intentDataStreamSubscription;
-  List<SharedMediaFile>? _sharedFiles;
-  String? _sharedText;
-  dynamic _sharedInfo;
 
   void initShareIntent() {
     // For sharing or opening urls/text coming from outside the app while the app is in the memory
@@ -267,69 +262,38 @@ class _CustomTabBar extends StatelessWidget {
                     ),
                     onPressed: () => onTap(key),
                     child: Tab(
-                        icon: key != 2
-                            ? Icon(value,
-                                color: key == selectedIndex
-                                    ? ColorResources.getPrimaryIconColor(context)
-                                    : ColorResources.getPrimaryIconColorDark(context))
-                            :
-                            // Container(
-                            //     height: 40,
-                            //     width: 40,
-                            //     child: Material(
-                            //       shape: CircleBorder(
-                            //           side: BorderSide(
-                            //               width: 0, color: Colors.transparent)),
-                            //       clipBehavior: Clip.hardEdge,
-                            //       color:
-                            //           ColorResources.getPrimaryIconColor(context),
-                            //       child: Icon(
-                            //         value,
-                            //         color: Colors.white,
-                            //       ),
-                            //     ),
-                            //   ),
-
-                            Container(
-                                width: 48.0,
-                                height: 48.0,
-                                decoration: BoxDecoration(
-                                  border: Border.all(width: 3.0, color: whiteColor),
-                                  shape: BoxShape.circle,
-                                  // color: Colors.green,
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xFF11998e),
-                                      Color(0xFF38ef7d),
-                                    ],
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      blurRadius: 4.0,
-                                      color: Colors.black12,
-                                      spreadRadius: 2.0,
-                                    )
+                      icon: key != 2
+                          ? Icon(value,
+                              color: key == selectedIndex
+                                  ? ColorResources.getPrimaryIconColor(context)
+                                  : ColorResources.getPrimaryIconColorDark(context))
+                          : Container(
+                              width: 48.0,
+                              height: 48.0,
+                              decoration: BoxDecoration(
+                                border: Border.all(width: 3.0, color: whiteColor),
+                                shape: BoxShape.circle,
+                                // color: Colors.green,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFF11998e),
+                                    Color(0xFF38ef7d),
                                   ],
                                 ),
-                                child: Icon(
-                                  value,
-                                  color: Colors.white,
-                                )
-                                // ElevatedButton(
-                                //   onPressed: onPressed,
-                                //   style: ButtonStyle(
-                                //     padding: MaterialStateProperty.all(EdgeInsetsDirectional.all(10.0)),
-                                //     backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                                //     shape: MaterialStateProperty.all(CircleBorder()),
-                                //     elevation: MaterialStateProperty.all(0),
-                                //     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                //   ),
-                                //   child: Icon(
-                                //     value,
-                                //     color: Colors.white,
-                                //   ),
-                                // ),
-                                )),
+                                boxShadow: [
+                                  BoxShadow(
+                                    blurRadius: 4.0,
+                                    color: Colors.black12,
+                                    spreadRadius: 2.0,
+                                  )
+                                ],
+                              ),
+                              child: Icon(
+                                value,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
                   ),
                 ),
               ),
