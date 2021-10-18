@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/sport.dart';
+import 'package:kroma_sport/models/team.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/models/venue.dart';
 import 'package:kroma_sport/views/auth/get_started_screen.dart';
@@ -17,6 +18,12 @@ import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/create_team_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/delete_team_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/join_team_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/team_get_started_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/team_list_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/team_setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/home/activity_preview_screen.dart';
 import 'package:kroma_sport/views/tabs/home/choose_location_screen.dart';
@@ -163,6 +170,18 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => GetStartedScreen());
       case BookingPaymentScreen.tag:
         return KSPageRoute(builder: (_) => BookingPaymentScreen(bookingData: args as Map<String, String>));
+      case TeamListScreen.tag:
+        return KSPageRoute(builder: (_) => TeamListScreen(), settings: RouteSettings(name: TeamListScreen.tag, arguments: Map()));
+      case TeamGetStartedScreen.tag:
+        return MaterialPageRoute(builder: (_) => TeamGetStartedScreen());
+      case JoinTeamScreen.tag:
+        return MaterialPageRoute(builder: (_) => JoinTeamScreen());
+      case CreateTeamScreen.tag:
+        return MaterialPageRoute(builder: (_) => CreateTeamScreen());
+      case DeleteTeamScreen.tag:
+        return MaterialPageRoute(builder: (_) => DeleteTeamScreen());
+      case TeamSettingScreen.tag:
+        return MaterialPageRoute(builder: (_) => TeamSettingScreen(team: args as Team));
 
       default:
         return _errorRoute();
@@ -216,15 +235,13 @@ class KSPageRoute<T> extends MaterialPageRoute<T> {
 }
 
 class KSSlidePageRoute<T> extends MaterialPageRoute<T> {
-  KSSlidePageRoute({required WidgetBuilder builder, RouteSettings? settings})
-      : super(builder: builder, settings: settings);
+  KSSlidePageRoute({required WidgetBuilder builder, RouteSettings? settings}) : super(builder: builder, settings: settings);
 
   // @override
   // Duration get transitionDuration => const Duration(milliseconds: 350);
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     return SlideTransition(
       position: animation.drive(
         Tween<Offset>(

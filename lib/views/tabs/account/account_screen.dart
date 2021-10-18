@@ -23,6 +23,7 @@ import 'package:kroma_sport/views/tabs/account/follow_screen.dart';
 import 'package:kroma_sport/views/tabs/account/setting/setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/team_list_screen.dart';
 import 'package:kroma_sport/views/tabs/account/widget/sport_card.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/activity_cell.dart';
@@ -625,6 +626,21 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
             ),
             title: Text(
               'My Booking',
+              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 18),
+            ),
+            horizontalTitleGap: 0,
+          ),
+          ListTile(
+            onTap: () {
+              dismissScreen(context);
+              launchScreen(context, TeamListScreen.tag);
+            },
+            leading: Icon(
+              LineIcons.alternateShield,
+              color: ColorResources.getSecondaryIconColor(context),
+            ),
+            title: Text(
+              'My Teams',
               style: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 18),
             ),
             horizontalTitleGap: 0,

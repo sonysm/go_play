@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:kroma_sport/routes.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/auth/login_screen.dart';
 
@@ -53,7 +54,7 @@ class _WalkThroughScreenState extends State<WalkThroughScreen> {
               right: 0,
               bottom: 0,
               child: Image.asset(
-                'assets/images/img_ks_watermark.png',
+                imgWaterMark,
                 repeat: ImageRepeat.repeat,
                 color: isLight(context) ? Colors.black.withOpacity(0.04) : Colors.white.withOpacity(0.04),
               ),

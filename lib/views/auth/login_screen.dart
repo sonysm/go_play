@@ -71,8 +71,12 @@ class _LoginScreenState extends State<LoginScreen> {
               selectorTextStyle: Theme.of(context).textTheme.bodyText2?.copyWith(color: ColorResources.getPrimaryText(context), fontSize: 18.0),
               inputDecoration: InputDecoration(
                   hintText: 'Phone number',
-                  hintStyle: Theme.of(context).textTheme.bodyText1?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.blueGrey[300]!, fontSize: 18),
-                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: isLight(context) ? Colors.blueGrey : Colors.blueGrey[300]!, width: 1.5)),
+                  hintStyle: Theme.of(context)
+                      .textTheme
+                      .bodyText1
+                      ?.copyWith(color: isLight(context) ? Colors.blueGrey : Colors.blueGrey[300]!, fontSize: 18),
+                  enabledBorder:
+                      UnderlineInputBorder(borderSide: BorderSide(color: isLight(context) ? Colors.blueGrey : Colors.blueGrey[300]!, width: 1.5)),
                   focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: ColorResources.getPrimaryText(context), width: 2.0))),
               searchBoxDecoration: InputDecoration(
                 labelStyle: Theme.of(context).textTheme.bodyText2,
@@ -225,9 +229,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 right: 0,
                 bottom: 0,
                 child: Image.asset(
-                  'assets/images/img_ks_watermark.png',
+                  imgWaterMark,
                   repeat: ImageRepeat.repeat,
-                  color: isLight(context) ? Colors.black.withOpacity(0.03) : Colors.white.withOpacity(0.03)
+                  color: isLight(context) ? Colors.black.withOpacity(0.03) : Colors.white.withOpacity(0.03),
                 ),
               ),
               Column(

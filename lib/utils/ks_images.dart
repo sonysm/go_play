@@ -2,6 +2,7 @@
 const loginBackground = 'assets/images/football_pitch.jpeg';
 
 const imgFootballField = 'assets/images/football_field.png';
+const imgWaterMark = 'assets/images/img_ks_watermark.png';
 
 /* Empty state */
 const imgEmptyActivity = 'assets/images/empty_activity.png';
