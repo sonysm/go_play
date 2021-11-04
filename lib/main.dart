@@ -83,7 +83,7 @@ class App extends StatelessWidget {
               caption: aeonikRegularBlack.copyWith(fontSize: 12.0),
             ),
             appBarTheme: AppBarTheme(
-              elevation: 1,
+              elevation: 0.3,
               color: primaryColor,
               centerTitle: false,
               titleTextStyle: aeonikMainColor20,
@@ -133,7 +133,7 @@ class App extends StatelessWidget {
               caption: aeonikRegularWhite.copyWith(fontSize: 12.0),
             ),
             appBarTheme: AppBarTheme(
-              elevation: 1,
+              elevation: 0.3,
               centerTitle: false,
               color: primaryDarkColor,
               titleTextStyle: aeonikWhite20,

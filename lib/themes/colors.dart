@@ -79,4 +79,8 @@ class ColorResources {
   static Color getAppbarTitleColor(BuildContext context) {
     return isLight(context) ? mainColor : Colors.white;
   }
+
+  static Color getSecondaryButtonBorderColor(BuildContext context) {
+    return isLight(context) ? Colors.grey[600]! : Colors.white;
+  }
 }

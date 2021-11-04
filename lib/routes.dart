@@ -21,8 +21,11 @@ import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart
 import 'package:kroma_sport/views/tabs/account/team/create_team_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/delete_team_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/join_team_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/player_list_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/player_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/team_get_started_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/team_list_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/team_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/team_setting_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/home/activity_preview_screen.dart';
@@ -182,6 +185,12 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => DeleteTeamScreen());
       case TeamSettingScreen.tag:
         return MaterialPageRoute(builder: (_) => TeamSettingScreen(team: args as Team));
+      case TeamScreen.tag:
+        return MaterialPageRoute(builder: (_) => TeamScreen(team: args as Team));
+      case PlayerScreen.tag:
+        return MaterialPageRoute(builder: (_) => PlayerScreen(player: args as User));
+      case PlayerListScreen.tag:
+        return MaterialPageRoute(builder: (_) => PlayerListScreen(team: args as Team));
 
       default:
         return _errorRoute();

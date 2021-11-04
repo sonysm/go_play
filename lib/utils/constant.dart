@@ -43,14 +43,14 @@ const aeonikRegularWhite = TextStyle(
 
 const aeonikWhite20 = TextStyle(
   fontFamily: 'Aeonik',
-  fontWeight: FontWeight.w700,
+  fontWeight: FontWeight.w500,
   color: Colors.white,
   fontSize: 20,
 );
 
 const aeonikMainColor20 = TextStyle(
   fontFamily: 'Aeonik',
-  fontWeight: FontWeight.w700,
+  fontWeight: FontWeight.w500,
   color: mainColor,
   fontSize: 20,
 );

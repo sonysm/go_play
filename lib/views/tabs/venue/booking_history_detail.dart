@@ -108,7 +108,7 @@ class _BookingHistoryDetailScreenState extends State<BookingHistoryDetailScreen>
                 ),
                 horizontalTitleGap: 0,
                 title: Text(_booking.venue.name, style: Theme.of(context).textTheme.bodyText1),
-                subtitle: Text(_booking.venue.address, style: Theme.of(context).textTheme.headline2),
+                subtitle: Text(_booking.venue.address, style: Theme.of(context).textTheme.bodyText1),
               ),
             ),
             if (_booking.service.serviceData != null)

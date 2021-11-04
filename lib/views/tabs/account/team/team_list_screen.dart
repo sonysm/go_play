@@ -1,13 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/team.dart';
+import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/dimensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/team/delete_team_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/team_cell.dart';
 import 'package:kroma_sport/views/tabs/account/team/team_get_started_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/team_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/team_setting_screen.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 import 'package:kroma_sport/widgets/ks_widgets.dart';
@@ -26,6 +29,8 @@ class _TeamListScreenState extends State<TeamListScreen> {
 
   KSHttpClient _ksHttpClient = KSHttpClient();
 
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +41,7 @@ class _TeamListScreenState extends State<TeamListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0.3,
+        titleSpacing: 0,
         title: Text('List of teams'),
       ),
       floatingActionButton: FloatingActionButton(
@@ -49,43 +54,53 @@ class _TeamListScreenState extends State<TeamListScreen> {
         },
         child: Icon(LineIcons.plus),
       ),
-      body: teamList.length > 0
-          ? SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      Dimensions.PADDING_SIZE_DEFAULT,
-                      16.0,
-                      Dimensions.PADDING_SIZE_DEFAULT,
-                      0,
-                    ),
-                    child: Text(
-                      'My teams',
-                      style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w600),
-                    ),
+      body: !isLoading
+          ? teamList.length > 0
+              ? SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          Dimensions.PADDING_SIZE_DEFAULT,
+                          16.0,
+                          Dimensions.PADDING_SIZE_DEFAULT,
+                          24,
+                        ),
+                        child: Text(
+                          'My teams',
+                          style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(
+                            Dimensions.PADDING_SIZE_DEFAULT, Dimensions.PADDING_SIZE_SMALL, Dimensions.PADDING_SIZE_DEFAULT, 16.0),
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          final team = teamList.elementAt(index);
+                          return TeamCell(
+                            team: team,
+                            onCellTap: () => launchScreen(context, TeamScreen.tag, arguments: team),
+                            onMoreTap: () => showMoreOption(team),
+                          );
+                        },
+                        itemCount: teamList.length,
+                      )
+                    ],
                   ),
-                  ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(
-                        Dimensions.PADDING_SIZE_DEFAULT, Dimensions.PADDING_SIZE_SMALL, Dimensions.PADDING_SIZE_DEFAULT, 16.0),
-                    shrinkWrap: true,
-                    physics: ClampingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final team = teamList.elementAt(index);
-                      return TeamCell(team: team, onMoreTap: () => showMoreOption(team));
-                    },
-                    itemCount: teamList.length,
-                  )
-                ],
-              ),
-            )
-          : Container(
-              height: double.infinity,
-              width: double.infinity,
-              child: KSScreenState(
-                icon: Icon(LineIcons.alternateShield, size: 150),
-                title: 'No team',
+                )
+              : Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: KSScreenState(
+                    icon: Icon(LineIcons.alternateShield, size: 150),
+                    title: 'No team',
+                  ),
+                )
+          : Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(mainColor),
               ),
             ),
     );
@@ -117,7 +132,18 @@ class _TeamListScreenState extends State<TeamListScreen> {
           title: 'See team setting',
           onTap: () {
             dismissScreen(context);
-            launchScreen(context, TeamSettingScreen.tag, arguments: team);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => TeamSettingScreen(
+                  team: team,
+                  onTeamUpdated: (_team) {
+                    setState(() => team = _team);
+                    getTeamList();
+                  },
+                ),
+              ),
+            );
           },
         ),
         itemOption(
@@ -135,8 +161,8 @@ class _TeamListScreenState extends State<TeamListScreen> {
   void getTeamList() async {
     var res = await _ksHttpClient.getApi('/user/my/team');
     if (res != null && res is! HttpResult) {
-      print('______: $res');
       teamList = (res as List).map((e) => Team.fromJson(e)).toList();
+      isLoading = false;
       setState(() {});
     }
   }

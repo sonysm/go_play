@@ -15,7 +15,7 @@ class TeamButtonTextField extends StatelessWidget {
       controller: controller,
       enabled: isEditing,
       enableInteractiveSelection: false,
-      style: Theme.of(context).textTheme.bodyText1,
+      style: Theme.of(context).textTheme.bodyText1, 
       decoration: InputDecoration(
         labelText: labelText,
         isDense: true,

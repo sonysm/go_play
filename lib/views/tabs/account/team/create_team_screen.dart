@@ -27,7 +27,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
   TextEditingController _genderController = TextEditingController();
   TextEditingController _ageCategoryController = TextEditingController();
   TextEditingController _teamTypeController = TextEditingController();
-  TextEditingController _praticeLevelController = TextEditingController();
+  TextEditingController _practiceLevelController = TextEditingController();
   TextEditingController _cityController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
 
@@ -36,11 +36,6 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
 
   bool isLoading = true;
   Sport? selectedSport;
-  String? selectedGender;
-  String? selectedAgeCategory;
-  String? selectedTeamType;
-  String? selectedPraticeLevel;
-  String? selectedCity;
 
   @override
   void initState() {
@@ -163,7 +158,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
                       8.height,
                       TextField(
                         readOnly: true,
-                        controller: _praticeLevelController,
+                        controller: _practiceLevelController,
                         enableInteractiveSelection: false,
                         style: Theme.of(context).textTheme.bodyText1,
                         decoration: InputDecoration(
@@ -286,21 +281,18 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
         itemOption(
           title: 'Male',
           onTap: () {
-            selectedGender = 'male';
             _genderController.text = 'Male';
           },
         ),
         itemOption(
           title: 'Female',
           onTap: () {
-            selectedGender = 'female';
             _genderController.text = 'Female';
           },
         ),
         itemOption(
           title: 'Other',
           onTap: () {
-            selectedGender = 'other';
             _genderController.text = 'Other';
           },
         ),
@@ -317,14 +309,12 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
         itemOption(
           title: 'Adults',
           onTap: () {
-            selectedAgeCategory = 'adults';
             _ageCategoryController.text = 'Adults';
           },
         ),
         itemOption(
           title: 'Youth',
           onTap: () {
-            selectedAgeCategory = 'youth';
             _ageCategoryController.text = 'Youth';
           },
         ),
@@ -341,35 +331,30 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
         itemOption(
           title: 'Club',
           onTap: () {
-            selectedTeamType = 'club';
             _teamTypeController.text = 'Club';
           },
         ),
         itemOption(
           title: 'Company',
           onTap: () {
-            selectedTeamType = 'company';
             _teamTypeController.text = 'Company';
           },
         ),
         itemOption(
           title: 'Group of friends',
           onTap: () {
-            selectedTeamType = 'group of friend';
             _teamTypeController.text = 'Group of friends';
           },
         ),
         itemOption(
           title: 'Recreational team',
           onTap: () {
-            selectedTeamType = 'recreational team';
             _teamTypeController.text = 'Recreational team';
           },
         ),
         itemOption(
           title: 'School / University',
           onTap: () {
-            selectedTeamType = 'school/university';
             _teamTypeController.text = 'School / University';
           },
         ),
@@ -386,22 +371,19 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
         itemOption(
           title: 'Competition',
           onTap: () {
-            selectedPraticeLevel = 'competition';
-            _praticeLevelController.text = 'Competition';
+            _practiceLevelController.text = 'Competition';
           },
         ),
         itemOption(
           title: 'Pickup games',
           onTap: () {
-            selectedPraticeLevel = 'pickup games';
-            _praticeLevelController.text = 'Pickup games';
+            _practiceLevelController.text = 'Pickup games';
           },
         ),
         itemOption(
           title: 'Recreational',
           onTap: () {
-            selectedPraticeLevel = 'recreational';
-            _praticeLevelController.text = 'Recreational';
+            _practiceLevelController.text = 'Recreational';
           },
         ),
         SizedBox(height: 16.0),
@@ -412,10 +394,10 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
   bool checkTeamCreationAvailable() {
     if (_teamNameController.text.trim().length > 0 &&
         selectedSport != null &&
-        selectedGender != null &&
-        selectedAgeCategory != null &&
-        selectedTeamType != null &&
-        selectedPraticeLevel != null) {
+        _genderController.text.isNotEmpty &&
+        _ageCategoryController.text.isNotEmpty &&
+        _teamTypeController.text.isNotEmpty &&
+        _practiceLevelController.text.isNotEmpty) {
       return true;
     }
     return false;
@@ -431,9 +413,12 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
     _ksClient.postApi('/user/create/team', body: {
       'name': _teamNameController.text,
       'sport': selectedSport!.id.toString(),
-      'gender': selectedGender,
+      'gender': _genderController.text,
       'phone': KS.shared.user.phone,
       'email': _emailController.text,
+      'age_group': _ageCategoryController.text,
+      'type': _teamTypeController.text,
+      'practice_level': _practiceLevelController.text,
     }).then((value) {
       dismissScreen(context);
       if (value != null && value is! HttpResult) {

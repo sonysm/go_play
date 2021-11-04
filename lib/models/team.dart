@@ -26,8 +26,13 @@ class TeamInfo {
     this.email,
     required this.id,
     required this.name,
-    required this.shortName,
+    this.shortName,
     required this.gender,
+    required this.inviteCode,
+    this.photo,
+    this.ageGroup,
+    this.practiceLevel,
+    this.type,
   });
 
   Sport sport;
@@ -35,8 +40,13 @@ class TeamInfo {
   String? email;
   int id;
   String name;
-  String shortName;
+  String? shortName;
   String gender;
+  String inviteCode;
+  String? photo;
+  String? ageGroup;
+  String? practiceLevel;
+  String? type;
 
   factory TeamInfo.fromJson(Map<String, dynamic> json) => TeamInfo(
         sport: Sport.fromJson(json["sport"]),
@@ -46,6 +56,11 @@ class TeamInfo {
         name: json["name"],
         shortName: json["short_name"],
         gender: json["gender"],
+        inviteCode: json["invite_code"],
+        photo: json["photo"],
+        ageGroup: json["age_group"],
+        practiceLevel: json["practice_level"],
+        type: json["type"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -56,6 +71,9 @@ class TeamInfo {
         "name": name,
         "short_name": shortName,
         "gender": gender,
+        "age_group": ageGroup,
+        "practice_level": practiceLevel,
+        "type": type
       };
 }
 
