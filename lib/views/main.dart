@@ -21,6 +21,8 @@ import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:uni_links/uni_links.dart';
+
 
 class MainView extends StatefulWidget {
   static const String tag = '/mainScreen';
@@ -53,6 +55,9 @@ class _MainViewState extends State<MainView> {
   List<SharedMediaFile>? _sharedFiles;
   String? _sharedText;
   dynamic _sharedInfo;
+
+  StreamSubscription? _uniSub;
+
 
   @override
   Widget build(BuildContext context) {
@@ -122,12 +127,18 @@ class _MainViewState extends State<MainView> {
     initShareIntent();
     BlocProvider.of<HomeCubit>(context).onLoad();
     BlocProvider.of<MeetupCubit>(context).onLoad();
+
+    _handleIncomingLinks();
+    _handleInitialUri();
   }
 
   @override
   void dispose() {
     _sharedText = null;
     _sharedInfo = null;
+    if(_uniSub != null){
+      _uniSub?.cancel();
+    }
     super.dispose();
   }
 
@@ -231,6 +242,59 @@ class _MainViewState extends State<MainView> {
     //   });
     // });
   }
+
+   /// Handle incoming links - the ones that the app will recieve from the OS
+  /// while already started.
+  void _handleIncomingLinks() {
+       // It will handle app links while the app is already started - be it in
+      // the foreground or in the background.
+      _uniSub = uriLinkStream.listen((Uri? uri) {
+        if (!mounted || uri == null) return;
+        _handleVplayUri(uri);
+      }, onError: (Object err) {
+        if (!mounted) return;
+        print('got err: $err');
+      });
+  }
+
+  /// Handle the initial Uri - the one the app was started with
+  ///
+  /// **ATTENTION**: `getInitialLink`/`getInitialUri` should be handled
+  /// ONLY ONCE in your app's lifetime, since it is not meant to change
+  /// throughout your app's life.
+  ///
+  /// We handle all exceptions, since it is called from initState.
+  Future<void> _handleInitialUri() async {
+    // In this example app this is an almost useless guard, but it is here to
+    // show we are not going to call getInitialUri multiple times, even if this
+    // was a weidget that will be disposed of (ex. a navigation route change).
+      try {
+        final uri = await getInitialUri();
+        if (!mounted || uri == null) return;
+        _handleVplayUri(uri);
+      } on PlatformException {
+        // Platform messages may fail but we ignore the exception
+        print('falied to get initial uri');
+      } on FormatException catch (err) {
+        if (!mounted) return;
+        print('malformed initial uri');
+      }
+  }
+
+  _handleVplayUri(Uri uri){
+      if(uri.host == "v-play.cc"){
+          final params = uri.queryParameters;
+          if(params.containsKey("shared") && params.containsKey("aid")){
+              try{
+                  final postId = int.parse(params['aid'].toString());
+                  print('Go to post detail $postId');
+              } on FormatException catch(e){
+                  print(e);
+              }
+          }
+      }
+  }
+
 }
 
 class _CustomTabBar extends StatelessWidget {
