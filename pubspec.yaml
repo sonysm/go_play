@@ -73,11 +73,15 @@ dependencies:
   loading_more_list: ^4.1.0
   extended_image: ^4.1.0
   share_plus: ^3.0.4
-  qr_flutter: ^4.0.0
   
   # Firebase
   firebase_auth: ^1.1.2
   firebase_messaging: ^10.0.2
+
+  image_gallery_saver: '^1.7.1'
+  qr_flutter: ^4.0.0
+  # firebase_dynamic_links: ^3.0.0
+  uni_links: ^0.5.1
 
 dev_dependencies:
   flutter_test:
