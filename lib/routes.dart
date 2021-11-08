@@ -21,6 +21,8 @@ import 'package:kroma_sport/views/tabs/account/sport_activity/sports_screen.dart
 import 'package:kroma_sport/views/tabs/account/team/create_team_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/delete_team_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/join_team_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/match/create_match_team_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/match/history_match_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/player_list_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/player_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/team_get_started_screen.dart';
@@ -191,6 +193,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => PlayerScreen(player: args as User));
       case PlayerListScreen.tag:
         return MaterialPageRoute(builder: (_) => PlayerListScreen(team: args as Team));
+      case HistoryMatchScreen.tag:
+        return MaterialPageRoute(builder: (_) => HistoryMatchScreen());
+      case CreateMatchTeamScreen.tag:
+        return MaterialPageRoute(builder: (_) => CreateMatchTeamScreen(data: args));
 
       default:
         return _errorRoute();

@@ -9,6 +9,8 @@ import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/dimensions.dart';
 import 'package:kroma_sport/utils/extensions.dart';
 import 'package:kroma_sport/utils/tools.dart';
+import 'package:kroma_sport/views/tabs/account/team/match/create_match_team_screen.dart';
+import 'package:kroma_sport/views/tabs/account/team/match/history_match_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/player_list_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/player_screen.dart';
 import 'package:kroma_sport/widgets/cache_image.dart';
@@ -70,18 +72,13 @@ class _TeamScreenState extends State<TeamScreen> {
                     16.height,
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Stack(
-                            alignment: Alignment.centerLeft,
-                            children: [
-                              Positioned(left: 48.0, child: _buildMemberAvatar(KS.shared.user.photo!)),
-                              Positioned(left: 24.0, child: _buildMemberAvatar(KS.shared.user.photo!)),
-                              _buildMemberAvatar(KS.shared.user.photo!),
-                            ],
-                          ),
-                        ),
-                      ],
+                      children: List.generate(
+                        _team.members.length <= 3 ? _team.members.length : 3,
+                        (index) {
+                          final member = _team.members.elementAt(index).member;
+                          return _buildMemberAvatar(member.photo!);
+                        },
+                      ),
                     )
                   ],
                 ),
@@ -110,20 +107,70 @@ class _TeamScreenState extends State<TeamScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () => launchScreen(context, CreateMatchTeamScreen.tag, arguments: _team.teamInfo.sport),
         style: ButtonStyle(
-          elevation: MaterialStateProperty.all(5),
+          elevation: MaterialStateProperty.all(0.5),
           shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: Colors.black26, width: 0.3)),
           ),
           shadowColor: MaterialStateProperty.all(Colors.black26),
-          overlayColor: MaterialStateProperty.all(Colors.grey.shade200),
+          backgroundColor: MaterialStateProperty.all(mainColor),
+          foregroundColor: MaterialStateProperty.all(whiteColor),
           padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
         ),
         child: Text(
           'Create match',
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryMatch() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: ElevatedButton(
+        onPressed: () => launchScreen(context, HistoryMatchScreen.tag),
+        style: ButtonStyle(
+          elevation: MaterialStateProperty.all(0.5),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: Colors.black26, width: 0.3)),
+          ),
+          shadowColor: MaterialStateProperty.all(Colors.black26),
+          overlayColor: MaterialStateProperty.all(Colors.grey.shade100),
+          backgroundColor: MaterialStateProperty.all(whiteColor),
+          padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
+        ),
+        child: Text(
+          'Match history',
           style: Theme.of(context).textTheme.bodyText1,
         ),
+      ),
+    );
+  }
+
+  Widget _buildUpcomingWidget() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Upcoming',
+            style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8.0),
+          ListView.builder(
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Container(
+                width: double.infinity,
+                height: 150.0,
+                color: Colors.teal,
+              );
+            },
+            itemCount: 1,
+          ),
+        ],
       ),
     );
   }
@@ -143,6 +190,8 @@ class _TeamScreenState extends State<TeamScreen> {
             children: [
               _buildTeamCell(),
               _buildCreateMatch(),
+              _buildHistoryMatch(),
+              _buildUpcomingWidget(),
             ],
           ),
         ),
