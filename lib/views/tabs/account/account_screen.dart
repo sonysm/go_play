@@ -531,7 +531,9 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
           isLoaded = true;
         }
       }
-      setState(() {});
+      if(!mounted){
+          setState(() {});
+      }
     }
   }
 

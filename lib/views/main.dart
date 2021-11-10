@@ -202,22 +202,26 @@ class _MainViewState extends State<MainView> {
   void initShareIntent() {
     // For sharing or opening urls/text coming from outside the app while the app is in the memory
     _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
-      setState(() {
-        _sharedText = value;
-        _sharedInfo = value;
-        print("Shared: $_sharedText");
-      });
+      if(!value.contains('v-play.cc')){
+          setState(() {
+            _sharedText = value;
+            _sharedInfo = value;
+          });
+          // print("Shared: $value");
+      }
     }, onError: (err) {
       print("getLinkStream error: $err");
     });
 
     // For sharing or opening urls/text coming from outside the app while the app is closed
     ReceiveSharingIntent.getInitialText().then((String? value) {
-      setState(() {
-        _sharedText = value;
-        _sharedInfo = value;
-        print("Shared: $_sharedText");
-      });
+      if(value != null && !value.contains('v-play.cc')){
+          setState(() {
+            _sharedText = value;
+            _sharedInfo = value;
+          });
+          // print("Shared: $value");
+      }
     });
 
     // // For sharing images coming from outside the app while the app is in the memory
