@@ -98,29 +98,30 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
       forceElevated: true,
       pinned: true,
       titleSpacing: 0,
-      titleTextStyle: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w400),
-      //actions: [
-      //  IconButton(
-      //      onPressed: () async {
-      //        if (uImage == null) uImage = await Capture.toPngByte(captureKey);
+      titleTextStyle: Theme.of(context)
+          .textTheme
+          .headline6
+          ?.copyWith(fontWeight: FontWeight.w400),
+      actions: [
+        CupertinoButton(
+            onPressed: () async {
+              if (uImage == null )
+                uImage = await Capture.toPngByte(captureKey);
 
-      //        if (uImage != null) {
-      //          showModalBottomSheet<void>(
-      //              isScrollControlled: true,
-      //              constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height * 0.9),
-      //              context: context,
-      //              builder: (BuildContext context) {
-      //                return Container(
-      //                    height: MediaQuery.of(context).size.height * 0.9,
-      //                    child: ShareFeedScreen(
-      //                      image: uImage,
-      //                      post: post,
-      //                    ));
-      //              });
-      //        }
-      //      },
-      //      icon: Icon(Icons.share))
-      //],
+              if(uImage != null){
+                showModalBottomSheet<void>(
+                  isScrollControlled: true,
+                  constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height * 0.9),
+                  context: context, builder: (BuildContext context) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height * 0.9,
+                    child: ShareFeedScreen(image: uImage, post: post,));
+                });
+              }
+            },
+            padding: EdgeInsets.zero,
+            child: Icon(Icons.share, color: isLight(context) ? Colors.grey[600] : whiteColor))
+      ],
     );
   }
 
@@ -375,11 +376,11 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                           scrollToBottom();
                         },
                       ),
-                       4.width,
-                       KSIconButton(
-                         icon: FeatherIcons.share2,
-                         onTap: onShare,
-                       ),
+                      // 4.width,
+                      // KSIconButton(
+                      //   icon: FeatherIcons.share2,
+                      //   onTap: onShare,
+                      // ),
                       Spacer(),
                       buildTotalReaction(post.totalReaction),
                       buildTotalComment(post.totalComment),

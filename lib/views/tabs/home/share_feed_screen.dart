@@ -1,13 +1,20 @@
+import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/utils/capture.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
+import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:clipboard/clipboard.dart';
+import 'package:permission_handler/permission_handler.dart' as PermissionHandler;
 
 class ShareFeedScreen extends StatefulWidget {
   final Uint8List? image;
@@ -29,53 +36,129 @@ class _ShareFeedScreenState extends State<ShareFeedScreen> {
     shareUrl = 'https://v-play.cc?shared=${widget.post.createdAt!.millisecondsSinceEpoch}&aid=${widget.post.id}';
   }
 
+  _showPhotoAlert() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Photo disable'),
+            // insetPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+            content: Text(
+              'Please enable your photo.',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    AppSettings.openAppSettings();
+                  },
+                  child: Text('Open settings')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Not now'))
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          RepaintBoundary(
-            key: captureKey,
-            child: Stack(
-              children: [
-                Container(
-                  child: Image.memory(widget.image!),
-                ),
-                Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: QrImage(
-                      data: shareUrl,
-                      size: 80,
-                      backgroundColor: Colors.white,
-                      embeddedImage: AssetImage(icVplay),
-                      embeddedImageStyle: QrEmbeddedImageStyle(size: Size(20, 20), color: Color(0xFF38ef7d)),
-                    ))
-              ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RepaintBoundary(
+              key: captureKey,
+              child: Stack(
+                children: [
+                  Container(
+                    child: Image.memory(widget.image!),
+                  ),
+                  Positioned(
+                      right: 8,
+                      bottom: 8,
+                      child: QrImage(
+                        padding: EdgeInsets.all(1.5),
+                        data: shareUrl,
+                        size: 68,
+                        backgroundColor: Colors.white,
+                        embeddedImage: AssetImage(icRound),
+                        embeddedImageStyle: QrEmbeddedImageStyle(
+                          size: Size(16, 16),
+                          // color: Color(0xFF38ef7d)
+                        ),
+                      ))
+                ],
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(onPressed: () {}, icon: Icon(Icons.download)),
-              IconButton(
-                  onPressed: () async {
-                    if (shareImage == null) shareImage = await Capture.toPngByte(captureKey);
-                    if (shareImage != null) {
-                      final directory = (await getApplicationDocumentsDirectory()).path;
-                      File imgFile = new File('$directory/photo.png');
-                      await imgFile.writeAsBytes(shareImage!);
-                      Share.shareFiles(['${imgFile.path}'], text: 'VPlay', subject: shareUrl);
-                    }
-                    // final result = await ImageGallerySaver.saveImage(img, quality: 100);
-                    // print(result);
-                  },
-                  icon: Icon(Icons.share)),
-              IconButton(onPressed: () {}, icon: Icon(Icons.copy))
-            ],
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.only(top: 16, left: 20, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  KSIconButton(
+                    onTap: () async {
+                      if (shareImage == null) shareImage = await Capture.toPngByte(captureKey);
+                      if (shareImage != null) {
+                        if (Platform.isAndroid) {
+                          PermissionHandler.PermissionStatus photoPermission = await PermissionHandler.Permission.photos.status;
+                          if (photoPermission != PermissionHandler.PermissionStatus.granted) {
+                            final status = await PermissionHandler.Permission.photos.request().isGranted;
+                            if (!status) {
+                              _showPhotoAlert();
+                              return;
+                            }
+                          }
+                        }
+                        final result = await ImageGallerySaver.saveImage(shareImage!, quality: 100);
+                        if (result != null && result['isSuccess'] == true) {
+                          final snackBar = SnackBar(
+                              duration: Duration(seconds: 2),
+                              content: const Text(
+                                'Image has been saved to device.',
+                                style: TextStyle(color: Colors.white),
+                              ));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
+                      }
+                    },
+                    icon: FeatherIcons.download,
+                  ),
+                  KSIconButton(
+                      onTap: () async {
+                        if (shareImage == null) shareImage = await Capture.toPngByte(captureKey);
+                        if (shareImage != null) {
+                          final directory = (await getApplicationDocumentsDirectory()).path;
+                          File imgFile = new File('$directory/photo.png');
+                          await imgFile.writeAsBytes(shareImage!);
+                          Share.shareFiles(['${imgFile.path}'], text: 'VPlay', subject: shareUrl);
+                        }
+                      },
+                      icon: Icons.share),
+                  KSIconButton(
+                      onTap: () {
+                        FlutterClipboard.copy(shareUrl).then((value) {
+                          final snackBar = SnackBar(
+                              duration: Duration(seconds: 1),
+                              content: const Text(
+                                'Link copied to clipboard',
+                                style: TextStyle(color: Colors.white),
+                              ));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        });
+                      },
+                      icon: FeatherIcons.link)
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

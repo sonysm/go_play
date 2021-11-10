@@ -44,6 +44,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       switch (notification.type) {
                         case KSNotificationType.invite:
                           return InviteNoticationCell(notification: notification);
+                        case KSNotificationType.comment:
+                          return CommentNoticationCell(notification: notification);
+                        case KSNotificationType.like:
+                          return LikeNoticationCell(notification: notification);
                         default:
                           return NotificationCell();
                       }
@@ -53,7 +57,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
               )
             : SliverFillRemaining(
                 child: KSScreenState(
-                  icon: SvgPicture.asset('assets/icons/ic_bell.svg', height: 150, color: isLight(context) ? Colors.blueGrey[700] : Colors.blueGrey[100]),
+                  icon: SvgPicture.asset('assets/icons/ic_bell.svg',
+                      height: 150, color: isLight(context) ? Colors.blueGrey[700] : Colors.blueGrey[100]),
                   title: 'No Notification',
                   subTitle: 'We\'ll notify you when someting arrives.',
                 ),
