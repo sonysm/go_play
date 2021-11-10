@@ -46,6 +46,9 @@ void main() async {
 }
 
 class App extends StatelessWidget {
+  
+  static final navigatorKey = new GlobalKey<NavigatorState>();
+  
   @override
   Widget build(BuildContext context) {
     precacheImage(AssetImage(loginBackground), context);

@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:kroma_sport/models/notification.dart';
 import 'package:kroma_sport/utils/constant.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -14,7 +15,17 @@ class MyNotification {
     var iOSInitialize = new IOSInitializationSettings();
     var initializationsSettings = new InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
     flutterLocalNotificationsPlugin.initialize(initializationsSettings, onSelectNotification: (String? payload) {
-      try {} catch (e) {}
+      try {
+        if (payload != null && payload.isNotEmpty) {
+          var jsonData = jsonDecode(payload);
+          KSNotification _notification = KSNotification.fromJson(jsonData);
+          if (_notification.type == KSNotificationType.like) {
+          } else if (_notification.type == KSNotificationType.comment) {
+          } else if (_notification.type == KSNotificationType.invite) {
+          } else if (_notification.type == KSNotificationType.joined) {
+          } else if (_notification.type == KSNotificationType.left) {}
+        }
+      } catch (e) {}
 
       return Future.value(1);
     });
@@ -44,7 +55,6 @@ class MyNotification {
     var content = jsonDecode(message['content']);
     String _title = content['title'];
     String _body = content['body'] ?? '';
-    String _orderID = content['order_id'] ?? '';
     const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'your channel id',
       'your channel name',
@@ -62,14 +72,13 @@ class MyNotification {
     );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatform);
-    await fln.show(0, _title, _body, platformChannelSpecifics, payload: _orderID);
+    await fln.show(0, _title, _body, platformChannelSpecifics, payload: message['content']);
   }
 
   static Future<void> showBigTextNotification(Map<String, dynamic> message, FlutterLocalNotificationsPlugin fln) async {
     var content = jsonDecode(message['content']);
     String _title = content['title'] ?? '';
     String _body = content['body'] ?? '';
-    String _orderID = content['order_id'] ?? '';
     BigTextStyleInformation bigTextStyleInformation = BigTextStyleInformation(
       _body,
       htmlFormatBigText: true,
@@ -94,14 +103,13 @@ class MyNotification {
     );
 
     NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatform);
-    await fln.show(0, _title, _body, platformChannelSpecifics, payload: _orderID);
+    await fln.show(0, _title, _body, platformChannelSpecifics, payload: message['content']);
   }
 
   static Future<void> showBigPictureNotificationHiddenLargeIcon(Map<String, dynamic> message, FlutterLocalNotificationsPlugin fln) async {
     var content = jsonDecode(message['content']);
     String _title = content['title'];
     String _body = content['body'];
-    String _orderID = content['order_id'] ?? '';
     String _image = content['image'].startsWith('http') ? message['image'] : '$BASE_URL/storage/app/public/notification/${message['image']}';
     final String largeIconPath = await _downloadAndSaveFile(_image, 'largeIcon');
     final String bigPicturePath = await _downloadAndSaveFile(_image, 'bigPicture');
@@ -132,7 +140,7 @@ class MyNotification {
     );
 
     final NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatform);
-    await fln.show(0, _title, _body, platformChannelSpecifics, payload: _orderID);
+    await fln.show(0, _title, _body, platformChannelSpecifics, payload: message['content']);
   }
 
   static Future<String> _downloadAndSaveFile(String url, String fileName) async {

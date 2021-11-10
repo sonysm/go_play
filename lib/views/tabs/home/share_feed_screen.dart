@@ -9,7 +9,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
-
 class ShareFeedScreen extends StatefulWidget {
   final Uint8List? image;
   final Post post;
@@ -32,8 +31,9 @@ class _ShareFeedScreenState extends State<ShareFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           RepaintBoundary(
             key: captureKey,
@@ -50,10 +50,7 @@ class _ShareFeedScreenState extends State<ShareFeedScreen> {
                       size: 80,
                       backgroundColor: Colors.white,
                       embeddedImage: AssetImage(icVplay),
-                      embeddedImageStyle: QrEmbeddedImageStyle(
-                        size: Size(20,20),
-                        color: Color(0xFF38ef7d)
-                      ),
+                      embeddedImageStyle: QrEmbeddedImageStyle(size: Size(20, 20), color: Color(0xFF38ef7d)),
                     ))
               ],
             ),
@@ -64,16 +61,12 @@ class _ShareFeedScreenState extends State<ShareFeedScreen> {
               IconButton(onPressed: () {}, icon: Icon(Icons.download)),
               IconButton(
                   onPressed: () async {
-                    if (shareImage == null)
-                      shareImage = await Capture.toPngByte(captureKey);
+                    if (shareImage == null) shareImage = await Capture.toPngByte(captureKey);
                     if (shareImage != null) {
-                      final directory =
-                          (await getApplicationDocumentsDirectory()).path;
+                      final directory = (await getApplicationDocumentsDirectory()).path;
                       File imgFile = new File('$directory/photo.png');
                       await imgFile.writeAsBytes(shareImage!);
-                      Share.shareFiles(['${imgFile.path}'],
-                          text: 'VPlay',
-                          subject: shareUrl);
+                      Share.shareFiles(['${imgFile.path}'], text: 'VPlay', subject: shareUrl);
                     }
                     // final result = await ImageGallerySaver.saveImage(img, quality: 100);
                     // print(result);
