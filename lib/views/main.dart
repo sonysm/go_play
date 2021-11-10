@@ -17,6 +17,7 @@ import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/option_screen.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
+import 'package:kroma_sport/views/detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
@@ -287,7 +288,9 @@ class _MainViewState extends State<MainView> {
           if(params.containsKey("shared") && params.containsKey("aid")){
               try{
                   final postId = int.parse(params['aid'].toString());
-                  print('Go to post detail $postId');
+                  launchScreen(context, DetailScreen.tag, arguments: {
+                      'postId': postId
+                  });
               } on FormatException catch(e){
                   print(e);
               }

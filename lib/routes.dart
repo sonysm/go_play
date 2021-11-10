@@ -34,6 +34,7 @@ import 'package:kroma_sport/views/tabs/home/activity_preview_screen.dart';
 import 'package:kroma_sport/views/tabs/home/choose_location_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_activity_screen.dart';
 import 'package:kroma_sport/views/tabs/home/create_post_screen.dart';
+import 'package:kroma_sport/views/detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
 import 'package:kroma_sport/views/tabs/home/home_screen.dart';
 import 'package:kroma_sport/views/tabs/home/widget/photo_view_screen.dart';
@@ -87,6 +88,10 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (_) => FeedDetailScreen(
                 post: data['post'], postIndex: data['postIndex'], isCommentTap: data['isCommentTap'], postCallback: data['postCallback']));
+
+      case DetailScreen.tag:
+        var data = args as Map<String, dynamic>;
+        return MaterialPageRoute(builder: (_) => DetailScreen(postId: data['postId']));
 
       case CreatePostScreen.tag:
         return MaterialPageRoute(builder: (_) => CreatePostScreen(data: args));

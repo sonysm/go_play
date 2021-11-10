@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -25,6 +24,7 @@ import 'package:kroma_sport/views/tabs/home/report_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/connect_booking_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/invite_meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/organize_activity_screen.dart';
+import 'package:kroma_sport/views/tabs/meetup/share_meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/widget/discussion_cell.dart';
 import 'package:kroma_sport/views/tabs/venue/booking_history_detail.dart';
 import 'package:kroma_sport/widgets/avatar.dart';
@@ -484,9 +484,25 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
               titleTextStyle: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w400),
               elevation: 0.3,
               actions: [
+                // CupertinoButton(
+                //   child: Icon(FeatherIcons.moreVertical, color: isLight(context) ? Colors.grey[600] : whiteColor),
+                //   onPressed: () => showMeetupBottomSheet(meetup!),
+                // )
                 CupertinoButton(
-                  child: Icon(FeatherIcons.moreVertical, color: isLight(context) ? Colors.grey[600] : whiteColor),
-                  onPressed: () => showMeetupBottomSheet(meetup!),
+                  padding: EdgeInsets.zero,
+                  child: Icon(Icons.share, color: isLight(context) ? Colors.grey[600] : whiteColor),
+                  onPressed: () {
+                    if( meetup != null){
+                        showModalBottomSheet<void>(
+                          isScrollControlled: true,
+                          constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height * 0.9),
+                          context: context, builder: (BuildContext context) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * 0.9,
+                            child: ShareMeetupScreen(post: meetup!));
+                        });
+                    }
+                  },
                 )
               ],
               bottom: PreferredSize(
