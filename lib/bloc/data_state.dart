@@ -3,7 +3,7 @@ enum DataState {
   Loading,
   Loaded,
   LoadingMore,
-  LoadedMore,
+  NoMore,
   Error,
   ErrorTimeOut,
   ErrorSocket,

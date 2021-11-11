@@ -118,7 +118,7 @@ class HomeCubit extends Cubit<HomeData> {
   }
 
   Future<void> onLoadMore() async {
-    if (state.status != DataState.LoadedMore) {
+    if (state.status != DataState.NoMore) {
       emit(state.copyWith(status: DataState.LoadingMore, page: state.page + 1));
       var data = await _client.getApi('/home', queryParameters: {'page': state.page.toString(), 'search': state.search});
       if (data != null) {

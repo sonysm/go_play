@@ -13,6 +13,8 @@ class KSNotification {
   DateTime createdAt;
   DateTime updatedAt;
   int? post;
+  int? otherId;
+  bool? isTap;
 
   KSNotification({
     required this.id,
@@ -27,6 +29,8 @@ class KSNotification {
     required this.createdAt,
     required this.updatedAt,
     this.post,
+    this.otherId,
+    this.isTap
   });
 
   factory KSNotification.fromJson(Map<String, dynamic> json) => KSNotification(
@@ -42,10 +46,12 @@ class KSNotification {
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         post: json["post"],
+        otherId: json['other_id'],
+        isTap: json['tap_view']
       );
 }
 
-enum KSNotificationType { none, like, comment, invite, cancel, joined, left }
+enum KSNotificationType { none, like, comment, invite, cancel, joined, left, bookAccepted, bookRejected, bookCanceled, followed }
 
 KSNotificationType mapNotificaitonType(int type) {
   switch (type) {
@@ -61,6 +67,15 @@ KSNotificationType mapNotificaitonType(int type) {
       return KSNotificationType.joined;
     case 6:
       return KSNotificationType.left;
+    case 7:
+      return KSNotificationType.bookAccepted;
+    case 8:
+      return KSNotificationType.followed;
+    case 9:
+      return KSNotificationType.bookCanceled;
+    case 10:
+      return KSNotificationType.bookRejected;
+
     default:
       return KSNotificationType.none;
   }

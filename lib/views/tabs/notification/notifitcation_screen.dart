@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kroma_sport/api/httpclient.dart';
-import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/data_state.dart';
+import 'package:kroma_sport/bloc/notify.dart';
 import 'package:kroma_sport/models/notification.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
@@ -21,35 +23,43 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   KSHttpClient ksClient = KSHttpClient();
 
-  List<KSNotification> noticationList = [];
+  // List<KSNotification> noticationList = [];
 
-  bool isLoading = true;
-  bool noInternet = false;
+  // bool isLoading = true;
+  // bool noInternet = false;
 
-  Widget buildNoticationList() {
-    if (!isLoading && noInternet) {
+  late NotifyCubit _cubit;
+
+  Widget buildNoticationList(NotifyData notify) {
+    if (notify.status == DataState.ErrorSocket || notify.status == DataState.ErrorTimeOut) {
       return SliverFillRemaining(
         child: KSNoInternet(),
       );
     }
 
-    return !isLoading
-        ? noticationList.isNotEmpty
+    return notify.status != DataState.Loading
+        ? notify.data.isNotEmpty
             ? SliverList(
                 delegate: SliverChildListDelegate(
                   List.generate(
-                    noticationList.length,
+                    notify.data.length,
                     (index) {
-                      final notification = noticationList[index];
+                      final notification = notify.data[index];
                       switch (notification.type) {
                         case KSNotificationType.invite:
-                          return InviteNoticationCell(notification: notification);
+                          return InviteNoticationCell(notification: notification, onClick: onClick);
                         case KSNotificationType.comment:
-                          return CommentNoticationCell(notification: notification);
+                          return CommentNoticationCell(notification: notification, onClick: onClick);
                         case KSNotificationType.like:
-                          return LikeNoticationCell(notification: notification);
+                          return LikeNoticationCell(notification: notification, onClick: onClick);
+                        case KSNotificationType.followed:
+                          return FollowingNoticationCell(notification: notification, onClick: onClick);
+                        case KSNotificationType.bookAccepted:
+                        case KSNotificationType.bookCanceled:
+                        case KSNotificationType.bookRejected:
+                          return BookingNotificationCell(notification: notification, onClick: onClick);
                         default:
-                          return NotificationCell();
+                          return NotificationCell(notification: notification,);
                       }
                     },
                   ),
@@ -82,16 +92,26 @@ class _NotificationScreenState extends State<NotificationScreen> {
         title: Text('Notification'),
         elevation: 0.3,
       ),
-      body: EasyRefresh.custom(
-        topBouncing: false,
-        bottomBouncing: false,
-        header: MaterialHeader(valueColor: AlwaysStoppedAnimation<Color>(mainColor)),
-        footer: noticationList.isNotEmpty ? ClassicalFooter(enableInfiniteLoad: false, completeDuration: Duration(milliseconds: 700)) : null,
-        slivers: [
-          buildNoticationList(),
-        ],
-        onRefresh: () async => getNotification(),
-        onLoad: noticationList.isNotEmpty ? () async {} : null,
+      body: BlocBuilder<NotifyCubit, NotifyData>(
+        builder: (context, state) {
+          return EasyRefresh.custom(
+            topBouncing: false,
+            bottomBouncing: false,
+            header: MaterialHeader(valueColor: AlwaysStoppedAnimation<Color>(mainColor)),
+            footer: state.data.isNotEmpty ? ClassicalFooter(enableInfiniteLoad: false, completeDuration: Duration(milliseconds: 700)) : null,
+            slivers: [
+              buildNoticationList(state),
+            ],
+            onRefresh: () async{
+                NotifyData data = await _cubit.onRefresh();
+                _cubit.emit(data);
+            },
+            onLoad: state.status != DataState.NoMore ? () async {
+                NotifyData data = await _cubit.onLoadMore();
+                _cubit.emit(data);
+            } : null,
+          );
+        }
       ),
     );
   }
@@ -99,7 +119,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
-    getNotification();
+     _cubit = context.read<NotifyCubit>();
   }
 
   @override
@@ -108,24 +128,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     super.setState(fn);
   }
 
-  void getNotification() async {
-    var res = await ksClient.getApi('/user/my_notification');
-    if (res != null) {
-      if (res is! HttpResult) {
-        noticationList = List.from((res as List).map((e) => KSNotification.fromJson(e)));
-
-        Future.delayed(Duration(milliseconds: 300)).then((_) {
-          isLoading = false;
-          noInternet = false;
-          setState(() {});
-        });
-      } else {
-        if (res.code == -500) {
-          isLoading = false;
-          noInternet = true;
-          setState(() {});
-        }
-      }
-    }
+  void onClick(int id){
+      _cubit.readNotify(id);
   }
 }

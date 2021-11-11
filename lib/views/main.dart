@@ -10,6 +10,7 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
+import 'package:kroma_sport/bloc/notify.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -52,9 +53,9 @@ class _MainViewState extends State<MainView> {
 
   KSHttpClient ksClient = KSHttpClient();
 
-  late StreamSubscription _intentDataStreamSubscription;
-  List<SharedMediaFile>? _sharedFiles;
-  String? _sharedText;
+  StreamSubscription? _streamSubscription;
+  // List<SharedMediaFile>? _sharedFiles;
+  // String? _sharedText;
   dynamic _sharedInfo;
 
   StreamSubscription? _uniSub;
@@ -111,6 +112,14 @@ class _MainViewState extends State<MainView> {
                   } else {
                     showKSMainOption(context);
                   }
+
+                  if(index == 3){ // notification
+                      NotifyCubit notifyCubit = context.read<NotifyCubit>();
+                      if(notifyCubit.state.badge > 0){
+                          notifyCubit.tapViewNotify();
+                          notifyCubit.emit(notifyCubit.state.copyWith(badge: 0));
+                      }
+                  }
                 },
               ),
             ),
@@ -135,10 +144,13 @@ class _MainViewState extends State<MainView> {
 
   @override
   void dispose() {
-    _sharedText = null;
+    // _sharedText = null;
     _sharedInfo = null;
     if(_uniSub != null){
       _uniSub?.cancel();
+    }
+    if(_streamSubscription != null){
+        _streamSubscription?.cancel();
     }
     super.dispose();
   }
@@ -201,10 +213,10 @@ class _MainViewState extends State<MainView> {
 
   void initShareIntent() {
     // For sharing or opening urls/text coming from outside the app while the app is in the memory
-    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
+    _streamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
       if(!value.contains('v-play.cc')){
           setState(() {
-            _sharedText = value;
+            // _sharedText = value;
             _sharedInfo = value;
           });
           // print("Shared: $value");
@@ -217,7 +229,7 @@ class _MainViewState extends State<MainView> {
     ReceiveSharingIntent.getInitialText().then((String? value) {
       if(value != null && !value.contains('v-play.cc')){
           setState(() {
-            _sharedText = value;
+            // _sharedText = value;
             _sharedInfo = value;
           });
           // print("Shared: $value");
@@ -334,10 +346,25 @@ class _CustomTabBar extends StatelessWidget {
                     onPressed: () => onTap(key),
                     child: Tab(
                       icon: key != 2
-                          ? Icon(value,
+                          ? key != 3 ? Icon(value,
                               color: key == selectedIndex
                                   ? ColorResources.getPrimaryIconColor(context)
                                   : ColorResources.getPrimaryIconColorDark(context))
+                            :  BlocBuilder<NotifyCubit, NotifyData>(
+                              builder: (context, state) {
+                                  return Stack(
+                                    children: [
+                                      Icon(value,color: key == selectedIndex ? ColorResources.getPrimaryIconColor(context) : ColorResources.getPrimaryIconColorDark(context)),
+                                      if (state.badge > 0)
+                                        Positioned(  // draw a red marble
+                                            top: 0.0,
+                                            right: 0.0,
+                                            child: new Icon(Icons.brightness_1, size: 8.0, 
+                                              color: Colors.redAccent),
+                                        )
+                                    ],
+                                  );
+                              })
                           : Container(
                               width: 48.0,
                               height: 48.0,

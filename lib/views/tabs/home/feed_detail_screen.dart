@@ -109,20 +109,25 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 uImage = await Capture.toPngByte(captureKey);
 
               if(uImage != null){
-                showModalBottomSheet<void>(
-                  isScrollControlled: true,
-                  constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height * 0.9),
-                  context: context, builder: (BuildContext context) {
-                  return Container(
-                    height: MediaQuery.of(context).size.height * 0.9,
-                    child: ShareFeedScreen(image: uImage, post: post,));
-                });
+                  _showShareScreen();
               }
             },
             padding: EdgeInsets.zero,
             child: Icon(Icons.share, color: isLight(context) ? Colors.grey[600] : whiteColor))
       ],
     );
+  }
+
+  _showShareScreen(){
+     showModalBottomSheet<void>(
+      isScrollControlled: true,
+      useRootNavigator: true,
+      constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height * 0.9),
+      context: context, builder: (BuildContext context) {
+      return Container(
+        height: MediaQuery.of(context).size.height * 0.9,
+        child: ShareFeedScreen(image: uImage, post: post,));
+    });
   }
 
   Widget buildTotalReaction(int total) {

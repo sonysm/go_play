@@ -18,12 +18,12 @@ class User {
     this.phone,
     this.email,
     this.photo,
-    this.facebookId,
-    this.appleId,
-    this.appVersion,
-    this.buildNumber,
-    this.os,
-    this.deviceToken,
+    // this.facebookId,
+    // this.appleId,
+    // this.appVersion,
+    // this.buildNumber,
+    // this.os,
+    // this.deviceToken,
     this.createdAt,
     this.updatedAt,
     required this.followerCount,
@@ -43,12 +43,12 @@ class User {
   String? phone;
   String? email;
   String? photo;
-  String? facebookId;
-  String? appleId;
-  String? appVersion;
-  int? buildNumber;
-  String? os;
-  List<dynamic>? deviceToken;
+  // String? facebookId;
+  // String? appleId;
+  // String? appVersion;
+  // int? buildNumber;
+  // String? os;
+  // List<dynamic>? deviceToken;
   DateTime? createdAt;
   DateTime? updatedAt;
   int followerCount;
@@ -68,12 +68,12 @@ class User {
         phone: json["phone"],
         email: json["email"],
         photo: json["photo"],
-        facebookId: json["facebook_id"],
-        appleId: json["apple_id"],
-        appVersion: json["app_version"],
-        buildNumber: json["build_number"],
-        os: json["os"],
-        deviceToken: json["device_token"],
+        // facebookId: json["facebook_id"],
+        // appleId: json["apple_id"],
+        // appVersion: json["app_version"],
+        // buildNumber: json["build_number"],
+        // os: json["os"],
+        // deviceToken: json["device_token"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         followerCount: json['follower_count'],
@@ -94,12 +94,12 @@ class User {
         "phone": phone,
         "email": email,
         "photo": photo,
-        "facebook_id": facebookId,
-        "apple_id": appleId,
-        "app_version": appVersion,
-        "build_number": buildNumber,
-        "os": os,
-        "device_token": deviceToken,
+        // "facebook_id": facebookId,
+        // "apple_id": appleId,
+        // "app_version": appVersion,
+        // "build_number": buildNumber,
+        // "os": os,
+        // "device_token": deviceToken,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
         "follower_count": followerCount,

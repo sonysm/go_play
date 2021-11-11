@@ -98,7 +98,7 @@ class _ShareFeedScreenState extends State<ShareFeedScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 16, left: 20, right: 20),
+              padding: const EdgeInsets.only(top: 16, left: 20, right: 20, bottom: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
