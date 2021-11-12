@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/account.dart';
+import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/bloc/notify.dart';
@@ -119,6 +121,11 @@ class _MainViewState extends State<MainView> {
                           notifyCubit.tapViewNotify();
                           notifyCubit.emit(notifyCubit.state.copyWith(badge: 0));
                       }
+                  }else if(index == 4){ //account
+                       AccountCubit accCubit = context.read<AccountCubit>();
+                       if(accCubit.state.postStatus == DataState.None){
+                          accCubit.onLoad();
+                       }
                   }
                 },
               ),

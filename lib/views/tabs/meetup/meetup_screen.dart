@@ -141,11 +141,14 @@ class _ActivityScreenState extends State<MeetupScreen> {
                       ),
               ],
               onRefresh: () async {
-                BlocProvider.of<MeetupCubit>(context).onRefresh();
+                  final cub =BlocProvider.of<MeetupCubit>(context);
+                  var data = await cub.onRefresh();
+                  cub.emit(data);
               },
-              onLoad: state.status != DataState.ErrorSocket ? () async {
-                await Future.delayed(Duration(milliseconds: 300));
-                BlocProvider.of<MeetupCubit>(context).onLoadMore();
+              onLoad: state.status != DataState.NoMore ? () async {
+                  final cub =BlocProvider.of<MeetupCubit>(context);
+                  var data = await cub.onLoadMore();
+                  cub.emit(data);
               } : null,
             );
           },

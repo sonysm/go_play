@@ -12,6 +12,7 @@ import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/account.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
@@ -573,9 +574,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         var newPost = Post.fromJson(data);
 
         if (widget.data is Post) {
-          BlocProvider.of<HomeCubit>(context).updatePost(newPost);
+            BlocProvider.of<HomeCubit>(context).updatePost(newPost);
+            BlocProvider.of<AccountCubit>(context).onUpdatePost(newPost);
         } else {
-          BlocProvider.of<HomeCubit>(context).onPostFeed(newPost);
+            BlocProvider.of<HomeCubit>(context).onPostFeed(newPost);
+            BlocProvider.of<AccountCubit>(context).onAddPost(newPost);
         }
       } else {
         if (data.code == -500) {

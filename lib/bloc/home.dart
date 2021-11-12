@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
-import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
 
 class HomeData extends Equatable {
@@ -11,9 +10,9 @@ class HomeData extends Equatable {
   final int page;
   final String? search;
   final DataState status;
-  final List<Post> ownerPost;
-  final bool hasReachedMax;
-  final bool ownerHasReachedMax;
+  // final List<Post> ownerPost;
+  // final bool hasReachedMax;
+  // final bool ownerHasReachedMax;
   final bool reload;
 
   HomeData(
@@ -21,9 +20,9 @@ class HomeData extends Equatable {
       this.status = DataState.None,
       this.page = 1,
       this.search,
-      required this.ownerPost,
-      this.hasReachedMax = false,
-      this.ownerHasReachedMax = false,
+      // required this.ownerPost,
+      // this.hasReachedMax = false,
+      // this.ownerHasReachedMax = false,
       this.reload = false});
 
   HomeData copyWith({
@@ -31,9 +30,8 @@ class HomeData extends Equatable {
     int? page,
     List<Post>? data,
     String? search,
-    List<Post>? ownerPost,
-    bool? hasReachedMax,
-    bool? ownerHasReachedMax,
+    // List<Post>? ownerPost,
+    // bool? ownerHasReachedMax,
     bool? reload,
   }) {
     return HomeData(
@@ -41,19 +39,19 @@ class HomeData extends Equatable {
       page: page ?? this.page,
       data: data ?? this.data,
       search: search ?? this.search,
-      ownerPost: ownerPost ?? this.ownerPost,
-      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
-      ownerHasReachedMax: ownerHasReachedMax ?? this.ownerHasReachedMax,
+      // ownerPost: ownerPost ?? this.ownerPost,
+      // hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      // ownerHasReachedMax: ownerHasReachedMax ?? this.ownerHasReachedMax,
       reload: reload ?? this.reload,
     );
   }
 
   @override
-  List<Object> get props => [status, data, page, hasReachedMax, ownerHasReachedMax, ownerPost, reload];
+  List<Object> get props => [status, data, page, reload];
 }
 
 class HomeCubit extends Cubit<HomeData> {
-  HomeCubit() : super(HomeData(data: [], ownerPost: []));
+  HomeCubit() : super(HomeData(data: []));
 
   final KSHttpClient _client = KSHttpClient();
 
@@ -63,17 +61,11 @@ class HomeCubit extends Cubit<HomeData> {
     if (data != null) {
       if (data is! HttpResult) {
         List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
-
-        List<Post> ownerPosts = [];
-        await _client.getApi('/user/feed/by/${KS.shared.user.id}').then((data) {
-          if (data != null) {
-            if (data is! HttpResult) {
-              ownerPosts = (data as List).map((e) => Post.fromJson(e)).toList();
-            }
-          }
-        });
-
-        emit(state.copyWith(status: DataState.Loaded, data: posts, ownerPost: ownerPosts));
+        DataState status = DataState.Loaded;
+        if(posts.length < 10) {
+            status = DataState.NoMore;
+        }
+        emit(state.copyWith(status: status, data: posts));
       } else {
         if (data.code == -500) {
           emit(state.copyWith(status: DataState.ErrorSocket));
@@ -96,68 +88,67 @@ class HomeCubit extends Cubit<HomeData> {
     // });
   }
 
-  Future<void> onRefresh() async {
-    // if (state.status == DataState.Loaded) {
-      emit(state.copyWith(page: 1));
-      var data = await _client.getApi('/home', queryParameters: {'page': state.page.toString()});
+  Future<HomeData> onRefresh() async {
+      var data = await _client.getApi('/home', queryParameters: {'page': 1.toString()});
       if (data != null) {
         if (data is! HttpResult) {
-          List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
-          emit(state.copyWith(status: DataState.Loaded, data: posts, reload: !state.reload, hasReachedMax: false));
+              List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
+              DataState status = DataState.Loaded;
+              if(posts.length < 10) {
+                  status = DataState.NoMore;
+              }
+              return state.copyWith(status: status, data: posts, reload: !state.reload, page: 1);
         } else {
           if (data.code == -500) {
-            emit(state.copyWith(status: DataState.ErrorSocket, reload: !state.reload));
-            return;
+                return state.copyWith(status: DataState.ErrorSocket, reload: !state.reload);
           } else if (data.code == 401) {
-            emit(state.copyWith(status: DataState.UnAuthorized));
+                return state.copyWith(status: DataState.UnAuthorized);
           }
           print("error");
         }
       }
-    // }
+      return state;
   }
 
-  Future<void> onLoadMore() async {
-    if (state.status != DataState.NoMore) {
-      emit(state.copyWith(status: DataState.LoadingMore, page: state.page + 1));
-      var data = await _client.getApi('/home', queryParameters: {'page': state.page.toString(), 'search': state.search});
+  Future<HomeData> onLoadMore() async {
+      final p = state.page + 1;
+      var data = await _client.getApi('/home', queryParameters: {'page': p.toString(), 'search': state.search});
       if (data != null) {
         if (data is! HttpResult) {
-          var newPosts = (data as List).map((e) => Post.fromJson(e)).toList();
-          if (newPosts.isNotEmpty) {
-            emit(state.copyWith(status: DataState.Loaded, data: state.data + newPosts));
-          } else {
-            emit(state.copyWith(status: DataState.Loaded, hasReachedMax: true));
-          }
+              var newPosts = (data as List).map((e) => Post.fromJson(e)).toList();
+              DataState status = DataState.Loaded;
+              if(newPosts.length < 10) {
+                  status = DataState.NoMore;
+              }
+              return state.copyWith(status: status, data: state.data + newPosts, page: p);
         } else {
-          if (data.code == -500) {
-            emit(state.copyWith(status: DataState.ErrorSocket, hasReachedMax: true));
-            return;
-          }
-          print('error $data');
+            if (data.code == -500) {
+                return state.copyWith(status: DataState.ErrorSocket);
+            } else if (data.code == 401) {
+                return state.copyWith(status: DataState.UnAuthorized);
+            }
         }
-      }
     }
+    return state;
   }
 
   Future<void> onPostFeed(Post newPost) async {
     if (state.status == DataState.Loaded) {
-      emit(state.copyWith(data: [newPost] + state.data, ownerPost: [newPost] + state.ownerPost));
+      emit(state.copyWith(data: [newPost] + state.data));
     }
   }
 
   Future<void> onDeletePostFeed(int postId) async {
     if (state.status == DataState.Loaded) {
       final updatedList = state.data.where((element) => element.id != postId).toList();
-      final updatedOwnerList = state.ownerPost.where((element) => element.id != postId).toList();
-
-      emit(state.copyWith(data: updatedList, ownerPost: updatedOwnerList));
+      // final updatedOwnerList = state.ownerPost.where((element) => element.id != postId).toList();
+      emit(state.copyWith(data: updatedList));
     }
   }
 
-  onReset() {
-    emit(HomeData(data: [], ownerPost: []));
-  }
+  // onReset() {
+  //   emit(HomeData(data: []));
+  // }
 
   Future<void> updatePost(Post newPost) async {
     if (state.status == DataState.Loaded) {
@@ -165,70 +156,73 @@ class HomeCubit extends Cubit<HomeData> {
         return element.id == newPost.id ? newPost : element;
       }).toList();
 
-      final updatedOwnerList = state.ownerPost.map((element) {
-        return element.id == newPost.id ? newPost : element;
-      }).toList();
-
-      emit(state.copyWith(data: updatedList, ownerPost: updatedOwnerList));
+      // final updatedOwnerList = state.ownerPost.map((element) {
+      //   return element.id == newPost.id ? newPost : element;
+      // }).toList();
+      emit(state.copyWith(data: updatedList));
     }
   }
 
-  Future<void> loadOwnerPost(int page) async {
-    if (state.status == DataState.Loaded) {
-      List<Post> morePosts = [];
-      await _client.getApi('/user/feed/by/${KS.shared.user.id}', queryParameters: {'page': page.toString()}).then((data) {
-        if (data != null) {
-          if (data is! HttpResult) {
-            morePosts = (data as List).map((e) => Post.fromJson(e)).toList();
-            if (page == 1) {
-              emit(state.copyWith(ownerPost: morePosts, ownerHasReachedMax: false));
-            } else {
-              if (morePosts.isNotEmpty) {
-                emit(state.copyWith(ownerPost: state.ownerPost + morePosts));
-              } else {
-                emit(state.copyWith(ownerHasReachedMax: true));
-              }
-            }
-          }
-        }
-      });
-    }
-  }
+  // Future<void> loadOwnerPost(int page) async {
+  //   if (state.status == DataState.Loaded) {
+  //     List<Post> morePosts = [];
+  //     await _client.getApi('/user/feed/by/${KS.shared.user.id}', queryParameters: {'page': page.toString()}).then((data) {
+  //       if (data != null) {
+  //         if (data is! HttpResult) {
+  //           morePosts = (data as List).map((e) => Post.fromJson(e)).toList();
+  //           if (page == 1) {
+  //             emit(state.copyWith(ownerPost: morePosts, ownerHasReachedMax: false));
+  //           } else {
+  //             if (morePosts.isNotEmpty) {
+  //               emit(state.copyWith(ownerPost: state.ownerPost + morePosts));
+  //             } else {
+  //               emit(state.copyWith(ownerHasReachedMax: true));
+  //             }
+  //           }
+  //         }
+  //       }
+  //     });
+  //   }
+  // }
 
   Future<void> reactPost(int id, bool reacted, {bool home = false}) async {
     if (state.status == DataState.Loaded) {
       // emit(state.copyWith(status: DataState.None));
       bool reEmit = false;
-      if (home) {
-        for (var element in state.ownerPost) {
-          if (element.id == id) {
-            element.reacted = reacted;
-            if (reacted) {
-              element.totalReaction += 1;
-            } else {
-              element.totalReaction -= 1;
-            }
-            reEmit = true;
-            break;
-          }
-        }
-      } else {
+      // if (home) {
+      //   for (var element in state.ownerPost) {
+      //     if (element.id == id) {
+      //       element.reacted = reacted;
+      //       if (reacted) {
+      //         element.totalReaction += 1;
+      //       } else {
+      //         element.totalReaction -= 1;
+      //       }
+      //       reEmit = true;
+      //       break;
+      //     }
+      //   }
+      // } else {
+      
+        // }
+      // }
+      if(!home){
         for (var element in state.data) {
-          if (element.id == id) {
-            element.reacted = reacted;
-            if (reacted) {
-              element.totalReaction += 1;
-            } else {
-              element.totalReaction -= 1;
+            if (element.id == id) {
+              element.reacted = reacted;
+              if (reacted) {
+                element.totalReaction += 1;
+              } else {
+                element.totalReaction -= 1;
+              }
+              reEmit = true;
+              break;
             }
-            reEmit = true;
-            break;
-          }
         }
       }
 
       if (reEmit) {
-        emit(state.copyWith(data: state.data, ownerPost: state.ownerPost, reload: !state.reload));
+        emit(state.copyWith(data: state.data, reload: !state.reload));
       }
     }
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:kroma_sport/bloc/account.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/bloc/notify.dart';
@@ -60,7 +61,8 @@ class App extends StatelessWidget {
         BlocProvider<SuggestionCubit>(create: (BuildContext context) => SuggestionCubit()..onLoad()),
         BlocProvider<MeetupCubit>(create: (BuildContext context) => MeetupCubit()),
         BlocProvider<UserCubit>(create: (BuildContext context) => UserCubit()),
-        BlocProvider<NotifyCubit>(create: (BuildContext context) => NotifyCubit()..onLoad())
+        BlocProvider<NotifyCubit>(create: (BuildContext context) => NotifyCubit()..onLoad()),
+        BlocProvider<AccountCubit>(create: (BuildContext context) => AccountCubit())
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(builder: (_, mode) {
         return MaterialApp(

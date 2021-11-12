@@ -6,6 +6,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/account.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/models/address.dart';
 import 'package:kroma_sport/models/post.dart';
@@ -890,8 +891,10 @@ class _OragnizeActivityScreenState extends State<OragnizeActivityScreen> {
 
         if (widget.data is Post) {
           BlocProvider.of<MeetupCubit>(context).update(newMeetup);
+           BlocProvider.of<AccountCubit>(context).onUpdateMeetup(newMeetup);
         } else {
           BlocProvider.of<MeetupCubit>(context).onAddMeetup(newMeetup);
+          BlocProvider.of<AccountCubit>(context).onAddMeetup(newMeetup);
         }
         Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
       } else {
