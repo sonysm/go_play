@@ -67,6 +67,7 @@ class App extends StatelessWidget {
       child: BlocBuilder<ThemeCubit, ThemeMode>(builder: (_, mode) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
+          navigatorKey: navigatorKey,
           themeMode: mode,
           home: SplashScreen(),
           onGenerateRoute: RouteGenerator.generateRoute,

@@ -5,8 +5,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:kroma_sport/main.dart';
 import 'package:kroma_sport/models/notification.dart';
 import 'package:kroma_sport/utils/constant.dart';
+import 'package:kroma_sport/views/detail_screen.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MyNotification {
@@ -17,13 +19,27 @@ class MyNotification {
     flutterLocalNotificationsPlugin.initialize(initializationsSettings, onSelectNotification: (String? payload) {
       try {
         if (payload != null && payload.isNotEmpty) {
+          print('========payload = $payload');
           var jsonData = jsonDecode(payload);
-          KSNotification _notification = KSNotification.fromJson(jsonData);
-          if (_notification.type == KSNotificationType.like) {
-          } else if (_notification.type == KSNotificationType.comment) {
-          } else if (_notification.type == KSNotificationType.invite) {
-          } else if (_notification.type == KSNotificationType.joined) {
-          } else if (_notification.type == KSNotificationType.left) {}
+
+          //KSNotification _notification = KSNotification.fromJson(jsonData);
+          if (jsonData['type'] == 1) {
+            App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': jsonData['post']});
+          } else if (jsonData['type'] == 2) {
+            App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': jsonData['post']});
+          }
+          //else if (_notification.type == KSNotificationType.invite) {
+          //} else if (_notification.type == KSNotificationType.joined) {
+          //} else if (_notification.type == KSNotificationType.left) {}
+
+          //KSNotification _notification = KSNotification.fromJson(jsonData);
+          //if (_notification.type == KSNotificationType.like) {
+          //  App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
+          //} else if (_notification.type == KSNotificationType.comment) {
+          //  App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
+          //} else if (_notification.type == KSNotificationType.invite) {
+          //} else if (_notification.type == KSNotificationType.joined) {
+          //} else if (_notification.type == KSNotificationType.left) {}
         }
       } catch (e) {}
 
@@ -36,6 +52,16 @@ class MyNotification {
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print("onMessageApp: ${message.data}");
+
+      //var jsonData = jsonDecode(message.data['content']);
+      //KSNotification _notification = KSNotification.fromJson(jsonData);
+      //if (_notification.type == KSNotificationType.like) {
+      //  App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
+      //} else if (_notification.type == KSNotificationType.comment) {
+      //  App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
+      //} else if (_notification.type == KSNotificationType.invite) {
+      //} else if (_notification.type == KSNotificationType.joined) {
+      //} else if (_notification.type == KSNotificationType.left) {}
     });
   }
 
@@ -55,6 +81,9 @@ class MyNotification {
     var content = jsonDecode(message['content']);
     String _title = content['title'];
     String _body = content['body'] ?? '';
+
+    Map _payload = {'type': content['type'], 'post': content['post']};
+
     const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'your channel id',
       'your channel name',
@@ -72,7 +101,7 @@ class MyNotification {
     );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatform);
-    await fln.show(0, _title, _body, platformChannelSpecifics, payload: message['content']);
+    await fln.show(0, _title, _body, platformChannelSpecifics, payload: jsonEncode(_payload));
   }
 
   static Future<void> showBigTextNotification(Map<String, dynamic> message, FlutterLocalNotificationsPlugin fln) async {
@@ -161,6 +190,5 @@ Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
   var initializationsSettings = new InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   flutterLocalNotificationsPlugin.initialize(initializationsSettings);
-  // MyNotification.showNotification(
-  //     message.data, flutterLocalNotificationsPlugin);
+  MyNotification.showNotification(message.data, flutterLocalNotificationsPlugin);
 }
