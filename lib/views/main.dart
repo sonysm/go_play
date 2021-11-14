@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:device_info/device_info.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -24,7 +25,8 @@ import 'package:kroma_sport/views/tabs/meetup/meetup_screen.dart';
 import 'package:kroma_sport/views/tabs/notification/notifitcation_screen.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:uni_links/uni_links.dart';
-
+import 'package:kroma_sport/main.dart';
+import 'package:kroma_sport/models/notification.dart';
 
 class MainView extends StatefulWidget {
   static const String tag = '/mainScreen';
@@ -59,7 +61,6 @@ class _MainViewState extends State<MainView> {
   dynamic _sharedInfo;
 
   StreamSubscription? _uniSub;
-
 
   @override
   Widget build(BuildContext context) {
@@ -113,12 +114,13 @@ class _MainViewState extends State<MainView> {
                     showKSMainOption(context);
                   }
 
-                  if(index == 3){ // notification
-                      NotifyCubit notifyCubit = context.read<NotifyCubit>();
-                      if(notifyCubit.state.badge > 0){
-                          notifyCubit.tapViewNotify();
-                          notifyCubit.emit(notifyCubit.state.copyWith(badge: 0));
-                      }
+                  if (index == 3) {
+                    // notification
+                    NotifyCubit notifyCubit = context.read<NotifyCubit>();
+                    if (notifyCubit.state.badge > 0) {
+                      notifyCubit.tapViewNotify();
+                      notifyCubit.emit(notifyCubit.state.copyWith(badge: 0));
+                    }
                   }
                 },
               ),
@@ -140,17 +142,18 @@ class _MainViewState extends State<MainView> {
 
     _handleIncomingLinks();
     _handleInitialUri();
+    _onNotificationInitial();
   }
 
   @override
   void dispose() {
     // _sharedText = null;
     _sharedInfo = null;
-    if(_uniSub != null){
+    if (_uniSub != null) {
       _uniSub?.cancel();
     }
-    if(_streamSubscription != null){
-        _streamSubscription?.cancel();
+    if (_streamSubscription != null) {
+      _streamSubscription?.cancel();
     }
     super.dispose();
   }
@@ -214,12 +217,12 @@ class _MainViewState extends State<MainView> {
   void initShareIntent() {
     // For sharing or opening urls/text coming from outside the app while the app is in the memory
     _streamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
-      if(!value.contains('v-play.cc')){
-          setState(() {
-            // _sharedText = value;
-            _sharedInfo = value;
-          });
-          // print("Shared: $value");
+      if (!value.contains('v-play.cc')) {
+        setState(() {
+          // _sharedText = value;
+          _sharedInfo = value;
+        });
+        // print("Shared: $value");
       }
     }, onError: (err) {
       print("getLinkStream error: $err");
@@ -227,12 +230,12 @@ class _MainViewState extends State<MainView> {
 
     // For sharing or opening urls/text coming from outside the app while the app is closed
     ReceiveSharingIntent.getInitialText().then((String? value) {
-      if(value != null && !value.contains('v-play.cc')){
-          setState(() {
-            // _sharedText = value;
-            _sharedInfo = value;
-          });
-          // print("Shared: $value");
+      if (value != null && !value.contains('v-play.cc')) {
+        setState(() {
+          // _sharedText = value;
+          _sharedInfo = value;
+        });
+        // print("Shared: $value");
       }
     });
 
@@ -260,18 +263,18 @@ class _MainViewState extends State<MainView> {
     // });
   }
 
-   /// Handle incoming links - the ones that the app will recieve from the OS
+  /// Handle incoming links - the ones that the app will recieve from the OS
   /// while already started.
   void _handleIncomingLinks() {
-       // It will handle app links while the app is already started - be it in
-      // the foreground or in the background.
-      _uniSub = uriLinkStream.listen((Uri? uri) {
-        if (!mounted || uri == null) return;
-        _handleVplayUri(uri);
-      }, onError: (Object err) {
-        if (!mounted) return;
-        print('got err: $err');
-      });
+    // It will handle app links while the app is already started - be it in
+    // the foreground or in the background.
+    _uniSub = uriLinkStream.listen((Uri? uri) {
+      if (!mounted || uri == null) return;
+      _handleVplayUri(uri);
+    }, onError: (Object err) {
+      if (!mounted) return;
+      print('got err: $err');
+    });
   }
 
   /// Handle the initial Uri - the one the app was started with
@@ -285,35 +288,48 @@ class _MainViewState extends State<MainView> {
     // In this example app this is an almost useless guard, but it is here to
     // show we are not going to call getInitialUri multiple times, even if this
     // was a weidget that will be disposed of (ex. a navigation route change).
-      try {
-        final uri = await getInitialUri();
-        if (!mounted || uri == null) return;
-        _handleVplayUri(uri);
-      } on PlatformException {
-        // Platform messages may fail but we ignore the exception
-        print('falied to get initial uri');
-      } on FormatException catch (err) {
-        if (!mounted) return;
-        print('malformed initial uri');
-      }
+    try {
+      final uri = await getInitialUri();
+      if (!mounted || uri == null) return;
+      _handleVplayUri(uri);
+    } on PlatformException {
+      // Platform messages may fail but we ignore the exception
+      print('falied to get initial uri');
+    } on FormatException catch (err) {
+      if (!mounted) return;
+      print('malformed initial uri');
+    }
   }
 
-  _handleVplayUri(Uri uri){
-      if(uri.host == "v-play.cc"){
-          final params = uri.queryParameters;
-          if(params.containsKey("shared") && params.containsKey("aid")){
-              try{
-                  final postId = int.parse(params['aid'].toString());
-                  launchScreen(context, DetailScreen.tag, arguments: {
-                      'postId': postId
-                  });
-              } on FormatException catch(e){
-                  print(e);
-              }
-          }
+  _handleVplayUri(Uri uri) {
+    if (uri.host == "v-play.cc") {
+      final params = uri.queryParameters;
+      if (params.containsKey("shared") && params.containsKey("aid")) {
+        try {
+          final postId = int.parse(params['aid'].toString());
+          launchScreen(context, DetailScreen.tag, arguments: {'postId': postId});
+        } on FormatException catch (e) {
+          print(e);
+        }
       }
+    }
   }
 
+  _onNotificationInitial() {
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        var jsonData = jsonDecode(message.data['content']);
+        KSNotification _notification = KSNotification.fromJson(jsonData);
+        if (_notification.type == KSNotificationType.like) {
+          App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
+        } else if (_notification.type == KSNotificationType.comment) {
+          App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
+        } else if (_notification.type == KSNotificationType.invite) {
+        } else if (_notification.type == KSNotificationType.joined) {
+        } else if (_notification.type == KSNotificationType.left) {}
+      }
+    });
+  }
 }
 
 class _CustomTabBar extends StatelessWidget {
@@ -346,25 +362,28 @@ class _CustomTabBar extends StatelessWidget {
                     onPressed: () => onTap(key),
                     child: Tab(
                       icon: key != 2
-                          ? key != 3 ? Icon(value,
-                              color: key == selectedIndex
-                                  ? ColorResources.getPrimaryIconColor(context)
-                                  : ColorResources.getPrimaryIconColorDark(context))
-                            :  BlocBuilder<NotifyCubit, NotifyData>(
-                              builder: (context, state) {
+                          ? key != 3
+                              ? Icon(value,
+                                  color: key == selectedIndex
+                                      ? ColorResources.getPrimaryIconColor(context)
+                                      : ColorResources.getPrimaryIconColorDark(context))
+                              : BlocBuilder<NotifyCubit, NotifyData>(builder: (context, state) {
                                   return Stack(
                                     children: [
-                                      Icon(value,color: key == selectedIndex ? ColorResources.getPrimaryIconColor(context) : ColorResources.getPrimaryIconColorDark(context)),
+                                      Icon(value,
+                                          color: key == selectedIndex
+                                              ? ColorResources.getPrimaryIconColor(context)
+                                              : ColorResources.getPrimaryIconColorDark(context)),
                                       if (state.badge > 0)
-                                        Positioned(  // draw a red marble
-                                            top: 0.0,
-                                            right: 0.0,
-                                            child: new Icon(Icons.brightness_1, size: 8.0, 
-                                              color: Colors.redAccent),
+                                        Positioned(
+                                          // draw a red marble
+                                          top: 0.0,
+                                          right: 0.0,
+                                          child: new Icon(Icons.brightness_1, size: 8.0, color: Colors.redAccent),
                                         )
                                     ],
                                   );
-                              })
+                                })
                           : Container(
                               width: 48.0,
                               height: 48.0,

@@ -9,6 +9,7 @@ import 'package:kroma_sport/main.dart';
 import 'package:kroma_sport/models/notification.dart';
 import 'package:kroma_sport/utils/constant.dart';
 import 'package:kroma_sport/views/detail_screen.dart';
+import 'package:kroma_sport/views/tabs/meetup/meetup_detail_screen.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MyNotification {
@@ -22,24 +23,13 @@ class MyNotification {
           print('========payload = $payload');
           var jsonData = jsonDecode(payload);
 
-          //KSNotification _notification = KSNotification.fromJson(jsonData);
           if (jsonData['type'] == 1) {
             App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': jsonData['post']});
           } else if (jsonData['type'] == 2) {
             App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': jsonData['post']});
-          }
-          //else if (_notification.type == KSNotificationType.invite) {
-          //} else if (_notification.type == KSNotificationType.joined) {
-          //} else if (_notification.type == KSNotificationType.left) {}
-
-          //KSNotification _notification = KSNotification.fromJson(jsonData);
-          //if (_notification.type == KSNotificationType.like) {
-          //  App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
-          //} else if (_notification.type == KSNotificationType.comment) {
-          //  App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
-          //} else if (_notification.type == KSNotificationType.invite) {
-          //} else if (_notification.type == KSNotificationType.joined) {
-          //} else if (_notification.type == KSNotificationType.left) {}
+          } else if (jsonData['type'] == 3) {
+          } else if (jsonData['type'] == 5) {
+          } else if (jsonData['type'] == 6) {}
         }
       } catch (e) {}
 
@@ -48,20 +38,26 @@ class MyNotification {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print("onMessage: ${message.data}");
-      MyNotification.showNotification(message.data, flutterLocalNotificationsPlugin);
+      if (!Platform.isIOS) {
+        MyNotification.showNotification(message.data, flutterLocalNotificationsPlugin);
+      }
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print("onMessageApp: ${message.data}");
 
-      //var jsonData = jsonDecode(message.data['content']);
-      //KSNotification _notification = KSNotification.fromJson(jsonData);
-      //if (_notification.type == KSNotificationType.like) {
-      //  App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
-      //} else if (_notification.type == KSNotificationType.comment) {
-      //  App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
-      //} else if (_notification.type == KSNotificationType.invite) {
-      //} else if (_notification.type == KSNotificationType.joined) {
-      //} else if (_notification.type == KSNotificationType.left) {}
+      var jsonData = jsonDecode(message.data['content']);
+      KSNotification _notification = KSNotification.fromJson(jsonData);
+      if (_notification.type == KSNotificationType.like) {
+        App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
+      } else if (_notification.type == KSNotificationType.comment) {
+        App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
+      } else if (_notification.type == KSNotificationType.invite) {
+        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: _notification.post);
+      } else if (_notification.type == KSNotificationType.joined) {
+        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: _notification.post);
+      } else if (_notification.type == KSNotificationType.left) {
+        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: _notification.post);
+      }
     });
   }
 
@@ -190,5 +186,5 @@ Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
   var initializationsSettings = new InitializationSettings(android: androidInitialize, iOS: iOSInitialize);
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   flutterLocalNotificationsPlugin.initialize(initializationsSettings);
-  MyNotification.showNotification(message.data, flutterLocalNotificationsPlugin);
+  //MyNotification.showNotification(message.data, flutterLocalNotificationsPlugin);
 }
