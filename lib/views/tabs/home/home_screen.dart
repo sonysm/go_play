@@ -298,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       valueColor: AlwaysStoppedAnimation<Color>(mainColor),
                     ),
                     footer: ClassicalFooter(
-                      enableInfiniteLoad: state.hasReachedMax ? false : true,
+                      enableInfiniteLoad: state.status == DataState.NoMore ? false : true,
                       // completeDuration: Duration(milliseconds: 1200),
                     ),
                     slivers: [
@@ -320,14 +320,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       //}),
                     ],
                     onRefresh: () async {
-                      await Future.delayed(Duration(milliseconds: 300));
-                      _homeCubit.onRefresh();
-                      _suggestionCubit.onLoad();
+                     // await Future.delayed(Duration(milliseconds: 300));
+                        _suggestionCubit.onLoad();
+                        HomeData data = await _homeCubit.onRefresh();
+                        _homeCubit.emit(data);
                     },
-                    onLoad: state.status != DataState.ErrorSocket
+                    onLoad: state.status != DataState.NoMore
                         ? () async {
-                            await Future.delayed(Duration(milliseconds: 300));
-                            _homeCubit.onLoadMore();
+                            var data = await _homeCubit.onLoadMore();
+                            _homeCubit.emit(data);
                           }
                         : null,
                   );

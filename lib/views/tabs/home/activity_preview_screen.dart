@@ -7,6 +7,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:http/http.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/account.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
@@ -331,6 +332,7 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
         dismissScreen(context);
         var newActivity = Post.fromJson(data);
         BlocProvider.of<HomeCubit>(context).onPostFeed(newActivity);
+        BlocProvider.of<AccountCubit>(context).onAddPost(newActivity);
         Navigator.popUntil(context, ModalRoute.withName(MainView.tag));
       } else {
         showKSMessageDialog(

@@ -5,9 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/account.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
-import 'package:kroma_sport/bloc/home.dart';
-import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
@@ -49,15 +48,12 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> with TickerProviderStateMixin {
   late TabController _controller;
   late ConnectionStatusSingleton connectionStatus;
-  late HomeCubit _homeCubit;
-  late MeetupCubit _meetupCubit;
+  late AccountCubit _accountCubit;
 
   KSHttpClient ksClient = KSHttpClient();
   List<FavoriteSport> favSportList = [];
 
   bool isLoaded = false;
-  int postPage = 1;
-  int meetupPage = 1;
 
   Widget actionHeader({String? amt, required String title, VoidCallback? onTap}) {
     return Material(
@@ -204,30 +200,31 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
   }
 
   Widget buildMeetupList() {
-    return BlocBuilder<MeetupCubit, MeetupData>(
+    return BlocBuilder<AccountCubit, AccountData>(
       builder: (context, data) {
-        if (!data.ownerHasReachedMax) meetupPage = 1;
-        if (data.status == DataState.ErrorSocket) {
+        if (data.meetupStatus == DataState.ErrorSocket) {
           return Padding(
             padding: const EdgeInsets.only(top: 50.0),
             child: KSNoInternet(),
           );
         }
 
-        return data.status == DataState.Loading
+        return data.meetupStatus == DataState.Loading
             ? Container(
                 margin: const EdgeInsets.only(top: 100),
                 child: Center(
                   child: CircularProgressIndicator(),
                 ),
               )
-            : data.ownerMeetup.isNotEmpty
+            : data.meetup.isNotEmpty
                 ? NotificationListener(
                     onNotification: (ScrollNotification scrollInfo) {
                       if (scrollInfo.metrics.atEdge &&
                           scrollInfo.metrics.pixels > 0 &&
                           (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent)) {
-                        loadMoreMeetup();
+                        if(data.meetupStatus == DataState.Loaded){
+                            loadMoreMeetup();
+                        }
                       }
                       return false;
                     },
@@ -237,11 +234,11 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        if (index >= data.ownerMeetup.length) {
+                        if (index >= data.meetup.length) {
                           return BottomLoader();
                         }
 
-                        var meetup = data.ownerMeetup.elementAt(index);
+                        var meetup = data.meetup.elementAt(index);
 
                         return Padding(
                           padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
@@ -256,7 +253,7 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
                       separatorBuilder: (context, index) {
                         return 8.height;
                       },
-                      itemCount: data.ownerHasReachedMax ? data.ownerMeetup.length : data.ownerMeetup.length + 1,
+                      itemCount: data.meetupStatus == DataState.NoMore ? data.meetup.length : data.meetup.length + 1,
                     ),
                   )
                 : SingleChildScrollView(
@@ -294,30 +291,31 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
   }
 
   Widget buildPostFeedList() {
-    return BlocBuilder<HomeCubit, HomeData>(
+    return BlocBuilder<AccountCubit, AccountData>(
       builder: (context, data) {
-        if (!data.ownerHasReachedMax) postPage = 1;
-        if (data.status == DataState.ErrorSocket && data.ownerPost.isEmpty) {
+        if (data.postStatus == DataState.ErrorSocket && data.posts.isEmpty) {
           return Padding(
             padding: const EdgeInsets.only(top: 50.0),
             child: KSNoInternet(),
           );
         }
 
-        return data.status == DataState.Loading
+        return data.postStatus == DataState.Loading
             ? Container(
                 margin: const EdgeInsets.only(top: 100),
                 child: Center(
                   child: CircularProgressIndicator(),
                 ),
               )
-            : data.ownerPost.isNotEmpty
+            : data.posts.isNotEmpty
                 ? NotificationListener<ScrollNotification>(
                     onNotification: (ScrollNotification scrollInfo) {
                       if (scrollInfo.metrics.atEdge &&
                           scrollInfo.metrics.pixels > 0 &&
                           (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent)) {
-                        loadMorePost();
+                            if(data.postStatus == DataState.Loaded){
+                                loadMorePost();
+                            }
                       }
                       return false;
                     },
@@ -327,11 +325,11 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        if (index >= data.ownerPost.length) {
+                        if (index >= data.posts.length) {
                           return BottomLoader();
                         }
 
-                        var post = data.ownerPost.elementAt(index);
+                        var post = data.posts.elementAt(index);
                         if (post.type == PostType.feed) {
                           return Padding(
                             padding: EdgeInsets.only(top: (index == 0 ? 4.0 : 0)),
@@ -359,7 +357,7 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
                       separatorBuilder: (context, index) {
                         return 8.height;
                       },
-                      itemCount: data.ownerHasReachedMax ? data.ownerPost.length : data.ownerPost.length + 1,
+                      itemCount: data.postStatus == DataState.NoMore ? data.posts.length : data.posts.length + 1,
                     ),
                   )
                 : SingleChildScrollView(
@@ -406,15 +404,10 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
 
     return PullToRefreshNotification(
       color: Colors.blue,
-      onRefresh: () {
-        return Future<bool>.delayed(
-            const Duration(
-              seconds: 1,
-            ), () {
-          _homeCubit.loadOwnerPost(1);
-          _meetupCubit.loadOwnerMeetup(1);
+      onRefresh: () async{
+          var data = await _accountCubit.onRefresh();
+          _accountCubit.emit(data);
           return true;
-        });
       },
       maxDragOffset: 100,
       child: GlowNotificationWidget(
@@ -509,9 +502,7 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
     Future.delayed(Duration(milliseconds: 300)).then((_) {
       getFavoriteSport();
     });
-
-    _homeCubit = context.read<HomeCubit>();
-    _meetupCubit = context.read<MeetupCubit>();
+    _accountCubit = context.read<AccountCubit>();
   }
 
   @override
@@ -539,9 +530,11 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
 
   void connectionChanged(dynamic hasConnection) {
     if (hasConnection) {
-      getFavoriteSport();
-      _homeCubit.onLoad();
-      _meetupCubit.onLoad();
+        getFavoriteSport();
+      
+      if(_accountCubit.state.postStatus != DataState.None) {
+          _accountCubit.onLoad();
+      }
     }
   }
 
@@ -669,17 +662,15 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
   }
 
   void loadMorePost() async {
-    postPage += 1;
-    await Future.delayed(Duration(seconds: 1), () {
-      _homeCubit.loadOwnerPost(postPage);
-    });
+    print('moreFeed');
+      var data = await _accountCubit.onMoreFeed();
+      _accountCubit.emit(data);
   }
 
   void loadMoreMeetup() async {
-    meetupPage += 1;
-    await Future.delayed(Duration(seconds: 1), () {
-      _meetupCubit.loadOwnerMeetup(meetupPage);
-    });
+    print('more');
+      var data = await _accountCubit.onMoreMeetup();
+      _accountCubit.emit(data);
   }
 }
 

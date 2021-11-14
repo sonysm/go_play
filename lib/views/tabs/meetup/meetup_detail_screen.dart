@@ -10,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/account.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/config/env.dart';
 import 'package:kroma_sport/ks.dart';
@@ -747,6 +748,7 @@ class _MeetupDetailScreenState extends State<MeetupDetailScreen> {
       dismissScreen(context);
       if (result is! HttpResult) {
         BlocProvider.of<MeetupCubit>(context).onDeleteMeetup(result['id']);
+        BlocProvider.of<AccountCubit>(context).onDeleteMeetup(result['id']);
         dismissScreen(context);
       }
     }

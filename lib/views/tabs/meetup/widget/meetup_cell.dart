@@ -6,6 +6,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/account.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/ks.dart';
@@ -479,6 +480,7 @@ class _MeetupCellState extends State<MeetupCell> {
       dismissScreen(context);
       if (result is! HttpResult) {
         BlocProvider.of<MeetupCubit>(context).onDeleteMeetup(result['id']);
+        BlocProvider.of<AccountCubit>(context).onDeleteMeetup(result['id']);
       }
     }
   }

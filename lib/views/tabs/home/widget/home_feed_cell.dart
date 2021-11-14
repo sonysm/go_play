@@ -6,6 +6,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
+import 'package:kroma_sport/bloc/account.dart';
 import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/bloc/user.dart';
@@ -61,7 +62,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
   );
 
   late HomeCubit _homeCubit;
-  late MeetupCubit _meetupCubit;
+  late AccountCubit _accountCubit;
 
   late AnimationController controller;
   Animation<double>? animation;
@@ -474,6 +475,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
       dismissScreen(context);
       if (result is! HttpResult) {
         _homeCubit.onDeletePostFeed(postId);
+        _accountCubit.onDeletePost(postId);
       }
     }
   }
@@ -482,7 +484,8 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
     var result = await ksClient.postApi('/create/post/reaction/${_post.id}');
     if (result != null) {
       if (result is! HttpResult) {
-        _homeCubit.reactPost(_post.id, _post.reacted!, home: home);
+          _homeCubit.reactPost(_post.id, _post.reacted!, home: home);
+          _accountCubit.checkReactPost(_post.id, _post.reacted!, home);
       }
     }
   }
@@ -509,7 +512,7 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
   void initState() {
     super.initState();
     _homeCubit = context.read<HomeCubit>();
-    _meetupCubit = context.read<MeetupCubit>();
+    _accountCubit = context.read<AccountCubit>();
     _post = widget.post;
     checkLinkPreview();
 
