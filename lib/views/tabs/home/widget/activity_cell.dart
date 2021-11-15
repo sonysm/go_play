@@ -6,7 +6,6 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
-import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
@@ -42,7 +41,7 @@ class _ActivityCellState extends State<ActivityCell> {
   late Post _post;
 
   late HomeCubit _homeCubit;
-  late MeetupCubit _meetupCubit;
+  // late MeetupCubit _meetupCubit;
 
   String calcMinuteDuration() {
     var s = DateTime.parse(_post.activityDate! + ' ' + _post.activityStartTime!);
@@ -329,7 +328,7 @@ class _ActivityCellState extends State<ActivityCell> {
   void initState() {
     super.initState();
     _homeCubit = context.read<HomeCubit>();
-    _meetupCubit = context.read<MeetupCubit>();
+    // _meetupCubit = context.read<MeetupCubit>();
     _post = widget.post;
   }
 

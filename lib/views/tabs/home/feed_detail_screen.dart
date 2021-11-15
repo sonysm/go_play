@@ -103,6 +103,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
           .headline6
           ?.copyWith(fontWeight: FontWeight.w400),
       actions: [
+        if(post.type != PostType.feed)
         CupertinoButton(
             onPressed: () async {
               if (uImage == null )
@@ -113,7 +114,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
               }
             },
             padding: EdgeInsets.zero,
-            child: Icon(Icons.share, color: isLight(context) ? Colors.grey[600] : whiteColor))
+            child: Icon(Icons.share, color: isLight(context) ? Colors.grey[600] : whiteColor)
+        ),
       ],
     );
   }

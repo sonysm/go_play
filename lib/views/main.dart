@@ -303,7 +303,7 @@ class _MainViewState extends State<MainView> {
       print('falied to get initial uri');
     } on FormatException catch (err) {
       if (!mounted) return;
-      print('malformed initial uri');
+      print('malformed initial uri $err');
     }
   }
 

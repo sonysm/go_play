@@ -133,17 +133,17 @@ class HomeCubit extends Cubit<HomeData> {
   }
 
   Future<void> onPostFeed(Post newPost) async {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       emit(state.copyWith(data: [newPost] + state.data));
-    }
+    // }
   }
 
   Future<void> onDeletePostFeed(int postId) async {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       final updatedList = state.data.where((element) => element.id != postId).toList();
       // final updatedOwnerList = state.ownerPost.where((element) => element.id != postId).toList();
       emit(state.copyWith(data: updatedList));
-    }
+    // }
   }
 
   // onReset() {
@@ -151,7 +151,7 @@ class HomeCubit extends Cubit<HomeData> {
   // }
 
   Future<void> updatePost(Post newPost) async {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       final updatedList = state.data.map((element) {
         return element.id == newPost.id ? newPost : element;
       }).toList();
@@ -160,7 +160,7 @@ class HomeCubit extends Cubit<HomeData> {
       //   return element.id == newPost.id ? newPost : element;
       // }).toList();
       emit(state.copyWith(data: updatedList));
-    }
+    // }
   }
 
   // Future<void> loadOwnerPost(int page) async {
@@ -186,7 +186,7 @@ class HomeCubit extends Cubit<HomeData> {
   // }
 
   Future<void> reactPost(int id, bool reacted, {bool home = false}) async {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       // emit(state.copyWith(status: DataState.None));
       bool reEmit = false;
       // if (home) {
@@ -224,17 +224,17 @@ class HomeCubit extends Cubit<HomeData> {
       if (reEmit) {
         emit(state.copyWith(data: state.data, reload: !state.reload));
       }
-    }
+    // }
   }
 
   Future<void> onHidePost(int postId) async {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       _client.postApi('/user/activity/hide_post/$postId');
 
       final updatedList = state.data.where((element) => element.id != postId).toList();
 
       emit(state.copyWith(data: updatedList));
-    }
+    // }
   }
 
   void onUndoHidingPost({required int index, required Post post}) {
@@ -247,19 +247,19 @@ class HomeCubit extends Cubit<HomeData> {
   }
 
   void onBlockUser(int userId) {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       _client.postApi('/user/activity/block/$userId');
 
       final updatedList = state.data.where((element) => element.owner.id != userId).toList();
 
       emit(state.copyWith(data: updatedList));
-    }
+    // }
   }
 
   void onUnblockUser(int userId) {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       _client.postApi('/user/activity/unblock/$userId');
       onRefresh();
-    }
+    // }
   }
 }

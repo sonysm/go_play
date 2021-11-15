@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
@@ -128,13 +127,13 @@ class MeetupCubit extends Cubit<MeetupData> {
   }
 
   Future<void> onAddMeetup(Post newPost) async {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       emit(state.copyWith(data: [newPost] + state.data));
-    }
+    // }
   }
 
   Future<void> onDeleteMeetup(int meetupId) async {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       final updatedList =
           state.data.where((element) => element.id != meetupId).toList();
 
@@ -142,7 +141,7 @@ class MeetupCubit extends Cubit<MeetupData> {
       //     state.ownerMeetup.where((element) => element.id != meetupId).toList();
 
       emit(state.copyWith(data: updatedList));
-    }
+    // }
   }
 
   // onReset() {
@@ -150,7 +149,7 @@ class MeetupCubit extends Cubit<MeetupData> {
   // }
 
   Future<void> update(Post newMeetup) async {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       final updatedList = state.data.map((element) {
         return element.id == newMeetup.id ? newMeetup : element;
       }).toList();
@@ -160,7 +159,7 @@ class MeetupCubit extends Cubit<MeetupData> {
       // }).toList();
 
       emit(state.copyWith(data: updatedList));
-    }
+    // }
   }
 
   // Future<void> loadOwnerMeetup(int page) async {
@@ -189,40 +188,40 @@ class MeetupCubit extends Cubit<MeetupData> {
   // }
 
   Future<void> onHideMeetup(int postId) async {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       _client.postApi('/user/activity/hide_post/$postId');
 
       final updatedList =
           state.data.where((element) => element.id != postId).toList();
 
       emit(state.copyWith(data: updatedList));
-    }
+    // }
   }
 
   void onUndoHidingMeetup({required int index, required Post post}) {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       _client.postApi('/user/activity/show/hidden_post/${post.id}');
 
       state.data.insert(index, post);
       emit(state.copyWith(data: state.data, reload: !state.reload));
-    }
+    // }
   }
 
   void onBlockUser(int userId) {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       // _client.postApi('/user/activity/block/$userId');
 
       final updatedList =
           state.data.where((element) => element.owner.id != userId).toList();
 
       emit(state.copyWith(data: updatedList));
-    }
+    // }
   }
 
   void onUnblockUser(int userId) {
-    if (state.status == DataState.Loaded) {
+    // if (state.status == DataState.Loaded) {
       // _client.postApi('/user/activity/unblock/$userId');
       onRefresh();
     }
-  }
+  // }
 }

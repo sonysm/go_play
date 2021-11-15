@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/account.dart';
-import 'package:kroma_sport/bloc/home.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/member.dart';
@@ -49,7 +48,7 @@ class _MeetupCellState extends State<MeetupCell> {
   late Post meetup;
   late List<Member> joinMember;
 
-  late HomeCubit _homeCubit;
+  // late HomeCubit _homeCubit;
   late MeetupCubit _meetupCubit;
 
   KSHttpClient ksClient = KSHttpClient();
@@ -359,7 +358,7 @@ class _MeetupCellState extends State<MeetupCell> {
     super.initState();
     meetup = widget.post;
 
-    _homeCubit = context.read<HomeCubit>();
+    // _homeCubit = context.read<HomeCubit>();
     _meetupCubit = context.read<MeetupCubit>();
 
     joinMember = meetup.meetupMember!.where((element) => element.status == 1).toList();

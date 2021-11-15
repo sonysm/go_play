@@ -28,7 +28,7 @@ class _CreateTeamScreenState extends State<CreateTeamScreen> {
   TextEditingController _ageCategoryController = TextEditingController();
   TextEditingController _teamTypeController = TextEditingController();
   TextEditingController _practiceLevelController = TextEditingController();
-  TextEditingController _cityController = TextEditingController();
+  // TextEditingController _cityController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
 
   KSHttpClient _ksClient = KSHttpClient();

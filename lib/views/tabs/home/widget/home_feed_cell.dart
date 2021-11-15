@@ -8,7 +8,6 @@ import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/account.dart';
 import 'package:kroma_sport/bloc/home.dart';
-import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/bloc/user.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/post.dart';
@@ -79,13 +78,13 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
       return total > 0 ? Text(total > 1 ? '$total comments' : '$total comment') : SizedBox();
     }
 
-    Size getTextSize(String text, TextStyle style) {
-      final TextPainter textPainter = TextPainter(text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
-        ..layout(minWidth: 0, maxWidth: double.infinity);
-      return textPainter.size;
-    }
+    // Size getTextSize(String text, TextStyle style) {
+    //   final TextPainter textPainter = TextPainter(text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
+    //     ..layout(minWidth: 0, maxWidth: double.infinity);
+    //   return textPainter.size;
+    // }
 
-    final textWidth = getTextSize(_post.description ?? '', Theme.of(context).textTheme.bodyText1!).width;
+    // final textWidth = getTextSize(_post.description ?? '', Theme.of(context).textTheme.bodyText1!).width;
     // print('w________: $textWidth ${_post.description ?? 'n/a'}');
 
     return FadeTransition(

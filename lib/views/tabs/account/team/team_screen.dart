@@ -2,9 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
-import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/team.dart';
-import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/dimensions.dart';
 import 'package:kroma_sport/utils/extensions.dart';
@@ -12,11 +10,7 @@ import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/team/match/create_match_team_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/match/history_match_screen.dart';
 import 'package:kroma_sport/views/tabs/account/team/player_list_screen.dart';
-import 'package:kroma_sport/views/tabs/account/team/player_screen.dart';
-import 'package:kroma_sport/widgets/cache_image.dart';
-import 'package:kroma_sport/widgets/ks_widgets.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:share_plus/share_plus.dart';
+
 
 class TeamScreen extends StatefulWidget {
   static const tag = '/teamScreen';

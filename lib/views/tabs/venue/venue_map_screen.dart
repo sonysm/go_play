@@ -30,8 +30,8 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
   late GoogleMapController _mapController;
   late CameraPosition _initialCameraPosition;
 
-  late LatLng _currentPosition;
-  late LatLng _latLng;
+  // late LatLng _currentPosition;
+  // late LatLng _latLng;
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -130,8 +130,8 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
         zoom: 12.0,
       );
 
-      _latLng = LatLng(KS.shared.currentPosition!.latitude, KS.shared.currentPosition!.longitude);
-      _currentPosition = _latLng;
+      // _latLng = LatLng(KS.shared.currentPosition!.latitude, KS.shared.currentPosition!.longitude);
+      // _currentPosition = _latLng;
     }
 
     // widget.venueList.forEach((element) {
