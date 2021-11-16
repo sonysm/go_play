@@ -22,16 +22,7 @@ class MyNotification {
     flutterLocalNotificationsPlugin.initialize(initializationsSettings, onSelectNotification: (String? payload) {
       try {
         if (payload != null && payload.isNotEmpty) {
-          print('========payload = $payload');
-          var jsonData = jsonDecode(payload);
-
-          if (jsonData['type'] == 1) {
-            App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': jsonData['post']});
-          } else if (jsonData['type'] == 2) {
-            App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': jsonData['post']});
-          } else if (jsonData['type'] == 3) {
-          } else if (jsonData['type'] == 5) {
-          } else if (jsonData['type'] == 6) {}
+          _onhandleMessage(payload);
         }
       } catch (e) {}
 
@@ -46,28 +37,7 @@ class MyNotification {
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print("onMessageApp: ${message.data}");
-
-      var jsonData = jsonDecode(message.data['content']);
-      KSNotification _notification = KSNotification.fromJson(jsonData);
-      if (_notification.type == KSNotificationType.like) {
-        App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
-      } else if (_notification.type == KSNotificationType.comment) {
-        App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
-      } else if (_notification.type == KSNotificationType.invite) {
-        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: _notification.post);
-      } else if (_notification.type == KSNotificationType.joined) {
-        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: _notification.post);
-      } else if (_notification.type == KSNotificationType.left) {
-        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: _notification.post);
-      } else if(_notification.type == KSNotificationType.followed){
-        App.navigatorKey.currentState!.pushNamed(ViewUserProfileScreen.tag, arguments: {'user': _notification.actor});
-      }else if(
-        _notification.type == KSNotificationType.bookAccepted || 
-        _notification.type == KSNotificationType.bookCanceled ||
-        _notification.type == KSNotificationType.bookRejected
-      ){
-        App.navigatorKey.currentState!.pushNamed(BookingHistoryDetailScreen.tag, arguments: {'id': _notification.otherId});
-      }
+      _onhandleMessage(message);
     });
   }
 
@@ -186,6 +156,46 @@ class MyNotification {
     final File file = File(filePath);
     await file.writeAsBytes(response.bodyBytes);
     return filePath;
+  }
+
+  static void _onhandleMessage(dynamic message) {
+    if (message is RemoteMessage) {
+      var jsonData = jsonDecode(message.data['content']);
+      KSNotification _notification = KSNotification.fromJson(jsonData);
+      if (_notification.type == KSNotificationType.like) {
+        App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
+      } else if (_notification.type == KSNotificationType.comment) {
+        App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': _notification.post});
+      } else if (_notification.type == KSNotificationType.invite) {
+        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: _notification.post);
+      } else if (_notification.type == KSNotificationType.joined) {
+        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: _notification.post);
+      } else if (_notification.type == KSNotificationType.left) {
+        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: _notification.post);
+      } else if (_notification.type == KSNotificationType.followed) {
+        App.navigatorKey.currentState!.pushNamed(ViewUserProfileScreen.tag, arguments: {'user': _notification.actor});
+      } else if (_notification.type == KSNotificationType.bookAccepted ||
+          _notification.type == KSNotificationType.bookCanceled ||
+          _notification.type == KSNotificationType.bookRejected) {
+        App.navigatorKey.currentState!.pushNamed(BookingHistoryDetailScreen.tag, arguments: {'id': _notification.otherId});
+      }
+    } else {
+      var jsonData = jsonDecode(message);
+
+      if (jsonData['type'] == 1) {
+        App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': jsonData['post']});
+      } else if (jsonData['type'] == 2) {
+        App.navigatorKey.currentState!.pushNamed(DetailScreen.tag, arguments: {'postId': jsonData['post']});
+      } else if (jsonData['type'] == 3) {
+        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: jsonData['post']);
+      } else if (jsonData['type'] == 5) {
+        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: jsonData['post']);
+      } else if (jsonData['type'] == 6) {
+        App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: jsonData['post']);
+      } else if (jsonData['type'] == 7 || jsonData['type'] == 9 || jsonData['type'] == 10) {
+        App.navigatorKey.currentState!.pushNamed(BookingHistoryDetailScreen.tag, arguments: {'id': jsonData['post']});
+      }
+    }
   }
 }
 

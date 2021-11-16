@@ -25,43 +25,45 @@ class KSScreenState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: AppSize(context).appHeight(50) - (AppBar().preferredSize.height + kToolbarHeight) - 100.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(color: isLight(context) ? Colors.green.shade50 : Colors.blueGrey[600], shape: BoxShape.circle),
-            child: icon,
-          ),
-          24.height,
-          if (title != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: SizedBox(
-                width: 300.0,
-                child: Text(
-                  title!,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: titleColor ?? (isLight(context) ? Colors.blueGrey[700] : Colors.white60),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(color: isLight(context) ? Colors.green.shade50 : Colors.blueGrey[600], shape: BoxShape.circle),
+              child: icon,
+            ),
+            24.height,
+            if (title != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: SizedBox(
+                  width: 300.0,
+                  child: Text(
+                    title!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: titleColor ?? (isLight(context) ? Colors.blueGrey[700] : Colors.white60),
+                    ),
                   ),
                 ),
               ),
-            ),
-          if (subTitle != null)
-            SizedBox(
-              width: 320.0,
-              child: Text(
-                subTitle!,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyText2?.copyWith(
-                      color: subTitleColor ?? (isLight(context) ? Colors.blueGrey[400] : Colors.white54),
-                    ),
+            if (subTitle != null)
+              SizedBox(
+                width: 320.0,
+                child: Text(
+                  subTitle!,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText2?.copyWith(
+                        color: subTitleColor ?? (isLight(context) ? Colors.blueGrey[400] : Colors.white54),
+                      ),
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

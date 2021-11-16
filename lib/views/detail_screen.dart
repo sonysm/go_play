@@ -51,7 +51,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: 
         (post != null && !isLoading) ? 
             (post!.type == PostType.meetUp) ? MeetupDetailScreen(meetup: post): FeedDetailScreen(post: post!, postIndex: -1)
@@ -63,11 +63,12 @@ class _DetailScreenState extends State<DetailScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(color: Colors.green.shade50, shape: BoxShape.circle),
+              width: 170,
+              height: 170,
+              padding: const EdgeInsets.all(26.0),
+              decoration: BoxDecoration(color: isLight(context) ? Colors.green.shade50 : Colors.blueGrey[600], shape: BoxShape.circle),
               child: SvgPicture.asset(
                 svgError,
-                height: 150,
                 color: isLight(context) ? Colors.blueGrey[700] : Colors.white60,
               ),
             ),

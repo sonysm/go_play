@@ -214,7 +214,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _emailTextField() {
+  /*Widget _emailTextField() {
     return SliverToBoxAdapter(
       child: Container(
         margin: EdgeInsets.only(top: 16.0),
@@ -257,7 +257,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget _genderField() {
     return SliverToBoxAdapter(
@@ -491,7 +491,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _infoTextWidget(),
               _firstnameTextField(),
               _lastnameTextField(),
-              _emailTextField(),
+              //_emailTextField(),
               _genderField(),
               _birthdateField(),
               _heightField(),
