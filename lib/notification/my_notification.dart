@@ -9,7 +9,9 @@ import 'package:kroma_sport/main.dart';
 import 'package:kroma_sport/models/notification.dart';
 import 'package:kroma_sport/utils/constant.dart';
 import 'package:kroma_sport/views/detail_screen.dart';
+import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/meetup/meetup_detail_screen.dart';
+import 'package:kroma_sport/views/tabs/venue/booking_history_detail.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MyNotification {
@@ -57,6 +59,14 @@ class MyNotification {
         App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: _notification.post);
       } else if (_notification.type == KSNotificationType.left) {
         App.navigatorKey.currentState!.pushNamed(MeetupDetailScreen.tag, arguments: _notification.post);
+      } else if(_notification.type == KSNotificationType.followed){
+        App.navigatorKey.currentState!.pushNamed(ViewUserProfileScreen.tag, arguments: {'user': _notification.actor});
+      }else if(
+        _notification.type == KSNotificationType.bookAccepted || 
+        _notification.type == KSNotificationType.bookCanceled ||
+        _notification.type == KSNotificationType.bookRejected
+      ){
+        App.navigatorKey.currentState!.pushNamed(BookingHistoryDetailScreen.tag, arguments: {'id': _notification.otherId});
       }
     });
   }
