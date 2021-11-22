@@ -103,7 +103,7 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
           .headline6
           ?.copyWith(fontWeight: FontWeight.w400),
       actions: [
-        if(post.type != PostType.feed)
+        if(post.type != PostType.feed || post.owner.id == KS.shared.user.id)
         CupertinoButton(
             onPressed: () async {
               if (uImage == null )

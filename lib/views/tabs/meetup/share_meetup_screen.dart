@@ -447,15 +447,18 @@ class _ShareMeetupScreenState extends State<ShareMeetupScreen> {
                 Positioned(
                     right: 8,
                     bottom: 8,
-                    child: QrImage(
-                      padding: EdgeInsets.all(1.5),
-                      data: shareUrl,
-                      size: 68,
-                      backgroundColor: Colors.white,
-                      embeddedImage: AssetImage(icRound),
-                      embeddedImageStyle: QrEmbeddedImageStyle(
-                        size: Size(16, 16),
-                        // color: Color(0xFF38ef7d)
+                    child: Opacity(
+                      opacity: 0.5,
+                      child: QrImage(
+                        padding: EdgeInsets.all(1.5),
+                        data: shareUrl,
+                        size: 64,
+                        backgroundColor: Colors.white,
+                        embeddedImage: AssetImage(icRound),
+                        embeddedImageStyle: QrEmbeddedImageStyle(
+                          size: Size(16, 16),
+                          // color: Color(0xFF38ef7d)
+                        ),
                       ),
                     ))
               ],
