@@ -165,17 +165,21 @@ class _MainViewState extends State<MainView> {
   }
 
   fetchLocation() async {
-    if (KS.shared.currentPosition == null) {
-      var service = await KS.shared.locationService.serviceEnabled();
+    var service = await KS.shared.locationService.serviceEnabled();
       if (service) {
         try {
           var location = await KS.shared.locationService.getLocation();
           if (location.latitude != null && location.longitude != null) {
             KS.shared.setupLocationMintor();
+
+            ksClient.postApi('/user/update_location', body: {
+                'latitude': location.latitude,
+                'longitude': location.longitude
+            }).then((value) => null).catchError((e){});
+
           } else {}
         } catch (e) {}
       } else {}
-    }
   }
 
   setupFirebaseMessage() {
