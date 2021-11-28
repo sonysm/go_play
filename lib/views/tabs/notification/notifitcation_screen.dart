@@ -120,6 +120,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   void initState() {
     super.initState();
      _cubit = context.read<NotifyCubit>();
+     _cubit.onLoad();
   }
 
   @override

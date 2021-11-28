@@ -7,10 +7,8 @@ import 'package:kroma_sport/api/api_checker.dart';
 import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/bloc/meetup.dart';
 import 'package:kroma_sport/themes/colors.dart';
-import 'package:kroma_sport/utils/extensions.dart';
-import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
-import 'package:kroma_sport/views/tabs/meetup/widget/meetup_cell.dart';
+import 'package:kroma_sport/views/tabs/meetup/widget/sliver_meetup_list.dart';
 import 'package:kroma_sport/views/tabs/search/search_screen.dart';
 import 'package:kroma_sport/widgets/ks_screen_state.dart';
 
@@ -24,72 +22,6 @@ class MeetupScreen extends StatefulWidget {
 }
 
 class _ActivityScreenState extends State<MeetupScreen> {
-  Widget buildNavbar() {
-    return SliverAppBar(
-      title: Text('Meetup'),
-    );
-  }
-
-  Widget emptyActivity() {
-    return SliverFillRemaining(
-      child: Container(
-        decoration: BoxDecoration(color: Theme.of(context).primaryColor, border: Border(top: BorderSide(width: 0.1))),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              imgEmptyActivity,
-              width: 120.0,
-            ),
-            16.height,
-            Text(
-              'No Meetup',
-              style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600, color: Colors.grey),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget loadingSliver() {
-    return SliverFillRemaining(
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-
-  Widget buildMeetupList(MeetupData meetupData) {
-    return meetupData.status == DataState.Loading
-        ? loadingSliver()
-        : meetupData.data.isNotEmpty
-            ? SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    var meetup = meetupData.data.elementAt(index);
-
-                    return Padding(
-                      padding: EdgeInsets.only(top: (index == 0 ? 8.0 : 0)),
-                      child: MeetupCell(
-                        key: Key(meetup.id.toString()),
-                        post: meetup,
-                        index: index,
-                      ),
-                    );
-                  },
-                  childCount: meetupData.data.length,
-                ),
-              )
-            : SliverFillRemaining(
-                child: KSScreenState(
-                  icon: Icon(FeatherIcons.activity, size: 150, color: isLight(context) ? Colors.blueGrey[700] : Colors.blueGrey[100]),
-                  title: 'No Meetup Found',
-                  subTitle: 'It seems there no meetup around you. You should try again later.',
-                ),
-              );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +67,7 @@ class _ActivityScreenState extends State<MeetupScreen> {
               ),
               slivers: [
                 state.status != DataState.ErrorSocket
-                    ? buildMeetupList(state)
+                    ? SliverMeetupListView(meetupData: state)
                     : SliverFillRemaining(
                         child: KSNoInternet(),
                       ),

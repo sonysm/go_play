@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_countdown_timer/index.dart';
 import 'package:kroma_sport/api/httpclient.dart';
@@ -61,6 +62,8 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
 
   final userRepository = UserRepository();
   KSHttpClient ksClient = KSHttpClient();
+
+  late FocusNode _focusNode;
 
   Stack _buildLoadingScreen() {
     return Stack(
@@ -286,7 +289,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                         // enteredColor: mainColor,
                         // strokeColor: Colors.grey
                       ),
-                      // focusNode: FocusNode(),
+                      focusNode: _focusNode,
                       onChanged: (t) {
                         print(t);
                         setState(() {});
@@ -382,6 +385,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   @override
   void initState() {
     super.initState();
+    _focusNode = FocusNode();
     controller = CountdownTimerController(endTime: endTime, onEnd: onEnd);
     Future.delayed(Duration(milliseconds: 500)).then((value) {
       // _toEditUserScreen();
@@ -389,6 +393,9 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
       _sendSMSCode();
       _status = OTPStatus.completed;
       setState(() {});
+    });
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
     });
   }
 

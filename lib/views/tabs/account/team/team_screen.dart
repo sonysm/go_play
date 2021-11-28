@@ -131,7 +131,7 @@ class _TeamScreenState extends State<TeamScreen> {
           ),
           shadowColor: MaterialStateProperty.all(Colors.black26),
           overlayColor: MaterialStateProperty.all(Colors.grey.shade100),
-          backgroundColor: MaterialStateProperty.all(whiteColor),
+          backgroundColor: MaterialStateProperty.all(ColorResources.getPrimary(context)),
           padding: MaterialStateProperty.all(const EdgeInsets.all(16)),
         ),
         child: Text(

@@ -37,7 +37,7 @@ class MainView extends StatefulWidget {
   _MainViewState createState() => _MainViewState();
 }
 
-class _MainViewState extends State<MainView> {
+class _MainViewState extends State<MainView> with WidgetsBindingObserver {
   List<Widget> _screens = [
     HomeScreen(key: homeStateKey),
     MeetupScreen(),
@@ -64,6 +64,8 @@ class _MainViewState extends State<MainView> {
 
   StreamSubscription? _uniSub;
 
+  bool inactive = false;
+
   @override
   Widget build(BuildContext context) {
     if (_sharedInfo != null) {
@@ -73,10 +75,14 @@ class _MainViewState extends State<MainView> {
     return DefaultTabController(
       length: _icons.length,
       child: Scaffold(
-        body: IndexedStack(
-          index: _screenIndex,
-          children: _screens,
-        ),
+        body: inactive
+            ? Container(
+                color: whiteColor,
+              )
+            : IndexedStack(
+                index: _screenIndex,
+                children: _screens,
+              ),
         bottomNavigationBar: Container(
           color: Theme.of(context).primaryColor,
           child: SafeArea(
@@ -116,17 +122,19 @@ class _MainViewState extends State<MainView> {
                     showKSMainOption(context);
                   }
 
-                  if(index == 3){ // notification
-                      NotifyCubit notifyCubit = context.read<NotifyCubit>();
-                      if(notifyCubit.state.badge > 0){
-                          notifyCubit.tapViewNotify();
-                          notifyCubit.emit(notifyCubit.state.copyWith(badge: 0));
-                      }
-                  }else if(index == 4){ //account
-                       AccountCubit accCubit = context.read<AccountCubit>();
-                       if(accCubit.state.postStatus == DataState.None){
-                          accCubit.onLoad();
-                       }
+                  if (index == 3) {
+                    // notification
+                    NotifyCubit notifyCubit = context.read<NotifyCubit>();
+                    if (notifyCubit.state.badge > 0) {
+                      notifyCubit.tapViewNotify();
+                      notifyCubit.emit(notifyCubit.state.copyWith(badge: 0));
+                    }
+                  } else if (index == 4) {
+                    //account
+                    AccountCubit accCubit = context.read<AccountCubit>();
+                    if (accCubit.state.postStatus == DataState.None) {
+                      accCubit.onLoad();
+                    }
                   }
                 },
               ),
@@ -149,6 +157,36 @@ class _MainViewState extends State<MainView> {
     _handleIncomingLinks();
     _handleInitialUri();
     _onNotificationInitial();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  late DateTime _bgDate;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.inactive:
+        print('appLifeCycleState inactive');
+        setState(() {
+          _bgDate = DateTime.now();
+        });
+        break;
+      case AppLifecycleState.resumed:
+        print('appLifeCycleState resumed');
+        if (DateTime.now().difference(_bgDate).inMinutes > 1) {
+          print('get new post============');
+        } else {
+          print('do nothing===============');
+        }
+        break;
+      case AppLifecycleState.paused:
+        print('appLifeCycleState paused');
+        break;
+      case AppLifecycleState.detached:
+        print('appLifeCycleState detached');
+        break;
+    }
   }
 
   @override
@@ -161,25 +199,25 @@ class _MainViewState extends State<MainView> {
     if (_streamSubscription != null) {
       _streamSubscription?.cancel();
     }
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
   fetchLocation() async {
     var service = await KS.shared.locationService.serviceEnabled();
-      if (service) {
-        try {
-          var location = await KS.shared.locationService.getLocation();
-          if (location.latitude != null && location.longitude != null) {
-            KS.shared.setupLocationMintor();
+    if (service) {
+      try {
+        var location = await KS.shared.locationService.getLocation();
+        if (location.latitude != null && location.longitude != null) {
+          KS.shared.setupLocationMintor();
 
-            ksClient.postApi('/user/update_location', body: {
-                'latitude': location.latitude,
-                'longitude': location.longitude
-            }).then((value) => null).catchError((e){});
-
-          } else {}
-        } catch (e) {}
-      } else {}
+          ksClient
+              .postApi('/user/update_location', body: {'latitude': location.latitude, 'longitude': location.longitude})
+              .then((value) => null)
+              .catchError((e) {});
+        } else {}
+      } catch (e) {}
+    } else {}
   }
 
   setupFirebaseMessage() {
