@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/utils/capture.dart';
 import 'package:kroma_sport/utils/ks_images.dart';
+import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/widgets/ks_icon_button.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -29,6 +31,8 @@ class _ShareFeedScreenState extends State<ShareFeedScreen> {
   Uint8List? shareImage;
   late String shareUrl;
   GlobalKey captureKey = GlobalKey();
+
+  Flushbar? flushbar;
 
   @override
   void initState() {
@@ -70,97 +74,114 @@ class _ShareFeedScreenState extends State<ShareFeedScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RepaintBoundary(
-              key: captureKey,
-              child: Stack(
-                children: [
-                  Container(
-                    child: Image.memory(widget.image!),
-                  ),
-                  Positioned(
-                      right: 8,
-                      top: 8,
-                      child: Opacity(
-                        opacity: 0.5,
-                        child: QrImage(
-                          padding: EdgeInsets.all(4),
-                          data: shareUrl,
-                          size: 64,
-                          backgroundColor: Colors.white,
-                          embeddedImage: AssetImage(icRound),
-                          embeddedImageStyle: QrEmbeddedImageStyle(
-                            size: Size(16, 16),
-                            // color: Color(0xFF38ef7d)
+        child: Container(
+          color: Theme.of(context).primaryColor,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RepaintBoundary(
+                key: captureKey,
+                child: Stack(
+                  children: [
+                    Container(
+                      child: Image.memory(widget.image!),
+                    ),
+                    Positioned(
+                        right: 8,
+                        top: 8,
+                        child: Opacity(
+                          opacity: 0.7,
+                          child: QrImage(
+                            padding: EdgeInsets.all(4),
+                            data: shareUrl,
+                            size: 64,
+                            backgroundColor: Colors.white,
+                            embeddedImage: AssetImage(icRound),
+                            embeddedImageStyle: QrEmbeddedImageStyle(
+                              size: Size(16, 16),
+                              // color: Color(0xFF38ef7d)
+                            ),
                           ),
-                        ),
-                      ))
-                ],
+                        ))
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16, left: 20, right: 20, bottom: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  KSIconButton(
-                    onTap: () async {
-                      if (shareImage == null) shareImage = await Capture.toPngByte(captureKey);
-                      if (shareImage != null) {
-                        if (Platform.isAndroid) {
-                          PermissionHandler.PermissionStatus photoPermission = await PermissionHandler.Permission.photos.status;
-                          if (photoPermission != PermissionHandler.PermissionStatus.granted) {
-                            final status = await PermissionHandler.Permission.photos.request().isGranted;
-                            if (!status) {
-                              _showPhotoAlert();
-                              return;
-                            }
-                          }
-                        }
-                        final result = await ImageGallerySaver.saveImage(shareImage!, quality: 100);
-                        if (result != null && result['isSuccess'] == true) {
-                          final snackBar = SnackBar(
-                              duration: Duration(seconds: 2),
-                              content: const Text(
-                                'Image has been saved to device.',
-                                style: TextStyle(color: Colors.white),
-                              ));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        }
-                      }
-                    },
-                    icon: FeatherIcons.download,
-                  ),
-                  KSIconButton(
+              Padding(
+                padding: const EdgeInsets.only(top: 16, left: 20, right: 20, bottom: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    KSIconButton(
                       onTap: () async {
                         if (shareImage == null) shareImage = await Capture.toPngByte(captureKey);
                         if (shareImage != null) {
-                          final directory = (await getApplicationDocumentsDirectory()).path;
-                          File imgFile = new File('$directory/photo.png');
-                          await imgFile.writeAsBytes(shareImage!);
-                          Share.shareFiles(['${imgFile.path}'], text: 'VPlay', subject: shareUrl);
+                          if (Platform.isAndroid) {
+                            PermissionHandler.PermissionStatus photoPermission = await PermissionHandler.Permission.photos.status;
+                            if (photoPermission != PermissionHandler.PermissionStatus.granted) {
+                              final status = await PermissionHandler.Permission.photos.request().isGranted;
+                              if (!status) {
+                                _showPhotoAlert();
+                                return;
+                              }
+                            }
+                          }
+                          final result = await ImageGallerySaver.saveImage(shareImage!, quality: 100);
+                          if (result != null && result['isSuccess'] == true) {
+                            flushbar = Flushbar(
+                              messageText: Text(
+                                "Image has been saved to device.",
+                                textAlign: TextAlign.center,
+                              ),
+                              flushbarStyle: FlushbarStyle.FLOATING,
+                              borderRadius: BorderRadius.circular(8.0),
+                              margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
+                              duration: const Duration(seconds: 3),
+                              onTap: (_) {
+                                flushbar!.dismiss();
+                              },
+                              backgroundColor: isLight(context) ? Colors.grey[400]! : Colors.blueGrey[400]!,
+                            )..show(context);
+                          }
                         }
                       },
-                      icon: Icons.share),
-                  KSIconButton(
-                      onTap: () {
-                        FlutterClipboard.copy(shareUrl).then((value) {
-                          final snackBar = SnackBar(
-                              duration: Duration(seconds: 1),
-                              content: const Text(
-                                'Link copied to clipboard',
-                                style: TextStyle(color: Colors.white),
-                              ));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        });
-                      },
-                      icon: FeatherIcons.link)
-                ],
-              ),
-            )
-          ],
+                      icon: FeatherIcons.download,
+                    ),
+                    KSIconButton(
+                        onTap: () async {
+                          if (shareImage == null) shareImage = await Capture.toPngByte(captureKey);
+                          if (shareImage != null) {
+                            final directory = (await getApplicationDocumentsDirectory()).path;
+                            File imgFile = new File('$directory/photo.png');
+                            await imgFile.writeAsBytes(shareImage!);
+                            Share.shareFiles(['${imgFile.path}'], text: 'VPlay', subject: shareUrl);
+                          }
+                        },
+                        icon: Icons.share),
+                    KSIconButton(
+                        onTap: () {
+                          FlutterClipboard.copy(shareUrl).then((value) {
+                            flushbar = Flushbar(
+                              messageText: Text(
+                                "Link copied to clipboard",
+                                textAlign: TextAlign.center,
+                              ),
+                              flushbarStyle: FlushbarStyle.FLOATING,
+                              borderRadius: BorderRadius.circular(8.0),
+                              margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
+                              duration: const Duration(seconds: 3),
+                              onTap: (_) {
+                                flushbar!.dismiss();
+                              },
+                              backgroundColor: isLight(context) ? Colors.grey[400]! : Colors.blueGrey[400]!,
+                            )..show(context);
+                          });
+                        },
+                        icon: FeatherIcons.link)
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

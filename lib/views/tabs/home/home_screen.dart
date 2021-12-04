@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class HomeScreen extends StatefulWidget {
 
 GlobalKey<_HomeScreenState> homeStateKey = GlobalKey();
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   ScrollController _homeScrollController = ScrollController();
   EasyRefreshController _easyRefreshController = EasyRefreshController();
 
@@ -136,6 +137,47 @@ class _HomeScreenState extends State<HomeScreen> {
     _homeCubit = context.read<HomeCubit>();
     _suggestionCubit = context.read<SuggestionCubit>();
     _suggestionCubit.onLoad();
+    _homeScrollController.addListener(onScrollListener);
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.inactive:
+        print('appLifeCycleState inactive');
+        setState(() {
+          lastScrollOffset = _homeScrollController.offset;
+        });
+        break;
+      case AppLifecycleState.resumed:
+        print('appLifeCycleState resumed');
+
+        break;
+      case AppLifecycleState.paused:
+        print('appLifeCycleState paused');
+        break;
+      case AppLifecycleState.detached:
+        print('appLifeCycleState detached');
+        break;
+    }
+  }
+
+  double lastScrollOffset = 0;
+
+  void onScrollListener() {
+    if (flushbar != null) {
+      if (_homeScrollController.offset < lastScrollOffset) {
+        flushbar!.dismiss();
+      }
+    }
   }
 
   Future<bool> checkAndRequestPhotoPermissions() async {
@@ -190,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 
-  void onHomeIconTap() {
+  void onHomeIconTap({bool callRefresh = true}) {
     if (_homeScrollController.offset > 500) {
       Future.delayed(Duration.zero).then((value) {
         _homeScrollController.animateTo(
@@ -198,8 +240,45 @@ class _HomeScreenState extends State<HomeScreen> {
           duration: Duration(milliseconds: 1000),
           curve: Curves.easeInOut,
         );
-        _easyRefreshController.callRefresh();
+        if (callRefresh) {
+          _easyRefreshController.callRefresh();
+        }
       });
     }
+  }
+
+  Flushbar? flushbar;
+
+  void getNewPostOnResume() {
+    //var index = _homeCubit.firstIndex;
+    //var orderDate = _homeCubit.orderDate;
+    //print('i = $index && d = $orderDate');
+
+    _homeCubit.onLoadFeedFromBackground().then((_) {
+      if (_homeCubit.hasNewPost && _homeScrollController.offset > 500) {
+        if (flushbar == null) {
+          flushbar = Flushbar(
+            messageText: Text(
+              "New Post",
+              textAlign: TextAlign.center,
+            ),
+            flushbarStyle: FlushbarStyle.FLOATING,
+            flushbarPosition: FlushbarPosition.TOP,
+            margin: EdgeInsets.all(16),
+            maxWidth: 120,
+            borderRadius: BorderRadius.circular(24.0),
+            onTap: (_) {
+              homeStateKey.currentState!.onHomeIconTap(callRefresh: false);
+              flushbar!.dismiss();
+            },
+            backgroundColor: isLight(context) ? Colors.grey[350]! : Colors.blueGrey[400]!,
+          )..show(context);
+        } else {
+          if (!flushbar!.isShowing()) {
+            flushbar!.show(context);
+          }
+        }
+      }
+    });
   }
 }

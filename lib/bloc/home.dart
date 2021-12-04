@@ -55,15 +55,25 @@ class HomeCubit extends Cubit<HomeData> {
 
   final KSHttpClient _client = KSHttpClient();
 
+  int? _firstIndex;
+  DateTime? _orderDate;
+  bool _hasNewPost = false;
+
+  int? get firstIndex => _firstIndex;
+  DateTime? get orderDate => _orderDate;
+  bool get hasNewPost => _hasNewPost;
+
   Future<void> onLoad() async {
     emit(state.copyWith(status: DataState.Loading, page: 1));
     var data = await _client.getApi('/home', queryParameters: {'page': state.page.toString()});
     if (data != null) {
       if (data is! HttpResult) {
         List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
+        _firstIndex = posts.elementAt(0).id;
+        _orderDate = posts.elementAt(0).orderDate;
         DataState status = DataState.Loaded;
-        if(posts.length < 10) {
-            status = DataState.NoMore;
+        if (posts.length < 10) {
+          status = DataState.NoMore;
         }
         emit(state.copyWith(status: status, data: posts));
       } else {
@@ -89,60 +99,62 @@ class HomeCubit extends Cubit<HomeData> {
   }
 
   Future<HomeData> onRefresh() async {
-      var data = await _client.getApi('/home', queryParameters: {'page': 1.toString()});
-      if (data != null) {
-        if (data is! HttpResult) {
-              List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
-              DataState status = DataState.Loaded;
-              if(posts.length < 10) {
-                  status = DataState.NoMore;
-              }
-              return state.copyWith(status: status, data: posts, reload: !state.reload, page: 1);
-        } else {
-          if (data.code == -500) {
-                return state.copyWith(status: DataState.ErrorSocket, reload: !state.reload);
-          } else if (data.code == 401) {
-                return state.copyWith(status: DataState.UnAuthorized);
-          }
-          print("error");
+    var data = await _client.getApi('/home', queryParameters: {'page': 1.toString()});
+    if (data != null) {
+      if (data is! HttpResult) {
+        List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
+        _firstIndex = posts.elementAt(0).id;
+        _orderDate = posts.elementAt(0).orderDate;
+        DataState status = DataState.Loaded;
+        if (posts.length < 10) {
+          status = DataState.NoMore;
         }
+        return state.copyWith(status: status, data: posts, reload: !state.reload, page: 1);
+      } else {
+        if (data.code == -500) {
+          return state.copyWith(status: DataState.ErrorSocket, reload: !state.reload);
+        } else if (data.code == 401) {
+          return state.copyWith(status: DataState.UnAuthorized);
+        }
+        print("error");
       }
-      return state;
+    }
+    return state;
   }
 
   Future<HomeData> onLoadMore() async {
-      final p = state.page + 1;
-      var data = await _client.getApi('/home', queryParameters: {'page': p.toString(), 'search': state.search});
-      if (data != null) {
-        if (data is! HttpResult) {
-              var newPosts = (data as List).map((e) => Post.fromJson(e)).toList();
-              DataState status = DataState.Loaded;
-              if(newPosts.length < 10) {
-                  status = DataState.NoMore;
-              }
-              return state.copyWith(status: status, data: state.data + newPosts, page: p);
-        } else {
-            if (data.code == -500) {
-                return state.copyWith(status: DataState.ErrorSocket);
-            } else if (data.code == 401) {
-                return state.copyWith(status: DataState.UnAuthorized);
-            }
+    final p = state.page + 1;
+    var data = await _client.getApi('/home', queryParameters: {'page': p.toString(), 'search': state.search});
+    if (data != null) {
+      if (data is! HttpResult) {
+        var newPosts = (data as List).map((e) => Post.fromJson(e)).toList();
+        DataState status = DataState.Loaded;
+        if (newPosts.length < 10) {
+          status = DataState.NoMore;
         }
+        return state.copyWith(status: status, data: state.data + newPosts, page: p);
+      } else {
+        if (data.code == -500) {
+          return state.copyWith(status: DataState.ErrorSocket);
+        } else if (data.code == 401) {
+          return state.copyWith(status: DataState.UnAuthorized);
+        }
+      }
     }
     return state;
   }
 
   Future<void> onPostFeed(Post newPost) async {
     // if (state.status == DataState.Loaded) {
-      emit(state.copyWith(data: [newPost] + state.data));
+    emit(state.copyWith(data: [newPost] + state.data));
     // }
   }
 
   Future<void> onDeletePostFeed(int postId) async {
     // if (state.status == DataState.Loaded) {
-      final updatedList = state.data.where((element) => element.id != postId).toList();
-      // final updatedOwnerList = state.ownerPost.where((element) => element.id != postId).toList();
-      emit(state.copyWith(data: updatedList));
+    final updatedList = state.data.where((element) => element.id != postId).toList();
+    // final updatedOwnerList = state.ownerPost.where((element) => element.id != postId).toList();
+    emit(state.copyWith(data: updatedList));
     // }
   }
 
@@ -152,14 +164,14 @@ class HomeCubit extends Cubit<HomeData> {
 
   Future<void> updatePost(Post newPost) async {
     // if (state.status == DataState.Loaded) {
-      final updatedList = state.data.map((element) {
-        return element.id == newPost.id ? newPost : element;
-      }).toList();
+    final updatedList = state.data.map((element) {
+      return element.id == newPost.id ? newPost : element;
+    }).toList();
 
-      // final updatedOwnerList = state.ownerPost.map((element) {
-      //   return element.id == newPost.id ? newPost : element;
-      // }).toList();
-      emit(state.copyWith(data: updatedList));
+    // final updatedOwnerList = state.ownerPost.map((element) {
+    //   return element.id == newPost.id ? newPost : element;
+    // }).toList();
+    emit(state.copyWith(data: updatedList));
     // }
   }
 
@@ -187,53 +199,53 @@ class HomeCubit extends Cubit<HomeData> {
 
   Future<void> reactPost(int id, bool reacted, {bool home = false}) async {
     // if (state.status == DataState.Loaded) {
-      // emit(state.copyWith(status: DataState.None));
-      bool reEmit = false;
-      // if (home) {
-      //   for (var element in state.ownerPost) {
-      //     if (element.id == id) {
-      //       element.reacted = reacted;
-      //       if (reacted) {
-      //         element.totalReaction += 1;
-      //       } else {
-      //         element.totalReaction -= 1;
-      //       }
-      //       reEmit = true;
-      //       break;
-      //     }
-      //   }
-      // } else {
-      
-        // }
-      // }
-      if(!home){
-        for (var element in state.data) {
-            if (element.id == id) {
-              element.reacted = reacted;
-              if (reacted) {
-                element.totalReaction += 1;
-              } else {
-                element.totalReaction -= 1;
-              }
-              reEmit = true;
-              break;
-            }
+    // emit(state.copyWith(status: DataState.None));
+    bool reEmit = false;
+    // if (home) {
+    //   for (var element in state.ownerPost) {
+    //     if (element.id == id) {
+    //       element.reacted = reacted;
+    //       if (reacted) {
+    //         element.totalReaction += 1;
+    //       } else {
+    //         element.totalReaction -= 1;
+    //       }
+    //       reEmit = true;
+    //       break;
+    //     }
+    //   }
+    // } else {
+
+    // }
+    // }
+    if (!home) {
+      for (var element in state.data) {
+        if (element.id == id) {
+          element.reacted = reacted;
+          if (reacted) {
+            element.totalReaction += 1;
+          } else {
+            element.totalReaction -= 1;
+          }
+          reEmit = true;
+          break;
         }
       }
+    }
 
-      if (reEmit) {
-        emit(state.copyWith(data: state.data, reload: !state.reload));
-      }
+    if (reEmit) {
+      emit(state.copyWith(data: state.data, reload: !state.reload));
+    }
     // }
   }
 
   Future<void> onHidePost(int postId) async {
     // if (state.status == DataState.Loaded) {
-      _client.postApi('/user/activity/hide_post/$postId');
+    _client.postApi('/user/activity/hide_post/$postId');
 
-      final updatedList = state.data.where((element) => element.id != postId).toList();
+    final updatedList = state.data.where((element) => element.id != postId).toList();
 
-      emit(state.copyWith(data: updatedList));
+    emit(state.copyWith(data: updatedList));
     // }
   }
 
@@ -248,18 +260,52 @@ class HomeCubit extends Cubit<HomeData> {
 
   void onBlockUser(int userId) {
     // if (state.status == DataState.Loaded) {
-      _client.postApi('/user/activity/block/$userId');
+    _client.postApi('/user/activity/block/$userId');
 
-      final updatedList = state.data.where((element) => element.owner.id != userId).toList();
+    final updatedList = state.data.where((element) => element.owner.id != userId).toList();
 
-      emit(state.copyWith(data: updatedList));
+    emit(state.copyWith(data: updatedList));
     // }
   }
 
   void onUnblockUser(int userId) {
     // if (state.status == DataState.Loaded) {
-      _client.postApi('/user/activity/unblock/$userId');
-      onRefresh();
+    _client.postApi('/user/activity/unblock/$userId');
+    onRefresh();
     // }
+  }
+
+  Future<void> onLoadFeedFromBackground() async {
+    var data = await _client.getApi('/home', queryParameters: {
+      'id': _firstIndex.toString(),
+      'date': _orderDate.toString(),
+      'page': state.page.toString(),
+    });
+    if (data != null) {
+      if (data is! HttpResult) {
+        List<Post> posts = (data as List).map((e) => Post.fromJson(e)).toList();
+        if (posts.isNotEmpty) {
+          _hasNewPost = true;
+          _firstIndex = posts.elementAt(0).id;
+          _orderDate = posts.elementAt(0).orderDate;
+          //DataState status = DataState.Loaded;
+          //if (posts.length < 10) {
+          //  status = DataState.NoMore;
+          //}
+          //emit(state.copyWith(status: status, data: posts));
+          emit(state.copyWith(data: posts + state.data));
+        } else {
+          _hasNewPost = false;
+        }
+      } else {
+        //if (data.code == -500) {
+        //  emit(state.copyWith(status: DataState.ErrorSocket));
+        //  return;
+        //} else if (data.code == 401) {
+        //  emit(state.copyWith(status: DataState.UnAuthorized));
+        //}
+        //print("error");
+      }
+    }
   }
 }

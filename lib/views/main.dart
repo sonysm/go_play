@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -64,8 +65,6 @@ class _MainViewState extends State<MainView> with WidgetsBindingObserver {
 
   StreamSubscription? _uniSub;
 
-  bool inactive = false;
-
   @override
   Widget build(BuildContext context) {
     if (_sharedInfo != null) {
@@ -75,14 +74,10 @@ class _MainViewState extends State<MainView> with WidgetsBindingObserver {
     return DefaultTabController(
       length: _icons.length,
       child: Scaffold(
-        body: inactive
-            ? Container(
-                color: whiteColor,
-              )
-            : IndexedStack(
-                index: _screenIndex,
-                children: _screens,
-              ),
+        body: IndexedStack(
+          index: _screenIndex,
+          children: _screens,
+        ),
         bottomNavigationBar: Container(
           color: Theme.of(context).primaryColor,
           child: SafeArea(
@@ -161,6 +156,7 @@ class _MainViewState extends State<MainView> with WidgetsBindingObserver {
   }
 
   late DateTime _bgDate;
+  Flushbar? flushbar;
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -174,10 +170,8 @@ class _MainViewState extends State<MainView> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         print('appLifeCycleState resumed');
-        if (DateTime.now().difference(_bgDate).inMinutes > 1) {
-          print('get new post============');
-        } else {
-          print('do nothing===============');
+        if (DateTime.now().difference(_bgDate).inMinutes >= 3) {
+          homeStateKey.currentState!.getNewPostOnResume();
         }
         break;
       case AppLifecycleState.paused:
