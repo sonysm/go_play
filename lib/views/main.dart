@@ -164,9 +164,11 @@ class _MainViewState extends State<MainView> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.inactive:
         print('appLifeCycleState inactive');
-        setState(() {
-          _bgDate = DateTime.now();
-        });
+        if (Platform.isAndroid) {
+          setState(() {
+            _bgDate = DateTime.now();
+          });
+        }
         break;
       case AppLifecycleState.resumed:
         print('appLifeCycleState resumed');
@@ -176,6 +178,11 @@ class _MainViewState extends State<MainView> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.paused:
         print('appLifeCycleState paused');
+        if (Platform.isIOS) {
+          setState(() {
+            _bgDate = DateTime.now();
+          });
+        }
         break;
       case AppLifecycleState.detached:
         print('appLifeCycleState detached');
