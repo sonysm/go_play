@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/account.dart';
@@ -15,6 +16,7 @@ import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/dimensions.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
@@ -38,13 +40,20 @@ class HomeFeedCell extends StatefulWidget {
   final bool isHomeFeed;
   final int index;
 
-  const HomeFeedCell({Key? key, required this.post, this.isAvatarSelectable = true, this.isHomeFeed = true, required this.index}) : super(key: key);
+  const HomeFeedCell(
+      {Key? key,
+      required this.post,
+      this.isAvatarSelectable = true,
+      this.isHomeFeed = true,
+      required this.index})
+      : super(key: key);
 
   @override
   _HomeFeedCellState createState() => _HomeFeedCellState();
 }
 
-class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderStateMixin {
+class _HomeFeedCellState extends State<HomeFeedCell>
+    with SingleTickerProviderStateMixin {
   String? _url;
   late Post _post;
 
@@ -71,11 +80,15 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     Widget buildTotalReaction(int total) {
-      return total > 0 ? Text(total > 1 ? '$total likes' : '$total like') : SizedBox();
+      return total > 0
+          ? Text(total > 1 ? '$total likes' : '$total like')
+          : SizedBox();
     }
 
     Widget buildTotalComment(int total) {
-      return total > 0 ? Text(total > 1 ? '$total comments' : '$total comment') : SizedBox();
+      return total > 0
+          ? Text(total > 1 ? '$total comments' : '$total comment')
+          : SizedBox();
     }
 
     // Size getTextSize(String text, TextStyle style) {
@@ -111,33 +124,59 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                       },
                     ),
                     8.width,
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () async {
-                            if (_post.owner.id != KS.shared.user.id) {
-                              var data = await launchScreen(context, ViewUserProfileScreen.tag, arguments: {'user': _post.owner});
-                              if (data != null) {
-                                _post.owner = data;
-                                setState(() {});
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InkWell(
+                            onTap: () async {
+                              if (_post.owner.id != KS.shared.user.id) {
+                                var data = await launchScreen(
+                                    context, ViewUserProfileScreen.tag,
+                                    arguments: {'user': _post.owner});
+                                if (data != null) {
+                                  _post.owner = data;
+                                  setState(() {});
+                                }
+                              } else {
+                                launchScreen(context, AccountScreen.tag);
                               }
-                            } else {
-                              launchScreen(context, AccountScreen.tag);
-                            }
-                          },
-                          child: Text(_post.owner.getFullname(), style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600)),
-                        ),
-                        Text(
-                          _post.createdAt.toString().timeAgoString,
-                          style: Theme.of(context).textTheme.caption!.copyWith(
-                                color: ColorResources.getSecondaryText(context),
+                            },
+                            child: Text.rich(
+                              TextSpan(
+                                text: _post.owner.getFullname() + " ",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    ?.copyWith(fontWeight: FontWeight.w600),
+                                children: [
+                                  if (_post.owner.isPublic)
+                                    WidgetSpan(
+                                      child: SvgPicture.asset(svgCheckVerified,
+                                          width: 18),
+                                    )
+                                ],
                               ),
-                          strutStyle: StrutStyle(fontSize: Dimensions.FONT_SIZE_SMALL),
-                        ),
-                      ],
+                              strutStyle: StrutStyle(height: 1.5),
+                            ),
+                            // Text(_post.owner.getFullname(), style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600)),
+                          ),
+                          Text(
+                            _post.createdAt.toString().timeAgoString,
+                            style: Theme.of(context)
+                                .textTheme
+                                .caption!
+                                .copyWith(
+                                  color:
+                                      ColorResources.getSecondaryText(context),
+                                ),
+                            strutStyle: StrutStyle(
+                                fontSize: Dimensions.FONT_SIZE_SMALL),
+                          ),
+                        ],
+                      ),
                     ),
-                    Spacer(),
+                    // Spacer(),
                     KSIconButton(
                       icon: FeatherIcons.moreHorizontal,
                       iconSize: 24.0,
@@ -152,86 +191,88 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                         vertical: 8.0,
                         horizontal: 16.0,
                       ),
-                      child: 
-                           SelectableLinkify(
-                              enableInteractiveSelection: false,
-                              text: _post.description!,
-                              style: Theme.of(context).textTheme.bodyText1,
-                              strutStyle: StrutStyle(fontSize: 16),
-                              scrollPhysics: NeverScrollableScrollPhysics(),
-                              onOpen: (link) async {
-                                if (await canLaunch(link.url)) {
-                                  // await launch(link.url);
-                                  FlutterWebBrowser.openWebPage(url: link.url);
-                                } else {
-                                  throw 'Could not launch $link';
-                                }
-                              },
-                              linkifiers: [UrlLinkifier()],
-                              options: LinkifyOptions(looseUrl: true),
-                              linkStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
-                                    color: isLight(context) ? Colors.blue : Colors.grey[100],
-                                    decoration: TextDecoration.underline,
-                                  ),
-                              onTap: () {
-                                if (isShowMore) {
-                                  setState(() => isShowMore = !isShowMore);
-                                }
-                              },
-                              minLines: 1,
-                              maxLines: 4,
-                            )
-                          // : ConstrainedBox(
-                          //     constraints: BoxConstraints(maxHeight: textWidth / (AppSize(context).appWidth(100) - 32) > 2 ? 100 : 24),
-                          //     child: Column(
-                          //       crossAxisAlignment: CrossAxisAlignment.start,
-                          //       children: [
-                          //         Flexible(
-                          //           child: SelectableLinkify(
-                          //             enableInteractiveSelection: false,
-                          //             text: _post.description!,
-                          //             style: Theme.of(context).textTheme.bodyText1,
-                          //             strutStyle: StrutStyle(fontSize: 16),
-                          //             scrollPhysics: NeverScrollableScrollPhysics(),
-                          //             onOpen: (link) async {
-                          //               if (await canLaunch(link.url)) {
-                          //                 // await launch(link.url);
-                          //                 FlutterWebBrowser.openWebPage(url: link.url);
-                          //               } else {
-                          //                 throw 'Could not launch $link';
-                          //               }
-                          //             },
-                          //             linkifiers: [UrlLinkifier()],
-                          //             options: LinkifyOptions(looseUrl: true),
-                          //             linkStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
-                          //                   color: isLight(context) ? Colors.blue : Colors.grey[100],
-                          //                   decoration: TextDecoration.underline,
-                          //                 ),
-                          //             // onTap: () {
-                          //             //   if (isShowMore) {
-                          //             //     setState(() => isShowMore = !isShowMore);
-                          //             //   }
-                          //             // },
-                          //           ),
-                          //         ),
-                          //         if (textWidth / (AppSize(context).appWidth(100) - 32) > 2)
-                          //           TextButton(
-                          //             onPressed: () {
-                          //               setState(() => isShowMore = true);
-                          //             },
-                          //             style: ButtonStyle(
-                          //                 padding: MaterialStateProperty.all(EdgeInsets.zero),
-                          //                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          //                 foregroundColor: MaterialStateProperty.all(Colors.blue),
-                          //                 minimumSize: MaterialStateProperty.all(Size.zero),
-                          //                 splashFactory: InkRipple.splashFactory),
-                          //             child: Text('See more...',
-                          //                 style: Theme.of(context).textTheme.bodyText1?.copyWith(color: ColorResources.getSecondaryText(context))),
-                          //           )
-                          //       ],
-                          //     ),
-                          //   ),
-                    )
+                      child: SelectableLinkify(
+                        enableInteractiveSelection: false,
+                        text: _post.description!,
+                        style: Theme.of(context).textTheme.bodyText1,
+                        strutStyle: StrutStyle(fontSize: 16),
+                        scrollPhysics: NeverScrollableScrollPhysics(),
+                        onOpen: (link) async {
+                          if (await canLaunch(link.url)) {
+                            // await launch(link.url);
+                            FlutterWebBrowser.openWebPage(url: link.url);
+                          } else {
+                            throw 'Could not launch $link';
+                          }
+                        },
+                        linkifiers: [UrlLinkifier()],
+                        options: LinkifyOptions(looseUrl: true),
+                        linkStyle:
+                            Theme.of(context).textTheme.bodyText1?.copyWith(
+                                  color: isLight(context)
+                                      ? Colors.blue
+                                      : Colors.grey[100],
+                                  decoration: TextDecoration.underline,
+                                ),
+                        onTap: () {
+                          if (isShowMore) {
+                            setState(() => isShowMore = !isShowMore);
+                          }
+                        },
+                        minLines: 1,
+                        maxLines: 4,
+                      )
+                      // : ConstrainedBox(
+                      //     constraints: BoxConstraints(maxHeight: textWidth / (AppSize(context).appWidth(100) - 32) > 2 ? 100 : 24),
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Flexible(
+                      //           child: SelectableLinkify(
+                      //             enableInteractiveSelection: false,
+                      //             text: _post.description!,
+                      //             style: Theme.of(context).textTheme.bodyText1,
+                      //             strutStyle: StrutStyle(fontSize: 16),
+                      //             scrollPhysics: NeverScrollableScrollPhysics(),
+                      //             onOpen: (link) async {
+                      //               if (await canLaunch(link.url)) {
+                      //                 // await launch(link.url);
+                      //                 FlutterWebBrowser.openWebPage(url: link.url);
+                      //               } else {
+                      //                 throw 'Could not launch $link';
+                      //               }
+                      //             },
+                      //             linkifiers: [UrlLinkifier()],
+                      //             options: LinkifyOptions(looseUrl: true),
+                      //             linkStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
+                      //                   color: isLight(context) ? Colors.blue : Colors.grey[100],
+                      //                   decoration: TextDecoration.underline,
+                      //                 ),
+                      //             // onTap: () {
+                      //             //   if (isShowMore) {
+                      //             //     setState(() => isShowMore = !isShowMore);
+                      //             //   }
+                      //             // },
+                      //           ),
+                      //         ),
+                      //         if (textWidth / (AppSize(context).appWidth(100) - 32) > 2)
+                      //           TextButton(
+                      //             onPressed: () {
+                      //               setState(() => isShowMore = true);
+                      //             },
+                      //             style: ButtonStyle(
+                      //                 padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      //                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      //                 foregroundColor: MaterialStateProperty.all(Colors.blue),
+                      //                 minimumSize: MaterialStateProperty.all(Size.zero),
+                      //                 splashFactory: InkRipple.splashFactory),
+                      //             child: Text('See more...',
+                      //                 style: Theme.of(context).textTheme.bodyText1?.copyWith(color: ColorResources.getSecondaryText(context))),
+                      //           )
+                      //       ],
+                      //     ),
+                      //   ),
+                      )
                   : SizedBox(height: 8.0),
               _post.photo != null && !_post.isExternal
                   ? InkWell(
@@ -247,18 +288,25 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                   : SizedBox(),
               _post.image != null && _post.image!.length > 1
                   ? Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
                             'See more images',
-                            style: Theme.of(context).textTheme.bodyText2?.copyWith(fontWeight: FontWeight.w600),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2
+                                ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           Icon(
                             Icons.arrow_forward_ios_rounded,
                             size: 18.0,
-                            color: Theme.of(context).brightness == Brightness.light ? Colors.blueGrey : whiteColor,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? Colors.blueGrey
+                                    : whiteColor,
                           ),
                         ],
                       ),
@@ -272,8 +320,12 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                     Row(
                       children: [
                         KSIconButton(
-                          icon: _post.reacted! ? Icons.favorite : FeatherIcons.heart,
-                          iconColor: _post.reacted! ? ColorResources.getActiveIconColor(context) : ColorResources.getInactiveIconColor(context),
+                          icon: _post.reacted!
+                              ? Icons.favorite
+                              : FeatherIcons.heart,
+                          iconColor: _post.reacted!
+                              ? ColorResources.getActiveIconColor(context)
+                              : ColorResources.getInactiveIconColor(context),
                           onTap: () {
                             _post.reacted = !_post.reacted!;
                             if (_post.reacted!) {
@@ -288,8 +340,10 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                         4.width,
                         KSIconButton(
                           icon: FeatherIcons.messageSquare,
-                          iconColor: ColorResources.getInactiveIconColor(context),
-                          onTap: () => launchFeedDetailScreen(isCommentTap: true),
+                          iconColor:
+                              ColorResources.getInactiveIconColor(context),
+                          onTap: () =>
+                              launchFeedDetailScreen(isCommentTap: true),
                         ),
                         // 4.width,
                         // KSIconButton(
@@ -303,7 +357,8 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                       ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 8.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -319,10 +374,12 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                           8.width,
                           Expanded(
                             child: InkWell(
-                              onTap: () => launchFeedDetailScreen(isCommentTap: true),
+                              onTap: () =>
+                                  launchFeedDetailScreen(isCommentTap: true),
                               child: Container(
                                 height: 32.0,
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Color(0XFFB0BEC5)),
                                   borderRadius: BorderRadius.circular(16.0),
@@ -407,7 +464,8 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
                   action: true,
                   actionTitle: 'Undo',
                   onAction: () {
-                    _homeCubit.onUndoHidingPost(index: widget.index, post: post);
+                    _homeCubit.onUndoHidingPost(
+                        index: widget.index, post: post);
                   },
                 );
               },
@@ -422,9 +480,11 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
             dismissScreen(context);
             showKSConfirmDialog(
               context,
-              message: 'Are you sure you want to unfollow ${post.owner.getFullname()}?',
+              message:
+                  'Are you sure you want to unfollow ${post.owner.getFullname()}?',
               onYesPressed: () async {
-                var res = await ksClient.postApi('/user/unfollow/${post.owner.id}');
+                var res =
+                    await ksClient.postApi('/user/unfollow/${post.owner.id}');
                 if (res != null) {
                   if (res is! HttpResult) {}
                 }
@@ -483,8 +543,8 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
     var result = await ksClient.postApi('/create/post/reaction/${_post.id}');
     if (result != null) {
       if (result is! HttpResult) {
-          _homeCubit.reactPost(_post.id, _post.reacted!, home: home);
-          _accountCubit.checkReactPost(_post.id, _post.reacted!, home);
+        _homeCubit.reactPost(_post.id, _post.reacted!, home: home);
+        _accountCubit.checkReactPost(_post.id, _post.reacted!, home);
       }
     }
   }
@@ -495,13 +555,17 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
     }
     final urlMatches = urlRegExp.allMatches(_post.description!);
 
-    List<String> urls = urlMatches.map((urlMatch) => _post.description!.substring(urlMatch.start, urlMatch.end)).toList();
+    List<String> urls = urlMatches
+        .map((urlMatch) =>
+            _post.description!.substring(urlMatch.start, urlMatch.end))
+        .toList();
 
     if (urls.isNotEmpty) {
       _url = urls.elementAt(0);
 
       if (!_url!.startsWith(_protocolIdentifierRegex)) {
-        _url = (LinkifyOptions().defaultToHttps ? "https://" : "http://") + _url!;
+        _url =
+            (LinkifyOptions().defaultToHttps ? "https://" : "http://") + _url!;
       }
     }
     setState(() {});
@@ -515,7 +579,8 @@ class _HomeFeedCellState extends State<HomeFeedCell> with SingleTickerProviderSt
     _post = widget.post;
     checkLinkPreview();
 
-    controller = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
 
     animation = Tween(begin: 0.0, end: 1.0).animate(controller);
     controller.forward();

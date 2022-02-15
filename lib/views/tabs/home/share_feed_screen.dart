@@ -90,7 +90,7 @@ class _ShareFeedScreenState extends State<ShareFeedScreen> {
                       ),
                       Positioned(
                           right: 8,
-                          top: 8,
+                          bottom: 8,
                           child: Opacity(
                             opacity: 0.7,
                             child: QrImage(

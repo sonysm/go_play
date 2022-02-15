@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
@@ -96,8 +98,10 @@ class _FollowScreenState extends State<FollowScreen> {
               child: IgnorePointer(
                 ignoring: !isLoaded,
                 child: TabBar(
-                  labelStyle: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
-                  indicatorColor: isLight(context) ? mainColor : Colors.greenAccent,
+                  labelStyle:
+                      TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                  indicatorColor:
+                      isLight(context) ? mainColor : Colors.greenAccent,
                   indicatorWeight: 1.0,
                   tabs: [
                     Tab(text: followerTitle),
@@ -131,20 +135,24 @@ class _FollowScreenState extends State<FollowScreen> {
     var followerRes = await ksClient.getApi('/user/follower/${_user.id}');
     if (followerRes != null) {
       if (followerRes is! HttpResult) {
-        followerList = List.from(followerRes.map((e) => User.fromJson(e['follower'])));
+        followerList =
+            List.from(followerRes.map((e) => User.fromJson(e['follower'])));
       }
     }
 
     var followingRes = await ksClient.getApi('/user/following/${_user.id}');
     if (followingRes != null) {
       if (followingRes is! HttpResult) {
-        followingList = List.from(followingRes.map((e) => User.fromJson(e['following'])));
+        followingList =
+            List.from(followingRes.map((e) => User.fromJson(e['following'])));
       }
     }
 
     isLoaded = true;
     if (followerList.isNotEmpty) {
-      followerTitle = followerList.length > 1 ? '${followerList.length} Followers' : '1 Follower';
+      followerTitle = followerList.length > 1
+          ? '${followerList.length} Followers'
+          : '1 Follower';
     }
     if (followingList.isNotEmpty) {
       followingTitle = '${followingList.length} Following';
@@ -169,7 +177,8 @@ class FollowCell extends StatelessWidget {
           if (user.id == KS.shared.user.id) {
             launchScreen(context, AccountScreen.tag);
           } else {
-            launchScreen(context, ViewUserProfileScreen.tag, arguments: {'user': user});
+            launchScreen(context, ViewUserProfileScreen.tag,
+                arguments: {'user': user});
           }
         },
         child: Container(
@@ -181,10 +190,22 @@ class FollowCell extends StatelessWidget {
             children: [
               Avatar(radius: 24, user: user, isSelectable: false),
               8.width,
-              Text(
-                user.getFullname(),
-                style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
-              ),
+              Text.rich(
+                TextSpan(
+                  text: user.getFullname() + " ",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                  children: [
+                    if (user.isPublic)
+                      WidgetSpan(
+                        child: SvgPicture.asset(svgCheckVerified, width: 18),
+                      )
+                  ],
+                ),
+                strutStyle: StrutStyle(height: 1.5),
+              )
             ],
           ),
         ),

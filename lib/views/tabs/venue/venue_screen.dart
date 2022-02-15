@@ -102,7 +102,7 @@ class _VenueScreenState extends State<VenueScreen> with SingleTickerProviderStat
         actions: [
           CupertinoButton(
             padding: EdgeInsets.zero,
-            child: Icon(LineIcons.history, size: 26.0, color: Colors.black),
+            child: Icon(LineIcons.history, size: 26.0, color: ColorResources.getSecondaryIconColor(context)),
             onPressed: () => launchScreen(context, BookingHistoryScreen.tag),
           ),
           CupertinoButton(

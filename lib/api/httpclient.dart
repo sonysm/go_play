@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/config/env.dart';
@@ -52,7 +54,10 @@ class KSHttpClient {
           await _httpClient.post(_getUir(url), body: body, headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
       });
+      log("POST: ${_getUir(url)}");
+      print("REQUEST_BODY: $body");
       if (response.statusCode == 200 || response.statusCode == 201) {
+        print("RESULT: ${response.body}");
         final json = jsonDecode(utf8.decode(response.bodyBytes));
         if (json != null) {
           int code = int.parse(json['code'].toString());
@@ -86,8 +91,10 @@ class KSHttpClient {
       final response = await _httpClient.get(
           _getUir(url, queryParameters: queryParameters),
           headers: _getHeader());
+      log("GET: ${_getUir(url)}");
       if (response.statusCode == 200) {
         final json = jsonDecode(utf8.decode(response.bodyBytes));
+        print("RESULT: ${response.body}");
         if (json != null) {
           int code = int.parse(json['code'].toString());
           if (code == 1) {
@@ -101,6 +108,7 @@ class KSHttpClient {
       } else if (response.statusCode == 401) {
         result = HttpResult(401, "Unauthorized");
       }
+      log("=======================================================================");
     } on SocketException catch (e) {
       result = HttpResult(-500, "Internet connection");
       print("SocketException = $e");
@@ -123,8 +131,11 @@ class KSHttpClient {
     try {
       final response = await _httpClient.post(_getUir(url),
           body: body, headers: _getHeader());
+      log("POST: ${_getUir(url)}");
+      print("REQUEST_BODY: ${body ?? "NULL"}");
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(utf8.decode(response.bodyBytes));
+        print("RESULT: ${response.body}");
         if (json != null) {
           int code = int.parse(json['code'].toString());
           if (code == 1) {
@@ -138,6 +149,7 @@ class KSHttpClient {
       } else if (response.statusCode == 401) {
         result = HttpResult(401, "Unauthorized");
       }
+      log("=======================================================================");
     } on SocketException catch (e) {
       result = HttpResult(-500, "Internet connection");
       print("SocketException = $e");
@@ -360,5 +372,18 @@ class KSHttpClient {
       print("Exception = $e");
     }
     return result;
+  }
+
+  void printAll(String msg) {
+    msg.split("\n").forEach((word) => debugPrint(" " + word));
+  }
+
+  void printWrapped(String text) {
+    final pattern = new RegExp('.{1,800}'); // 800 is the size of each chunk
+    pattern.allMatches(text).forEach((match) => print(match.group(0)));
+  }
+
+  void printKV(k, v) {
+    print("$k: $v");
   }
 }

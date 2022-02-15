@@ -2,12 +2,15 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:kroma_sport/bloc/account.dart';
+import 'package:kroma_sport/bloc/data_state.dart';
 import 'package:kroma_sport/ks.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/account_screen.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
+import 'package:provider/src/provider.dart';
 
 class Avatar extends StatefulWidget {
   final double radius;
@@ -73,6 +76,10 @@ class _AvatarState extends State<Avatar> {
                   }
                 }
               } else {
+                AccountCubit accCubit = context.read<AccountCubit>();
+                if (accCubit.state.postStatus == DataState.None) {
+                  accCubit.onLoad();
+                }
                 launchScreen(context, AccountScreen.tag);
               }
             }

@@ -49,7 +49,7 @@ class _SetAddressScreenState extends State<SetAddressScreen>
               '${placeMark.name} ${placeMark.subAdministrativeArea} ${placeMark.administrativeArea}';
           _addressController.text = locationName;
         }).onError((error, stackTrace) {
-          _addressController.text = 'No name';
+          _addressController.text = '${_latLng.latitude}, ${_latLng.longitude}';
         });
         // if (widget.oldAddress == null) {
         //   _mapController
@@ -77,7 +77,7 @@ class _SetAddressScreenState extends State<SetAddressScreen>
                 '${placeMark.name}, ${placeMark.subAdministrativeArea}, ${placeMark.administrativeArea}';
             _addressController.text = locationName;
           }).onError((error, stackTrace) {
-            _addressController.text = 'No name';
+            _addressController.text = '${_latLng.latitude}, ${_latLng.longitude}';
           });
           // if (placeVM == null) {
           //   _mapController
@@ -150,7 +150,7 @@ class _SetAddressScreenState extends State<SetAddressScreen>
       margin: EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
       child: TextField(
         style: TextStyle(
-          fontSize: 16.0,
+          fontSize: 14.0,
           color: mainColor,
           fontWeight: FontWeight.w500,
         ),
@@ -162,11 +162,11 @@ class _SetAddressScreenState extends State<SetAddressScreen>
             fillColor: Colors.transparent,
             hintStyle: TextStyle(
               color: Colors.grey[700],
-              fontSize: 16.0,
+              fontSize: 14.0,
               fontWeight: FontWeight.w400,
             ),
             counterStyle: TextStyle(
-              fontSize: 16.0,
+              fontSize: 14.0,
               color: blackColor,
               fontWeight: FontWeight.w500,
             ),

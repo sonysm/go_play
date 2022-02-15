@@ -1,12 +1,15 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/models/post.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/view_user_screen.dart';
 import 'package:kroma_sport/views/tabs/home/feed_detail_screen.dart';
@@ -41,7 +44,8 @@ class _SearchScreenState extends State<SearchScreen> {
               color: Colors.transparent,
               child: CircularProgressIndicator(
                 strokeWidth: 3.0,
-                valueColor: AlwaysStoppedAnimation<Color>(ColorResources.getMainColor(context)),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    ColorResources.getMainColor(context)),
               ),
             ),
             Padding(
@@ -50,7 +54,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 'Loading...',
                 // style: TextStyle(fontSize: 16.0),
               ),
-            )
+            ),
+            const SizedBox(height: 250),
           ],
         ),
       ),
@@ -76,11 +81,12 @@ class _SearchScreenState extends State<SearchScreen> {
                 return SearchResultCell(
                   post: result,
                   onTap: () async {
-                    var res = await launchScreen(context, FeedDetailScreen.tag, arguments: {
-                      'post': result,
-                      'postIndex': -1,
-                      'isCommentTap': false,
-                    });
+                    var res = await launchScreen(context, FeedDetailScreen.tag,
+                        arguments: {
+                          'post': result,
+                          'postIndex': -1,
+                          'isCommentTap': false,
+                        });
                     if (res != null && res == 1) {
                       onSearch(_textController.text);
                     }
@@ -89,18 +95,42 @@ class _SearchScreenState extends State<SearchScreen> {
               } else if (result is User) {
                 return InkWell(
                   onTap: () {
-                    launchScreen(context, ViewUserProfileScreen.tag, arguments: {'user': result, 'backgroundColor': avatarBgColor});
+                    launchScreen(context, ViewUserProfileScreen.tag,
+                        arguments: {
+                          'user': result,
+                          'backgroundColor': avatarBgColor
+                        });
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     child: Row(
                       children: [
-                        Avatar(radius: 20, user: result, backgroundcolor: avatarBgColor,),
+                        Avatar(
+                          radius: 20,
+                          user: result,
+                          backgroundcolor: avatarBgColor,
+                        ),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(result.getFullname(), style: Theme.of(context).textTheme.bodyText1),
-                          ),
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child:
+                                  // Text(result.getFullname(),
+                                  //     style: Theme.of(context).textTheme.bodyText1),
+                                  Text.rich(
+                                TextSpan(
+                                  text: result.getFullname() + " ",
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                  children: [
+                                    if (result.isPublic)
+                                      WidgetSpan(
+                                        child: SvgPicture.asset(
+                                            svgCheckVerified,
+                                            width: 18),
+                                      )
+                                  ],
+                                ),
+                              )),
                         ),
                       ],
                     ),
@@ -120,6 +150,8 @@ class _SearchScreenState extends State<SearchScreen> {
           );
   }
 
+  final _debouncer = Debouncer(milliseconds: 500);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,16 +168,26 @@ class _SearchScreenState extends State<SearchScreen> {
             focusNode: _searchFocusScop,
             onSubmitted: onSearch,
             textInputAction: TextInputAction.search,
-            style: Theme.of(context).textTheme.bodyText1?.copyWith(fontFamily: 'OpenSans', color: blackColor),
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1
+                ?.copyWith(fontFamily: 'OpenSans', color: blackColor),
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey[100],
               contentPadding: EdgeInsets.all(0),
               prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(50), borderSide: BorderSide.none),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50),
+                  borderSide: BorderSide.none),
               hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
               hintText: "Search",
             ),
+            onChanged: (string) {
+              _isSearching = true;
+              setState(() {});
+              _debouncer.run(() => onSearch(string));
+            },
           ),
         ),
       ),
@@ -183,10 +225,11 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void onSearch(String? keyword) {
-    FocusScope.of(context).unfocus();
-    _isSearching = true;
-    setState(() {});
-    _ksHttpClient.getApi('/user/activity/search', queryParameters: {'keyword': keyword}).then((data) {
+    // FocusScope.of(context).unfocus();
+    // _isSearching = true;
+    // setState(() {});
+    _ksHttpClient.getApi('/user/activity/search',
+        queryParameters: {'keyword': keyword}).then((data) {
       if (data != null && data is! HttpResult) {
         _resultList = (data as List).map((e) {
           if (e['owner'] != null) {
@@ -197,9 +240,12 @@ class _SearchScreenState extends State<SearchScreen> {
         }).toList();
       }
 
-      Future.delayed(Duration(seconds: 0), () {
-        setState(() => _isSearching = false);
-      });
+      _isSearching = false;
+      setState(() {});
+
+      // Future.delayed(Duration(seconds: 0), () {
+      //   setState(() => _isSearching = false);
+      // });
     });
   }
 }
@@ -214,5 +260,20 @@ class SearchResultWidget extends StatelessWidget {
         child: Text('No result found'),
       ),
     );
+  }
+}
+
+class Debouncer {
+  final int milliseconds;
+  VoidCallback? action;
+  Timer? _timer;
+
+  Debouncer({required this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer!.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }

@@ -2,6 +2,7 @@ import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
@@ -12,6 +13,7 @@ import 'package:kroma_sport/models/sport.dart';
 import 'package:kroma_sport/models/user.dart';
 import 'package:kroma_sport/themes/colors.dart';
 import 'package:kroma_sport/utils/extensions.dart';
+import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/utils/tools.dart';
 import 'package:kroma_sport/views/tabs/account/follow_screen.dart';
 import 'package:kroma_sport/views/tabs/account/sport_activity/fav_sport_detail.dart';
@@ -128,10 +130,24 @@ class _ViewUserProfileScreenState extends State<ViewUserProfileScreen> with Tick
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.user.getFullname(),
-                        style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w600),
-                      ),
+                      // Text(
+                      //   widget.user.getFullname(),
+                      //   style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w600),
+                      // ),
+                      Text.rich(
+                              TextSpan(
+                                text: widget.user.getFullname() + " ",
+                                style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.w600),
+                                children: [
+                                  if (widget.user.isPublic)
+                                    WidgetSpan(
+                                      child: SvgPicture.asset(svgCheckVerified,
+                                          width: 20),
+                                    )
+                                ],
+                              ),
+                              strutStyle: StrutStyle(height: 1.9),
+                            ),
                       //Text(
                       //  'Phnom Penh, Cambodia',
                       //  style: Theme.of(context).textTheme.bodyText2,

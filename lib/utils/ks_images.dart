@@ -22,3 +22,5 @@ const svgError = 'assets/images/svg_error.svg';
 
 /* Activity Screen */
 const imgVplayText = 'assets/images/img_vplay_text.png';
+
+const svgCheckVerified = 'assets/icons/ic_check_verified.svg';

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/account.dart';
@@ -192,51 +193,128 @@ class _ActivityPreviewScreenState extends State<ActivityPreviewScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Text(
+                          //   (widget.activityData['sport'] as Sport)
+                          //       .name
+                          //       .toUpperCase(),
+                          //   style: TextStyle(
+                          //       color: whiteColor, fontWeight: FontWeight.bold),
+                          // ),
                           SizedBox(
-                            width: AppSize(context).appWidth(50),
-                            child: Text(
-                              widget.activityData['name'],
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: whiteColor,
-                                // fontWeight: FontWeight.w600,
+                              width: AppSize(context).appWidth(50),
+                              child: Text.rich(TextSpan(children: [
+                                if (widget.activityData['sport']!.icon !=
+                                    null) ...[
+                                  WidgetSpan(
+                                    child: SizedBox(
+                                      height: 16,
+                                      width: 16,
+                                      child: CacheImage(
+                                          url: widget
+                                              .activityData['sport']!.icon!),
+                                    ),
+                                  ),
+                                  WidgetSpan(
+                                      child: Container(
+                                        height: 4,
+                                        width: 4,
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 6),
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle),
+                                      ),
+                                      alignment: PlaceholderAlignment.middle),
+                                ],
+                                TextSpan(
+                                  text: widget.activityData['name'],
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: whiteColor,
+                                    // fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ]))
+                              // Text(
+                              //   widget.activityData['name'],
+                              //   style: TextStyle(
+                              //     fontSize: 14.0,
+                              //     color: whiteColor,
+                              //     // fontWeight: FontWeight.w600,
+                              //   ),
+                              // ),
                               ),
-                            ),
-                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                (widget.activityData['sport'] as Sport)
-                                    .name
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                  color: whiteColor,
-                                ),
-                              ),
+                              // Text(
+                              //   (widget.activityData['sport'] as Sport)
+                              //       .name
+                              //       .toUpperCase(),
+                              //   style: TextStyle(
+                              //     color: whiteColor,
+                              //   ),
+                              // ),
+
                               Row(
                                 children: [
                                   Icon(
+                                    Feather.calendar,
+                                    color: whiteColor,
+                                    size: 12.0,
+                                  ),
+                                  const SizedBox(
+                                    width: 4.0,
+                                  ),
+                                  Text(
+                                    '${DateFormat('dd MMM yyyy').format(DateTime.parse(widget.activityData['date']))}' + '  ',
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      color: whiteColor,
+                                    ),
+                                  ),
+                                  Icon(
                                     Feather.clock,
                                     color: whiteColor,
-                                    size: 18.0,
+                                    size: 12.0,
                                   ),
                                   4.width,
                                   Text(
                                     '${widget.activityData['minute']}mn',
                                     style: TextStyle(
-                                      fontSize: 18.0,
+                                      fontSize: 14.0,
                                       color: whiteColor,
-                                      fontWeight: FontWeight.w600,
                                     ),
                                     strutStyle: StrutStyle(
-                                      fontSize: 18.0,
+                                      fontSize: 14.0,
                                     ),
                                   ),
                                 ],
                               ),
+
+                              // Row(
+                              //   children: [
+                              //     Icon(
+                              //       Feather.clock,
+                              //       color: whiteColor,
+                              //       size: 18.0,
+                              //     ),
+                              //     4.width,
+                              //     Text(
+                              //       '${widget.activityData['minute']}mn',
+                              //       style: TextStyle(
+                              //         fontSize: 18.0,
+                              //         color: whiteColor,
+                              //         fontWeight: FontWeight.w600,
+                              //       ),
+                              //       strutStyle: StrutStyle(
+                              //         fontSize: 18.0,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                               SizedBox(
-                                  height: 24, child: Image.asset(imgVplayText)),
+                                  height: 20, child: Image.asset(imgVplayText)),
                             ],
                           ),
                         ],

@@ -8,8 +8,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:intl/intl.dart';
 import 'package:kroma_sport/api/httpclient.dart';
 import 'package:kroma_sport/api/httpresult.dart';
 import 'package:kroma_sport/bloc/home.dart';
@@ -84,7 +86,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
   PageController pageController = PageController();
 
   PhotoViewController photoViewController = PhotoViewController();
-  PhotoViewScaleStateController scaleStateController = PhotoViewScaleStateController();
+  PhotoViewScaleStateController scaleStateController =
+      PhotoViewScaleStateController();
   var state;
 
   GlobalKey captureKey = GlobalKey();
@@ -103,33 +106,38 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
           .headline6
           ?.copyWith(fontWeight: FontWeight.w400),
       actions: [
-        if(post.type != PostType.feed || post.owner.id == KS.shared.user.id)
-        CupertinoButton(
-            onPressed: () async {
-              if (uImage == null )
-                uImage = await Capture.toPngByte(captureKey);
+        if (post.type != PostType.feed || post.owner.id == KS.shared.user.id)
+          CupertinoButton(
+              onPressed: () async {
+                if (uImage == null)
+                  uImage = await Capture.toPngByte(captureKey);
 
-              if(uImage != null){
+                if (uImage != null) {
                   _showShareScreen();
-              }
-            },
-            padding: EdgeInsets.zero,
-            child: Icon(Icons.share, color: isLight(context) ? Colors.grey[600] : whiteColor)
-        ),
+                }
+              },
+              padding: EdgeInsets.zero,
+              child: Icon(Icons.share,
+                  color: isLight(context) ? Colors.grey[600] : whiteColor)),
       ],
     );
   }
 
-  _showShareScreen(){
-     showModalBottomSheet<void>(
-      isScrollControlled: true,
-      useRootNavigator: true,
-      constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height * 0.9),
-      context: context, builder: (BuildContext context) {
-      return Container(
-        height: MediaQuery.of(context).size.height * 0.9,
-        child: ShareFeedScreen(image: uImage, post: post,));
-    });
+  _showShareScreen() {
+    showModalBottomSheet<void>(
+        isScrollControlled: true,
+        useRootNavigator: true,
+        constraints:
+            BoxConstraints(minHeight: MediaQuery.of(context).size.height * 0.9),
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+              height: MediaQuery.of(context).size.height * 0.9,
+              child: ShareFeedScreen(
+                image: uImage,
+                post: post,
+              ));
+        });
   }
 
   Widget buildTotalReaction(int total) {
@@ -139,7 +147,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 overlayColor: MaterialStateProperty.all(Colors.grey[100]),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 minimumSize: MaterialStateProperty.all(Size(0, 0)),
-                padding: MaterialStateProperty.all(const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0))),
+                padding: MaterialStateProperty.all(const EdgeInsets.symmetric(
+                    vertical: 4.0, horizontal: 8.0))),
             onPressed: showUserLike,
             child: Text(
               total > 1 ? '$total likes' : '$total like',
@@ -167,187 +176,322 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
           children: [
             Container(
               color: Theme.of(context).primaryColor,
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0, right: 8.0),
-                  child: Row(
-                    children: [
-                      Avatar(
-                        radius: 18.0,
-                        user: post.owner,
-                        onTap: (u) {},
-                      ),
-                      8.width,
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                      child: Row(
                         children: [
-                          Text(
-                            post.owner.getFullname(),
-                            style: Theme.of(context).textTheme.bodyText1?.copyWith(fontWeight: FontWeight.w600),
+                          Avatar(
+                            radius: 18.0,
+                            user: post.owner,
+                            onTap: (u) {},
                           ),
-                          Text(
-                            post.createdAt.toString().timeAgoString,
-                            style: Theme.of(context).textTheme.caption!.copyWith(color: Colors.blueGrey[200]),
-                            strutStyle: StrutStyle(fontSize: 12),
+                          8.width,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text.rich(
+                                TextSpan(
+                                  text: post.owner.getFullname() + " ",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                  children: [
+                                    if (post.owner.isPublic)
+                                      WidgetSpan(
+                                        child: SvgPicture.asset(
+                                            svgCheckVerified,
+                                            width: 18),
+                                      )
+                                  ],
+                                ),
+                                strutStyle: StrutStyle(height: 1.5),
+                              ),
+                              Text(
+                                post.createdAt.toString().timeAgoString,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .caption!
+                                    .copyWith(color: Colors.blueGrey[200]),
+                                strutStyle: StrutStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+                          KSIconButton(
+                            icon: FeatherIcons.moreHorizontal,
+                            iconSize: 22.0,
+                            onTap: () => showOptionActionBottomSheet(post),
                           ),
                         ],
                       ),
-                      Spacer(),
-                      KSIconButton(
-                        icon: FeatherIcons.moreHorizontal,
-                        iconSize: 22.0,
-                        onTap: () => showOptionActionBottomSheet(post),
-                      ),
-                    ],
-                  ),
-                ),
-                post.description != null
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8.0,
-                          horizontal: 16.0,
-                        ),
-                        child: SelectableLinkify(
-                          text: post.description!,
-                          style: Theme.of(context).textTheme.bodyText1,
-                          linkStyle: Theme.of(context).textTheme.bodyText1?.copyWith(
-                                color: isLight(context) ? Colors.blue : Colors.grey[100],
-                                decoration: TextDecoration.underline,
-                              ),
-                          onOpen: (link) async {
-                            if (await canLaunch(link.url)) {
-                              // await launch(link.url);
-                              FlutterWebBrowser.openWebPage(url: link.url);
-                            } else {
-                              throw 'Could not launch $link';
-                            }
-                          },
-                          linkifiers: [UrlLinkifier()],
-                          options: LinkifyOptions(looseUrl: true),
-                        ),
-                      )
-                    : SizedBox(height: 8.0),
-                if (post.type == PostType.feed) ...[
-                  post.isExternal
-                      ? KSLinkPreview(post: post)
-                      : post.photo != null && imageSize != null
-                          ? RepaintBoundary(
-                              key: captureKey,
-                              child: SizedBox(
-                                height: (MediaQuery.of(context).size.width * imageSize!.height) / imageSize!.width,
-                                child: PageView(
-                                  controller: pageController,
-                                  children: List.generate(
-                                    post.image!.length,
-                                    (index) {
-                                      return InkWell(
-                                        onTap: () {
-                                          launchScreen(context, ViewPhotoScreen.tag, arguments: {'post': post, 'index': index});
-                                        },
-                                        child: CachedNetworkImage(
-                                          imageUrl: post.image!.elementAt(index).name,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            )
-                          : SizedBox(),
-                ] else ...[
-                  RepaintBoundary(
-                    key: captureKey,
-                    child: Stack(
-                      children: [
-                        post.photo != null
-                            ? SizedBox(
-                                width: double.infinity,
-                                child: CachedNetworkImage(
-                                  imageUrl: post.photo!,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : SizedBox(
-                                width: AppSize(context).appWidth(100),
-                                height: AppSize(context).appWidth(100),
-                                child: CacheImage(
-                                    url: post.sport!.id == 1
-                                        ? 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1353&q=80'
-                                        : 'https://images.unsplash.com/photo-1592656094267-764a45160876?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
-                              ),
-                        Positioned(
-                          left: 0,
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0, top: 26.0),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.black87,
-                                  Color(0x00000000),
-                                ],
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter,
-                              ),
+                    ),
+                    post.description != null
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8.0,
+                              horizontal: 16.0,
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: AppSize(context).appWidth(70),
-                                  child: Text(
-                                    widget.post.title,
-                                    style: TextStyle(
-                                      fontSize: 14.0,
-                                      color: whiteColor,
-                                      // fontWeight: FontWeight.w600,
-                                    ),
+                            child: SelectableLinkify(
+                              text: post.description!,
+                              style: Theme.of(context).textTheme.bodyText1,
+                              linkStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  ?.copyWith(
+                                    color: isLight(context)
+                                        ? Colors.blue
+                                        : Colors.grey[100],
+                                    decoration: TextDecoration.underline,
                                   ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      widget.post.sport!.name.toUpperCase(),
-                                      style: TextStyle(
-                                        color: whiteColor,
+                              onOpen: (link) async {
+                                if (await canLaunch(link.url)) {
+                                  // await launch(link.url);
+                                  FlutterWebBrowser.openWebPage(url: link.url);
+                                } else {
+                                  throw 'Could not launch $link';
+                                }
+                              },
+                              linkifiers: [UrlLinkifier()],
+                              options: LinkifyOptions(looseUrl: true),
+                            ),
+                          )
+                        : SizedBox(height: 8.0),
+                    if (post.type == PostType.feed) ...[
+                      post.isExternal
+                          ? KSLinkPreview(post: post)
+                          : post.photo != null && imageSize != null
+                              ? RepaintBoundary(
+                                  key: captureKey,
+                                  child: SizedBox(
+                                    height: (MediaQuery.of(context).size.width *
+                                            imageSize!.height) /
+                                        imageSize!.width,
+                                    child: PageView(
+                                      controller: pageController,
+                                      children: List.generate(
+                                        post.image!.length,
+                                        (index) {
+                                          return InkWell(
+                                            onTap: () {
+                                              launchScreen(
+                                                  context, ViewPhotoScreen.tag,
+                                                  arguments: {
+                                                    'post': post,
+                                                    'index': index
+                                                  });
+                                            },
+                                            child: CachedNetworkImage(
+                                              imageUrl: post.image!
+                                                  .elementAt(index)
+                                                  .name,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Feather.clock,
-                                          color: whiteColor,
-                                          size: 18.0,
+                                  ),
+                                )
+                              : SizedBox(),
+                    ] else ...[
+                      Stack(
+                        children: [
+                          RepaintBoundary(
+                            key: captureKey,
+                            child: Stack(
+                              children: [
+                                post.photo != null
+                                    ? SizedBox(
+                                        width: double.infinity,
+                                        child: CachedNetworkImage(
+                                          imageUrl: post.photo!,
+                                          fit: BoxFit.cover,
                                         ),
-                                        4.width,
-                                        Text(
-                                          calcMinuteDuration(),
-                                          style: TextStyle(
-                                            fontSize: 18.0,
-                                            color: whiteColor,
-                                            fontWeight: FontWeight.w600,
+                                      )
+                                    : SizedBox(
+                                        width: AppSize(context).appWidth(100),
+                                        height: AppSize(context).appWidth(100),
+                                        child: CacheImage(
+                                            url: post.sport!.id == 1
+                                                ? 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1353&q=80'
+                                                : 'https://images.unsplash.com/photo-1592656094267-764a45160876?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
+                                      ),
+                                Positioned(
+                                  left: 0,
+                                  bottom: 0,
+                                  right: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 16.0,
+                                        right: 16.0,
+                                        bottom: 8.0,
+                                        top: 26.0),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.black87,
+                                          Color(0x00000000),
+                                        ],
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: AppSize(context).appWidth(70),
+                                          child: Text.rich(
+                                            TextSpan(
+                                              children: [
+                                                if (widget.post.sport!.icon !=
+                                                    null) ...[
+                                                  WidgetSpan(
+                                                    child: SizedBox(
+                                                      height: 16,
+                                                      width: 16,
+                                                      child: CacheImage(
+                                                          url: widget.post
+                                                              .sport!.icon!),
+                                                    ),
+                                                  ),
+                                                  WidgetSpan(
+                                                      child: Container(
+                                                        height: 4,
+                                                        width: 4,
+                                                        margin: const EdgeInsets
+                                                                .symmetric(
+                                                            horizontal: 6),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                shape: BoxShape
+                                                                    .circle),
+                                                      ),
+                                                      alignment:
+                                                          PlaceholderAlignment
+                                                              .middle),
+                                                ],
+                                                TextSpan(
+                                                  text: widget.post.title,
+                                                  style: TextStyle(
+                                                    fontSize: 14.0,
+                                                    color: whiteColor,
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                          strutStyle: StrutStyle(
-                                            fontSize: 18.0,
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 4.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Icon(
+                                                        Feather.calendar,
+                                                        color: whiteColor,
+                                                        size: 12.0,
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 4.0,
+                                                      ),
+                                                      Text(
+                                                        DateFormat('dd MMM yyyy')
+                                                                .format(DateTime
+                                                                    .parse(widget
+                                                                        .post
+                                                                        .activityDate!)) +
+                                                            '  ',
+                                                        style: TextStyle(
+                                                          fontSize: 14.0,
+                                                          color: whiteColor,
+                                                        ),
+                                                      ),
+                                                      Icon(
+                                                        Feather.clock,
+                                                        color: whiteColor,
+                                                        size: 12.0,
+                                                      ),
+                                                      4.width,
+                                                      Text(
+                                                        calcMinuteDuration(),
+                                                        style: TextStyle(
+                                                          fontSize: 14.0,
+                                                          color: whiteColor,
+                                                        ),
+                                                        strutStyle: StrutStyle(
+                                                          fontSize: 14.0,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              // Row(
+                                              //   children: [
+                                              //     Icon(
+                                              //       Feather.clock,
+                                              //       color: whiteColor,
+                                              //       size: 18.0,
+                                              //     ),
+                                              //     4.width,
+                                              //     Text(
+                                              //       calcMinuteDuration(),
+                                              //       style: TextStyle(
+                                              //         fontSize: 18.0,
+                                              //         color: whiteColor,
+                                              //         fontWeight: FontWeight.w600,
+                                              //       ),
+                                              //       strutStyle: StrutStyle(
+                                              //         fontSize: 18.0,
+                                              //       ),
+                                              //     ),
+                                              //   ],
+                                              // ),
+
+                                              // SizedBox(
+                                              //   height: 24,
+                                              //   child: Image.asset(imgVplayText),
+                                              // ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 24, child: Image.asset(imgVplayText)),
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ]),
+                          Positioned(
+                            right: 16,
+                            bottom: 8,
+                            child: SizedBox(
+                              height: 20,
+                              child: Image.asset(imgVplayText),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ]),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -357,7 +501,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                   Row(
                     children: [
                       KSIconButton(
-                        icon: (post.reacted != null && post.reacted!) ? Icons.favorite : FeatherIcons.heart,
+                        icon: (post.reacted != null && post.reacted!)
+                            ? Icons.favorite
+                            : FeatherIcons.heart,
                         iconColor: (post.reacted != null && post.reacted!)
                             ? ColorResources.getActiveIconColor(context)
                             : ColorResources.getInactiveIconColor(context),
@@ -450,7 +596,10 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                   isDense: true,
                   border: InputBorder.none,
                   hintText: 'Add a comment',
-                  hintStyle: Theme.of(context).textTheme.bodyText2?.copyWith(color: ColorResources.getBlueGrey(context)),
+                  hintStyle: Theme.of(context)
+                      .textTheme
+                      .bodyText2
+                      ?.copyWith(color: ColorResources.getBlueGrey(context)),
                 ),
                 onChanged: (value) {
                   setState(() {});
@@ -479,9 +628,14 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
-          statusBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light,
+          statusBarIconBrightness:
+              Theme.of(context).brightness == Brightness.light
+                  ? Brightness.dark
+                  : Brightness.light,
           systemNavigationBarColor:
-              Theme.of(context).brightness == Brightness.light ? Color.fromRGBO(113, 113, 113, 1) : Color.fromRGBO(15, 15, 15, 1),
+              Theme.of(context).brightness == Brightness.light
+                  ? Color.fromRGBO(113, 113, 113, 1)
+                  : Color.fromRGBO(15, 15, 15, 1),
         ),
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
@@ -576,7 +730,9 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 if (widget.postIndex != -1) {
                   _homeCubit.onHidePost(post.id);
                 } else {
-                  ksClient.postApi('/user/activity/hide_post/${post.id}').then((value) {
+                  ksClient
+                      .postApi('/user/activity/hide_post/${post.id}')
+                      .then((value) {
                     if (value != null) {
                       _homeCubit.onRefresh();
                     }
@@ -592,9 +748,13 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                     actionTitle: 'Undo',
                     onAction: () {
                       if (widget.postIndex != -1) {
-                        _homeCubit.onUndoHidingPost(index: widget.postIndex, post: post);
+                        _homeCubit.onUndoHidingPost(
+                            index: widget.postIndex, post: post);
                       } else {
-                        ksClient.postApi('/user/activity/show/hidden_post/${post.id}').then((value) {
+                        ksClient
+                            .postApi(
+                                '/user/activity/show/hidden_post/${post.id}')
+                            .then((value) {
                           if (value != null) {
                             _homeCubit.onRefresh();
                           }
@@ -615,9 +775,11 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
             dismissScreen(context);
             showKSConfirmDialog(
               context,
-              message: 'Are you sure you want to unfollow ${post.owner.getFullname()}?',
+              message:
+                  'Are you sure you want to unfollow ${post.owner.getFullname()}?',
               onYesPressed: () async {
-                var res = await ksClient.postApi('/user/unfollow/${post.owner.id}');
+                var res =
+                    await ksClient.postApi('/user/unfollow/${post.owner.id}');
                 if (res != null) {
                   if (res is! HttpResult) {}
                 }
@@ -669,7 +831,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
       if (data is! HttpResult) {
         post = Post.fromJson(data['post']);
         post.owner = post.owner;
-        commentList = List.from((data['comment'] as List).map((e) => Comment.fromJson(e)));
+        commentList = List.from(
+            (data['comment'] as List).map((e) => Comment.fromJson(e)));
         if (widget.postCallback != null) {
           widget.postCallback!(post);
         }
@@ -700,7 +863,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     fields['comment'] = _commentController.text;
     fields['type'] = 1;
 
-    var result = await ksClient.postApi('/create/post/comment/${post.id}', body: fields);
+    var result =
+        await ksClient.postApi('/create/post/comment/${post.id}', body: fields);
     if (result != null) {
       if (result is! HttpResult) {
         var newComment = Comment.fromJson(result);
@@ -765,7 +929,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                           gestureDetectorBehavior: HitTestBehavior.opaque,
                           minScale: PhotoViewComputedScale.contained,
                           maxScale: 1.5,
-                          imageProvider: CachedNetworkImageProvider(post.photo!),
+                          imageProvider:
+                              CachedNetworkImageProvider(post.photo!),
                           loadingBuilder: (context, event) {
                             return CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation(whiteColor),
@@ -788,7 +953,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                         child: Container(
                           width: 28.0,
                           height: 28.0,
-                          decoration: BoxDecoration(color: whiteColor, shape: BoxShape.circle),
+                          decoration: BoxDecoration(
+                              color: whiteColor, shape: BoxShape.circle),
                           child: Icon(
                             Icons.close,
                             color: blackColor,
@@ -905,7 +1071,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     var res = await ksClient.getApi('/view/post/reaction/${post.id}');
     if (res != null) {
       if (res is! HttpResult) {
-        likeUsers = List.from((res as List).map((e) => User.fromJson(e['user'])));
+        likeUsers =
+            List.from((res as List).map((e) => User.fromJson(e['user'])));
         setState(() {});
       }
     }
@@ -924,7 +1091,8 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
                 return InkWell(
                   onTap: () {
                     if (user.id != KS.shared.user.id) {
-                      launchScreen(context, ViewUserProfileScreen.tag, arguments: {'user': user});
+                      launchScreen(context, ViewUserProfileScreen.tag,
+                          arguments: {'user': user});
                     } else {
                       launchScreen(context, AccountScreen.tag);
                     }
@@ -962,9 +1130,11 @@ class _FeedDetailScreenState extends State<FeedDetailScreen> {
     if (uImage != null) {
       showModalBottomSheet<void>(
           isScrollControlled: true,
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
+          constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.9),
           context: context,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
           builder: (BuildContext context) {
             return Container(
                 //height: MediaQuery.of(context).size.height * 0.9,
