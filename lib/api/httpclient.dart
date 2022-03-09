@@ -94,7 +94,7 @@ class KSHttpClient {
       log("GET: ${_getUir(url)}");
       if (response.statusCode == 200) {
         final json = jsonDecode(utf8.decode(response.bodyBytes));
-        print("RESULT: ${response.body}");
+        // print("RESULT: ${response.body}");
         if (json != null) {
           int code = int.parse(json['code'].toString());
           if (code == 1) {

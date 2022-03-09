@@ -17,9 +17,23 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
   Widget splashText() {
-    return SizedBox(height: 42.0, child: Image.asset(imgVplayText, color: mainColor,));
+    return ScaleTransition(
+      scale: _animationController,
+      child: Opacity(
+        opacity: (1.02 - (_animationController.value / 3)),
+        child: SizedBox(
+            height: 42.0,
+            child: Image.asset(
+              imgVplayText,
+              color: mainColor,
+            )),
+      ),
+    );
   }
 
   @override
@@ -28,11 +42,16 @@ class _SplashScreenState extends State<SplashScreen> {
       create: (context) => SplashCubit()..init(),
       child: BlocListener<SplashCubit, SplashState>(
         listener: (context, state) {
-          if (state == SplashState.Exist) {
-            Navigator.pushNamedAndRemoveUntil(context, MainView.tag, (route) => false);
-          } else if (state == SplashState.New) {
-            navigateToLoginScreen();
-          }
+          _animationController.addStatusListener((status) {
+            if (status == AnimationStatus.completed) {
+              if (state == SplashState.Exist) {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, MainView.tag, (route) => false);
+              } else if (state == SplashState.New) {
+                navigateToLoginScreen();
+              }
+            }
+          });
         },
         child: Scaffold(
           backgroundColor: whiteColor,
@@ -61,30 +80,50 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+      lowerBound: 1.0,
+      upperBound: 3.0,
+    );
+    _animationController.forward();
+    _animationController.addListener(() {
+      setState(() {});
+    });
     _initPackageInfo();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   navigateToLoginScreen() {
     // return Timer(Duration(milliseconds: 500), () => Navigator.pushReplacementNamed(context, GetStartedScreen.tag));
-    return Timer(Duration(milliseconds: 1000), () => Navigator.pushReplacement(context, PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) {
-                    return GetStartedScreen();
-                  },
-                  transitionsBuilder: (context, animation1, animation2, child) {
-                    return FadeTransition(
-                      opacity: animation1,
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: Offset.zero,
-                          end: Offset(-1.0, 0.0),
-                        ).animate(animation2),
-                        child: child,
-                      ),
-                    );
-                  },
-                  transitionDuration: Duration(milliseconds: 350),
-                )));
+    return Timer(
+        Duration(milliseconds: 1000),
+        () => Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation1, animation2) {
+                return GetStartedScreen();
+              },
+              transitionsBuilder: (context, animation1, animation2, child) {
+                return FadeTransition(
+                  opacity: animation1,
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                      begin: Offset.zero,
+                      end: Offset(-1.0, 0.0),
+                    ).animate(animation2),
+                    child: child,
+                  ),
+                );
+              },
+              transitionDuration: Duration(milliseconds: 350),
+            )));
   }
 
   Future<void> _initPackageInfo() async {

@@ -50,10 +50,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   //);
 
   void scrollToTop() {
+    print("scroll=======");
     Future.delayed(Duration.zero).then((value) {
       _homeScrollController.animateTo(
         _homeScrollController.position.minScrollExtent,
-        duration: Duration(milliseconds: 200),
+        duration: Duration(milliseconds: 1500),
         curve: Curves.fastLinearToSlowEaseIn,
       );
     });
