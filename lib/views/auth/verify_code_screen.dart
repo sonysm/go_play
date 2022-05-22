@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_countdown_timer/index.dart';
 import 'package:kroma_sport/api/httpclient.dart';
@@ -87,7 +86,9 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           Container(
                             width: 50,
                             height: 50,
-                            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(mainColor)),
+                            child: CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(mainColor)),
                           ),
                         ],
                       );
@@ -101,7 +102,9 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           Container(
                             width: 70,
                             height: 70,
-                            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(mainColor)),
+                            child: CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(mainColor)),
                           ),
                         ],
                       );
@@ -122,12 +125,16 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           ),
                           SizedBox(height: 24),
                           ElevatedButton(
-                            onPressed: () => setState(() => _status = OTPStatus.otp),
+                            onPressed: () =>
+                                setState(() => _status = OTPStatus.otp),
                             child: Text('Try again'),
                             style: ButtonStyle(
-                              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0)),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.symmetric(
+                                      horizontal: 32.0, vertical: 12.0)),
                               elevation: MaterialStateProperty.all(0),
-                              backgroundColor: MaterialStateProperty.all(mainColor),
+                              backgroundColor:
+                                  MaterialStateProperty.all(mainColor),
                             ),
                           )
                         ],
@@ -145,7 +152,8 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           Container(
                             width: 100,
                             height: 100,
-                            child: Icon(Icons.check_circle_outline, size: 100, color: mainColor),
+                            child: Icon(Icons.check_circle_outline,
+                                size: 100, color: mainColor),
                           ),
                         ],
                       );
@@ -162,7 +170,8 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           Container(
                             width: 100,
                             height: 100,
-                            child: Icon(Icons.check_circle_outline, size: 100, color: mainColor),
+                            child: Icon(Icons.check_circle_outline,
+                                size: 100, color: mainColor),
                           ),
                         ],
                       );
@@ -202,7 +211,11 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                             child: Text(
                               '${_firebaseError!.message}',
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 16, color: isLight(context) ? Colors.red : Colors.red[300]),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: isLight(context)
+                                      ? Colors.red
+                                      : Colors.red[300]),
                             ),
                           ),
                           SizedBox(height: 24),
@@ -215,9 +228,12 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           ElevatedButton(
                             child: Text('Try again'),
                             style: ButtonStyle(
-                              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0)),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.symmetric(
+                                      horizontal: 32.0, vertical: 12.0)),
                               elevation: MaterialStateProperty.all(0),
-                              backgroundColor: MaterialStateProperty.all(mainColor),
+                              backgroundColor:
+                                  MaterialStateProperty.all(mainColor),
                             ),
                             onPressed: () {
                               _sendSMSCode();
@@ -249,7 +265,8 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
           fit: StackFit.expand,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 16, left: 32, right: 32, bottom: 16.0),
+              padding: const EdgeInsets.only(
+                  top: 16, left: 32, right: 32, bottom: 16.0),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -306,7 +323,8 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                           widgetBuilder: (_, CurrentRemainingTime? time) {
                             if (time != null) {
                               var min = time.min ?? 0;
-                              return Text('${_getNumberAddZero(min)} : ${_getNumberAddZero(time.sec!)}');
+                              return Text(
+                                  '${_getNumberAddZero(min)} : ${_getNumberAddZero(time.sec!)}');
                             }
                             return TextButton(
                               child: Text(
@@ -356,10 +374,15 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                             color: Colors.white,
                           ),
                         ),
-                        onPressed: _editController.text.length == 6 ? _verifyCode : null,
+                        onPressed: _editController.text.length == 6
+                            ? _verifyCode
+                            : null,
                         style: ButtonStyle(
                           elevation: MaterialStateProperty.all(0),
-                          backgroundColor: MaterialStateProperty.all(_editController.text.length == 6 ? mainColor : Colors.green[200]),
+                          backgroundColor: MaterialStateProperty.all(
+                              _editController.text.length == 6
+                                  ? mainColor
+                                  : Colors.green[200]),
                         ),
                       ),
                     )
@@ -551,7 +574,8 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   }
 
   void redirectToScreen() async {
-    var data = await ksClient.postLogin('/user/login', {'phone': widget.phoneNumber});
+    var data =
+        await ksClient.postLogin('/user/login', {'phone': widget.phoneNumber});
 
     if (data != null) {
       if (data is! HttpResult) {
@@ -560,10 +584,13 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
         userRepository.persistHeaderToken(data['token']);
         KS.shared.user = KSUser.User.fromJson(data['user']);
         BlocProvider.of<UserCubit>(context).emitUser(KS.shared.user);
-        Navigator.pushNamedAndRemoveUntil(context, MainView.tag, (route) => false);
+        Navigator.pushNamedAndRemoveUntil(
+            context, MainView.tag, (route) => false);
       } else {
         if (data.code == 0) {
-          Navigator.pushNamedAndRemoveUntil(context, RegisterScreen.tag, (route) => false, arguments: widget.phoneNumber);
+          Navigator.pushNamedAndRemoveUntil(
+              context, RegisterScreen.tag, (route) => false,
+              arguments: widget.phoneNumber);
         }
       }
     }
