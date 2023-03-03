@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kroma_sport/utils/tools.dart';
 
-const mainColor = Color(0xFF26a65b);
-const mainDarkColor = Colors.greenAccent;
+// const mainColor = Color(0xFF26a65b);
+const mainColor = Colors.blue;
+
+const mainDarkColor = Color.fromARGB(0, 0, 50, 108);
 
 const primaryColor = Colors.white;
-const primaryDarkColor = Color(0xFF536872);
+const primaryDarkColor = Colors.black;
 
 const backgroundPrimary = Color(0xFFFAFAFA);
 const backgroundDarkPrimary = Color(0xFF36454f);

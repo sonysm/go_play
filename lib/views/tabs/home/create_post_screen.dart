@@ -105,8 +105,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 color: availablePost()
                     ? ColorResources.getMainColor(context)
                     : isLight(context)
-                        ? Colors.green[200]
-                        : Colors.green[100],
+                        ? mainColor
+                        : mainColor,
                 fontWeight: FontWeight.w600),
           ),
         ),
@@ -352,7 +352,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 CustomScrollView(
                   slivers: [
                     buildNavbar(),
-                    buildPostHeader(),
+                    // buildPostHeader(),
                     buildPostCaption(),
                     buildUrlWidget(),
                     buildPhotoList(),
@@ -574,11 +574,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         var newPost = Post.fromJson(data);
 
         if (widget.data is Post) {
-            BlocProvider.of<HomeCubit>(context).updatePost(newPost);
-            BlocProvider.of<AccountCubit>(context).onUpdatePost(newPost);
+          BlocProvider.of<HomeCubit>(context).updatePost(newPost);
+          BlocProvider.of<AccountCubit>(context).onUpdatePost(newPost);
         } else {
-            BlocProvider.of<HomeCubit>(context).onPostFeed(newPost);
-            BlocProvider.of<AccountCubit>(context).onAddPost(newPost);
+          BlocProvider.of<HomeCubit>(context).onPostFeed(newPost);
+          BlocProvider.of<AccountCubit>(context).onAddPost(newPost);
         }
       } else {
         if (data.code == -500) {
@@ -590,8 +590,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           return;
         }
         showKSMessageDialog(context,
-            message:
-                'Something went wrong with the content!',
+            message: 'Something went wrong with the content!',
             buttonTitle: 'OK');
       }
     }

@@ -413,12 +413,13 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
     Future.delayed(Duration(milliseconds: 500)).then((value) {
       // _toEditUserScreen();
 
-      _sendSMSCode();
+      // _sendSMSCode();
       _status = OTPStatus.completed;
       setState(() {});
     });
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _focusNode.requestFocus();
+      redirectToScreen();
     });
   }
 

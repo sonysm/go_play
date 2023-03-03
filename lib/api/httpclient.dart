@@ -41,9 +41,9 @@ class KSHttpClient {
 
   Uri _getUir(url, {Map<String, dynamic>? queryParameters}) {
     if (DEBUG) {
-      return Uri.http(_baseUrl, '/api/v1$url', queryParameters);
+      return Uri.http(_baseUrl, '/vplay/api/v1$url', queryParameters);
     }
-    return Uri.https(_baseUrl, '/api/v1$url', queryParameters);
+    return Uri.https(_baseUrl, '/vplay/api/v1$url', queryParameters);
   }
 
   Future postLogin(url, Object body) async {
@@ -109,6 +109,7 @@ class KSHttpClient {
         result = HttpResult(401, "Unauthorized");
       }
       log("=======================================================================");
+      // print(_getHeader());
     } on SocketException catch (e) {
       result = HttpResult(-500, "Internet connection");
       print("SocketException = $e");

@@ -14,7 +14,7 @@ Future<File?> _getCameraImage(
     final pickedFile = await picker.getImage(source: ImageSource.camera);
     if (pickedFile != null) {
       if (isCropped) {
-        File? croppedFile = await ImageCropper.cropImage(
+        File? croppedFile = await ImageCropper().cropImage(
             sourcePath: pickedFile.path,
             cropStyle: isRectangle ? CropStyle.rectangle : CropStyle.circle,
             aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0));
@@ -36,7 +36,7 @@ Future<File?> _getLibraryImage(
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       if (isCropped) {
-        File? croppedFile = await ImageCropper.cropImage(
+        File? croppedFile = await ImageCropper().cropImage(
           sourcePath: pickedFile.path,
           cropStyle: isRectangle ? CropStyle.rectangle : CropStyle.circle,
           aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
