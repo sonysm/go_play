@@ -489,7 +489,7 @@ class _HomeFeedCellState extends State<HomeFeedCell>
             (LinkifyOptions().defaultToHttps ? "https://" : "http://") + _url!;
       }
     }
-    setState(() {});
+    setState(() {});  
   }
 
   @override

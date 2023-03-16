@@ -1,4 +1,3 @@
-
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -11,27 +10,26 @@ import 'package:kroma_sport/widgets/spinkit/animation_bounce.dart';
 
 typedef Future<void> RefreshCallback();
 
-
 class TopRefresher extends StatefulWidget {
-  
   final double paintOriginYOffset;
   final double refreshTriggerPullDistance;
   final double refreshIndicatorExtent;
   final RefreshCallback? onRefresh;
 
-  const TopRefresher({Key? key, 
+  const TopRefresher(
+      {Key? key,
       this.refreshTriggerPullDistance: kDefaultRefreshTriggerPullDistance,
       this.refreshIndicatorExtent: kDefaultRefreshIndicatorExtent,
       this.paintOriginYOffset: kDefaultTopRefreshPaintOriginYOffset,
-      this.onRefresh
-  }) : super(key: key);
+      this.onRefresh})
+      : super(key: key);
 
   @override
   _TopRefresherState createState() => _TopRefresherState();
 }
 
 class _TopRefresherState extends State<TopRefresher> {
-    static const double _kInactiveResetOverscrollFraction = 0.1;
+  static const double _kInactiveResetOverscrollFraction = 0.1;
 
   RefreshState refreshState = RefreshState.inactive;
   Future<void>? refreshTask;
@@ -49,7 +47,7 @@ class _TopRefresherState extends State<TopRefresher> {
     RefreshState nextState;
     void goToDone() {
       nextState = RefreshState.done;
-      if (SchedulerBinding.instance!.schedulerPhase == SchedulerPhase.idle) {
+      if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.idle) {
         setState(() => hasSliverLayoutExtent = false);
       } else {
         SchedulerBinding.instance!.addPostFrameCallback((Duration timestamp) {
@@ -78,7 +76,7 @@ class _TopRefresherState extends State<TopRefresher> {
             // Call onRefresh after this frame finished since the function is
             // user supplied and we're always here in the middle of the sliver's
             // performLayout.
-            SchedulerBinding.instance!
+            SchedulerBinding.instance
                 .addPostFrameCallback((Duration timestamp) {
               refreshTask = widget.onRefresh!()
                 ..then((_) {
@@ -129,7 +127,7 @@ class _TopRefresherState extends State<TopRefresher> {
 
   @override
   Widget build(BuildContext context) {
-     return _RefreshSliver(
+    return _RefreshSliver(
         paintOriginYOffset: widget.paintOriginYOffset,
         refreshIndicatorLayoutExtent: widget.refreshIndicatorExtent,
         hasLayoutExtent: hasSliverLayoutExtent,
@@ -140,7 +138,7 @@ class _TopRefresherState extends State<TopRefresher> {
             if (refreshState != RefreshState.inactive) {
               return _DefaultRefresherIndicator(
                   refreshState: refreshState,
-                  pulledExtent:lastIndicatorExtent,
+                  pulledExtent: lastIndicatorExtent,
                   refreshTriggerPullDistance: widget.refreshTriggerPullDistance,
                   refreshIndicatorExtent: widget.refreshIndicatorExtent);
             } else {
@@ -151,25 +149,29 @@ class _TopRefresherState extends State<TopRefresher> {
   }
 }
 
-
 class _DefaultRefresherIndicator extends StatelessWidget {
-
   final RefreshState? refreshState;
   final double pulledExtent;
   final double refreshTriggerPullDistance;
   final double refreshIndicatorExtent;
 
-  const _DefaultRefresherIndicator({Key? key, this.refreshState, this.pulledExtent = 0 , this.refreshTriggerPullDistance = 0, this.refreshIndicatorExtent = 0}) : super(key: key);
+  const _DefaultRefresherIndicator(
+      {Key? key,
+      this.refreshState,
+      this.pulledExtent = 0,
+      this.refreshTriggerPullDistance = 0,
+      this.refreshIndicatorExtent = 0})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     const Curve opacityCurve =
-    const Interval(0.4, 0.8, curve: Curves.easeInOut);
+        const Interval(0.4, 0.8, curve: Curves.easeInOut);
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: EdgeInsets.only(
-            bottom: (refreshIndicatorExtent - 14.0 * 2) / 2.0),
+        padding:
+            EdgeInsets.only(bottom: (refreshIndicatorExtent - 14.0 * 2) / 2.0),
         child: refreshState == RefreshState.drag
             ? Opacity(
                 opacity: opacityCurve.transform(
@@ -180,35 +182,37 @@ class _DefaultRefresherIndicator extends StatelessWidget {
                   size: 36.0,
                 ),
               )
-            : refreshState == RefreshState.armed ? 
-            Opacity(
-                opacity: opacityCurve
-                    .transform(min(pulledExtent / refreshIndicatorExtent, 1.0)),
-                child: const Icon(
-                  CupertinoIcons.chevron_up,
-                  color: CupertinoColors.inactiveGray,
-                  size: 36.0,
-                ),
-              )
-            : refreshState == RefreshState.refresh? Opacity(
-                opacity: opacityCurve
-                    .transform(min(pulledExtent / refreshIndicatorExtent, 1.0)),
-                child: AnimationBounce(color: Theme.of(context).colorScheme.secondary, size: 25.0,)
-              ): SizedBox.shrink(),
+            : refreshState == RefreshState.armed
+                ? Opacity(
+                    opacity: opacityCurve.transform(
+                        min(pulledExtent / refreshIndicatorExtent, 1.0)),
+                    child: const Icon(
+                      CupertinoIcons.chevron_up,
+                      color: CupertinoColors.inactiveGray,
+                      size: 36.0,
+                    ),
+                  )
+                : refreshState == RefreshState.refresh
+                    ? Opacity(
+                        opacity: opacityCurve.transform(
+                            min(pulledExtent / refreshIndicatorExtent, 1.0)),
+                        child: AnimationBounce(
+                          color: Theme.of(context).colorScheme.secondary,
+                          size: 25.0,
+                        ))
+                    : SizedBox.shrink(),
       ),
     );
   }
 }
 
 class _RefreshSliver extends SingleChildRenderObjectWidget {
-
   const _RefreshSliver(
       {this.refreshIndicatorLayoutExtent: 0.0,
       this.paintOriginYOffset: 0.0,
       this.hasLayoutExtent: false,
       Widget? child})
-      : 
-        assert(refreshIndicatorLayoutExtent >= 0.0),
+      : assert(refreshIndicatorLayoutExtent >= 0.0),
         super(child: child);
 
   final double paintOriginYOffset;
@@ -234,7 +238,6 @@ class _RefreshSliver extends SingleChildRenderObjectWidget {
   }
 }
 
-
 class _RenderRefreshSliver extends RenderSliver
     with RenderObjectWithChildMixin<RenderBox> {
   _RenderRefreshSliver(
@@ -242,8 +245,7 @@ class _RenderRefreshSliver extends RenderSliver
       required bool hasLayoutExtent,
       RenderBox? child,
       this.paintOriginYOffset: 0.0})
-      :
-        assert(refreshIndicatorExtent >= 0.0),
+      : assert(refreshIndicatorExtent >= 0.0),
         _refreshIndicatorExtent = refreshIndicatorExtent,
         _hasLayoutExtent = hasLayoutExtent {
     this.child = child;
@@ -267,7 +269,6 @@ class _RenderRefreshSliver extends RenderSliver
   }
 
   double layoutExtentOffsetCompensation = 0.0;
-
 
   @override
   void performLayout() {

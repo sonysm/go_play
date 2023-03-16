@@ -138,7 +138,7 @@ class _VenueMapScreenState extends State<VenueMapScreen> with SingleTickerProvid
     //   getMarker(element).then((value) => setState(() => venueMarker.addAll(value)));
     // });
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (MediaQuery.of(context).size.width > 420 && !Platform.isIOS) {
         bigIconWidth = 90;
         smallIconWidth = 50;

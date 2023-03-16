@@ -76,7 +76,7 @@ class _BlockAccountScreenState extends State<BlockAccountScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       fecthBlockedAccount();
     });
 

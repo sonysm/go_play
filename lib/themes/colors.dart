@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kroma_sport/utils/tools.dart';
 
 // const mainColor = Color(0xFF26a65b);
-const mainColor = Colors.blue;
+const mainColor = Color.fromARGB(255, 9, 83, 143);
 
 const mainDarkColor = Color.fromARGB(0, 0, 50, 108);
 

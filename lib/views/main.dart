@@ -152,7 +152,7 @@ class _MainViewState extends State<MainView> with WidgetsBindingObserver {
     _handleIncomingLinks();
     _handleInitialUri();
     _onNotificationInitial();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   late DateTime _bgDate;

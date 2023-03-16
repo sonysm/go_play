@@ -471,7 +471,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (widget.data != null) {
       if (widget.data is String) {
         descController.text = widget.data!;
-        WidgetsBinding.instance!.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           checkShareInfoString(widget.data!);
         });
       } else if (widget.data is List<SharedMediaFile>) {

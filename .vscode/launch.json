@@ -14,7 +14,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "kroma_sport",
+            "name": "v-play",
             "request": "launch",
             "type": "dart",
             // "flutterMode": "profile"

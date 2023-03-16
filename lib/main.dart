@@ -19,7 +19,8 @@ import 'package:kroma_sport/utils/ks_images.dart';
 import 'package:kroma_sport/views/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -35,7 +36,8 @@ void main() async {
     sound: true,
   );
 
-  ConnectionStatusSingleton connectionStatus = ConnectionStatusSingleton.getInstance();
+  ConnectionStatusSingleton connectionStatus =
+      ConnectionStatusSingleton.getInstance();
   connectionStatus.initialize();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
@@ -59,13 +61,18 @@ class App extends StatelessWidget {
     precacheImage(AssetImage(loginBackground), context);
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ThemeCubit>(create: (BuildContext context) => ThemeCubit()..init()),
+        BlocProvider<ThemeCubit>(
+            create: (BuildContext context) => ThemeCubit()..init()),
         BlocProvider<HomeCubit>(create: (BuildContext context) => HomeCubit()),
-        BlocProvider<SuggestionCubit>(create: (BuildContext context) => SuggestionCubit()..onLoad()),
-        BlocProvider<MeetupCubit>(create: (BuildContext context) => MeetupCubit()),
+        BlocProvider<SuggestionCubit>(
+            create: (BuildContext context) => SuggestionCubit()..onLoad()),
+        BlocProvider<MeetupCubit>(
+            create: (BuildContext context) => MeetupCubit()),
         BlocProvider<UserCubit>(create: (BuildContext context) => UserCubit()),
-        BlocProvider<NotifyCubit>(create: (BuildContext context) => NotifyCubit()..onLoad()),
-        BlocProvider<AccountCubit>(create: (BuildContext context) => AccountCubit())
+        BlocProvider<NotifyCubit>(
+            create: (BuildContext context) => NotifyCubit()..onLoad()),
+        BlocProvider<AccountCubit>(
+            create: (BuildContext context) => AccountCubit())
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(builder: (_, mode) {
         return MaterialApp(
@@ -81,17 +88,19 @@ class App extends StatelessWidget {
             iconTheme: IconThemeData(color: mainColor),
             primaryIconTheme: IconThemeData(color: mainColor),
             visualDensity: VisualDensity.adaptivePlatformDensity,
-            primaryTextTheme: Theme.of(context).primaryTextTheme.apply(bodyColor: blackColor),
+            primaryTextTheme:
+                Theme.of(context).primaryTextTheme.apply(bodyColor: blackColor),
             textTheme: TextTheme(
-              headline1: aeonikRegularBlack.copyWith(fontSize: 96.0),
-              headline2: aeonikRegularBlack.copyWith(fontSize: 60.0),
-              headline3: aeonikRegularBlack.copyWith(fontSize: 48.0),
-              headline4: aeonikRegularBlack.copyWith(fontSize: 34.0),
-              headline5: aeonikRegularBlack.copyWith(fontSize: 24.0),
-              headline6: aeonikRegularBlack.copyWith(fontSize: 20.0),
-              bodyText1: aeonikRegularBlack.copyWith(fontSize: 16.0, fontWeight: FontWeight.w400),
-              bodyText2: aeonikRegularBlack,
-              caption: aeonikRegularBlack.copyWith(fontSize: 12.0),
+              displayLarge: aeonikRegularBlack.copyWith(fontSize: 96.0),
+              displayMedium: aeonikRegularBlack.copyWith(fontSize: 60.0),
+              displaySmall: aeonikRegularBlack.copyWith(fontSize: 48.0),
+              headlineMedium: aeonikRegularBlack.copyWith(fontSize: 34.0),
+              headlineSmall: aeonikRegularBlack.copyWith(fontSize: 24.0),
+              titleLarge: aeonikRegularBlack.copyWith(fontSize: 20.0),
+              bodyLarge: aeonikRegularBlack.copyWith(
+                  fontSize: 16.0, fontWeight: FontWeight.w400),
+              bodyMedium: aeonikRegularBlack,
+              bodySmall: aeonikRegularBlack.copyWith(fontSize: 12.0),
             ),
             appBarTheme: AppBarTheme(
               elevation: 0.3,
@@ -105,10 +114,12 @@ class App extends StatelessWidget {
               unselectedLabelColor: Colors.grey,
               labelStyle: Theme.of(context).textTheme.bodyText1,
             ),
-            radioTheme: RadioThemeData(fillColor: MaterialStateProperty.all(mainColor)),
+            radioTheme:
+                RadioThemeData(fillColor: MaterialStateProperty.all(mainColor)),
             elevatedButtonTheme: ElevatedButtonThemeData(
               style: ButtonStyle(
-                textStyle: MaterialStateProperty.all(aeonikRegularBlack.copyWith(fontSize: 16.0)),
+                textStyle: MaterialStateProperty.all(
+                    aeonikRegularBlack.copyWith(fontSize: 16.0)),
                 // padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0)),
                 // elevation: MaterialStateProperty.all(0),
                 // backgroundColor: MaterialStateProperty.all(mainColor),
@@ -131,7 +142,8 @@ class App extends StatelessWidget {
             iconTheme: IconThemeData(color: mainDarkColor),
             primaryIconTheme: IconThemeData(color: mainDarkColor),
             visualDensity: VisualDensity.adaptivePlatformDensity,
-            primaryTextTheme: Theme.of(context).primaryTextTheme.apply(bodyColor: whiteColor),
+            primaryTextTheme:
+                Theme.of(context).primaryTextTheme.apply(bodyColor: whiteColor),
             textTheme: TextTheme(
               headline1: aeonikRegularWhite.copyWith(fontSize: 96.0),
               headline2: aeonikRegularWhite.copyWith(fontSize: 60.0),
@@ -139,7 +151,8 @@ class App extends StatelessWidget {
               headline4: aeonikRegularWhite.copyWith(fontSize: 34.0),
               headline5: aeonikRegularWhite.copyWith(fontSize: 24.0),
               headline6: aeonikRegularWhite.copyWith(fontSize: 20.0),
-              bodyText1: aeonikRegularWhite.copyWith(fontSize: 16.0, fontWeight: FontWeight.w400),
+              bodyText1: aeonikRegularWhite.copyWith(
+                  fontSize: 16.0, fontWeight: FontWeight.w400),
               bodyText2: aeonikRegularWhite,
               caption: aeonikRegularWhite.copyWith(fontSize: 12.0),
             ),
@@ -157,7 +170,8 @@ class App extends StatelessWidget {
             ),
             elevatedButtonTheme: ElevatedButtonThemeData(
               style: ButtonStyle(
-                textStyle: MaterialStateProperty.all(aeonikRegularBlack.copyWith(fontSize: 16.0)),
+                textStyle: MaterialStateProperty.all(
+                    aeonikRegularBlack.copyWith(fontSize: 16.0)),
               ),
             ),
             colorScheme: ColorScheme.fromSwatch().copyWith(

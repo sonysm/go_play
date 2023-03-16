@@ -126,7 +126,7 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - "permission_handler (5.1.0+2)":
+  - permission_handler_apple (9.0.4):
     - Flutter
   - PhoneNumberKit (3.3.4):
     - PhoneNumberKit/PhoneNumberKitCore (= 3.3.4)
@@ -173,7 +173,7 @@ DEPENDENCIES:
   - multi_image_picker2 (from `.symlinks/plugins/multi_image_picker2/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
-  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - receive_sharing_intent (from `.symlinks/plugins/receive_sharing_intent/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
@@ -244,8 +244,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/package_info/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/ios"
-  permission_handler:
-    :path: ".symlinks/plugins/permission_handler/ios"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   receive_sharing_intent:
     :path: ".symlinks/plugins/receive_sharing_intent/ios"
   share_plus:
@@ -279,7 +279,7 @@ SPEC CHECKSUMS:
   flutter_web_browser: a719eca01d00bdc9a0e13e42194f86b90a5b8729
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geocoding: 32cfcdb16d38d907caaba65e2e42ad10d38bee58
-  google_maps_flutter_ios: 53f75334bad87ccd0473f4b0142756169846b42b
+  google_maps_flutter_ios: 3e0b99383a8003b8169d06e7e324170bd0424105
   GoogleDataTransport: ea169759df570f4e37bdee1623ec32a7e64e67c4
   GoogleMaps: a146f275ee429d14822178c7a841c03366ec92a1
   GoogleUtilities: c2bdc4cf2ce786c4d2e6b3bcfd599a25ca78f06f
@@ -295,7 +295,7 @@ SPEC CHECKSUMS:
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
-  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
+  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96

@@ -417,7 +417,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
       _status = OTPStatus.completed;
       setState(() {});
     });
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
       redirectToScreen();
     });
